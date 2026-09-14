@@ -262,12 +262,12 @@ export default function AboutPage() {
 
                 {/* QR Slot */}
                 <div 
-                  onClick={() => setPreviewImage({ src: "/sponsor_qr.png", title: "请喝咖啡 · 赞赏支持码" })}
+                  onClick={() => setPreviewImage({ src: "/sponsor_qr.png?v=2026", title: "请喝咖啡 · 赞赏支持码" })}
                   className="w-48 h-48 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400 hover:shadow-md transition-all"
                   title="点击放大查看 / 微信扫码"
                 >
                   <img 
-                    src="/sponsor_qr.png" 
+                    src="/sponsor_qr.png?v=2026" 
                     alt="给 Keiyee 赞赏" 
                     className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform"
                     onError={(e) => {

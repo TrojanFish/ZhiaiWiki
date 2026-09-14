@@ -106,7 +106,7 @@ export default function SubpageNavbar() {
               title="请作者喝杯咖啡 · 自愿赞助支持"
               aria-label="请作者喝杯咖啡"
             >
-              <Coffee className="w-4 h-4 text-amber-600 group-hover:rotate-12 transition-transform" />
+              <Coffee className="w-4 h-4 text-amber-600 animate-coffee-wiggle group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline">请喝咖啡</span>
             </button>
             {/* Spotlight Command Palette Trigger (Circular Icon Button, Symmetrical with Avatar & LangSwitch) */}
@@ -246,7 +246,7 @@ export default function SubpageNavbar() {
                   className="w-full flex items-center justify-between p-3 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100/90 text-amber-900 text-xs font-bold transition-all active:scale-98 cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
-                    <Coffee className="w-4 h-4 text-amber-600" />
+                    <Coffee className="w-4 h-4 text-amber-600 animate-coffee-wiggle" />
                     <span>请作者喝杯咖啡 / 自愿赞助</span>
                   </div>
                   <span className="text-[10px] text-amber-700 font-mono bg-amber-100/80 px-2 py-0.5 rounded-full">支持公益</span>
@@ -295,7 +295,7 @@ export default function SubpageNavbar() {
             <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
-                  <Coffee className="w-4 h-4" />
+                  <Coffee className="w-4 h-4 animate-coffee-wiggle" />
                 </div>
                 <div className="text-left">
                   <h3 className="text-sm font-extrabold text-slate-900">请作者喝杯咖啡</h3>
@@ -316,7 +316,7 @@ export default function SubpageNavbar() {
             <div className="w-full bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col items-center space-y-2">
               <div className="w-60 h-60 max-w-full bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/sponsor_qr.png" 
+                  src="/sponsor_qr.png?v=2026" 
                   alt="给 Keiyee 赞赏" 
                   className="w-full h-full object-contain rounded-lg"
                 />

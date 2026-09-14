@@ -290,6 +290,34 @@ select:focus-visible {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes coffeeWiggle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  8% {
+    transform: rotate(-14deg) scale(1.08);
+  }
+  16% {
+    transform: rotate(12deg) scale(1.08);
+  }
+  24% {
+    transform: rotate(-8deg) scale(1.04);
+  }
+  32% {
+    transform: rotate(6deg) scale(1.02);
+  }
+  40%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.animate-coffee-wiggle {
+  display: inline-block;
+  transform-origin: bottom center;
+  animation: coffeeWiggle 3.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  will-change: transform;
+}
+
 /* Step wizard slide-in animation — triggered by key={`step-${currentStep}`} re-mount */
 .animate-slide-in {
   animation: slideInFromRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
