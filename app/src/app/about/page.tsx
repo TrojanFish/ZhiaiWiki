@@ -303,7 +303,7 @@ export default function AboutPage() {
                   <span>专业建议与纠错反馈</span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  欢迎胸外科、病理科、肿瘤内科医师及病友提出宝贵指正。联系邮箱：<span className="font-mono font-bold text-blue-700 bg-white/80 px-2 py-0.5 rounded border border-blue-200/60 select-all">2909138455@qq.com</span>
+                  欢迎胸外科、病理科、肿瘤内科医师及病友提出宝贵指正。如有学术探讨、词条勘误或技术交流，欢迎随时联系作者。
                 </p>
               </div>
 
@@ -312,16 +312,16 @@ export default function AboutPage() {
                   type="button"
                   onClick={handleCopyEmail}
                   className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-blue-700 text-xs font-bold border border-blue-200 shadow-2xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
-                  title="点击复制联系邮箱 2909138455@qq.com"
+                  title="点击一键复制作者联系邮箱"
                 >
                   {copied ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      <span className="text-emerald-700">已复制 2909138455@qq.com</span>
+                      <span className="text-emerald-700">邮箱已复制到剪贴板</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-3.5 h-3.5 text-blue-600" />
                       <span>复制联系邮箱</span>
                     </>
                   )}
