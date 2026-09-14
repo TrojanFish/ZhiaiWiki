@@ -33,6 +33,14 @@ async function main() {
     const [sourceId, targetId] = edgeKey.split('-');
     if (!sourceId || !targetId) continue;
 
+    // Defensively verify both source and target nodes exist to prevent foreign key errors
+    const sourceNode = await prisma.node.findUnique({ where: { id: sourceId } });
+    const targetNode = await prisma.node.findUnique({ where: { id: targetId } });
+    if (!sourceNode || !targetNode) {
+      console.warn(`[Seed] Skipping edge ${edgeKey}: source (${sourceId}) or target (${targetId}) node does not exist.`);
+      continue;
+    }
+
     // Determine relationship type
     let relationshipType = 'guides';
     if (targetId === 'RECURRENCE' || targetId === 'METASTASIS') {

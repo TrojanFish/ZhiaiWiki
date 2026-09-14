@@ -95,6 +95,21 @@ export const DEFAULT_GRAPH_NODES: KnowledgeNode[] = [
     evidence: 5,
     description: "表皮生长因子受体突变（19del / L858R）：亚裔非吸烟肺腺癌占比高达 50%+，为第三代 EGFR-TKI 靶向治疗的核心获益靶点。"
   },
+  {
+    id: "ctDNA",
+    label: "ctDNA\nMRD",
+    type: "factor",
+    x: 15,
+    y: 125,
+    connections: ["RECURRENCE", "ADJUVANT"],
+    connectionTypes: {
+      RECURRENCE: "risk",
+      ADJUVANT: "guides"
+    },
+    studies: 42,
+    evidence: 5,
+    description: "循环肿瘤DNA（微小残留病灶）：最新一代超高敏感度复发监测技术。术后ctDNA持续阴性患者复发风险极低，阳性则预示极高复发可能。"
+  },
 
   // --- Column 2: Intermediary Clinical Guidelines & Treatments (X = 50) ---
   {
