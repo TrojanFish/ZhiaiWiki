@@ -90,24 +90,24 @@ const SYSTEM_PROMPT = `
   "reportType": "ct_imaging" | "pathology" | "systemic_staging" | "comprehensive",
   "reportDate": String | null,
   "noduleLocation": String | null,
-  "noduleType": "mixed_ggo" | "pure_ggo" | "pure_solid",
-  "tumorSize": Number (主结节全径厘米，例如 1.5),
-  "solidSize": Number (实性成分最大径厘米，例如 0.8),
-  "ctr": Number (实性成分最大径除以磨玻璃最大径，例如 0.53),
-  "pathologyTumorSize": Number | null (术后病理标本肿瘤大体全径厘米，例如 1.4),
-  "pathologyInvasiveSize": Number | null (镜下微观浸润成分大小厘米，例如 0.6),
-  "pathologyLepidicPercent": Number | null (贴壁/伏壁生长型占比百分比，例如 70),
+  "noduleType": "mixed_ggo" | "pure_ggo" | "pure_solid" | "unknown" | null,
+  "tumorSize": Number | null (若未提供CT或报告未提及结节全径，必须返回 null，严禁假造),
+  "solidSize": Number | null (若未提供CT或无实性成分数据，必须返回 null),
+  "ctr": Number | null (若无法计算返回 null),
+  "pathologyTumorSize": Number | null (术后病理标本肿瘤大体全径厘米，例如 1.4，未做病理返回 null),
+  "pathologyInvasiveSize": Number | null (镜下微观浸润成分大小厘米，例如 0.6，未做病理返回 null),
+  "pathologyLepidicPercent": Number | null (贴壁/伏壁生长型占比百分比，例如 70，未做病理返回 null),
   "pathologyReportMode": "explicit" | "percentage" | "unspecified" | null,
   "imagingFeatures": ["分叶征", "毛刺征", ...],
   "lungRads": String | null,
-  "malignancyRisk": "low" | "moderate" | "high",
-  "clinicalRecommendation": String,
+  "malignancyRisk": "low" | "moderate" | "high" | null,
+  "clinicalRecommendation": String | null,
   "isMultipleNodules": Boolean,
   "secondaryNodules": [
     {
       "id": "sec_1",
       "location": "右肺下叶",
-      "sizeMm": 4,
+      "sizeMm": Number | null,
       "type": "pure_ggo",
       "isBenignTendency": true,
       "note": "微小纯磨玻璃灶，考虑良性/定期随访"
@@ -168,19 +168,19 @@ const SYSTEM_PROMPT = `
   "boneScan": "negative" | "positive" | "not_performed",
   "neckLymphNodes": "negative" | "positive" | "not_performed",
   "petCt": "negative" | "positive" | "not_performed",
-  "benignFindings": ["肝囊肿", ...],
+  "benignFindings": String[] (仅返回报告中明确提到的伴发良性病变如肝囊肿/钙化灶，若无则返回 [] 空数组，严禁捏造),
   "systemicStagingConfirmed": Boolean,
   "age": Number | null,
   "sex": "male" | "female" | null,
   "organ": "lung",
-  "histology": String | null (例如: "adenocarcinoma", "squamous_cell_carcinoma", "unknown"),
+  "histology": String | null (例如: "adenocarcinoma", "squamous_cell_carcinoma", 若未查或报告未写明必须设为 null),
   "tStage": "Tis" | "T1mi" | "T1a" | "T1b" | "T1c" | "T2a" | "T2b" | "T3" | "T4" | null,
   "nStage": "N0" | "N1" | "N2" | "N2a" | "N2b" | "N3" | null,
   "adjacentLobeInvasion": Boolean | null,
-  "stas": "positive" | "negative",
-  "vpi": "positive" | "negative",
-  "lvi": "positive" | "negative",
-  "marginStatus": "positive" | "negative",
+  "stas": "positive" | "negative" | null (仅在病理明确记录时返回，未做病理切片必须设为 null),
+  "vpi": "positive" | "negative" | null (仅在病理明确记录时返回，未做病理切片必须设为 null),
+  "lvi": "positive" | "negative" | null (仅在病理明确记录时返回，未做病理切片必须设为 null),
+  "marginStatus": "positive" | "negative" | null (仅在切除病理记录时返回，未手术必须设为 null),
   "surgeryType": "lobectomy" | "segmentectomy" | "wedge" | "unknown" | null,
   "grade": "1" | "2" | "3" | null,
   "ki67": Number | String | null
@@ -281,10 +281,11 @@ export async function POST(request: Request) {
 
     const extracted = JSON.parse(cleanedJson);
 
-    // Precise normalization of positive/negative strings
-    const normalizeFlag = (val: any): "positive" | "negative" => {
+    // Precise normalization of positive/negative strings without defaulting nulls to negative
+    const normalizeFlag = (val: any): "positive" | "negative" | null => {
       if (val === true || val === "positive" || val === "yes" || val === "1") return "positive";
-      return "negative";
+      if (val === false || val === "negative" || val === "no" || val === "0") return "negative";
+      return null;
     };
 
     const isCtReport = extracted.reportType === "ct_imaging";
@@ -297,9 +298,15 @@ export async function POST(request: Request) {
     const rawLepidicPct = extracted.pathologyLepidicPercent != null && !isNaN(Number(extracted.pathologyLepidicPercent)) ? Number(extracted.pathologyLepidicPercent) : null;
     let rawPathologyInvasive = extracted.pathologyInvasiveSize != null && !isNaN(Number(extracted.pathologyInvasiveSize)) ? Number(extracted.pathologyInvasiveSize) : null;
     if (rawPathologyInvasive == null && rawLepidicPct != null) {
-      const gross = rawPathologyTumor || (extracted.tumorSize ?? 1.5);
-      rawPathologyInvasive = Math.max(0, Math.round(gross * (1 - rawLepidicPct / 100) * 100) / 100);
+      const gross = rawPathologyTumor || (extracted.tumorSize != null && !isNaN(Number(extracted.tumorSize)) ? Number(extracted.tumorSize) : null);
+      if (gross != null && gross > 0) {
+        rawPathologyInvasive = Math.max(0, Math.round(gross * (1 - rawLepidicPct / 100) * 100) / 100);
+      }
     }
+
+    const rawTumor = extracted.tumorSize != null && !isNaN(Number(extracted.tumorSize)) && Number(extracted.tumorSize) > 0 ? Number(extracted.tumorSize) : null;
+    const rawSolid = extracted.solidSize != null && !isNaN(Number(extracted.solidSize)) ? Number(extracted.solidSize) : (isCtReport && extracted.noduleType === "pure_ggo" ? 0 : null);
+    const rawCtr = extracted.ctr != null && !isNaN(Number(extracted.ctr)) ? Number(extracted.ctr) : (rawTumor != null && rawSolid != null && rawTumor > 0 ? Math.min(1, Math.round((rawSolid / rawTumor) * 100) / 100) : null);
 
     const pathologyReportMode = extracted.pathologyReportMode || (
       rawLepidicPct != null ? "percentage" : (rawPathologyInvasive != null ? "explicit" : "unspecified")
@@ -307,14 +314,15 @@ export async function POST(request: Request) {
 
     // Compute accurate TNM Stage using IASLC / AJCC 第 9 版 (2024) Solid Component Formula
     const stagingCalc = computeClinicalTnmStage({
-      noduleType: extracted.noduleType || "mixed_ggo",
-      tumorSize: extracted.tumorSize ?? 1.5,
-      solidSize: extracted.solidSize ?? (isCtReport && extracted.noduleType === "pure_ggo" ? 0 : 0.8),
-      ctr: extracted.ctr ?? 0.53,
+      noduleType: extracted.noduleType || (rawTumor != null ? "mixed_ggo" : "unknown"),
+      tumorSize: rawTumor,
+      solidSize: rawSolid,
+      ctr: rawCtr,
       pathologyTumorSize: rawPathologyTumor,
       pathologyInvasiveSize: rawPathologyInvasive,
       pathologyLepidicPercent: rawLepidicPct,
       pathologyReportMode: pathologyReportMode,
+      tStage: extracted.tStage || null,
       nStage: extracted.nStage || "N0",
       vpi: vpi,
       adjacentLobeInvasion: extracted.adjacentLobeInvasion || false,
@@ -353,7 +361,7 @@ export async function POST(request: Request) {
     const secondaryNodules = Array.isArray(extracted.secondaryNodules) ? extracted.secondaryNodules.map((sec: any, idx: number) => ({
       id: sec.id || `sec_${idx + 1}`,
       location: sec.location || "伴随结节",
-      sizeMm: sec.sizeMm ? parseFloat(String(sec.sizeMm)) : 4,
+      sizeMm: sec.sizeMm != null && !isNaN(Number(sec.sizeMm)) ? parseFloat(String(sec.sizeMm)) : null,
       type: sec.type || "pure_ggo",
       isBenignTendency: sec.isBenignTendency ?? true,
       imagingFeatures: Array.isArray(sec.imagingFeatures) ? sec.imagingFeatures : [],
@@ -364,9 +372,9 @@ export async function POST(request: Request) {
     const followUpHistory = Array.isArray(extracted.followUpHistory) ? extracted.followUpHistory.map((hist: any, idx: number) => ({
       id: hist.id || `hist_${idx + 1}`,
       date: hist.date || new Date().toISOString().split('T')[0],
-      tumorSize: hist.tumorSize ? parseFloat(String(hist.tumorSize)) : stagingCalc.tumorSize,
-      solidSize: hist.solidSize != null ? parseFloat(String(hist.solidSize)) : stagingCalc.solidSize,
-      ctr: hist.ctr != null ? parseFloat(String(hist.ctr)) : stagingCalc.ctr,
+      tumorSize: hist.tumorSize != null && !isNaN(Number(hist.tumorSize)) ? parseFloat(String(hist.tumorSize)) : stagingCalc.tumorSize,
+      solidSize: hist.solidSize != null && !isNaN(Number(hist.solidSize)) ? parseFloat(String(hist.solidSize)) : stagingCalc.solidSize,
+      ctr: hist.ctr != null && !isNaN(Number(hist.ctr)) ? parseFloat(String(hist.ctr)) : stagingCalc.ctr,
       noduleType: hist.noduleType || stagingCalc.noduleType,
       lungRads: hist.lungRads || extracted.lungRads || null,
       note: hist.note || ""
@@ -498,7 +506,7 @@ export async function POST(request: Request) {
       sex: extracted.sex || null,
       gender: extracted.sex || null,
       organ: "lung",
-      histology: extracted.histology || (isCtReport ? null : "adenocarcinoma"),
+      histology: extracted.histology || null,
       noduleType: stagingCalc.noduleType,
       morphology: stagingCalc.noduleType,
       tumorSize: stagingCalc.tumorSize,
@@ -518,7 +526,7 @@ export async function POST(request: Request) {
       lvi: lvi,
       marginStatus: marginStatus,
       margin: marginStatus,
-      surgeryType: extracted.surgeryType || (isCtReport ? "unknown" : "unknown"),
+      surgeryType: extracted.surgeryType || "unknown",
       grade: extracted.grade || null,
       iaslcGrade: extracted.grade || null,
       ki67: extracted.ki67 || null,

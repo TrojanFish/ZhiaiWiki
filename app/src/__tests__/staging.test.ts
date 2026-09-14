@@ -618,6 +618,34 @@ describe('IASLC / AJCC 第 9 版 (2024 现行国际金标准) TNM Staging Engine
       expect(rT2a.tStage).toBe('T2a');
       expect(rT2a.stage).toBe('IB');
     });
+
+    it('should handle unprovided CT / pathology size by assigning Tx and 待定 (Tx) stage', () => {
+      const rNoSize = computeClinicalTnmStage({
+        noduleType: 'mixed_ggo',
+        tumorSize: null,
+        solidSize: null,
+        nStage: 'N0',
+        mStage: 'M0'
+      });
+      expect(rNoSize.tStage).toBe('Tx');
+      expect(rNoSize.stage).toBe('待定 (Tx)');
+      expect(rNoSize.explanation).toContain('原发肿瘤无法评估');
+      expect(rNoSize.tumorSize).toBeNull();
+      expect(rNoSize.solidSize).toBeNull();
+      expect(rNoSize.ctr).toBeNull();
+
+      // If user provides a known T stage explicitly without size
+      const rExplicitT = computeClinicalTnmStage({
+        noduleType: 'mixed_ggo',
+        tumorSize: null,
+        solidSize: null,
+        tStage: 'T1b',
+        nStage: 'N0',
+        mStage: 'M0'
+      });
+      expect(rExplicitT.tStage).toBe('T1b');
+      expect(rExplicitT.stage).toBe('IA2');
+    });
   });
 });
 

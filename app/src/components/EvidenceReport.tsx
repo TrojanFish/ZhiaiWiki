@@ -50,12 +50,12 @@ export default function EvidenceReport({
   const effectiveReportJson = initialReportJson || reportJson || null;
 
   const result = useMemo(() => analyzePatientProfile({
-      stage: profile.stage || "IA1",
-      ctr: profile.ctr ?? 0.53,
-      stas: profile.stas || "negative",
-      lvi: profile.lvi || "negative",
-      vpi: profile.vpi || "negative",
-      iaslcGrade: (profile.iaslcGrade || profile.grade || "2") as any,
+      stage: profile.stage || "待定 (Tx)",
+      ctr: profile.ctr ?? (profile.solidSize != null && profile.tumorSize ? Math.min(1, Math.round((profile.solidSize / profile.tumorSize) * 100) / 100) : null),
+      stas: profile.stas || "unknown",
+      lvi: profile.lvi || "unknown",
+      vpi: profile.vpi || "unknown",
+      iaslcGrade: (profile.iaslcGrade || profile.grade || "unknown") as any,
       histology: profile.histology || [],
       egfr: (profile.egfr || "unknown") as any,
       lymphNodes: (profile.lymphNodes || profile.nStage || "N0") as any,
@@ -835,7 +835,7 @@ function RadarChart({ profile, result }: { profile: PatientProfile; result: Pati
   const radius = 60;
 
   const dimensions = [
-    { label: "CTR", value: 1 - profile.ctr, angle: -90 },
+    { label: "CTR", value: profile.ctr != null ? 1 - profile.ctr : 0.5, angle: -90 },
     { label: "STAS", value: profile.stas === "negative" ? 0.95 : profile.stas === "positive" ? 0.2 : 0.5, angle: -18 },
     { label: "LVI", value: profile.lvi === "negative" ? 0.95 : profile.lvi === "positive" ? 0.2 : 0.5, angle: 54 },
     { label: "VPI", value: profile.vpi === "negative" ? 0.9 : profile.vpi === "positive" ? 0.3 : 0.6, angle: 126 },

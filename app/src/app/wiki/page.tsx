@@ -173,7 +173,7 @@ export default function WikiPage() {
     if (topicId === "stas"          && userProfile.stas === "positive") return true;
     if (topicId === "vpi"           && userProfile.vpi === "positive") return true;
     if (topicId === "lvi"           && userProfile.lvi === "positive") return true;
-    if (topicId === "ggo-evolution" && (userProfile.ctr > 0 || userProfile.morphology === "mixed_ggo")) return true;
+    if (topicId === "ggo-evolution" && ((userProfile.ctr != null && userProfile.ctr > 0) || userProfile.morphology === "mixed_ggo")) return true;
     if (topicId === "egfr-targeted" && userProfile.egfr === "positive") return true;
     if (topicId === "iaslc-grade3"  && userProfile.iaslcGrade === "3") return true;
     return false;

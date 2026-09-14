@@ -24,9 +24,9 @@ export interface VdtAnalysisResult {
  */
 export function calculateVdtAndGrowth(
   history?: FollowUpRecord[] | null, 
-  currentTumorSizeCm?: number, 
-  currentSolidSizeCm?: number, 
-  currentCtr?: number,
+  currentTumorSizeCm?: number | null, 
+  currentSolidSizeCm?: number | null, 
+  currentCtr?: number | null,
   currentScanDate?: string | null
 ): VdtAnalysisResult {
   const fallbackResult: VdtAnalysisResult = {

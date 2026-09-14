@@ -14,13 +14,16 @@ export default function CtComparisonLens({ records, profile }: CtComparisonLensP
   const allRecords = useMemo(() => {
     let list = [...records];
     if (list.length === 0 && profile?.tumorSize) {
+      const baseTumor = profile.tumorSize;
+      const baseSolid = profile.solidSize ?? (profile.noduleType === "pure_ggo" ? 0 : (profile.noduleType === "pure_solid" ? baseTumor : 0));
+      const baseCtr = profile.ctr ?? (baseTumor > 0 ? Math.min(1, Math.round((baseSolid / baseTumor) * 100) / 100) : 0);
       list = [
         {
           id: "baseline",
           date: new Date().toISOString().split("T")[0],
-          tumorSize: profile.tumorSize,
-          solidSize: profile.solidSize ?? (profile.noduleType === "pure_ggo" ? 0 : 0.8),
-          ctr: profile.ctr ?? 0.53,
+          tumorSize: baseTumor,
+          solidSize: baseSolid,
+          ctr: baseCtr,
           noduleType: profile.noduleType || "mixed_ggo",
           note: "当前基线 CT"
         }

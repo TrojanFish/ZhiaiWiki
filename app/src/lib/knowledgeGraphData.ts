@@ -63,7 +63,7 @@ export function getNodeActivation(nodeId: string, profile: PatientProfile | null
       const riskCount = [
         profile.stas === "positive",
         profile.lvi === "positive",
-        profile.ctr > 0.5,
+        profile.ctr != null && profile.ctr > 0.5,
         profile.iaslcGrade === "3",
         profile.vpi === "positive",
       ].filter(Boolean).length;
@@ -109,10 +109,10 @@ export function getNodeActivation(nodeId: string, profile: PatientProfile | null
       if (profile.egfr === "positive" || profile.iaslcGrade === "3" || profile.vpi === "positive") return "active";
       return "normal";
     case "STAGING":
-      if (profile.vpi === "positive" || profile.ctr > 0.5 || isStageIA) return "active";
+      if (profile.vpi === "positive" || (profile.ctr != null && profile.ctr > 0.5) || isStageIA) return "active";
       return "normal";
     case "SURGERY":
-      if (profile.stas === "positive" || profile.ctr > 0.25 || isStageIA) return "active";
+      if (profile.stas === "positive" || (profile.ctr != null && profile.ctr > 0.25) || isStageIA) return "active";
       return "normal";
     default:
       return "normal";

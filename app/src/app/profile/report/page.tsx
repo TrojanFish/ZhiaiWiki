@@ -523,19 +523,19 @@ export default function EvidenceReportPage() {
     ? (profile?.riskLevel === 'high' ? '⚡ 建议胸外科微创评估' : '🌱 建议随访观察 (低危)')
     : (isAllSafe ? '🌱 早期低复发风险组' : '⚡ 需积极辅助治疗');
 
-  const tumorVal = profile?.tumorSize != null ? profile.tumorSize : 2.5;
-  const solidVal = profile?.solidSize != null ? profile.solidSize : 0.8;
-  const calculatedCtr = profile?.ctr != null ? profile.ctr : (tumorVal > 0 ? Math.round((solidVal / tumorVal) * 100) / 100 : 0.32);
+  const tumorVal = profile?.tumorSize != null ? profile.tumorSize : null;
+  const solidVal = profile?.solidSize != null ? profile.solidSize : null;
+  const calculatedCtr = profile?.ctr != null ? profile.ctr : (tumorVal && solidVal !== null && tumorVal > 0 ? Math.round((solidVal / tumorVal) * 100) / 100 : null);
 
-  const isPureSolid = profile?.noduleType === 'pure_solid' || calculatedCtr >= 1.0 || (profile?.solidSize != null && profile?.tumorSize != null && profile.solidSize >= profile.tumorSize);
-  const isPureGgo = profile?.noduleType === 'pure_ggo' || calculatedCtr === 0 || profile?.solidSize === 0;
+  const isPureSolid = profile?.noduleType === 'pure_solid' || (calculatedCtr !== null && calculatedCtr >= 1.0) || (profile?.solidSize != null && profile?.tumorSize != null && profile.solidSize >= profile.tumorSize);
+  const isPureGgo = profile?.noduleType === 'pure_ggo' || (calculatedCtr !== null && calculatedCtr === 0) || profile?.solidSize === 0;
 
   const histologyText = 
     profile?.histology === 'squamous' ? '原发性肺鳞癌' :
     profile?.histology === 'sclc' ? '原发性小细胞肺癌' :
     profile?.histology === 'large_cell' ? '原发性大细胞肺癌' :
     profile?.histology === 'adenocarcinoma' ? '原发性肺腺癌' :
-    (profile?.histology ? `原发性${profile.histology}` : '原发性肺腺癌');
+    (profile?.histology ? `原发性${profile.histology}` : '待病理组织学定性');
 
   return (
     <div className="min-h-screen bg-slate-50/70 pb-8 sm:pb-12 print:bg-white print:pb-0 text-slate-900">
@@ -701,15 +701,19 @@ export default function EvidenceReportPage() {
                     }
                   </span>
                 </div>
-                {profile.tumorSize != null && (
+                {profile.tumorSize != null ? (
                   <div className="text-[11px] sm:text-[12px] text-slate-500 mt-1">
                     {isPureSolid ? (
                       <span>📏 <strong>病灶最大径</strong>: {profile.tumorSize} cm · 性质: <strong className="text-blue-700">纯实性软组织结节</strong> (CTR: 1.0)</span>
                     ) : isPureGgo ? (
                       <span>📏 <strong>结节最大径</strong>: {profile.tumorSize} cm · 性质: <strong className="text-emerald-700">纯磨玻璃密度/无实性成分</strong> (CTR: 0)</span>
                     ) : (
-                      <span>📏 <strong>结节总全径</strong>: {profile.tumorSize} cm · CT 实性成分: <strong className="text-teal-700">{profile.solidSize != null ? `${profile.solidSize} cm` : '微量'}</strong> (CTR: {profile.ctr ?? (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : 0.53)})</span>
+                      <span>📏 <strong>结节总全径</strong>: {profile.tumorSize} cm · CT 实性成分: <strong className="text-teal-700">{profile.solidSize != null ? `${profile.solidSize} cm` : '微量'}</strong> (CTR: {profile.ctr ?? (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : '待核算')})</span>
                     )}
+                  </div>
+                ) : (
+                  <div className="text-[11px] sm:text-[12px] text-slate-400 mt-1 flex items-center gap-1.5">
+                    <span>📏 未提供薄层胸部 CT 报告 · 结节大小待查</span>
                   </div>
                 )}
               </div>
@@ -753,27 +757,27 @@ export default function EvidenceReportPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <MatrixBadge 
                     label="结节形态" 
-                    value={profile.noduleType === 'pure_ggo' ? '纯磨玻璃(pGGO)' : profile.noduleType === 'pure_solid' ? '纯实性结节' : '混合磨玻璃(mGGO)'} 
-                    type={profile.noduleType === 'pure_solid' ? 'warning' : 'safe'}
+                    value={profile.noduleType === 'pure_ggo' ? '纯磨玻璃(pGGO)' : profile.noduleType === 'pure_solid' ? '纯实性结节' : profile.noduleType === 'mixed_ggo' ? '混合磨玻璃(mGGO)' : (profile.noduleType || '未查/待定')} 
+                    type={profile.noduleType === 'pure_solid' ? 'warning' : (profile.noduleType ? 'safe' : 'neutral')}
                   />
                   <MatrixBadge 
                     label="实性占比 (CTR)" 
-                    value={profile.solidSize != null ? `实性 ${profile.solidSize}cm (${Math.round((profile.ctr ?? 0.53)*100)}%)` : '微量实性'} 
-                    type={(profile.ctr ?? 0.53) > 0.5 ? 'warning' : 'safe'}
+                    value={profile.ctr != null ? `${Math.round(profile.ctr * 100)}%` : (profile.solidSize != null ? `实性 ${profile.solidSize}cm` : '未提供/待评估')} 
+                    type={profile.ctr != null ? (profile.ctr > 0.5 ? 'warning' : 'safe') : 'neutral'}
                   />
                   <MatrixBadge 
                     label="高危影像征象" 
                     value={
                       profile.imagingFeatures && profile.imagingFeatures.length > 0
                         ? profile.imagingFeatures.slice(0, 2).join(' / ')
-                        : '边缘光滑'
+                        : '未见明显高危征象'
                     } 
                     type={profile.imagingFeatures && profile.imagingFeatures.length > 0 ? 'warning' : 'safe'}
                   />
                   <MatrixBadge 
                     label="Fleischner 指南" 
-                    value={(profile.ctr ?? 0.53) >= 0.5 ? 'MDT多学科评估' : '3~6个月薄层CT'} 
-                    type={(profile.ctr ?? 0.53) >= 0.5 ? 'warning' : 'safe'}
+                    value={profile.ctr != null ? (profile.ctr >= 0.5 ? 'MDT多学科评估' : '3~6个月薄层CT') : '建议完善薄层CT'} 
+                    type={profile.ctr != null ? (profile.ctr >= 0.5 ? 'warning' : 'safe') : 'neutral'}
                   />
                 </div>
               </div>
@@ -789,33 +793,100 @@ export default function EvidenceReportPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
                   <MatrixBadge 
                     label="切缘状态" 
-                    value={profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true ? '阳性(有残留)' : '阴性(R0安全)'} 
-                    type={profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true ? 'danger' : 'safe'}
+                    value={
+                      (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
+                        ? '阳性(有残留)'
+                        : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
+                            ? '阴性(R0安全)'
+                            : '未提及 / 待查')
+                    } 
+                    type={
+                      (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
+                        ? 'danger'
+                        : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
+                            ? 'safe'
+                            : 'neutral')
+                    }
                   />
                   <MatrixBadge 
                     label="淋巴结状态" 
-                    value={profile.nStage === 'N0' || !profile.nStage ? 'N0 (无转移)' : profile.nStage === 'N1' ? 'N1 (肺门累及)' : profile.nStage === 'N2' ? 'N2 (纵隔转移)' : profile.nStage} 
-                    type={profile.nStage === 'N0' || !profile.nStage ? 'safe' : profile.nStage === 'N1' ? 'warning' : 'danger'}
+                    value={
+                      profile.nStage === 'N0' ? 'N0 (无转移)' :
+                      profile.nStage === 'N1' ? 'N1 (肺门累及)' :
+                      profile.nStage === 'N2' ? 'N2 (纵隔转移)' :
+                      (profile.nStage || '待分期')
+                    } 
+                    type={profile.nStage === 'N0' ? 'safe' : (profile.nStage === 'N1' || profile.nStage === 'N2' ? 'danger' : 'neutral')}
                   />
                   <MatrixBadge 
                     label="胸膜侵犯 (VPI)" 
-                    value={profile.vpi === 'positive' || (profile.vpi as any) === true ? 'PL1/PL2 (阳性高危)' : 'PL0 (未侵犯)'} 
-                    type={profile.vpi === 'positive' || (profile.vpi as any) === true ? 'warning' : 'safe'}
+                    value={
+                      (profile.vpi === 'positive' || (profile.vpi as any) === true)
+                        ? 'PL1/PL2 (阳性高危)'
+                        : ((profile.vpi === 'negative' || (profile.vpi as any) === false)
+                            ? 'PL0 (未侵犯)'
+                            : '未提及 / 待查')
+                    } 
+                    type={
+                      (profile.vpi === 'positive' || (profile.vpi as any) === true)
+                        ? 'warning'
+                        : ((profile.vpi === 'negative' || (profile.vpi as any) === false)
+                            ? 'safe'
+                            : 'neutral')
+                    }
                   />
                   <MatrixBadge 
                     label="气道播散 (STAS)" 
-                    value={profile.stas === 'positive' || (profile.stas as any) === true ? '阳性 (高危)' : '阴性 (安全)'} 
-                    type={profile.stas === 'positive' || (profile.stas as any) === true ? 'warning' : 'safe'}
+                    value={
+                      (profile.stas === 'positive' || (profile.stas as any) === true)
+                        ? '阳性 (高危)'
+                        : ((profile.stas === 'negative' || (profile.stas as any) === false)
+                            ? '阴性 (安全)'
+                            : '未提及 / 待查')
+                    } 
+                    type={
+                      (profile.stas === 'positive' || (profile.stas as any) === true)
+                        ? 'warning'
+                        : ((profile.stas === 'negative' || (profile.stas as any) === false)
+                            ? 'safe'
+                            : 'neutral')
+                    }
                   />
                   <MatrixBadge 
                     label="脉管癌栓 (LVI)" 
-                    value={profile.lvi === 'positive' || (profile.lvi as any) === true ? '阳性 (高危)' : '阴性 (安全)'} 
-                    type={profile.lvi === 'positive' || (profile.lvi as any) === true ? 'warning' : 'safe'}
+                    value={
+                      (profile.lvi === 'positive' || (profile.lvi as any) === true)
+                        ? '阳性 (高危)'
+                        : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
+                            ? '阴性 (安全)'
+                            : '未提及 / 待查')
+                    } 
+                    type={
+                      (profile.lvi === 'positive' || (profile.lvi as any) === true)
+                        ? 'warning'
+                        : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
+                            ? 'safe'
+                            : 'neutral')
+                    }
                   />
                   <MatrixBadge 
                     label="IASLC 病理分级" 
-                    value={profile.iaslcGrade === '3' || profile.grade === '3' ? 'Grade 3 (低分化高危)' : profile.iaslcGrade === '1' || profile.grade === '1' ? 'Grade 1 (高分化)' : 'Grade 2 (中分化)'} 
-                    type={profile.iaslcGrade === '3' || profile.grade === '3' ? 'warning' : 'safe'}
+                    value={
+                      (profile.iaslcGrade === '3' || profile.grade === '3')
+                        ? 'Grade 3 (低分化高危)'
+                        : ((profile.iaslcGrade === '1' || profile.grade === '1')
+                            ? 'Grade 1 (高分化)'
+                            : ((profile.iaslcGrade === '2' || profile.grade === '2')
+                                ? 'Grade 2 (中分化)'
+                                : '未分级 / 待查'))
+                    } 
+                    type={
+                      (profile.iaslcGrade === '3' || profile.grade === '3')
+                        ? 'warning'
+                        : ((profile.iaslcGrade === '1' || profile.grade === '1' || profile.iaslcGrade === '2' || profile.grade === '2')
+                            ? 'safe'
+                            : 'neutral')
+                    }
                   />
                 </div>
               </div>
@@ -1399,11 +1470,12 @@ export default function EvidenceReportPage() {
   );
 }
 
-function MatrixBadge({ label, value, type }: { label: string; value: string; type: 'safe' | 'warning' | 'danger' }) {
+function MatrixBadge({ label, value, type }: { label: string; value: string; type: 'safe' | 'warning' | 'danger' | 'neutral' }) {
   const styles = {
     safe: 'bg-emerald-50/90 text-emerald-800 border-emerald-200',
     warning: 'bg-amber-50/90 text-amber-800 border-amber-200',
-    danger: 'bg-rose-50/90 text-rose-800 border-rose-200'
+    danger: 'bg-rose-50/90 text-rose-800 border-rose-200',
+    neutral: 'bg-slate-50/90 text-slate-600 border-slate-200'
   };
 
   return (
@@ -1430,6 +1502,12 @@ function MatrixBadge({ label, value, type }: { label: string; value: string; typ
           <svg className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.75" />
             <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+        {type === 'neutral' && (
+          <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
+            <path d="M8 12h8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
           </svg>
         )}
         <span className="truncate">{value}</span>

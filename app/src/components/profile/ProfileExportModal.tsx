@@ -45,11 +45,12 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
   const isLviSafe = profile.lvi === 'negative' || (profile.lvi as any) === false;
   const isVpiSafe = profile.vpi === 'negative' || (profile.vpi as any) === false;
   const isMarginSafe = profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false;
-  const isN0Safe = profile.nStage === 'N0' || !profile.nStage || profile.nStage === 'N?' || profile.lymphNodes === 'N0';
+  const isN0Safe = profile.nStage === 'N0' || profile.lymphNodes === 'N0';
   const isGrade3 = profile.iaslcGrade === '3' || profile.grade === '3';
   const isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
   const isFemale = (profile.gender as string) === 'female' || (profile.sex as string) === 'female' || (profile.gender as string) === '女' || (profile.sex as string) === '女';
-  const genderText = isFemale ? '女' : '男';
+  const isMale = (profile.gender as string) === 'male' || (profile.sex as string) === 'male' || (profile.gender as string) === '男' || (profile.sex as string) === '男';
+  const genderText = isFemale ? '女性' : isMale ? '男性' : '性别待确认';
 
   const noduleLabel = profile.noduleType === 'pure_ggo' 
     ? '纯磨玻璃结节 (pGGO)' 
@@ -357,12 +358,12 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                   {(profile as any).name || "患者数字档案"}
                 </div>
                 <span className="text-[11px] text-slate-300 font-semibold px-2 py-0.5 bg-slate-700 rounded-md">
-                  {profile.age ? `${profile.age} 岁 · ` : ''}{genderText}性
+                  {profile.age ? `${profile.age} 岁 · ` : ''}{genderText}
                 </span>
 
               </div>
               <span className="text-xs font-extrabold text-emerald-400 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
-                {profile.stage ? `${profile.stage} 期` : "早期原发灶"} ({profile.tStage || "T1"} {profile.nStage || "N0"} {profile.mStage || "M0"})
+                {profile.stage ? `${profile.stage} 期` : "待定分期"} ({profile.tStage || "Tx"} {profile.nStage || "N0"} {profile.mStage || "M0"})
               </span>
             </div>
 
@@ -373,7 +374,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                   <span>结节形态与部位</span>
                 </span>
                 <div className="font-bold text-slate-200 text-[11px]">
-                  {profile.noduleLocation || "肺部病灶"} · {noduleLabel.split(" ")[0]}
+                  {profile.noduleLocation || "肺部病灶"} · {profile.tumorSize != null ? noduleLabel.split(" ")[0] : "待影像学确认"}
                 </div>
               </div>
 
@@ -383,11 +384,13 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                   <span>结节全径与实性浸润</span>
                 </span>
                 <div className="font-bold text-slate-200 text-[11px]">
-                  {profile.noduleType === 'pure_solid' || (profile.ctr != null && profile.ctr >= 1.0)
+                  {profile.tumorSize == null && profile.solidSize == null
+                    ? "未提供 CT 报告 · 结节大小待查"
+                    : profile.noduleType === 'pure_solid' || (profile.ctr != null && profile.ctr >= 1.0)
                     ? `病灶全径 ${profile.tumorSize != null ? `${profile.tumorSize} cm` : "未录入"} · 纯实性 (CTR: 1.0)`
                     : profile.noduleType === 'pure_ggo' || (profile.ctr != null && profile.ctr === 0)
                     ? `结节全径 ${profile.tumorSize != null ? `${profile.tumorSize} cm` : "未录入"} · 纯磨玻璃 (CTR: 0)`
-                    : `全径 ${profile.tumorSize != null ? `${profile.tumorSize} cm` : "未录入"} / 实性 ${profile.solidSize != null ? `${profile.solidSize} cm` : "微小"} (CTR: ${profile.ctr ?? 0.5})`
+                    : `全径 ${profile.tumorSize != null ? `${profile.tumorSize} cm` : "未录入"} / 实性 ${profile.solidSize != null ? `${profile.solidSize} cm` : "微小"} (CTR: ${profile.ctr != null ? profile.ctr : (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : '未定')})`
                   }
                 </div>
               </div>
@@ -457,44 +460,64 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
 
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
               <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">切缘状态 (R0)</div>
-                <div className={`font-bold text-[11px] mt-0.5 ${isMarginSafe ? "text-emerald-400" : "text-rose-400"}`}>
-                  {isMarginSafe ? "R0 阴性安全" : "阳性"}
+                <div className="text-[9px] text-slate-400">切缘状态 (Margin)</div>
+                <div className={`font-bold text-[11px] mt-0.5 ${
+                  isMarginSafe ? "text-emerald-400" :
+                  profile.marginStatus === 'positive' || profile.margin === 'positive' ? "text-rose-400" : "text-slate-400"
+                }`}>
+                  {isMarginSafe ? "R0 阴性安全" : profile.marginStatus === 'positive' || profile.margin === 'positive' ? "阳性 (有残留)" : "未检测 / 待查"}
                 </div>
               </div>
 
               <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
                 <div className="text-[9px] text-slate-400">淋巴结 (N分期)</div>
-                <div className={`font-bold text-[11px] mt-0.5 ${isN0Safe ? "text-emerald-400" : "text-amber-400"}`}>
-                  {isN0Safe ? "N0 无转移" : profile.nStage}
+                <div className={`font-bold text-[11px] mt-0.5 ${
+                  isN0Safe ? "text-emerald-400" :
+                  profile.nStage === 'N1' || profile.nStage === 'N2a' ? "text-amber-400" :
+                  profile.nStage === 'Nx' || !profile.nStage ? "text-slate-400" : "text-rose-400"
+                }`}>
+                  {isN0Safe ? "N0 无转移" : profile.nStage === 'Nx' || !profile.nStage ? "Nx 待查" : profile.nStage}
                 </div>
               </div>
 
               <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
                 <div className="text-[9px] text-slate-400">胸膜侵犯 (VPI)</div>
-                <div className={`font-bold text-[11px] mt-0.5 ${isVpiSafe ? "text-emerald-400" : "text-amber-400"}`}>
-                  {isVpiSafe ? "PL0 未侵犯" : "阳性"}
+                <div className={`font-bold text-[11px] mt-0.5 ${
+                  isVpiSafe ? "text-emerald-400" :
+                  profile.vpi === 'positive' || (profile.vpi as any) === true ? "text-amber-400" : "text-slate-400"
+                }`}>
+                  {isVpiSafe ? "PL0 未侵犯" : profile.vpi === 'positive' || (profile.vpi as any) === true ? "阳性 (侵犯)" : "未检测"}
                 </div>
               </div>
 
               <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
                 <div className="text-[9px] text-slate-400">气道播散 (STAS)</div>
-                <div className={`font-bold text-[11px] mt-0.5 ${isStasSafe ? "text-emerald-400" : "text-amber-400"}`}>
-                  {isStasSafe ? "阴性 / 无" : "阳性"}
+                <div className={`font-bold text-[11px] mt-0.5 ${
+                  isStasSafe ? "text-emerald-400" :
+                  profile.stas === 'positive' || (profile.stas as any) === true ? "text-amber-400" : "text-slate-400"
+                }`}>
+                  {isStasSafe ? "阴性 / 无" : profile.stas === 'positive' || (profile.stas as any) === true ? "阳性 (高危)" : "未检测"}
                 </div>
               </div>
 
               <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
                 <div className="text-[9px] text-slate-400">脉管癌栓 (LVI)</div>
-                <div className={`font-bold text-[11px] mt-0.5 ${isLviSafe ? "text-emerald-400" : "text-amber-400"}`}>
-                  {isLviSafe ? "阴性 / 无" : "阳性"}
+                <div className={`font-bold text-[11px] mt-0.5 ${
+                  isLviSafe ? "text-emerald-400" :
+                  profile.lvi === 'positive' || (profile.lvi as any) === true ? "text-amber-400" : "text-slate-400"
+                }`}>
+                  {isLviSafe ? "阴性 / 无" : profile.lvi === 'positive' || (profile.lvi as any) === true ? "阳性 (高危)" : "未检测"}
                 </div>
               </div>
 
               <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
                 <div className="text-[9px] text-slate-400">IASLC 分级</div>
-                <div className={`font-bold text-[11px] mt-0.5 ${isGrade3 ? "text-amber-400" : "text-emerald-400"}`}>
-                  {profile.iaslcGrade ? `G${profile.iaslcGrade}` : "G1/G2"}
+                <div className={`font-bold text-[11px] mt-0.5 ${
+                  isGrade3 ? "text-rose-400" :
+                  profile.iaslcGrade === '1' || profile.grade === '1' ? "text-emerald-400" :
+                  profile.iaslcGrade === '2' || profile.grade === '2' ? "text-blue-400" : "text-slate-400"
+                }`}>
+                  {profile.iaslcGrade || profile.grade ? `G${profile.iaslcGrade || profile.grade}` : "未分级"}
                 </div>
               </div>
             </div>

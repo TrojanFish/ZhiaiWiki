@@ -110,7 +110,7 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
     if (profile.stas === "positive") activeHighlightNodes.push("STAS", "SURGERY");
     if (profile.lvi === "positive") activeHighlightNodes.push("LVI", "METASTASIS");
     if (profile.vpi === "positive") activeHighlightNodes.push("VPI", "STAGING", "ADJUVANT");
-    if (profile.ctr > 0.5) activeHighlightNodes.push("CTR", "STAGING", "SURGERY");
+    if (profile.ctr != null && profile.ctr > 0.5) activeHighlightNodes.push("CTR", "STAGING", "SURGERY");
     if (profile.iaslcGrade === "3") activeHighlightNodes.push("IASLC", "ADJUVANT");
     if (profile.egfr === "positive") activeHighlightNodes.push("EGFR", "TARGETED", "ADJUVANT");
     

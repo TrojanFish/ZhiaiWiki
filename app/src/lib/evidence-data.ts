@@ -775,7 +775,7 @@ import type { HistologyItem } from "./types";
 
 export function analyzePatientProfile(profile: {
   stage: string;
-  ctr: number;
+  ctr?: number | null;
   stas: string;
   lvi: string;
   vpi: string;
@@ -812,39 +812,41 @@ export function analyzePatientProfile(profile: {
   if (profile.stas === "unknown") riskScore += 1;
 
   // CTR assessment
-  const ctrRiskLevel =
-    profile.ctr === 0 ? "very_low"
-    : profile.ctr <= 0.25 ? "very_low"
-    : profile.ctr <= 0.5 ? "low"
-    : profile.ctr <= 0.75 ? "moderate"
-    : "high";
+  if (profile.ctr != null) {
+    const ctrRiskLevel =
+      profile.ctr === 0 ? "very_low"
+      : profile.ctr <= 0.25 ? "very_low"
+      : profile.ctr <= 0.5 ? "low"
+      : profile.ctr <= 0.75 ? "moderate"
+      : "high";
 
-  const ctrLabel =
-    profile.ctr === 0 ? "纯磨玻璃（CTR=0）"
-    : profile.ctr <= 0.25 ? `低CTR（${profile.ctr}）`
-    : profile.ctr <= 0.5 ? `中低CTR（${profile.ctr}）`
-    : profile.ctr <= 0.75 ? `中高CTR（${profile.ctr}）`
-    : `高CTR（${profile.ctr}）`;
+    const ctrLabel =
+      profile.ctr === 0 ? "纯磨玻璃（CTR=0）"
+      : profile.ctr <= 0.25 ? `低CTR（${profile.ctr}）`
+      : profile.ctr <= 0.5 ? `中低CTR（${profile.ctr}）`
+      : profile.ctr <= 0.75 ? `中高CTR（${profile.ctr}）`
+      : `高CTR（${profile.ctr}）`;
 
-  factors.push({
-    factorId: "CTR",
-    factorName: "实性成分比例（CTR）",
-    status: String(profile.ctr),
-    statusLabel: ctrLabel,
-    riskDirection: profile.ctr <= 0.5 ? "protective" : "risk",
-    riskLevel: ctrRiskLevel as "very_low" | "low" | "moderate" | "high",
-    explanation:
-      profile.ctr <= 0.25
-        ? `CTR=${profile.ctr}，属于极低风险分组。JCOG0804证实CTR≤0.25患者5年RFS高达99.7%。`
-        : profile.ctr <= 0.5
-        ? `CTR=${profile.ctr}，属于低风险磨玻璃主导组。JCOG1211前瞻性III期试验证实解剖性肺段切除5年RFS达98.2%。`
-        : `CTR=${profile.ctr}，实性成分偏高。研究显示CTR>0.5的复发风险HR约为1.89，JCOG0802证实肺段切除5年OS优于肺叶切除（94.3% vs 91.1%）。`,
-    studyRef: profile.ctr <= 0.25 ? "JCOG0804_2022" : profile.ctr <= 0.5 ? "JCOG1211_2023" : "JCOG0802_2022",
-    evidenceLevel: 4,
-  });
-  if (profile.ctr > 0.75) riskScore += 3;
-  else if (profile.ctr > 0.5) riskScore += 2;
-  else if (profile.ctr > 0.25) riskScore += 0.5;
+    factors.push({
+      factorId: "CTR",
+      factorName: "实性成分比例（CTR）",
+      status: String(profile.ctr),
+      statusLabel: ctrLabel,
+      riskDirection: profile.ctr <= 0.5 ? "protective" : "risk",
+      riskLevel: ctrRiskLevel as "very_low" | "low" | "moderate" | "high",
+      explanation:
+        profile.ctr <= 0.25
+          ? `CTR=${profile.ctr}，属于极低风险分组。JCOG0804证实CTR≤0.25患者5年RFS高达99.7%。`
+          : profile.ctr <= 0.5
+          ? `CTR=${profile.ctr}，属于低风险磨玻璃主导组。JCOG1211前瞻性III期试验证实解剖性肺段切除5年RFS达98.2%。`
+          : `CTR=${profile.ctr}，实性成分偏高。研究显示CTR>0.5的复发风险HR约为1.89，JCOG0802证实肺段切除5年OS优于肺叶切除（94.3% vs 91.1%）。`,
+      studyRef: profile.ctr <= 0.25 ? "JCOG0804_2022" : profile.ctr <= 0.5 ? "JCOG1211_2023" : "JCOG0802_2022",
+      evidenceLevel: 4,
+    });
+    if (profile.ctr > 0.75) riskScore += 3;
+    else if (profile.ctr > 0.5) riskScore += 2;
+    else if (profile.ctr > 0.25) riskScore += 0.5;
+  }
 
   // LVI assessment
   if (profile.lvi !== "unknown") {
@@ -965,19 +967,21 @@ export function analyzePatientProfile(profile: {
   if (sLace) matchedStudies.push(sLace);
 
   // CTR & Surgical Studies
-  if (profile.ctr <= 0.25) {
-    const s0804 = FEATURED_STUDIES.find(s => s.id === "JCOG0804_2022");
-    if (s0804) matchedStudies.push(s0804);
-  } else if (profile.ctr <= 0.5) {
-    const s1211 = FEATURED_STUDIES.find(s => s.id === "JCOG1211_2023");
-    if (s1211) matchedStudies.push(s1211);
-    const sHattori = FEATURED_STUDIES.find(s => s.id === "Hattori_JTO_2021");
-    if (sHattori) matchedStudies.push(sHattori);
-  } else {
-    const s0802 = FEATURED_STUDIES.find(s => s.id === "JCOG0802_2022");
-    if (s0802) matchedStudies.push(s0802);
-    const sCalgb = FEATURED_STUDIES.find(s => s.id === "CALGB140503_2023");
-    if (sCalgb) matchedStudies.push(sCalgb);
+  if (profile.ctr != null) {
+    if (profile.ctr <= 0.25) {
+      const s0804 = FEATURED_STUDIES.find(s => s.id === "JCOG0804_2022");
+      if (s0804) matchedStudies.push(s0804);
+    } else if (profile.ctr <= 0.5) {
+      const s1211 = FEATURED_STUDIES.find(s => s.id === "JCOG1211_2023");
+      if (s1211) matchedStudies.push(s1211);
+      const sHattori = FEATURED_STUDIES.find(s => s.id === "Hattori_JTO_2021");
+      if (sHattori) matchedStudies.push(sHattori);
+    } else {
+      const s0802 = FEATURED_STUDIES.find(s => s.id === "JCOG0802_2022");
+      if (s0802) matchedStudies.push(s0802);
+      const sCalgb = FEATURED_STUDIES.find(s => s.id === "CALGB140503_2023");
+      if (sCalgb) matchedStudies.push(sCalgb);
+    }
   }
 
   // STAS matching

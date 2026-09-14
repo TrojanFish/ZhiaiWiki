@@ -34,16 +34,27 @@ export async function POST(request: Request) {
       console.warn("Notice: Prisma read error during findFirst (running in resilient mode):", findErr);
     }
     
-    // Normalize boolean / string factors
-    const isStas = data.stas === 'positive' || data.stas === true;
-    const isVpi = data.vpi === 'positive' || data.vpi === true;
-    const isLvi = data.lvi === 'positive' || data.lvi === true;
-    const marginStatus = data.marginStatus === 'positive' || data.margin === 'positive' ? 'positive' : 'negative';
+    // Normalize boolean / string factors safely without presuming negative
+    const isStas = data.stas === 'positive' || data.stas === true ? true : (data.stas === 'negative' || data.stas === false ? false : null);
+    const isVpi = data.vpi === 'positive' || data.vpi === true ? true : (data.vpi === 'negative' || data.vpi === false ? false : null);
+    const isLvi = data.lvi === 'positive' || data.lvi === true ? true : (data.lvi === 'negative' || data.lvi === false ? false : null);
+    const marginStatus = (data.marginStatus === 'positive' || data.margin === 'positive')
+      ? 'positive'
+      : ((data.marginStatus === 'negative' || data.margin === 'negative') ? 'negative' : null);
+
+    const tumorSizeVal = (data.tumorSize !== undefined && data.tumorSize !== null && data.tumorSize !== "")
+      ? parseFloat(data.tumorSize)
+      : (data.sizeMm !== undefined && data.sizeMm !== null && data.sizeMm !== "" ? parseFloat(data.sizeMm) / 10 : (existingProfile?.tumorSize ?? (existingProfile?.sizeMm ? existingProfile.sizeMm / 10 : null)));
+
+    const ctrVal = (data.ctr !== undefined && data.ctr !== null && data.ctr !== "")
+      ? parseFloat(data.ctr)
+      : (existingProfile?.ctr ?? null);
 
     const stagingResult = computeClinicalTnmStage({
       noduleType: data.noduleType || data.morphology || "mixed_ggo",
-      tumorSize: data.tumorSize ? parseFloat(data.tumorSize) : (data.sizeMm ? parseFloat(data.sizeMm) / 10 : 1.5),
+      tumorSize: tumorSizeVal,
       solidSize: data.solidSize ? parseFloat(data.solidSize) : null,
+      ctr: ctrVal,
       pathologyTumorSize: data.pathologyTumorSize !== undefined && data.pathologyTumorSize !== null && data.pathologyTumorSize !== "" ? parseFloat(String(data.pathologyTumorSize)) : (existingProfile?.pathologyTumorSize ?? null),
       pathologyInvasiveSize: data.pathologyInvasiveSize !== undefined && data.pathologyInvasiveSize !== null && data.pathologyInvasiveSize !== "" ? parseFloat(String(data.pathologyInvasiveSize)) : (existingProfile?.pathologyInvasiveSize ?? null),
       pathologyLepidicPercent: data.pathologyLepidicPercent !== undefined && data.pathologyLepidicPercent !== null && data.pathologyLepidicPercent !== "" ? parseFloat(String(data.pathologyLepidicPercent)) : (existingProfile?.pathologyLepidicPercent ?? null),
@@ -95,9 +106,9 @@ export async function POST(request: Request) {
       organ: data.organ || existingProfile?.organ || 'lung',
       histology: data.histology || existingProfile?.histology || null,
       noduleType: stagingResult.noduleType,
-      sizeMm: stagingResult.tumorSize * 10,
-      ctr: stagingResult.ctr,
-      tumorSize: stagingResult.tumorSize,
+      sizeMm: stagingResult.tumorSize != null ? stagingResult.tumorSize * 10 : null,
+      ctr: stagingResult.ctr != null ? stagingResult.ctr : null,
+      tumorSize: stagingResult.tumorSize != null ? stagingResult.tumorSize : null,
       pathologyTumorSize: data.pathologyTumorSize !== undefined && data.pathologyTumorSize !== null && data.pathologyTumorSize !== "" ? parseFloat(String(data.pathologyTumorSize)) : (existingProfile?.pathologyTumorSize ?? null),
       pathologyInvasiveSize: data.pathologyInvasiveSize !== undefined && data.pathologyInvasiveSize !== null && data.pathologyInvasiveSize !== "" ? parseFloat(String(data.pathologyInvasiveSize)) : (existingProfile?.pathologyInvasiveSize ?? null),
       pathologyLepidicPercent: data.pathologyLepidicPercent !== undefined && data.pathologyLepidicPercent !== null && data.pathologyLepidicPercent !== "" ? parseFloat(String(data.pathologyLepidicPercent)) : (existingProfile?.pathologyLepidicPercent ?? null),
@@ -180,14 +191,14 @@ export async function POST(request: Request) {
           title: data.examName || (existingCT?.title || '胸部薄层高分辨 CT 平扫'),
           summary: nextAction || 'CT 影像已结构化归档',
           keyFindings: {
-            sizeMm: stagingResult.tumorSize * 10,
+            sizeMm: stagingResult.tumorSize != null ? stagingResult.tumorSize * 10 : null,
             ctr: stagingResult.ctr,
             noduleType: stagingResult.noduleType,
             location: data.noduleLocation || '肺部结节',
           },
           tags: JSON.stringify([
             data.noduleLocation || '肺部',
-            `${(stagingResult.tumorSize * 10).toFixed(1)}mm`,
+            stagingResult.tumorSize != null ? `${(stagingResult.tumorSize * 10).toFixed(1)}mm` : '大小待查',
             stagingResult.noduleType === 'pure_ggo' ? '纯磨玻璃' : stagingResult.noduleType === 'pure_solid' ? '实性结节' : '混合磨玻璃'
           ]),
           riskStatus: riskLevel === 'high' ? 'warning' : 'watch',
@@ -219,23 +230,23 @@ export async function POST(request: Request) {
           subType: 'Pathology',
           hospital: data.hospital || (existingPathology?.hospital || '病理诊断中心'),
           title: '手术标本常规组织病理学诊断',
-          summary: `【病理诊断】${stagingResult.stage ? `${stagingResult.stage}期，` : ''}${data.histology || '浸润性腺癌'}，切缘${marginStatus === 'positive' ? '阳性' : 'R0安全阴性'}，STAS${isStas ? '阳性' : '阴性'}，VPI${isVpi ? '阳性' : '阴性'}。`,
+          summary: `【病理诊断】${stagingResult.stage ? `${stagingResult.stage}期，` : ''}${data.histology || '原发性肺恶性肿瘤'}${marginStatus ? `，切缘${marginStatus === 'positive' ? '阳性' : 'R0安全阴性'}` : ''}${isStas !== null ? `，STAS${isStas ? '阳性' : '阴性'}` : ''}${isVpi !== null ? `，VPI${isVpi ? '阳性' : '阴性'}` : ''}。`,
           keyFindings: {
-            histology: data.histology || '浸润性腺癌',
+            histology: data.histology || '原发性肺恶性肿瘤',
             stage: stagingResult.stage,
             stas: isStas,
             vpi: isVpi,
             lvi: isLvi,
-            marginStatus: marginStatus === 'positive' ? '切缘阳性' : 'R0切缘阴性',
-            sizeMm: stagingResult.tumorSize * 10,
+            marginStatus: marginStatus === 'positive' ? '切缘阳性' : (marginStatus === 'negative' ? 'R0切缘阴性' : '未提及'),
+            sizeMm: stagingResult.tumorSize != null ? stagingResult.tumorSize * 10 : null,
             location: data.noduleLocation || '肺部病灶',
           },
           tags: JSON.stringify([
             data.noduleLocation || '肺部病灶',
             stagingResult.stage || '早期肺癌',
-            isStas ? 'STAS阳性' : 'STAS阴性',
-            isVpi ? 'VPI阳性' : 'VPI阴性',
-            marginStatus === 'positive' ? '切缘阳性' : 'R0根治切除'
+            ...(isStas !== null ? [isStas ? 'STAS阳性' : 'STAS阴性'] : []),
+            ...(isVpi !== null ? [isVpi ? 'VPI阳性' : 'VPI阴性'] : []),
+            ...(marginStatus ? [marginStatus === 'positive' ? '切缘阳性' : 'R0根治切除'] : [])
           ]),
           riskStatus: (isStas || isVpi || isLvi || marginStatus === 'positive') ? 'warning' : 'normal',
         };
@@ -671,13 +682,16 @@ export async function GET(request: Request) {
     }
 
     // Recompute accurate IASLC / AJCC 第 9 版 Stage and normalize all fields for frontend
-    const tumorSize = profile.tumorSize ?? (profile.sizeMm ? profile.sizeMm / 10 : 1.5);
+    const tumorSize = profile.tumorSize ?? (profile.sizeMm ? profile.sizeMm / 10 : null);
     const stagingResult = computeClinicalTnmStage({
       noduleType: profile.noduleType || "mixed_ggo",
       tumorSize: tumorSize,
-      ctr: profile.ctr ?? 0.53,
+      solidSize: (profile as any).solidSize ?? null,
+      ctr: profile.ctr ?? null,
       pathologyTumorSize: profile.pathologyTumorSize ?? null,
       pathologyInvasiveSize: profile.pathologyInvasiveSize ?? null,
+      pathologyLepidicPercent: profile.pathologyLepidicPercent ?? null,
+      pathologyReportMode: profile.pathologyReportMode ?? null,
       tStage: profile.tStage,
       nStage: profile.nStage || "N0",
       mStage: profile.mStage || "M0",
@@ -816,15 +830,15 @@ export async function GET(request: Request) {
       tumorMarkers: tumorMarkers,
       followUpHistory: followUpHistory,
 
-      gender: profile.sex || 'female',
-      sex: profile.sex || 'female',
-      stas: profile.stas ? 'positive' : 'negative',
-      vpi: profile.vpi ? 'positive' : 'negative',
-      lvi: profile.lvi ? 'positive' : 'negative',
-      margin: profile.marginStatus || 'negative',
-      marginStatus: profile.marginStatus || 'negative',
-      noduleType: profile.noduleType || 'mixed_ggo',
-      morphology: profile.noduleType || 'mixed_ggo',
+      gender: profile.sex || null,
+      sex: profile.sex || null,
+      stas: profile.stas === true ? 'positive' : (profile.stas === false ? 'negative' : null),
+      vpi: profile.vpi === true ? 'positive' : (profile.vpi === false ? 'negative' : null),
+      lvi: profile.lvi === true ? 'positive' : (profile.lvi === false ? 'negative' : null),
+      margin: profile.marginStatus || null,
+      marginStatus: profile.marginStatus || null,
+      noduleType: profile.noduleType || null,
+      morphology: profile.noduleType || null,
       tumorSize: stagingResult.tumorSize,
       solidSize: stagingResult.solidSize,
       ctr: stagingResult.ctr,
@@ -839,7 +853,7 @@ export async function GET(request: Request) {
       stageExplanation: stagingResult.explanation,
       versionBridgeNotice: stagingResult.versionBridgeNotice,
       adjacentLobeInvasion: Boolean((profile as any).adjacentLobeInvasion),
-      iaslcGrade: profile.grade || '2',
+      iaslcGrade: profile.grade || null,
       ki67: (profile as any).ki67 || null,
 
       // Systemic Staging & M0 Confirmation

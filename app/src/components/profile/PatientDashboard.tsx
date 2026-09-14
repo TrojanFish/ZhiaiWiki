@@ -293,11 +293,12 @@ export default function PatientDashboard() {
   const isLviSafe = profile.lvi === 'negative' || (profile.lvi as any) === false;
   const isVpiSafe = profile.vpi === 'negative' || (profile.vpi as any) === false;
   const isMarginSafe = profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false;
-  const isN0Safe = profile.nStage === 'N0' || !profile.nStage || profile.nStage === 'N?' || profile.lymphNodes === 'N0';
+  const isN0Safe = profile.nStage === 'N0' || profile.lymphNodes === 'N0';
   const isGrade3 = profile.iaslcGrade === '3' || profile.grade === '3';
   const isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
   const isFemale = (profile.gender as string) === 'female' || (profile.sex as string) === 'female' || (profile.gender as string) === '女' || (profile.sex as string) === '女';
-  const genderText = isFemale ? '女性' : '男性';
+  const isMale = (profile.gender as string) === 'male' || (profile.sex as string) === 'male' || (profile.gender as string) === '男' || (profile.sex as string) === '男';
+  const genderText = isFemale ? '女性' : isMale ? '男性' : '性别待确认';
 
   const noduleLabel = profile.noduleType === 'pure_ggo' 
     ? '纯磨玻璃结节 (pGGO)' 
@@ -411,41 +412,64 @@ export default function PatientDashboard() {
                 </div>
               </div>
               <span className="text-xs font-semibold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200 whitespace-nowrap shrink-0">
-                {noduleLabel}
+                {profile.tumorSize != null ? noduleLabel : "待影像测量确认"}
               </span>
             </div>
 
-            <div className="space-y-3.5">
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <span className="text-xs text-slate-600">
-                  <strong>结节部位</strong>: <span className="font-semibold text-slate-900">{profile.noduleLocation || '肺部结节'}</span>
-                </span>
-                {profile.lungRads && (
-                  <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold shrink-0">
-                    Lung-RADS {profile.lungRads}
-                  </span>
-                )}
-              </div>
-
-              {/* CTR Intelligence Computation Box */}
-              {profile.solidSize != null && (
-                <div className="bg-teal-50/90 p-3.5 rounded-2xl border border-teal-200 space-y-2">
-                  <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
-                    <span className="text-teal-950 font-bold flex items-center gap-1.5">
-                      <Ruler className="w-3.5 h-3.5 text-teal-700 shrink-0" />
-                      <span>CT 实性浸润: {profile.solidSize} cm</span>
-                      <span className="text-slate-400">/</span>
-                      <span>全径: {profile.tumorSize || 1.5} cm</span>
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-teal-100 font-extrabold text-teal-900 text-xs shrink-0">
-                      CTR: {profile.ctr != null ? profile.ctr : (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : 0.53)}
-                    </span>
-                  </div>
-                  <div className="text-[11px] text-teal-700 font-medium">
-                    依据 IASLC / AJCC 第 9 版 规则以实性成分精准校准为 <strong>{profile.stage || 'IA1'} 期 ({profile.tStage || 'T1a'})</strong>
-                  </div>
+            {profile.tumorSize == null && profile.solidSize == null ? (
+              <div className="p-5 rounded-2xl bg-slate-50/80 border border-slate-200 space-y-3 text-center my-4">
+                <div className="w-10 h-10 rounded-full bg-sky-50 text-sky-600 mx-auto flex items-center justify-center shrink-0">
+                  <Scan className="w-5 h-5 shrink-0" />
                 </div>
-              )}
+                <div className="space-y-1">
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-800">未提供薄层胸部 CT 报告</h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed max-w-sm mx-auto">
+                    结节全径与实性浸润占比 (CTR) 是肺结节临床分期 (cTNM) 的核心金标准。当前档案暂无 CT 影像测量数据。
+                  </p>
+                </div>
+                <div className="pt-1 flex items-center justify-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setShowUpdateModal(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>补充录入结节大小 / 校对</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs text-slate-600">
+                    <strong>结节部位</strong>: <span className="font-semibold text-slate-900">{profile.noduleLocation || '肺部结节'}</span>
+                  </span>
+                  {profile.lungRads && (
+                    <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold shrink-0">
+                      Lung-RADS {profile.lungRads}
+                    </span>
+                  )}
+                </div>
+
+                {/* CTR Intelligence Computation Box */}
+                {profile.solidSize != null && (
+                  <div className="bg-teal-50/90 p-3.5 rounded-2xl border border-teal-200 space-y-2">
+                    <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
+                      <span className="text-teal-950 font-bold flex items-center gap-1.5">
+                        <Ruler className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+                        <span>CT 实性浸润: {profile.solidSize} cm</span>
+                        <span className="text-slate-400">/</span>
+                        <span>全径: {profile.tumorSize != null ? `${profile.tumorSize} cm` : '待测'}</span>
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-md bg-teal-100 font-extrabold text-teal-900 text-xs shrink-0">
+                        CTR: {profile.ctr != null ? profile.ctr : (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : (profile.noduleType === 'pure_solid' ? 1.0 : profile.noduleType === 'pure_ggo' ? 0 : '待测'))}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-teal-700 font-medium">
+                      依据 IASLC / AJCC 第 9 版 规则以实性成分精准校准为 <strong>{profile.stage || '待定'} 期 ({profile.tStage || 'Tx'})</strong>
+                    </div>
+                  </div>
+                )}
 
               {/* CT Malignant Signs Pills with GlossaryTooltip */}
               <div className="space-y-1.5 pt-1">
@@ -492,6 +516,7 @@ export default function PatientDashboard() {
                 </div>
               )}
             </div>
+            )}
           </div>
         </div>
 
@@ -539,7 +564,7 @@ export default function PatientDashboard() {
                     }
                   </span>
                   <span>
-                    <strong>病理分级</strong>: {profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1 (高分化)' : profile.iaslcGrade === '3' || profile.grade === '3' ? 'G3 (低分化)' : 'G2 (中分化)'}
+                    <strong>病理分级</strong>: {profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1 (高分化)' : profile.iaslcGrade === '3' || profile.grade === '3' ? 'G3 (低分化)' : profile.iaslcGrade === '2' || profile.grade === '2' ? 'G2 (中分化)' : '未分级 / 待确认'}
                   </span>
                 </div>
 
@@ -563,7 +588,7 @@ export default function PatientDashboard() {
                       <span>标本全径: {profile.pathologyTumorSize != null ? `${profile.pathologyTumorSize} cm` : (profile.tumorSize ? `${profile.tumorSize} cm (参考原发灶)` : '未标明')}</span>
                     </span>
                     <span className="px-2.5 py-0.5 rounded-md bg-purple-200/90 font-extrabold text-purple-950 text-xs shrink-0">
-                      pT定级基准: {profile.tStage || 'pT1'}
+                      pT定级基准: {profile.tStage || '待定 (Tx)'}
                     </span>
                   </div>
                   <div className="text-[11px] text-purple-800 leading-snug flex items-center justify-between flex-wrap gap-1">
@@ -582,41 +607,78 @@ export default function PatientDashboard() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <RiskBadge 
                     label="切缘状态 (R0)" 
-                    status={isMarginSafe ? 'good' : 'danger'} 
-                    text={isMarginSafe ? '阴性 (R0安全)' : '阳性 (有残留)'} 
+                    status={
+                      profile.marginStatus === 'negative' || profile.margin === 'negative' ? 'good' :
+                      profile.marginStatus === 'positive' || profile.margin === 'positive' ? 'danger' : 'neutral'
+                    } 
+                    text={
+                      profile.marginStatus === 'negative' || profile.margin === 'negative' ? '阴性 (R0安全)' :
+                      profile.marginStatus === 'positive' || profile.margin === 'positive' ? '阳性 (有残留)' : '未检测 / 待查'
+                    } 
                   />
                   <RiskBadge 
                     label="淋巴结分期" 
-                    status={isN0Safe ? 'good' : profile.nStage === 'N1' ? 'warning' : 'danger'} 
+                    status={
+                      profile.nStage === 'N0' || profile.lymphNodes === 'N0' ? 'good' :
+                      profile.nStage === 'N1' || profile.nStage === 'N2a' ? 'warning' :
+                      profile.nStage === 'N2b' || profile.nStage === 'N2' || profile.nStage === 'N3' ? 'danger' :
+                      'neutral'
+                    } 
                     text={
-                      profile.nStage === 'N0' || !profile.nStage ? 'N0 (无转移)' :
+                      profile.nStage === 'N0' || profile.lymphNodes === 'N0' ? 'N0 (无转移)' :
                       profile.nStage === 'N1' ? 'N1 (肺门累及)' :
                       profile.nStage === 'N2a' ? 'N2a (单站纵隔)' :
                       profile.nStage === 'N2b' ? 'N2b (多站纵隔)' :
                       profile.nStage === 'N2' ? 'N2 (纵隔转移)' :
                       profile.nStage === 'N3' ? 'N3 (对侧/锁骨上)' :
-                      profile.nStage
+                      profile.nStage === 'Nx' ? 'Nx (未行清扫)' :
+                      (profile.nStage || '待病理评估')
                     } 
                   />
                   <RiskBadge 
                     label="胸膜侵犯 (VPI)" 
-                    status={isVpiSafe ? 'good' : 'warning'} 
-                    text={isVpiSafe ? 'PL0 (未侵犯)' : 'PL1/PL2 (阳性)'} 
+                    status={
+                      profile.vpi === 'negative' || (profile.vpi as any) === false ? 'good' :
+                      profile.vpi === 'positive' || (profile.vpi as any) === true ? 'warning' : 'neutral'
+                    } 
+                    text={
+                      profile.vpi === 'negative' || (profile.vpi as any) === false ? 'PL0 (未侵犯)' :
+                      profile.vpi === 'positive' || (profile.vpi as any) === true ? 'PL1/PL2 (阳性)' : '未检测 / 待查'
+                    } 
                   />
                   <RiskBadge 
                     label="气道播散 (STAS)" 
-                    status={isStasSafe ? 'good' : 'warning'} 
-                    text={isStasSafe ? '无 / 阴性' : '阳性 (高危)'} 
+                    status={
+                      profile.stas === 'negative' || (profile.stas as any) === false ? 'good' :
+                      profile.stas === 'positive' || (profile.stas as any) === true ? 'warning' : 'neutral'
+                    } 
+                    text={
+                      profile.stas === 'negative' || (profile.stas as any) === false ? '无 / 阴性' :
+                      profile.stas === 'positive' || (profile.stas as any) === true ? '阳性 (高危)' : '未检测 / 待查'
+                    } 
                   />
                   <RiskBadge 
                     label="脉管癌栓 (LVI)" 
-                    status={isLviSafe ? 'good' : 'warning'} 
-                    text={isLviSafe ? '无 / 阴性' : '阳性 (高危)'} 
+                    status={
+                      profile.lvi === 'negative' || (profile.lvi as any) === false ? 'good' :
+                      profile.lvi === 'positive' || (profile.lvi as any) === true ? 'warning' : 'neutral'
+                    } 
+                    text={
+                      profile.lvi === 'negative' || (profile.lvi as any) === false ? '无 / 阴性' :
+                      profile.lvi === 'positive' || (profile.lvi as any) === true ? '阳性 (高危)' : '未检测 / 待查'
+                    } 
                   />
                   <RiskBadge 
                     label="IASLC 分级" 
-                    status={isGrade3 ? 'warning' : 'good'} 
-                    text={isGrade3 ? 'G3 (低分化)' : profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1 (高分化)' : 'G2 (中分化)'} 
+                    status={
+                      profile.iaslcGrade === '3' || profile.grade === '3' ? 'warning' :
+                      profile.iaslcGrade === '1' || profile.grade === '1' || profile.iaslcGrade === '2' || profile.grade === '2' ? 'good' : 'neutral'
+                    } 
+                    text={
+                      profile.iaslcGrade === '3' || profile.grade === '3' ? 'G3 (低分化)' :
+                      profile.iaslcGrade === '2' || profile.grade === '2' ? 'G2 (中分化)' :
+                      profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1 (高分化)' : '未分级 / 待确认'
+                    } 
                   />
                 </div>
 
@@ -661,8 +723,12 @@ export default function PatientDashboard() {
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 whitespace-nowrap shrink-0">
-                M0 根治窗口确立
+              <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${
+                profile.systemicStagingConfirmed || profile.mStage === 'M0'
+                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                  : 'text-slate-600 bg-slate-100 border-slate-200'
+              }`}>
+                {profile.systemicStagingConfirmed || profile.mStage === 'M0' ? 'M0 根治窗口确立' : 'M 分期待排查'}
               </span>
             </div>
 
@@ -1040,11 +1106,12 @@ export default function PatientDashboard() {
 
 }
 
-function RiskBadge({ label, status, text }: { label: string; status: 'good' | 'warning' | 'danger'; text: string }) {
+function RiskBadge({ label, status, text }: { label: string; status: 'good' | 'warning' | 'danger' | 'neutral'; text: string }) {
   const styles = {
     good: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     warning: 'bg-amber-50 text-amber-800 border-amber-200',
-    danger: 'bg-rose-50 text-rose-800 border-rose-200'
+    danger: 'bg-rose-50 text-rose-800 border-rose-200',
+    neutral: 'bg-slate-50 text-slate-700 border-slate-200'
   };
 
   return (
@@ -1066,6 +1133,12 @@ function RiskBadge({ label, status, text }: { label: string; status: 'good' | 'w
           <svg className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.75" />
             <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+        {status === 'neutral' && (
+          <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
+            <path d="M8 12h8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
           </svg>
         )}
         <span>{label}</span>

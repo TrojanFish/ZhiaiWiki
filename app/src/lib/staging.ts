@@ -31,13 +31,13 @@ export interface StagingInput {
 
 export interface StagingResult {
   stage: string;       // e.g. "0", "IA1", "IA2", "IA3", "IB", "IIA", "IIB", "IIIA", "IIIB", "IIIC", "IVA", "IVB"
-  tStage: string;      // e.g. "Tis", "T1mi", "T1a", "T1b", "T1c", "T2a", "T2b", "T3", "T4"
+  tStage: string;      // e.g. "Tis", "T1mi", "T1a", "T1b", "T1c", "T2a", "T2b", "T3", "T4", "Tx"
   nStage: string;      // e.g. "N0", "N1", "N2", "N2a", "N2b", "N3"
   mStage: string;      // e.g. "M0", "M1a", "M1b", "M1c1", "M1c2"
   noduleType: string;
-  tumorSize: number;
-  solidSize: number;
-  ctr: number;
+  tumorSize: number | null;
+  solidSize: number | null;
+  ctr: number | null;
   pathologyTumorSize?: number | null;
   pathologyInvasiveSize?: number | null;
   pathologyLepidicPercent?: number | null;
@@ -51,7 +51,8 @@ export interface StagingResult {
 
 export function computeClinicalTnmStage(input: StagingInput): StagingResult {
   const noduleType = input.noduleType || "mixed_ggo";
-  const tumorSize = input.tumorSize != null && !isNaN(Number(input.tumorSize)) ? Number(input.tumorSize) : 1.5;
+  const hasCtSize = input.tumorSize != null && !isNaN(Number(input.tumorSize)) && Number(input.tumorSize) > 0;
+  const tumorSize = hasCtSize ? Number(input.tumorSize) : null;
   const pathologyTumorSize = input.pathologyTumorSize != null && !isNaN(Number(input.pathologyTumorSize)) ? Number(input.pathologyTumorSize) : null;
   const pathologyLepidicPercent = input.pathologyLepidicPercent != null && !isNaN(Number(input.pathologyLepidicPercent)) ? Number(input.pathologyLepidicPercent) : null;
   
@@ -59,28 +60,37 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
   let isDerivedFromPercent = false;
   if (pathologyInvasiveSize == null && pathologyLepidicPercent != null) {
     const gross = pathologyTumorSize || tumorSize;
-    pathologyInvasiveSize = Math.max(0, Math.round(gross * (1 - pathologyLepidicPercent / 100) * 100) / 100);
-    isDerivedFromPercent = true;
+    if (gross != null && gross > 0) {
+      pathologyInvasiveSize = Math.max(0, Math.round(gross * (1 - pathologyLepidicPercent / 100) * 100) / 100);
+      isDerivedFromPercent = true;
+    }
   }
   
   // Calculate solid size and CTR
-  let solidSize: number;
-  if (input.solidSize != null && !isNaN(Number(input.solidSize))) {
-    const rawSolid = Number(input.solidSize);
-    // Clinical sanity check: solid component cannot exceed total gross tumor size
-    solidSize = rawSolid > tumorSize ? tumorSize : rawSolid;
-  } else if (input.ctr != null && !isNaN(Number(input.ctr))) {
-    const rawCtr = Math.max(0, Math.min(1, Number(input.ctr)));
-    solidSize = Math.round(tumorSize * rawCtr * 10) / 10;
+  let solidSize: number | null = null;
+  let ctr: number | null = null;
+
+  if (hasCtSize && tumorSize != null) {
+    if (input.solidSize != null && !isNaN(Number(input.solidSize))) {
+      const rawSolid = Number(input.solidSize);
+      // Clinical sanity check: solid component cannot exceed total gross tumor size
+      solidSize = rawSolid > tumorSize ? tumorSize : rawSolid;
+    } else if (input.ctr != null && !isNaN(Number(input.ctr))) {
+      const rawCtr = Math.max(0, Math.min(1, Number(input.ctr)));
+      solidSize = Math.round(tumorSize * rawCtr * 10) / 10;
+    } else if (noduleType === "pure_ggo") {
+      solidSize = 0;
+    } else if (noduleType === "mixed_ggo") {
+      solidSize = Math.min(tumorSize, 0.8); // Reasonable clinical default for mGGO
+    } else {
+      solidSize = tumorSize;
+    }
+    ctr = tumorSize > 0 && solidSize != null ? Math.min(1, Math.round((solidSize / tumorSize) * 100) / 100) : 0;
   } else if (noduleType === "pure_ggo") {
     solidSize = 0;
-  } else if (noduleType === "mixed_ggo") {
-    solidSize = Math.min(tumorSize, 0.8); // Reasonable clinical default for mGGO
-  } else {
-    solidSize = tumorSize;
+    ctr = 0;
   }
 
-  const ctr = tumorSize > 0 ? Math.min(1, Math.round((solidSize / tumorSize) * 100) / 100) : 0;
   const nStage = input.nStage || "N0";
   const mStage = input.mStage || "M0";
   const isVpi = input.vpi === true || input.vpi === "positive";
@@ -94,7 +104,7 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
   // 1. IASLC / AJCC 第 9 版 (2024) T 分期规则 (病理镜下浸润径 vs CT 影像形态)
   if (pathologyInvasiveSize != null) {
     // 术后大体病理 pT 分期（依据镜下实性/浸润径与标本全径）
-    const grossSize = pathologyTumorSize || tumorSize;
+    const grossSize = pathologyTumorSize || tumorSize || pathologyInvasiveSize;
     const percentPrefix = isDerivedFromPercent 
       ? `标本全径 ${grossSize}cm · 贴壁型占比 ${pathologyLepidicPercent}% (折算镜下浸润径 ${pathologyInvasiveSize}cm) ➔ ` 
       : "";
@@ -126,61 +136,72 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
       effectiveT = "T4";
       explanation = `${percentPrefix}病理镜下浸润径 ${pathologyInvasiveSize}cm >7.0cm ➔ 依据 IASLC / AJCC 第 9 版金标准定级为 pT4 (IIIA期)`;
     }
-  } else if (noduleType === "pure_ggo" || solidSize === 0) {
-    effectiveT = "Tis";
-    explanation = `纯磨玻璃结节 (实性成分=0cm, CTR=0) ➔ 判定为原位/微浸润 Tis/T1mi (0期/IA1期)`;
-    isSubsolidAdjusted = true;
-  } else if (noduleType === "mixed_ggo" || (ctr > 0 && ctr < 1)) {
-    isSubsolidAdjusted = true;
-    // IASLC / AJCC 第 9 版严格微浸润 (MIA) 准则: 结节总径 <= 3.0cm 且实性成分 <= 0.5cm
-    if (solidSize <= 0.5 && tumorSize <= 3.0) {
-      effectiveT = "T1mi";
-      explanation = `混合磨玻璃结节 (结节总全径 ${tumorSize}cm ≤3.0cm，CT实性成分 ${solidSize}cm ≤0.5cm, CTR=${ctr}) ➔ 依据 IASLC / AJCC 第 9 版规则以微浸润判定为 T1mi (IA1期)`;
-    } else if (solidSize <= 1.0) {
-      effectiveT = "T1a";
-      explanation = `混合磨玻璃结节 (结节总全径 ${tumorSize}cm，CT实性成分 ${solidSize}cm ≤1.0cm, CTR=${ctr}${tumorSize > 3.0 ? '，总径>3cm不归入T1mi' : ''}) ➔ 依据 IASLC / AJCC 第 9 版规则以实性成分判定为 T1a (IA1期)，非结节全径对应的更高分期`;
-    } else if (solidSize <= 2.0) {
-      effectiveT = "T1b";
-      explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤2.0cm, CTR=${ctr}) ➔ 判定为 T1b (IA2期)`;
-    } else if (solidSize <= 3.0) {
-      effectiveT = "T1c";
-      explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤3.0cm, CTR=${ctr}) ➔ 判定为 T1c (IA3期)`;
-    } else if (solidSize <= 4.0) {
-      effectiveT = "T2a";
-      explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤4.0cm, CTR=${ctr}) ➔ 判定为 T2a (IB期)`;
-    } else if (solidSize <= 5.0) {
-      effectiveT = "T2b";
-      explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤5.0cm, CTR=${ctr}) ➔ 判定为 T2b (IIA期)`;
-    } else if (solidSize <= 7.0) {
-      effectiveT = "T3";
-      explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm >5.0cm, CTR=${ctr}) ➔ 判定为 T3 (IIB期)`;
+  } else if (hasCtSize && tumorSize != null && solidSize != null) {
+    if (noduleType === "pure_ggo" || solidSize === 0) {
+      effectiveT = "Tis";
+      explanation = `纯磨玻璃结节 (实性成分=0cm, CTR=0) ➔ 判定为原位/微浸润 Tis/T1mi (0期/IA1期)`;
+      isSubsolidAdjusted = true;
+    } else if (noduleType === "mixed_ggo" || (ctr != null && ctr > 0 && ctr < 1)) {
+      isSubsolidAdjusted = true;
+      // IASLC / AJCC 第 9 版严格微浸润 (MIA) 准则: 结节总径 <= 3.0cm 且实性成分 <= 0.5cm
+      if (solidSize <= 0.5 && tumorSize <= 3.0) {
+        effectiveT = "T1mi";
+        explanation = `混合磨玻璃结节 (结节总全径 ${tumorSize}cm ≤3.0cm，CT实性成分 ${solidSize}cm ≤0.5cm, CTR=${ctr}) ➔ 依据 IASLC / AJCC 第 9 版规则以微浸润判定为 T1mi (IA1期)`;
+      } else if (solidSize <= 1.0) {
+        effectiveT = "T1a";
+        explanation = `混合磨玻璃结节 (结节总全径 ${tumorSize}cm，CT实性成分 ${solidSize}cm ≤1.0cm, CTR=${ctr}${tumorSize > 3.0 ? '，总径>3cm不归入T1mi' : ''}) ➔ 依据 IASLC / AJCC 第 9 版规则以实性成分判定为 T1a (IA1期)，非结节全径对应的更高分期`;
+      } else if (solidSize <= 2.0) {
+        effectiveT = "T1b";
+        explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤2.0cm, CTR=${ctr}) ➔ 判定为 T1b (IA2期)`;
+      } else if (solidSize <= 3.0) {
+        effectiveT = "T1c";
+        explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤3.0cm, CTR=${ctr}) ➔ 判定为 T1c (IA3期)`;
+      } else if (solidSize <= 4.0) {
+        effectiveT = "T2a";
+        explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤4.0cm, CTR=${ctr}) ➔ 判定为 T2a (IB期)`;
+      } else if (solidSize <= 5.0) {
+        effectiveT = "T2b";
+        explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm ≤5.0cm, CTR=${ctr}) ➔ 判定为 T2b (IIA期)`;
+      } else if (solidSize <= 7.0) {
+        effectiveT = "T3";
+        explanation = `混合磨玻璃结节 (CT实性成分 ${solidSize}cm >5.0cm, CTR=${ctr}) ➔ 判定为 T3 (IIB期)`;
+      } else {
+        effectiveT = "T4";
+        explanation = `混合磨玻璃结节 (CT实性成分 >7.0cm) ➔ 判定为 T4 (IIIA期)`;
+      }
     } else {
-      effectiveT = "T4";
-      explanation = `混合磨玻璃结节 (CT实性成分 >7.0cm) ➔ 判定为 T4 (IIIA期)`;
+      // 纯实性病灶 (Pure Solid)
+      if (tumorSize <= 1.0) {
+        effectiveT = "T1a";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm ≤1.0cm) ➔ 判定为 T1a (IA1期)`;
+      } else if (tumorSize <= 2.0) {
+        effectiveT = "T1b";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm ≤2.0cm) ➔ 判定为 T1b (IA2期)`;
+      } else if (tumorSize <= 3.0) {
+        effectiveT = "T1c";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm ≤3.0cm) ➔ 判定为 T1c (IA3期)`;
+      } else if (tumorSize <= 4.0) {
+        effectiveT = "T2a";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm ≤4.0cm) ➔ 判定为 T2a (IB期)`;
+      } else if (tumorSize <= 5.0) {
+        effectiveT = "T2b";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm ≤5.0cm) ➔ 判定为 T2b (IIA期)`;
+      } else if (tumorSize <= 7.0) {
+        effectiveT = "T3";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm ≤7.0cm) ➔ 判定为 T3 (IIB期)`;
+      } else {
+        effectiveT = "T4";
+        explanation = `纯实性结节 (总径 ${tumorSize}cm >7.0cm) ➔ 判定为 T4`;
+      }
     }
   } else {
-    // 纯实性病灶 (Pure Solid)
-    if (tumorSize <= 1.0) {
-      effectiveT = "T1a";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm ≤1.0cm) ➔ 判定为 T1a (IA1期)`;
-    } else if (tumorSize <= 2.0) {
-      effectiveT = "T1b";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm ≤2.0cm) ➔ 判定为 T1b (IA2期)`;
-    } else if (tumorSize <= 3.0) {
-      effectiveT = "T1c";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm ≤3.0cm) ➔ 判定为 T1c (IA3期)`;
-    } else if (tumorSize <= 4.0) {
-      effectiveT = "T2a";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm ≤4.0cm) ➔ 判定为 T2a (IB期)`;
-    } else if (tumorSize <= 5.0) {
-      effectiveT = "T2b";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm ≤5.0cm) ➔ 判定为 T2b (IIA期)`;
-    } else if (tumorSize <= 7.0) {
-      effectiveT = "T3";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm ≤7.0cm) ➔ 判定为 T3 (IIB期)`;
+    // 既无病理浸润径，又未提供 CT 结节大小
+    if (input.tStage && input.tStage !== "Tx") {
+      effectiveT = input.tStage;
+      explanation = `未提供胸部 CT 结节大小与术后病理浸润径，沿用就诊记录临床分期 (${input.tStage})`;
     } else {
-      effectiveT = "T4";
-      explanation = `纯实性结节 (总径 ${tumorSize}cm >7.0cm) ➔ 判定为 T4`;
+      effectiveT = "Tx";
+      explanation = "未提供术前胸部 CT 结节全径与术后病理浸润径，原发肿瘤无法评估 (Tx)";
     }
   }
 
@@ -307,6 +328,7 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
     else if (effectiveT === "T2b") stage = "IIA";
     else if (effectiveT === "T3") stage = "IIB";
     else if (effectiveT === "T4") stage = "IIIA";
+    else if (effectiveT === "Tx") stage = "待定 (Tx)";
   }
 
   // 3.1 临床病理冲突拦截：原位病变 (Tis) 定义上不突破基底膜，不应伴随淋巴结转移
@@ -323,7 +345,8 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
     marginNotice = "标本切缘镜下阳性 (R1)，局部存在残留风险，建议胸外科与多学科 (MDT) 评估扩大切除或术后局部辅助放疗。";
   } else if (input.marginDistanceMm != null && !isNaN(Number(input.marginDistanceMm))) {
     const dist = Number(input.marginDistanceMm);
-    const tumorMm = tumorSize * 10;
+    const referenceGross = pathologyTumorSize || tumorSize;
+    const tumorMm = referenceGross != null ? referenceGross * 10 : 20;
     // JCOG guideline recommends margin >= tumor size or >= 20mm
     if (dist > 0 && dist < 20 && dist < tumorMm) {
       marginSafety = "close_margin";
@@ -392,9 +415,13 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   }
 
   // 1. Compute or resolve staging
+  const tumorSizeVal = (rawProfile.tumorSize !== undefined && rawProfile.tumorSize !== null && rawProfile.tumorSize !== "")
+    ? parseFloat(rawProfile.tumorSize)
+    : (rawProfile.sizeMm !== undefined && rawProfile.sizeMm !== null && rawProfile.sizeMm !== "" ? parseFloat(rawProfile.sizeMm) / 10 : null);
+
   const staging = computeClinicalTnmStage({
     noduleType: rawProfile.noduleType || rawProfile.morphology,
-    tumorSize: rawProfile.tumorSize ? parseFloat(rawProfile.tumorSize) : (rawProfile.sizeMm ? parseFloat(rawProfile.sizeMm) / 10 : 1.5),
+    tumorSize: tumorSizeVal,
     solidSize: rawProfile.solidSize ? parseFloat(rawProfile.solidSize) : null,
     ctr: rawProfile.ctr ? parseFloat(rawProfile.ctr) : null,
     pathologyTumorSize: rawProfile.pathologyTumorSize ? parseFloat(rawProfile.pathologyTumorSize) : null,
@@ -421,8 +448,8 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   const isGrade3 = rawProfile.grade === "3" || rawProfile.iaslcGrade === "3";
   const ki67Val = rawProfile.ki67 != null && rawProfile.ki67 !== "" ? parseFloat(String(rawProfile.ki67)) : null;
   const isHighKi67 = ki67Val !== null && !isNaN(ki67Val) && ki67Val > 20;
-  const surgeryType = rawProfile.surgeryType || "segmentectomy";
-  const isPreOp = rawProfile.reportType === "ct_imaging" || rawProfile.currentStage === "evaluation" || rawProfile.currentStage === "discovery" || surgeryType === "unknown";
+  const isPreOp = rawProfile.reportType === "ct_imaging" || rawProfile.currentStage === "evaluation" || rawProfile.currentStage === "discovery";
+  const surgeryType = rawProfile.surgeryType || (isPreOp ? "unknown" : "segmentectomy");
 
   // Molecular driver gene status
   const geneMutations = Array.isArray(rawProfile.geneMutations) 
@@ -453,8 +480,8 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   if (isMarginPos) keyFactors.push("切缘阳性 (R1)");
   if (rawProfile.marginDistanceMm != null && !isNaN(Number(rawProfile.marginDistanceMm))) {
     const dist = Number(rawProfile.marginDistanceMm);
-    const tumorMm = staging.tumorSize * 10;
-    if (dist > 0 && dist < 20 && dist < tumorMm) {
+    const tumorMm = staging.tumorSize != null ? staging.tumorSize * 10 : null;
+    if (dist > 0 && dist < 20 && (tumorMm == null || dist < tumorMm)) {
       keyFactors.push(`切缘净距较近 (${dist}mm < JCOG推荐安全边距)`);
     }
   }
@@ -465,10 +492,10 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   if (hasMet) keyFactors.push("MET 14号外显子跳跃 (赛沃替尼/谷美替尼)");
   if (hasHer2) keyFactors.push("HER2 (ERBB2) 突变 (T-DXd ADC)");
 
-  const isPureGgo = staging.noduleType === "pure_ggo" || ctr === 0;
-  const isSubsolidLow = staging.noduleType === "mixed_ggo" && ctr > 0 && ctr <= 0.50;
-  const isSubsolidHigh = staging.noduleType === "mixed_ggo" && ctr > 0.50;
-  const isPureSolid = staging.noduleType === "pure_solid" || ctr >= 1.0;
+  const isPureGgo = staging.noduleType === "pure_ggo" || (ctr !== null && ctr === 0);
+  const isSubsolidLow = staging.noduleType === "mixed_ggo" && ctr !== null && ctr > 0 && ctr <= 0.50;
+  const isSubsolidHigh = staging.noduleType === "mixed_ggo" && ctr !== null && ctr > 0.50;
+  const isPureSolid = staging.noduleType === "pure_solid" || (ctr !== null && ctr >= 1.0);
 
   const morphologyLabel = isPureGgo 
     ? "纯磨玻璃结节 (pGGO / CTR=0)" 

@@ -45,33 +45,33 @@ export interface TumorMarkersData {
 export interface PatientProfile {
   id?: string;
   userId?: string;
-  age: number;
-  gender: "female" | "male";
-  sex?: "female" | "male" | "unknown" | string;
+  age?: number | null;
+  gender?: "female" | "male" | "unknown" | string | null;
+  sex?: "female" | "male" | "unknown" | string | null;
   stage: string;
   organ?: string;
   
   // Report Modality & Detection
   reportType?: "ct_imaging" | "pathology" | "comprehensive" | string;
-  noduleLocation?: string;       // e.g. "右肺上叶尖后段"
+  noduleLocation?: string | null;       // e.g. "右肺上叶尖后段"
   imagingFeatures?: string[];    // e.g. ["分叶征", "毛刺征", "胸膜牵拉", "血管集束征", "空泡征"]
-  lungRads?: string;             // e.g. "3", "4A", "4B", "4X"
-  malignancyRisk?: "low" | "moderate" | "high" | string;
-  clinicalRecommendation?: string; // e.g. "建议3个月薄层CT随访" 或 "建议胸外科微创手术评估"
+  lungRads?: string | null;             // e.g. "3", "4A", "4B", "4X"
+  malignancyRisk?: "low" | "moderate" | "high" | string | null;
+  clinicalRecommendation?: string | null; // e.g. "建议3个月薄层CT随访" 或 "建议胸外科微创手术评估"
 
   // Imaging & Morphology (IASLC / AJCC 第 9 版 Solid Component Support)
-  noduleType?: "mixed_ggo" | "pure_ggo" | "pure_solid" | string;
-  morphology?: "pure_ggo" | "mixed_ggo" | "pure_solid" | string;
-  tumorSize?: number; // Total gross tumor size in cm (Clinical HRCT thin-slice imaging)
-  solidSize?: number; // Invasive / solid component size on CT in cm
-  ctr: number;        // Consolidation-to-tumor ratio (0 to 1)
+  noduleType?: "mixed_ggo" | "pure_ggo" | "pure_solid" | "unknown" | string | null;
+  morphology?: "pure_ggo" | "mixed_ggo" | "pure_solid" | "unknown" | string | null;
+  tumorSize?: number | null; // Total gross tumor size in cm (null if CT not provided)
+  solidSize?: number | null; // Invasive / solid component size on CT in cm (null if CT not provided)
+  ctr?: number | null;        // Consolidation-to-tumor ratio (0 to 1, null if CT not provided)
   
   // Surgical Pathology Tumor Dimensions (IASLC / AJCC 第 9 版 Pathological pT Standard)
   pathologyTumorSize?: number | null;    // 标本大体肿瘤全径 (Gross tumor size in cm)
   pathologyInvasiveSize?: number | null; // 镜下浸润成分最大径 (Microscopic invasive size in cm, determines pT)
   pathologyLepidicPercent?: number | null; // 贴壁/伏壁生长型亚型占比百分比 (0~100)
   pathologyReportMode?: "explicit" | "percentage" | "unspecified" | string | null; // 病理报告模式
-  adjacentLobeInvasion?: boolean;        // IASLC 第9版 T2a: 直接侵犯相邻肺叶
+  adjacentLobeInvasion?: boolean | null;        // IASLC 第9版 T2a: 直接侵犯相邻肺叶
   
   stageExplanation?: string;
 
@@ -111,17 +111,17 @@ export interface PatientProfile {
   pdl1Tps?: "<1%" | "1-49%" | ">=50%" | "unknown" | string;
 
   // Pathological High-Risk Factors
-  stas: "negative" | "positive" | "unknown";
-  lvi: "negative" | "positive" | "unknown";
-  vpi: "negative" | "positive" | "unknown";
-  margin: "negative" | "positive";
-  marginStatus?: "negative" | "positive" | string;
-  iaslcGrade?: "1" | "2" | "3" | "unknown" | string;
-  grade?: "1" | "2" | "3" | "unknown" | string;
-  ki67?: number | string; // Ki-67 proliferation index (%) e.g. 5, 15, 30
+  stas?: "negative" | "positive" | "unknown" | "not_applicable" | null;
+  lvi?: "negative" | "positive" | "unknown" | "not_applicable" | null;
+  vpi?: "negative" | "positive" | "unknown" | "not_applicable" | null;
+  margin?: "negative" | "positive" | "unknown" | "not_applicable" | null;
+  marginStatus?: "negative" | "positive" | "unknown" | "not_applicable" | string | null;
+  iaslcGrade?: "1" | "2" | "3" | "unknown" | null | string;
+  grade?: "1" | "2" | "3" | "unknown" | null | string;
+  ki67?: number | string | null; // Ki-67 proliferation index (%) e.g. 5, 15, 30
   histology?: any;
-  egfr?: "positive" | "negative" | "unknown" | "not_tested" | string;
-  surgeryType: "lobectomy" | "segmentectomy" | "wedge" | "unknown" | string;
+  egfr?: "positive" | "negative" | "unknown" | "not_tested" | string | null;
+  surgeryType?: "lobectomy" | "segmentectomy" | "wedge" | "unknown" | string | null;
   notes?: string;
 
   // State Engine (Dynamic Decision Nodes)

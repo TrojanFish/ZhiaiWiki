@@ -211,16 +211,16 @@ export function deriveTimelineEventsFromProfile(profile: any): TimelineEventItem
     (profile.createdAt ? profile.createdAt.split("T")[0] : null) || 
     today;
 
-  const tumorSizeMm = profile.sizeMm || (profile.tumorSize ? profile.tumorSize * 10 : 15);
-  const solidSizeMm = profile.solidSize ? profile.solidSize * 10 : 0;
-  const ctrVal = profile.ctr ?? (tumorSizeMm > 0 ? Math.min(1, Math.round((solidSizeMm / tumorSizeMm) * 100) / 100) : 0);
+  const tumorSizeMm = profile.sizeMm != null ? profile.sizeMm : (profile.tumorSize != null ? profile.tumorSize * 10 : null);
+  const solidSizeMm = profile.solidSize != null ? profile.solidSize * 10 : null;
+  const ctrVal = profile.ctr ?? (tumorSizeMm && solidSizeMm !== null && tumorSizeMm > 0 ? Math.min(1, Math.round((solidSizeMm / tumorSizeMm) * 100) / 100) : null);
 
   // 1. Ingest Historical Scans from followUpHistory
   if (Array.isArray(profile.followUpHistory) && profile.followUpHistory.length > 0) {
     profile.followUpHistory.forEach((hist: any, index: number) => {
       const histDate = hist.date || baseDate;
-      const histTumorMm = hist.sizeMm || (hist.tumorSize ? hist.tumorSize * 10 : tumorSizeMm);
-      const histCtr = hist.ctr ?? 0;
+      const histTumorMm = hist.sizeMm != null ? hist.sizeMm : (hist.tumorSize != null ? hist.tumorSize * 10 : tumorSizeMm);
+      const histCtr = hist.ctr ?? null;
       
       events.push({
         id: hist.id || `profile-hist-ct-${index}-${histDate}`,
@@ -229,15 +229,21 @@ export function deriveTimelineEventsFromProfile(profile: any): TimelineEventItem
         subType: "CT",
         hospital: hist.hospital || "复查医院放射科",
         title: `历史随访胸部 CT 扫描 (${histDate})`,
-        summary: `结节全径约 ${histTumorMm.toFixed(1)} mm，实性成分占比 ${(histCtr * 100).toFixed(0)}%。${hist.note || "历史随访比对"}`,
+        summary: histTumorMm != null 
+          ? `结节全径约 ${histTumorMm.toFixed(1)} mm${histCtr != null ? `，实性成分占比 ${(histCtr * 100).toFixed(0)}%` : ''}。${hist.note || "历史随访比对"}`
+          : `胸部 CT 历史随访记录。${hist.note || "历史随访比对"}`,
         keyFindings: {
           sizeMm: histTumorMm,
           ctr: histCtr,
           noduleType: profile.noduleType || "mixed_ggo",
           location: profile.noduleLocation || "肺部病灶",
         },
-        tags: [`${histTumorMm.toFixed(1)}mm`, `CTR ${(histCtr * 100).toFixed(0)}%`, "时序随访"],
-        riskStatus: histCtr > 0.5 ? "warning" : "watch",
+        tags: [
+          ...(histTumorMm != null ? [`${histTumorMm.toFixed(1)}mm`] : []),
+          ...(histCtr != null ? [`CTR ${(histCtr * 100).toFixed(0)}%`] : []),
+          "时序随访"
+        ],
+        riskStatus: (histCtr != null && histCtr > 0.5) ? "warning" : "watch",
       });
     });
   }
@@ -253,28 +259,39 @@ export function deriveTimelineEventsFromProfile(profile: any): TimelineEventItem
       subType: "CT",
       hospital: profile.hospital || "放射影像中心",
       title: "基准诊断：胸部薄层高分辨 CT 平扫与重建",
-      summary: `检出肺部病灶全径约 ${tumorSizeMm.toFixed(1)} mm，实性成分径约 ${solidSizeMm.toFixed(1)} mm (CTR: ${(ctrVal * 100).toFixed(0)}%)。${profile.nextAction || "已完成影像学结构化提取"}`,
+      summary: tumorSizeMm != null
+        ? `检出肺部病灶全径约 ${tumorSizeMm.toFixed(1)} mm${solidSizeMm != null ? `，实性成分径约 ${solidSizeMm.toFixed(1)} mm` : ''}${ctrVal != null ? ` (CTR: ${(ctrVal * 100).toFixed(0)}%)` : ''}。${profile.nextAction || "已完成影像学结构化提取"}`
+        : `胸部薄层 CT 影像已结构化登记。${profile.nextAction || "待补充结节大小与测量参数"}`,
       keyFindings: {
         sizeMm: tumorSizeMm,
         ctr: ctrVal,
-        noduleType: profile.noduleType === "pure_ggo" ? "纯磨玻璃 (pGGN)" : profile.noduleType === "pure_solid" ? "纯实性" : "混合磨玻璃 (mGGN)",
+        noduleType: profile.noduleType === "pure_ggo" ? "纯磨玻璃 (pGGN)" : profile.noduleType === "pure_solid" ? "纯实性" : (profile.noduleType === "mixed_ggo" ? "混合磨玻璃 (mGGN)" : (profile.noduleType || "待查")),
         location: profile.noduleLocation || "肺部病灶",
       },
       tags: [
         profile.noduleLocation || "肺部",
-        `${tumorSizeMm.toFixed(1)}mm`,
-        `CTR ${(ctrVal * 100).toFixed(0)}%`,
-        profile.noduleType === "pure_ggo" ? "纯磨玻璃" : "混合磨玻璃"
+        ...(tumorSizeMm != null ? [`${tumorSizeMm.toFixed(1)}mm`] : ['大小待查']),
+        ...(ctrVal != null ? [`CTR ${(ctrVal * 100).toFixed(0)}%`] : []),
+        profile.noduleType === "pure_ggo" ? "纯磨玻璃" : profile.noduleType === "pure_solid" ? "纯实性" : "混合磨玻璃"
       ],
       riskStatus: profile.riskLevel === "high" ? "warning" : "watch",
     });
   } else {
     // 3. Ingest Pathology & Post-Op Milestone
-    const stageStr = profile.tStage ? `${profile.tStage}${profile.nStage || "N0"}${profile.mStage || "M0"}` : "IA2期";
-    const stasPositive = Boolean(profile.stas);
-    const vpiPositive = Boolean(profile.vpi);
-    const lviPositive = Boolean(profile.lvi);
-    const isMarginPositive = profile.marginStatus === "positive";
+    const stageStr = profile.stage || (profile.tStage ? `${profile.tStage}${profile.nStage || "N0"}${profile.mStage || "M0"}` : "待定 (Tx)");
+    const isStasSpecified = profile.stas != null;
+    const stasPositive = profile.stas === 'positive' || profile.stas === true;
+    const isVpiSpecified = profile.vpi != null;
+    const vpiPositive = profile.vpi === 'positive' || profile.vpi === true;
+    const isLviSpecified = profile.lvi != null;
+    const lviPositive = profile.lvi === 'positive' || profile.lvi === true;
+    const isMarginSpecified = profile.marginStatus != null || profile.margin != null;
+    const isMarginPositive = profile.marginStatus === "positive" || profile.margin === "positive";
+
+    const pathologyDetails: string[] = [];
+    if (isMarginSpecified) pathologyDetails.push(`切缘${isMarginPositive ? "阳性" : "R0安全阴性"}`);
+    if (isStasSpecified) pathologyDetails.push(`STAS ${stasPositive ? "阳性(+)" : "阴性(-)"}`);
+    if (isVpiSpecified) pathologyDetails.push(`胸膜侵犯 ${vpiPositive ? "阳性(+)" : "阴性(-)"}`);
 
     events.push({
       id: `profile-cur-pathology-${baseDate}`,
@@ -283,21 +300,21 @@ export function deriveTimelineEventsFromProfile(profile: any): TimelineEventItem
       subType: "Pathology",
       hospital: profile.hospital || "病理诊断中心",
       title: "手术切除标本常规石蜡切片与组织病理学诊断",
-      summary: `【病理确诊】${stageStr} (${profile.histology || "浸润性肺腺癌"})，切缘${isMarginPositive ? "阳性" : "R0根治性阴性"}，STAS ${stasPositive ? "阳性(+)" : "阴性(-)"}，胸膜侵犯 ${vpiPositive ? "阳性(+)" : "阴性(-)"}。`,
+      summary: `【病理确诊】${stageStr} (${profile.histology || "原发性肺恶性肿瘤"})${pathologyDetails.length > 0 ? `，${pathologyDetails.join("，")}` : ""}。`,
       keyFindings: {
-        histology: profile.histology || "浸润性腺癌",
+        histology: profile.histology || "原发性肺恶性肿瘤",
         stage: stageStr,
-        stas: stasPositive,
-        vpi: vpiPositive,
-        lvi: lviPositive,
-        marginStatus: isMarginPositive ? "切缘阳性" : "R0安全阴性",
-        sizeMm: tumorSizeMm,
+        stas: isStasSpecified ? stasPositive : undefined,
+        vpi: isVpiSpecified ? vpiPositive : undefined,
+        lvi: isLviSpecified ? lviPositive : undefined,
+        marginStatus: isMarginSpecified ? (isMarginPositive ? "切缘阳性" : "R0安全阴性") : "未提及",
+        sizeMm: tumorSizeMm != null ? tumorSizeMm : undefined,
       },
       tags: [
         stageStr,
-        stasPositive ? "STAS(+)" : "STAS(-)",
-        vpiPositive ? "VPI(+)" : "VPI(-)",
-        isMarginPositive ? "切缘阳性" : "R0根治切除"
+        ...(isStasSpecified ? [stasPositive ? "STAS(+)" : "STAS(-)"] : []),
+        ...(isVpiSpecified ? [vpiPositive ? "VPI(+)" : "VPI(-)"] : []),
+        ...(isMarginSpecified ? [isMarginPositive ? "切缘阳性" : "R0根治切除"] : [])
       ],
       riskStatus: (stasPositive || vpiPositive || lviPositive || isMarginPositive) ? "warning" : "normal",
     });

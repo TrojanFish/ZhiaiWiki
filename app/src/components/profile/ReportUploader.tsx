@@ -257,17 +257,19 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
 
   useEffect(() => {
     if (parsedData) {
-      const tumorVal = parsedData.tumorSize !== "" && parsedData.tumorSize != null ? parseFloat(String(parsedData.tumorSize)) : 1.5;
-      const solidVal = parsedData.solidSize !== "" && parsedData.solidSize != null ? parseFloat(String(parsedData.solidSize)) : 0.8;
+      const parsedTumor = parsedData.tumorSize !== "" && parsedData.tumorSize != null ? parseFloat(String(parsedData.tumorSize)) : null;
+      const tumorVal = parsedTumor !== null && !isNaN(parsedTumor) ? parsedTumor : null;
+      const parsedSolid = parsedData.solidSize !== "" && parsedData.solidSize != null ? parseFloat(String(parsedData.solidSize)) : null;
+      const solidVal = parsedSolid !== null && !isNaN(parsedSolid) ? parsedSolid : null;
       const pathTumor = parsedData.pathologyTumorSize !== "" && parsedData.pathologyTumorSize != null ? parseFloat(String(parsedData.pathologyTumorSize)) : null;
       const pathInvasive = parsedData.pathologyInvasiveSize !== "" && parsedData.pathologyInvasiveSize != null ? parseFloat(String(parsedData.pathologyInvasiveSize)) : null;
       const pathLepidic = parsedData.pathologyLepidicPercent !== "" && parsedData.pathologyLepidicPercent != null ? parseFloat(String(parsedData.pathologyLepidicPercent)) : null;
 
       const calc = computeClinicalTnmStage({
         noduleType: parsedData.noduleType || "mixed_ggo",
-        tumorSize: isNaN(tumorVal) ? 1.5 : tumorVal,
-        solidSize: isNaN(solidVal) ? 0.8 : solidVal,
-        ctr: parsedData.ctr ? parseFloat(String(parsedData.ctr)) : (tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : null),
+        tumorSize: tumorVal,
+        solidSize: solidVal,
+        ctr: parsedData.ctr != null ? parseFloat(String(parsedData.ctr)) : (tumorVal && solidVal !== null && tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : null),
         pathologyTumorSize: pathTumor,
         pathologyInvasiveSize: pathInvasive,
         pathologyLepidicPercent: pathLepidic,
@@ -412,9 +414,11 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
 
   const handleConfirm = () => {
     if (parsedData) {
-      const tumorVal = parsedData.tumorSize !== "" && parsedData.tumorSize != null ? parseFloat(String(parsedData.tumorSize)) || 1.5 : 1.5;
-      const solidVal = parsedData.solidSize !== "" && parsedData.solidSize != null ? parseFloat(String(parsedData.solidSize)) || 0.8 : 0.8;
-      const calculatedCtr = tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : 0;
+      const parsedTumor = parsedData.tumorSize !== "" && parsedData.tumorSize != null ? parseFloat(String(parsedData.tumorSize)) : null;
+      const tumorVal = parsedTumor !== null && !isNaN(parsedTumor) ? parsedTumor : null;
+      const parsedSolid = parsedData.solidSize !== "" && parsedData.solidSize != null ? parseFloat(String(parsedData.solidSize)) : null;
+      const solidVal = parsedSolid !== null && !isNaN(parsedSolid) ? parsedSolid : null;
+      const calculatedCtr = tumorVal && solidVal !== null && tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : null;
 
       // Systemic M0 confirmation logic
       const isM0Confirmed = 
@@ -440,16 +444,18 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       const reportDate = parsedData.reportDate || new Date().toISOString().split('T')[0];
       const hasDateInHist = finalHistory.some((h: any) => h.date === reportDate);
       if (!hasDateInHist && (parsedData.reportType === 'ct_imaging' || parsedData.tumorSize)) {
-        finalHistory.push({
-          id: `hist_${Date.now()}`,
-          date: reportDate,
-          tumorSize: stagingPreview?.tumorSize || tumorVal,
-          solidSize: stagingPreview?.solidSize || solidVal,
-          ctr: stagingPreview?.ctr ?? calculatedCtr,
-          noduleType: parsedData.noduleType || "mixed_ggo",
-          lungRads: parsedData.lungRads || null,
-          note: parsedData.clinicalRecommendation || "本次检查建档"
-        });
+        if (tumorVal !== null) {
+          finalHistory.push({
+            id: `hist_${Date.now()}`,
+            date: reportDate,
+            tumorSize: stagingPreview?.tumorSize !== undefined ? stagingPreview.tumorSize : tumorVal,
+            solidSize: stagingPreview?.solidSize !== undefined ? stagingPreview.solidSize : solidVal,
+            ctr: stagingPreview?.ctr ?? calculatedCtr,
+            noduleType: parsedData.noduleType || "mixed_ggo",
+            lungRads: parsedData.lungRads || null,
+            note: parsedData.clinicalRecommendation || "本次检查建档"
+          });
+        }
       }
       finalHistory.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -458,32 +464,32 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         id: base.id,
         userId: base.userId,
         age: parsedData.age !== "" && parsedData.age != null && !isNaN(parseInt(String(parsedData.age))) ? parseInt(String(parsedData.age)) : (base.age || undefined),
-        tumorSize: stagingPreview?.tumorSize || tumorVal,
-        solidSize: stagingPreview?.solidSize || solidVal,
-        ctr: stagingPreview?.ctr ?? calculatedCtr,
+        tumorSize: stagingPreview?.tumorSize !== undefined ? stagingPreview.tumorSize : tumorVal,
+        solidSize: stagingPreview?.solidSize !== undefined ? stagingPreview.solidSize : solidVal,
+        ctr: stagingPreview?.ctr !== undefined ? stagingPreview.ctr : calculatedCtr,
         pathologyTumorSize: parsedData.pathologyTumorSize !== "" && parsedData.pathologyTumorSize != null ? parseFloat(String(parsedData.pathologyTumorSize)) : (base.pathologyTumorSize ?? null),
         pathologyInvasiveSize: parsedData.pathologyInvasiveSize !== "" && parsedData.pathologyInvasiveSize != null ? parseFloat(String(parsedData.pathologyInvasiveSize)) : (base.pathologyInvasiveSize ?? null),
         pathologyLepidicPercent: parsedData.pathologyLepidicPercent !== "" && parsedData.pathologyLepidicPercent != null ? parseFloat(String(parsedData.pathologyLepidicPercent)) : (base.pathologyLepidicPercent ?? null),
         pathologyReportMode: parsedData.pathologyReportMode || base.pathologyReportMode || null,
-        stage: stagingPreview?.stage || parsedData.stage || base.stage || "IA1",
-        tStage: stagingPreview?.tStage || parsedData.tStage || base.tStage || "T1a",
+        stage: stagingPreview?.stage || parsedData.stage || base.stage || (tumorVal == null ? "待定 (Tx)" : "IA1"),
+        tStage: stagingPreview?.tStage || parsedData.tStage || base.tStage || (tumorVal == null ? "Tx" : "T1a"),
         noduleType: parsedData.noduleType || base.noduleType || "mixed_ggo",
         nStage: stagingPreview?.nStage || parsedData.nStage || base.nStage || "N0",
         mStage: stagingPreview?.mStage || parsedData.mStage || base.mStage || "M0",
         adjacentLobeInvasion: Boolean(parsedData.adjacentLobeInvasion ?? base.adjacentLobeInvasion),
         versionBridgeNotice: stagingPreview?.versionBridgeNotice,
-        stas: parsedData.stas !== undefined ? parsedData.stas : (base.stas || "negative"),
-        vpi: parsedData.vpi !== undefined ? parsedData.vpi : (base.vpi || "negative"),
-        lvi: parsedData.lvi !== undefined ? parsedData.lvi : (base.lvi || "negative"),
-        marginStatus: parsedData.marginStatus !== undefined ? parsedData.marginStatus : (base.marginStatus || "negative"),
-        margin: parsedData.marginStatus !== undefined ? parsedData.marginStatus : (base.margin || "negative"),
-        surgeryType: parsedData.surgeryType || base.surgeryType || "segmentectomy",
-        iaslcGrade: parsedData.grade || parsedData.iaslcGrade || base.iaslcGrade || "2",
-        grade: parsedData.grade || parsedData.iaslcGrade || base.grade || "2",
+        stas: parsedData.stas !== undefined ? parsedData.stas : (base.stas ?? null),
+        vpi: parsedData.vpi !== undefined ? parsedData.vpi : (base.vpi ?? null),
+        lvi: parsedData.lvi !== undefined ? parsedData.lvi : (base.lvi ?? null),
+        marginStatus: parsedData.marginStatus !== undefined ? parsedData.marginStatus : (base.marginStatus ?? null),
+        margin: parsedData.marginStatus !== undefined ? parsedData.marginStatus : (base.margin ?? null),
+        surgeryType: parsedData.surgeryType || base.surgeryType || "unknown",
+        iaslcGrade: parsedData.grade || parsedData.iaslcGrade || base.iaslcGrade || null,
+        grade: parsedData.grade || parsedData.iaslcGrade || base.grade || null,
         ki67: cleanKi67,
-        sex: parsedData.sex || parsedData.gender || base.sex || "female",
-        gender: parsedData.sex || parsedData.gender || base.gender || "female",
-        histology: parsedData.histology || base.histology || "adenocarcinoma",
+        sex: parsedData.sex || parsedData.gender || base.sex || "unknown",
+        gender: parsedData.sex || parsedData.gender || base.gender || "unknown",
+        histology: parsedData.histology || base.histology || null,
         reportType: parsedData.reportType || base.reportType || "pathology",
         currentStage: (parsedData.reportType === 'ct_imaging' || parsedData.surgeryType === 'unknown') ? 'evaluation' : 'treatment',
         imagingFeatures: (Array.isArray(parsedData.imagingFeatures) && parsedData.imagingFeatures.length > 0) ? parsedData.imagingFeatures : (base.imagingFeatures || []),
@@ -700,20 +706,24 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
     const isPureGgo = noduleType === "pure_ggo";
     const isPureSolid = noduleType === "pure_solid";
 
-    const rawTumor = parsedData.tumorSize !== "" && parsedData.tumorSize != null ? parseFloat(String(parsedData.tumorSize)) : 1.5;
-    const tumorVal = isNaN(rawTumor) ? 1.5 : rawTumor;
+    const rawTumor = parsedData.tumorSize !== "" && parsedData.tumorSize != null ? parseFloat(String(parsedData.tumorSize)) : null;
+    const tumorVal = rawTumor !== null && !isNaN(rawTumor) ? rawTumor : null;
 
-    let solidVal = 0.8;
+    let solidVal: number | null = null;
     if (isPureGgo) {
       solidVal = 0;
-    } else if (isPureSolid) {
+    } else if (isPureSolid && tumorVal !== null) {
       solidVal = tumorVal;
     } else if (parsedData.solidSize !== "" && parsedData.solidSize != null) {
       const parsedSolid = parseFloat(String(parsedData.solidSize));
-      solidVal = isNaN(parsedSolid) ? 0.8 : parsedSolid;
+      solidVal = isNaN(parsedSolid) ? null : parsedSolid;
     }
 
-    const currentCtr = isPureGgo ? 0 : isPureSolid ? 1.0 : (tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : 0);
+    const currentCtr = isPureGgo 
+      ? 0 
+      : isPureSolid 
+      ? 1.0 
+      : (tumorVal && solidVal !== null && tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : null);
 
     const isSystemicM0 = 
       parsedData.brainMri === 'negative' || 
@@ -836,10 +846,11 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">生物学性别</label>
                   <select 
-                    value={parsedData.sex || "female"} 
+                    value={parsedData.sex || "unknown"} 
                     onChange={e => setParsedData({...parsedData, sex: e.target.value})}
                     className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
                   >
+                    <option value="unknown">未提及 / 待确认</option>
                     <option value="female">女性 (Female)</option>
                     <option value="male">男性 (Male)</option>
                   </select>
@@ -851,26 +862,35 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     value={parsedData.age || ""} 
                     onChange={e => setParsedData({...parsedData, age: e.target.value})}
                     className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors"
-                    placeholder="如: 55"
+                    placeholder="如未提供可留空，如: 55"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">当前诊疗状态 / 手术术式</label>
-                  {parsedData.reportType === 'ct_imaging' && parsedData.surgeryType === 'unknown' ? (
-                    <div className="w-full h-10 px-3 py-2 bg-sky-50 border border-sky-200 rounded-xl text-xs font-bold text-sky-900 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-sky-500" />
-                      <span>尚未手术 (随访观察 / 术前评估)</span>
+                  {parsedData.reportType === 'ct_imaging' && (parsedData.surgeryType === 'unknown' || !parsedData.surgeryType) ? (
+                    <div className="w-full h-10 px-3 py-2 bg-sky-50 border border-sky-200 rounded-xl text-xs font-bold text-sky-900 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
+                        <span>尚未手术 (随访期 / 术前)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setParsedData({ ...parsedData, surgeryType: "segmentectomy" })}
+                        className="text-[11px] text-sky-700 hover:text-sky-900 underline font-semibold shrink-0 cursor-pointer"
+                      >
+                        改为已手术
+                      </button>
                     </div>
                   ) : (
                     <select 
-                      value={parsedData.surgeryType || "segmentectomy"} 
+                      value={parsedData.surgeryType || "unknown"} 
                       onChange={e => setParsedData({...parsedData, surgeryType: e.target.value})}
                       className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
                     >
+                      <option value="unknown">尚未手术 / 随访观察期</option>
                       <option value="segmentectomy">解剖性肺段切除 (Segmentectomy)</option>
                       <option value="lobectomy">标准肺叶切除 (Lobectomy)</option>
                       <option value="wedge">肺楔形切除 (Wedge Resection)</option>
-                      <option value="unknown">尚未手术 / 随访期</option>
                     </select>
                   )}
                 </div>
@@ -890,8 +910,44 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                 </div>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
-                  当前 CTR: {isPureGgo ? "0.0 (纯磨玻璃)" : isPureSolid ? "1.0 (纯实性)" : currentCtr}
+                  当前 CTR: {
+                    currentCtr === null 
+                      ? "待影像测量确认" 
+                      : isPureGgo 
+                      ? "0.0 (纯磨玻璃)" 
+                      : isPureSolid 
+                      ? "1.0 (纯实性)" 
+                      : currentCtr
+                  }
                 </span>
+              </div>
+
+              {/* CT Size Status Banner / Quick Toggle */}
+              <div className="flex items-center justify-between p-2.5 bg-slate-50/90 rounded-xl border border-slate-200/80 text-xs">
+                <span className="text-slate-600 font-medium">
+                  {parsedData.tumorSize !== "" && parsedData.tumorSize != null
+                    ? "✓ 已录入胸部薄层 CT 影像测量数据"
+                    : "⚠️ 未提供 CT 报告或结节大小数据（档案将显示待影像学确认）"}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {parsedData.tumorSize !== "" && parsedData.tumorSize != null ? (
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, tumorSize: "", solidSize: "", ctr: null })}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-500 hover:text-rose-600 hover:bg-white border border-slate-200 transition-colors cursor-pointer"
+                    >
+                      清空 / 标为未提供
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, tumorSize: "1.0", solidSize: "0", ctr: 0 })}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-colors cursor-pointer"
+                    >
+                      + 录入 CT 结节大小
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-3">
@@ -909,12 +965,12 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                           ctr: 0
                         });
                       } else if (newType === "pure_solid") {
-                        const curTumor = parsedData.tumorSize !== undefined && parsedData.tumorSize !== "" ? parsedData.tumorSize : "1.5";
+                        const curTumor = parsedData.tumorSize !== undefined && parsedData.tumorSize !== "" ? parsedData.tumorSize : "";
                         setParsedData({
                           ...parsedData,
                           noduleType: "pure_solid",
                           solidSize: curTumor,
-                          ctr: 1.0
+                          ctr: curTumor ? 1.0 : null
                         });
                       } else {
                         setParsedData({
@@ -947,7 +1003,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                           ...parsedData,
                           tumorSize: val,
                           solidSize: val,
-                          ctr: 1.0
+                          ctr: val ? 1.0 : null
                         });
                       } else if (isPureGgo) {
                         setParsedData({
@@ -964,7 +1020,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                       }
                     }}
                     className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors font-mono"
-                    placeholder="如: 1.5"
+                    placeholder="未提供可留空，如: 1.5"
                   />
                 </div>
 
@@ -1008,7 +1064,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                         ? "纯磨玻璃无实性成分 (0 cm)"
                         : isPureSolid
                         ? "纯实性病灶 (同总径)"
-                        : "如: 0.8"
+                        : "未提供可留空，如: 0.8"
                     }
                   />
                 </div>
@@ -1017,7 +1073,11 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
               <div className="text-[11px] text-slate-600 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between flex-wrap gap-2">
                 <span className="flex items-center gap-1.5">
                   <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  {isPureGgo ? (
+                  {tumorVal === null ? (
+                    <span>
+                      <strong>CT 影像数据待确认</strong>：暂未录入结节全径。如需准确测算实性成分比 (CTR) 与 TNM 临床分期，请根据胸部薄层 CT 报告填写。
+                    </span>
+                  ) : isPureGgo ? (
                     <span>
                       <strong>结节性质判定</strong>：纯磨玻璃结节 (pGGO)，实性浸润成分为 0，<strong>CTR = 0%</strong> (惰性极低危， Tis/T1mi 原位级别)
                     </span>
@@ -1027,12 +1087,14 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     </span>
                   ) : (
                     <span>
-                      <strong>CTR 计算公式</strong>：<strong>CT 实性成分最大径 ({solidVal}cm) ÷ 结节总全径 ({tumorVal}cm) = {currentCtr}</strong>
+                      <strong>CTR 计算公式</strong>：<strong>CT 实性成分最大径 ({solidVal !== null ? `${solidVal}cm` : '未测'}) ÷ 结节总全径 ({tumorVal}cm) = {currentCtr !== null ? currentCtr : '待输入实性成分'}</strong>
                     </span>
                   )}
                 </span>
                 <span className="text-teal-700 font-semibold flex items-center gap-1">
-                  {isPureGgo ? (
+                  {tumorVal === null ? (
+                    <span className="text-slate-400">待影像学补录</span>
+                  ) : isPureGgo ? (
                     <>
                       <Check className="w-3 h-3 text-teal-600" />
                       <span>纯磨玻璃结节 (贴壁生长，5年生存率近 100%)</span>
@@ -1042,7 +1104,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                       <AlertTriangle className="w-3 h-3 text-blue-600" />
                       <span>纯实性浸润 (依据实性总径确定 T 分期与评估切缘)</span>
                     </>
-                  ) : currentCtr <= 0.5 ? (
+                  ) : currentCtr !== null && currentCtr <= 0.5 ? (
                     <>
                       <Check className="w-3 h-3 text-teal-600" />
                       <span>CTR ≤ 0.5 (惰性浸润，5年无复发率高达99.7%)</span>
@@ -1090,10 +1152,12 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Lung-RADS 影像分级</label>
                   <select 
-                    value={parsedData.lungRads || "4A"} 
-                    onChange={e => setParsedData({...parsedData, lungRads: e.target.value})}
+                    value={parsedData.lungRads || ""} 
+                    onChange={e => setParsedData({...parsedData, lungRads: e.target.value || null})}
                     className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
                   >
+                    <option value="">未标注 / 不适用</option>
+                    <option value="2">2 类 (良性表现)</option>
                     <option value="3">3 类 (良性可能)</option>
                     <option value="4A">4A 类 (低度可疑恶性)</option>
                     <option value="4B">4B 类 (中度可疑恶性)</option>
@@ -1751,7 +1815,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 </div>
                 {(parsedData.tumorSize || parsedData.solidSize) && (
                   <div className="text-[11px] text-purple-800 pt-0.5 font-medium pl-5">
-                    🔍 术前薄层 CT 对照参考：影像结节总全径 <strong>{parsedData.tumorSize || 1.5} cm</strong> · CT实性浸润 <strong>{parsedData.solidSize || 0.8} cm</strong>
+                    🔍 术前薄层 CT 对照参考：影像结节总全径 <strong>{parsedData.tumorSize ? `${parsedData.tumorSize} cm` : '未测'}</strong> · CT实性浸润 <strong>{parsedData.solidSize ? `${parsedData.solidSize} cm` : '未测'}</strong>
                   </div>
                 )}
               </div>
@@ -1783,40 +1847,51 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">切缘状态 (Margin)</div>
-                    <div className="text-[11px] text-slate-400">手术残留排查</div>
+                    <div className="text-[10px] text-slate-400">手术残留排查</div>
                   </div>
-                  <div className="flex gap-1.5 h-[34px]">
+                  <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, marginStatus: "negative", margin: "negative" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.marginStatus !== "positive" && parsedData.margin !== "positive"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.marginStatus === "negative" || parsedData.margin === "negative"
                           ? "bg-emerald-500 text-white shadow-2xs"
-                          : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阴性 (R0安全)
+                      阴性(R0)
                     </button>
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, marginStatus: "positive", margin: "positive" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         parsedData.marginStatus === "positive" || parsedData.margin === "positive"
                           ? "bg-rose-500 text-white shadow-2xs"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      阳性(残留)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, marginStatus: null, margin: null })}
+                      className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        !parsedData.marginStatus && !parsedData.margin
+                          ? "bg-slate-700 text-white shadow-2xs"
                           : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                       }`}
                     >
-                      阳性 (有残留)
+                      未提及
                     </button>
                   </div>
                 </div>
 
-                {/* 2. Lymph Node N-Stage (IASLC 9th Edition: N0, N1, N2a, N2b, N3) */}
+                {/* 2. Lymph Node N-Stage (IASLC 9th Edition: N0, N1, N2a, N2b, Nx) */}
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between min-h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">淋巴结分期 (N)</div>
                     <div className="text-[10px] text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded font-bold border border-teal-200">
-                      第9版细分单/多站
+                      第9版标准
                     </div>
                   </div>
                   <div className="flex gap-1 h-[34px]">
@@ -1825,7 +1900,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                       { val: "N1", label: "N1(肺门)" },
                       { val: "N2a", label: "N2a(单站)" },
                       { val: "N2b", label: "N2b(多站)" },
-                      { val: "N3", label: "N3(对侧)" },
+                      { val: "Nx", label: "Nx(未查)" },
                     ].map((opt) => {
                       const currentN = parsedData.nStage || "N0";
                       const isSelected = currentN === opt.val || (opt.val === "N2a" && currentN === "N2");
@@ -1842,14 +1917,16 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                                 ? "bg-amber-500 text-white shadow-2xs"
                                 : opt.val === "N2a"
                                 ? "bg-blue-600 text-white shadow-2xs"
+                                : opt.val === "Nx"
+                                ? "bg-slate-700 text-white shadow-2xs"
                                 : "bg-rose-500 text-white shadow-2xs"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                           }`}
                           title={
-                            opt.val === "N2a" ? "IASLC第9版：同侧单站纵隔淋巴结转移 (较N2b预后明显更优，分期降级)" :
+                            opt.val === "N2a" ? "IASLC第9版：同侧单站纵隔淋巴结转移 (较N2b预后明显更优)" :
                             opt.val === "N2b" ? "IASLC第9版：同侧多站纵隔淋巴结转移 (局部广泛累及)" :
                             opt.val === "N1" ? "同侧支气管周或肺门淋巴结转移" :
-                            opt.val === "N0" ? "未发现区域淋巴结转移" : "对侧纵隔/锁骨上淋巴结转移"
+                            opt.val === "N0" ? "未发现区域淋巴结转移" : "未行淋巴结清扫或待评估"
                           }
                         >
                           {opt.label}
@@ -1863,26 +1940,35 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">胸膜侵犯 (VPI)</div>
-                    <div className="text-[11px] text-slate-400">脏层胸膜 PL1/2</div>
+                    <div className="text-[10px] text-slate-400">脏层胸膜 PL1/2</div>
                   </div>
-                  <div className="flex gap-1.5 h-[34px]">
+                  <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, vpi: "negative" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.vpi !== "positive" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.vpi === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阴性 (PL0)
+                      阴性(PL0)
                     </button>
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, vpi: "positive" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.vpi === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.vpi === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阳性 (PL1/2)
+                      阳性(PL1/2)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, vpi: null })}
+                      className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        !parsedData.vpi ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      未提及
                     </button>
                   </div>
                 </div>
@@ -1891,26 +1977,35 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">气道播散 (STAS)</div>
-                    <div className="text-[11px] text-slate-400">气腔微小巢漂移</div>
+                    <div className="text-[10px] text-slate-400">气腔微小巢漂移</div>
                   </div>
-                  <div className="flex gap-1.5 h-[34px]">
+                  <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, stas: "negative" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.stas !== "positive" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.stas === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阴性 (未见)
+                      阴性(未见)
                     </button>
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, stas: "positive" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.stas === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.stas === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阳性 (见播散)
+                      阳性(见播散)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, stas: null })}
+                      className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        !parsedData.stas ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      未提及
                     </button>
                   </div>
                 </div>
@@ -1919,26 +2014,35 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">脉管癌栓 (LVI)</div>
-                    <div className="text-[11px] text-slate-400">微血管/淋巴管</div>
+                    <div className="text-[10px] text-slate-400">微血管/淋巴管</div>
                   </div>
-                  <div className="flex gap-1.5 h-[34px]">
+                  <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, lvi: "negative" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.lvi !== "positive" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.lvi === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阴性 (无栓)
+                      阴性(无栓)
                     </button>
                     <button
                       type="button"
                       onClick={() => setParsedData({ ...parsedData, lvi: "positive" })}
-                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.lvi === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.lvi === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阳性 (有栓)
+                      阳性(有栓)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, lvi: null })}
+                      className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        !parsedData.lvi ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      未提及
                     </button>
                   </div>
                 </div>
@@ -1947,28 +2051,31 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">IASLC 病理分级</div>
-                    <div className="text-[11px] text-slate-400">高级别成分占比</div>
+                    <div className="text-[10px] text-slate-400">高级别成分占比</div>
                   </div>
-                  <div className="flex gap-1.5 h-[34px]">
+                  <div className="flex gap-1 h-[34px]">
                     {[
                       { val: "1", label: "G1(高分化)" },
                       { val: "2", label: "G2(中分化)" },
-                      { val: "3", label: "G3(高级别)" }
+                      { val: "3", label: "G3(低分化)" },
+                      { val: "", label: "未定" }
                     ].map(({ val, label }) => {
-                      const currentGrade = String(parsedData.iaslcGrade || parsedData.grade || "2");
-                      const isSelected = currentGrade === val;
+                      const currentGrade = String(parsedData.iaslcGrade || parsedData.grade || "");
+                      const isSelected = val === "" ? !currentGrade : currentGrade === val;
                       return (
                         <button
                           key={val}
                           type="button"
-                          onClick={() => setParsedData({ ...parsedData, grade: val, iaslcGrade: val })}
-                          className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                          onClick={() => setParsedData({ ...parsedData, grade: val || null, iaslcGrade: val || null })}
+                          className={`flex-1 text-[10px] sm:text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                             isSelected
                               ? val === "1"
                                 ? "bg-emerald-500 text-white shadow-2xs"
                                 : val === "2"
                                 ? "bg-blue-500 text-white shadow-2xs"
-                                : "bg-rose-500 text-white shadow-2xs"
+                                : val === "3"
+                                ? "bg-rose-500 text-white shadow-2xs"
+                                : "bg-slate-700 text-white shadow-2xs"
                               : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                           }`}
                         >
@@ -2621,7 +2728,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 
                 <div className="flex items-center gap-1.5">
                   <div className="flex-1 flex gap-1 overflow-x-auto py-0.5 no-scrollbar">
-                    {(parsedData.benignFindings || ["肝囊肿", "钙化点"]).map((item: string) => (
+                    {(Array.isArray(parsedData.benignFindings) ? parsedData.benignFindings : []).map((item: string) => (
                       <span key={item} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-medium shrink-0">
                         <span>{item}</span>
                         <button 
@@ -2633,6 +2740,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                         </button>
                       </span>
                     ))}
+                    {(!parsedData.benignFindings || parsedData.benignFindings.length === 0) && (
+                      <span className="text-[10px] text-slate-400 py-1">未检出/无伴发良性发现</span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
