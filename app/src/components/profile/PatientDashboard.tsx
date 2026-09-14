@@ -819,26 +819,6 @@ export default function PatientDashboard() {
         <SimilarCasesCard profile={profile} />
       </div>
 
-      {/* Bridge Banner to Longitudinal Timeline & Molecular Tracking */}
-      <div className="mb-6 bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-white rounded-3xl p-5 sm:p-6 border border-blue-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs hover:border-blue-300 transition-all">
-        <div className="space-y-1 max-w-2xl">
-          <div className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-blue-600 shrink-0" />
-            <span>长程时序演变、VDT 倍增速度与分子驱动基因追踪</span>
-          </div>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            结节随访生长轨迹、VDT 肿瘤倍增时间仪表盘 (Schwartz 模型) 及 NGS 驱动基因/DDI用药排雷已收录至<strong>「时间生命线」</strong>。
-          </p>
-        </div>
-        <Link
-          href="/timeline"
-          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 shrink-0 transition-all cursor-pointer whitespace-nowrap"
-        >
-          <span>查看时间生命线</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
-
       {/* Profile Update Intent Router Modal (方案 A: 意图分流弹窗) */}
 
       {/* Profile Update Intent Router Modal (3-Tier Standard Architecture) */}
