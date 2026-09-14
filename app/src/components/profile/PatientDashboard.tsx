@@ -319,45 +319,49 @@ export default function PatientDashboard() {
             PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 IASLC / AJCC 第 9 版 实性成分与前瞻性临床队列
           </p>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2 self-start sm:self-center shrink-0">
-          {/* 1. DDI Self-Check Button (SVG icon only) */}
-          <button
-            onClick={() => setShowDdiModal(true)}
-            className="p-2 sm:p-2.5 rounded-xl text-purple-700 bg-purple-50/70 hover:bg-purple-100/80 border border-purple-200 transition-all cursor-pointer shadow-2xs group flex items-center justify-center shrink-0"
-            title="靶向药与慢病用药相互作用 (DDI) 自检排查"
-            aria-label="用药自检"
-          >
-            <Pill className="w-4 h-4 text-purple-600 transition-transform group-hover:scale-110 shrink-0" />
-          </button>
-
-          {/* 2. Export Profile Poster Image (SVG icon only) */}
-          <button
-            onClick={() => setShowExportModal(true)}
-            className="p-2 sm:p-2.5 rounded-xl text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-2xs group flex items-center justify-center shrink-0"
-            title="一键导出高清数字档案全景卡 (PNG)"
-            aria-label="导出图片"
-          >
-            <Share2 className="w-4 h-4 text-slate-500 transition-transform group-hover:scale-110 shrink-0" />
-          </button>
-
-          {/* 3. Edit Profile (SVG icon only) */}
+        {/* Ergonomic Segmented Capsule Dock (校对 -> 用药 -> 导出 -> [隔离线] -> 清空) */}
+        <div className="flex items-center bg-slate-100/80 p-1 sm:p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs self-start sm:self-center shrink-0">
+          {/* 1. 校对指标 (Primary Core Action - White elevated pill with Blue accent) */}
           <button 
             onClick={() => setShowUpdateModal(true)}
-            className="p-2 sm:p-2.5 rounded-xl text-blue-700 bg-blue-50/70 hover:bg-blue-100/80 border border-blue-200 transition-all cursor-pointer shadow-2xs group flex items-center justify-center shrink-0"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-blue-700 bg-white hover:bg-blue-50/80 border border-blue-200/60 shadow-2xs text-xs font-bold transition-all active:scale-95 cursor-pointer"
             title="校对或更新患者病理、分期与临床指标"
-            aria-label="校对指标"
           >
-            <Edit3 className="w-4 h-4 text-blue-600 transition-transform group-hover:scale-110 shrink-0" />
+            <Edit3 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="text-[11px] font-extrabold">校对</span>
           </button>
 
-          {/* 4. Clear/Delete Profile (SVG icon only) */}
+          {/* 2. 用药自检 (Clinical Diagnostic Utility - Purple) */}
+          <button
+            onClick={() => setShowDdiModal(true)}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-purple-700 hover:bg-white/80 hover:shadow-2xs text-xs font-bold transition-all active:scale-95 cursor-pointer"
+            title="靶向药与慢病用药相互作用 (DDI) 自检排查"
+          >
+            <Pill className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+            <span className="text-[11px] font-bold">用药</span>
+          </button>
+
+          {/* 3. 导出图片 (Output & Sharing Utility - Slate) */}
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-slate-700 hover:bg-white/80 hover:shadow-2xs text-xs font-bold transition-all active:scale-95 cursor-pointer"
+            title="一键导出高清数字档案全景卡 (PNG)"
+          >
+            <Share2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <span className="text-[11px] font-bold">导出</span>
+          </button>
+
+          {/* Safety Divider: Physical separation to prevent accidental taps on mobile */}
+          <div className="w-px h-4 bg-slate-300/80 mx-1 self-center shrink-0" />
+
+          {/* 4. 清空档案 (Destructive Action - Muted, segregated, alert on hover) */}
           <button 
             onClick={() => setShowDeleteModal(true)}
-            className="p-2 sm:p-2.5 rounded-xl text-rose-700 bg-rose-50/70 hover:bg-rose-100/80 border border-rose-200 transition-all cursor-pointer shadow-2xs group flex items-center justify-center shrink-0"
+            className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50/80 transition-all active:scale-95 cursor-pointer shrink-0"
             title="彻底销毁并重置本地与云端档案"
             aria-label="清空档案"
           >
-            <Trash2 className="w-4 h-4 text-rose-600 transition-transform group-hover:scale-110 shrink-0" />
+            <Trash2 className="w-3.5 h-3.5 shrink-0" />
           </button>
         </div>
       </div>
