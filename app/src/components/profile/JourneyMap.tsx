@@ -182,7 +182,7 @@ function TrackRow({ title, icon, themeColor, stages, currentIndex, activeTag }: 
 
                 {/* Symmetrical Circle Indicator Node */}
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-xs
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center transition-colors duration-200 shadow-xs
                     ${isActive 
                       ? `bg-white ${colors.activeRing}` 
                       : isPast 

@@ -138,10 +138,28 @@ export default function PatientDashboard() {
   };
 
   useEffect(() => {
-    loadProfile(true);
+    // 1. Synchronously read cached profile from localStorage for instant 0ms dashboard paint
+    let hasCached = false;
+    if (typeof window !== "undefined") {
+      const localCached = localStorage.getItem("oncopath_profile");
+      if (localCached) {
+        try {
+          const parsed = JSON.parse(localCached);
+          if (parsed && (parsed.stage || parsed.noduleType || parsed.tumorSize || parsed.organ)) {
+            setProfile(parsed);
+            setLoading(false);
+            setShowUploader(false);
+            hasCached = true;
+          }
+        } catch {}
+      }
+    }
+
+    // 2. Fetch server update in background (silent refresh if cached, spinner only if clean slate)
+    loadProfile(!hasCached);
 
     const handleAuthChange = () => {
-      loadProfile(true);
+      loadProfile(false);
     };
 
     window.addEventListener("auth-change", handleAuthChange);
@@ -291,7 +309,7 @@ export default function PatientDashboard() {
     : '混合磨玻璃结节 (mGGO)';
 
   return (
-    <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pb-6 transition-all">
+    <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pb-6">
       <ConsentModal />
       
       {/* Header */}
@@ -389,7 +407,7 @@ export default function PatientDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 mb-6">
         
         {/* Bento Box 1: Primary CT Imaging & Solid Component (T-Staging) */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-colors duration-200">
 
           <div>
             <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
@@ -492,7 +510,7 @@ export default function PatientDashboard() {
         </div>
 
         {/* Bento Box 2: Pathology High-Risk Indicators & Ki-67 (N-Stage & Invasive Factors) */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-colors duration-200">
           <div>
             <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -641,7 +659,7 @@ export default function PatientDashboard() {
         </div>
 
         {/* Bento Box 3: Systemic Staging & Benign Findings (M-Staging) */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-colors duration-200">
           <div>
             <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -739,7 +757,7 @@ export default function PatientDashboard() {
         </div>
 
         {/* Bento Box 4: AI Decision Engine & Actionable Next Steps */}
-        <div className="bg-gradient-to-br from-blue-50/50 via-white to-sky-50/30 rounded-3xl p-4 sm:p-6 md:p-7 border border-blue-200/80 shadow-sm flex flex-col justify-between hover:border-blue-300 transition-all">
+        <div className="bg-gradient-to-br from-blue-50/50 via-white to-sky-50/30 rounded-3xl p-4 sm:p-6 md:p-7 border border-blue-200/80 shadow-sm flex flex-col justify-between hover:border-blue-300 transition-colors duration-200">
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-blue-100/80">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -811,7 +829,7 @@ export default function PatientDashboard() {
       </div>
 
       {/* Molecular Profiling & Precision Targeting Feature Card */}
-      <div className="mb-6 bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-sm hover:border-slate-300 transition-all">
+      <div className="mb-6 bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-sm hover:border-slate-300 transition-colors duration-200">
         <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 flex-wrap">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center shrink-0">

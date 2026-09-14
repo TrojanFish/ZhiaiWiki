@@ -24,7 +24,7 @@ export default function AboutPage() {
 
   const [copied, setCopied] = useState(false);
   const [previewImage, setPreviewImage] = useState<{ src: string; title: string } | null>(null);
-  const contactEmail = "contact@oncopath.org";
+  const contactEmail = "2909138455@qq.com";
 
   // Support Esc key to dismiss QR modal
   useEffect(() => {
@@ -39,9 +39,35 @@ export default function AboutPage() {
   }, [previewImage]);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(contactEmail);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(contactEmail)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2500);
+        })
+        .catch(() => fallbackCopy(contactEmail));
+    } else {
+      fallbackCopy(contactEmail);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {
+      console.error("Fallback copy failed", err);
+    }
   };
 
   return (
@@ -209,7 +235,6 @@ export default function AboutPage() {
                   <div id="wechat-qr-placeholder" className="hidden flex-col items-center justify-center text-slate-400 text-center p-2">
                     <QrCode className="w-10 h-10 text-slate-400 mb-1.5" />
                     <span className="text-xs font-bold text-slate-600">微信交流二维码</span>
-                    <span className="text-[10px] text-slate-400 mt-1">（待添加 wechat_qr.png）</span>
                   </div>
                   <div className="absolute inset-0 bg-teal-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                     <span className="bg-white/90 text-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs backdrop-blur-xs flex items-center gap-1">
@@ -225,25 +250,25 @@ export default function AboutPage() {
               </div>
 
               {/* Card 2: Server Support Tip / Sponsorship */}
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 text-center flex flex-col items-center justify-between space-y-4 hover:border-blue-300 transition-colors">
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 text-center flex flex-col items-center justify-between space-y-4 hover:border-amber-300 transition-colors">
                 <div className="space-y-1">
                   <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
                     <Coffee className="w-3.5 h-3.5" />
                     <span>支持服务器与算力支出</span>
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900">自愿赞助一杯清茶</h4>
+                  <h4 className="text-sm font-bold text-slate-900">请喝咖啡 · 自愿赞赏</h4>
                   <p className="text-xs text-slate-500">所有赞助将全部用于覆盖 VPS 服务器、域名与大模型 Token 成本</p>
                 </div>
 
                 {/* QR Slot */}
                 <div 
-                  onClick={() => setPreviewImage({ src: "/sponsor_qr.png", title: "赞赏支持二维码" })}
+                  onClick={() => setPreviewImage({ src: "/sponsor_qr.png", title: "请喝咖啡 · 赞赏支持码" })}
                   className="w-48 h-48 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400 hover:shadow-md transition-all"
                   title="点击放大查看 / 微信扫码"
                 >
                   <img 
                     src="/sponsor_qr.png" 
-                    alt="赞赏支持二维码" 
+                    alt="给 Keiyee 赞赏" 
                     className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = 'none';
@@ -254,7 +279,6 @@ export default function AboutPage() {
                   <div id="sponsor-qr-placeholder" className="hidden flex-col items-center justify-center text-slate-400 text-center p-2">
                     <Coffee className="w-10 h-10 text-slate-400 mb-1.5" />
                     <span className="text-xs font-bold text-slate-600">自愿赞赏支持码</span>
-                    <span className="text-[10px] text-slate-400 mt-1">（待添加 sponsor_qr.png）</span>
                   </div>
                   <div className="absolute inset-0 bg-amber-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                     <span className="bg-white/90 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs backdrop-blur-xs flex items-center gap-1">
@@ -273,25 +297,27 @@ export default function AboutPage() {
 
             {/* Email Contact & Bug Report */}
             <div className="bg-gradient-to-r from-blue-50/70 to-teal-50/70 p-5 rounded-2xl border border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <div className="text-xs font-bold text-blue-900 flex items-center justify-center sm:justify-start gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-blue-700" />
                   <span>专业建议与纠错反馈</span>
                 </div>
-                <p className="text-xs text-slate-600">
-                  欢迎胸外科、病理科、肿瘤内科医师及病友提出宝贵指正。每一封邮件我都会认真研读并持续迭代系统。
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  欢迎胸外科、病理科、肿瘤内科医师及病友提出宝贵指正。联系邮箱：<span className="font-mono font-bold text-blue-700 bg-white/80 px-2 py-0.5 rounded border border-blue-200/60 select-all">2909138455@qq.com</span>
                 </p>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
                 <button
+                  type="button"
                   onClick={handleCopyEmail}
-                  className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-blue-700 text-xs font-bold border border-blue-200 shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-blue-700 text-xs font-bold border border-blue-200 shadow-2xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  title="点击复制联系邮箱 2909138455@qq.com"
                 >
                   {copied ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>已复制邮箱</span>
+                      <span className="text-emerald-700">已复制 2909138455@qq.com</span>
                     </>
                   ) : (
                     <>

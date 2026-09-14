@@ -21,7 +21,7 @@ export function TumorMarkersCard({
   const isAllNormal = hasData && evaluations.every((item) => item.status === "normal");
 
   return (
-    <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm space-y-5 hover:border-slate-300 transition-all">
+    <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm space-y-5 hover:border-slate-300 transition-colors duration-200">
 
 
       {/* Header */}

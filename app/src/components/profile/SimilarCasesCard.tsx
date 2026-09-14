@@ -54,7 +54,7 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
   if (!cohort) return null;
 
   return (
-    <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm relative group hover:border-slate-300 transition-all">
+    <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm relative group hover:border-slate-300 transition-colors duration-200">
       
       {/* Background Soft Ambient Light (Clipped independently to prevent Tooltip clipping) */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">

@@ -71,16 +71,16 @@ export default function HomePage() {
           ref={heroRef}
           className="relative min-h-[85vh] flex items-center bg-gradient-to-b from-blue-50/40 via-slate-50 to-white overflow-hidden pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-16"
         >
-          {/* Ambient background glow orbs with pure CSS animation (Zero JS main-thread scroll lag) */}
+          {/* Ambient background glow orbs (Static high-performance CSS gradient, Zero JS/GPU repaint jitter) */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div
-              className="absolute top-10 left-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl animate-pulse"
+              className="absolute top-10 left-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl pointer-events-none"
               style={{
                 background: "radial-gradient(circle, #38bdf8 0%, #0d9488 40%, transparent 70%)",
               }}
             />
             <div
-              className="absolute bottom-10 right-10 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl"
+              className="absolute bottom-10 right-10 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl pointer-events-none"
               style={{
                 background: "radial-gradient(circle, #2563eb 0%, transparent 70%)",
               }}
@@ -116,14 +116,14 @@ export default function HomePage() {
                 不再面对晦涩冰冷的医学术语盲目焦虑。AI 自动结构化提取 CT 影像征象、TNM 分期与分子靶点，无缝匹配 JTO、Lancet、JCO 顶级期刊真实患者队列与生存数据。
               </p>
 
-              {/* CTA Action Buttons */}
+              {/* CTA Action Buttons: min-w-[210px] prevents horizontal button resize jitter upon auth detection */}
               <div className="flex flex-wrap items-center gap-3.5 pt-2 animate-fade-in-up stagger-3">
                 <Link
                   href="/profile"
-                  className="btn-primary px-7 py-3.5 rounded-2xl text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="btn-primary min-w-[210px] px-7 py-3.5 rounded-2xl text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <FileText className="w-5 h-5" />
-                  <span>{hasProfile || userEmail ? "进入我的临床数字档案" : "建立临床数字档案"}</span>
+                  <FileText className="w-5 h-5 shrink-0" />
+                  <span suppressHydrationWarning>{hasProfile || userEmail ? "进入我的临床数字档案" : "建立临床数字档案"}</span>
                 </Link>
               </div>
 

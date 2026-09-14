@@ -283,11 +283,11 @@ select:focus-visible {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Step wizard slide-in animation — triggered by key={`step-${currentStep}`} re-mount */

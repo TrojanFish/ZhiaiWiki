@@ -184,20 +184,15 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
     );
   }, [lang]);
 
-  if (!mounted) {
-    return showFullLabel ? (
-      <div className={`h-8 w-24 rounded-xl bg-slate-100 animate-pulse ${className}`} />
-    ) : (
-      <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 animate-pulse ${className}`} />
-    );
-  }
-
+  // Synchronously render the button matching default "cn" language immediately during SSR & hydration
+  // Eliminating the gray pulse placeholder delay so it renders simultaneously with the Search button
   if (showFullLabel) {
     return (
       <button
         type="button"
         onClick={handleToggle}
-        className={`group relative inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-2xs cursor-pointer select-none active:scale-95 ${
+        suppressHydrationWarning
+        className={`group relative inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border shadow-2xs cursor-pointer select-none active:scale-95 ${
           lang === "tw"
             ? "bg-blue-50/90 text-blue-700 border-blue-200 hover:bg-blue-100"
             : "bg-slate-50/90 text-slate-700 border-slate-200/90 hover:bg-slate-100 hover:text-slate-900"
@@ -206,7 +201,7 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
         aria-label="简繁语言转换 / 簡繁語言轉換"
       >
         <Languages className={`w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110 ${lang === "tw" ? "text-blue-600" : "text-slate-500 group-hover:text-blue-600"}`} />
-        <span className="font-semibold tracking-tight text-xs">
+        <span suppressHydrationWarning className="font-semibold tracking-tight text-xs">
           {lang === "cn" ? "繁體中文" : "简体中文"}
         </span>
       </button>
@@ -217,7 +212,8 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
     <button
       type="button"
       onClick={handleToggle}
-      className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full inline-flex items-center justify-center transition-all border shadow-2xs cursor-pointer select-none active:scale-95 ${
+      suppressHydrationWarning
+      className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full inline-flex items-center justify-center transition-colors border shadow-2xs cursor-pointer select-none active:scale-95 ${
         lang === "tw"
           ? "bg-blue-50/90 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300"
           : "bg-slate-100/90 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900"
@@ -226,7 +222,7 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
       aria-label="简繁语言转换 / 簡繁語言轉換"
     >
       <Languages className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 transition-transform group-hover:scale-110 ${lang === "tw" ? "text-blue-600" : "text-slate-500 group-hover:text-blue-600"}`} />
-      <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-[15px] px-0.5 text-[9px] font-extrabold rounded-full bg-slate-800 group-hover:bg-blue-600 text-white flex items-center justify-center leading-none border-2 border-white shadow-2xs transition-colors pointer-events-none">
+      <span suppressHydrationWarning className="absolute -top-0.5 -right-0.5 min-w-[15px] h-[15px] px-0.5 text-[9px] font-extrabold rounded-full bg-slate-800 group-hover:bg-blue-600 text-white flex items-center justify-center leading-none border-2 border-white shadow-2xs transition-colors pointer-events-none">
         {lang === "cn" ? "繁" : "简"}
       </span>
     </button>
