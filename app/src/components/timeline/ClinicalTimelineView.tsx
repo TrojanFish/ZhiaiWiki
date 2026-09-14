@@ -26,9 +26,14 @@ import TimelineCategoryIcon from "./TimelineCategoryIcon";
 import ClinicalSynopsisTimeline from "./ClinicalSynopsisTimeline";
 import { triggerHaptic } from "@/lib/haptics";
 import EmptyState from "@/components/common/EmptyState";
+import type { PatientProfile, FollowUpRecord } from "@/lib/types";
+import { NoduleTimelineChart } from "@/components/profile/NoduleTimelineChart";
+import { MolecularProfileCard } from "@/components/profile/MolecularProfileCard";
+import { DdiCheckerVisual } from "@/components/wiki/visuals/DdiCheckerVisual";
 
 export default function ClinicalTimelineView() {
   const [events, setEvents] = useState<TimelineEventItem[]>([]);
+  const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [activeCategory, setActiveCategory] = useState<TimelineCategory | "all">("all");
   const [selectedYear, setSelectedYear] = useState<string | "all">("all");
@@ -37,6 +42,7 @@ export default function ClinicalTimelineView() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TimelineEventItem | null>(null);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [showDdiModal, setShowDdiModal] = useState(false);
   const [hoveredTimelineDate, setHoveredTimelineDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,6 +54,35 @@ export default function ClinicalTimelineView() {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const guestId = typeof window !== "undefined" ? localStorage.getItem("guestId") : null;
+
+      // Sync active profile from localStorage or API
+      let currentProfile: PatientProfile | null = null;
+      const savedProfileStr = typeof window !== "undefined" ? (localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile")) : null;
+      if (savedProfileStr) {
+        try {
+          currentProfile = JSON.parse(savedProfileStr);
+          setProfile(currentProfile);
+        } catch {}
+      }
+
+      if (!currentProfile) {
+        try {
+          const pUrl = guestId ? `/api/profile?userId=${encodeURIComponent(guestId)}` : "/api/profile";
+          const pRes = await fetch(pUrl, {
+            credentials: "same-origin",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          const pData = await pRes.json();
+          if (pData?.profile) {
+            currentProfile = pData.profile;
+            setProfile(currentProfile);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("oncopath_profile", JSON.stringify(currentProfile));
+            }
+          }
+        } catch {}
+      }
+
       const url = guestId ? `/api/timeline?userId=${encodeURIComponent(guestId)}` : "/api/timeline";
       const res = await fetch(url, {
         credentials: "same-origin",
@@ -70,11 +105,9 @@ export default function ClinicalTimelineView() {
         }
         
         // Auto-derive from saved profile if available
-        const savedProfileStr = localStorage.getItem("oncopath_profile");
-        if (savedProfileStr) {
+        if (currentProfile) {
           try {
-            const savedProfile = JSON.parse(savedProfileStr);
-            const derived = deriveTimelineEventsFromProfile(savedProfile);
+            const derived = deriveTimelineEventsFromProfile(currentProfile);
             if (derived.length > 0) {
               setEvents(derived);
               setIsDemoMode(false);
@@ -319,6 +352,68 @@ export default function ClinicalTimelineView() {
     return events.find((e) => e.subType === "Surgery" || e.category === "milestone");
   }, [events]);
 
+  // Derive follow-up history for NoduleTimelineChart (from profile or events)
+  const followUpHistory = useMemo(() => {
+    if (profile?.followUpHistory && profile.followUpHistory.length > 0) {
+      return profile.followUpHistory;
+    }
+    // Derive from imaging events if any
+    const imaging: FollowUpRecord[] = events
+      .filter((e) => e.category === "imaging" && e.keyFindings?.sizeMm !== undefined)
+      .map((e) => {
+        const tumorSize = Number(e.keyFindings?.sizeMm || 0) / 10;
+        const solidSize = e.keyFindings?.solidSizeMm !== undefined 
+          ? Number(e.keyFindings.solidSizeMm) / 10 
+          : (e.keyFindings?.ctr !== undefined ? Number((tumorSize * Number(e.keyFindings.ctr)).toFixed(2)) : 0);
+        const ctr = e.keyFindings?.ctr !== undefined 
+          ? Number(e.keyFindings.ctr) 
+          : (tumorSize > 0 ? Number((solidSize / tumorSize).toFixed(2)) : 0);
+        return {
+          id: e.id,
+          date: e.eventDate,
+          tumorSize,
+          solidSize,
+          ctr,
+          noduleType: e.keyFindings?.noduleType === "pGGO" ? "pure_ggo" : e.keyFindings?.noduleType === "solid" ? "pure_solid" : "mixed_ggo",
+          lungRads: e.keyFindings?.lungRads,
+          note: e.title,
+        };
+      })
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return imaging.length > 0 ? imaging : undefined;
+  }, [profile, events]);
+
+  const { recommendedTargetDrugId, matchedGeneLabel } = useMemo(() => {
+    if (!profile) return { recommendedTargetDrugId: 'osimertinib', matchedGeneLabel: '常规用药参考' };
+    const mutations = (Array.isArray(profile.geneMutations) && profile.geneMutations.length > 0)
+      ? profile.geneMutations
+      : (Array.isArray(profile.molecular?.mutations) && profile.molecular.mutations.length > 0)
+      ? profile.molecular.mutations
+      : (profile.egfr === 'positive' ? [{ gene: 'EGFR', subtype: '敏感突变' }] : []);
+    
+    const egfrMut = mutations.find((m: any) => m.gene === 'EGFR');
+    const alkMut = mutations.find((m: any) => m.gene === 'ALK');
+    const krasMut = mutations.find((m: any) => m.gene === 'KRAS');
+    const metMut = mutations.find((m: any) => m.gene === 'MET');
+
+    if (egfrMut || profile.egfr === 'positive') {
+      return { recommendedTargetDrugId: 'osimertinib', matchedGeneLabel: `EGFR 突变 (${egfrMut?.subtype || '敏感突变'})` };
+    }
+    if (alkMut) {
+      return { recommendedTargetDrugId: 'alectinib', matchedGeneLabel: `ALK 融合 (${alkMut?.subtype || '阳性'})` };
+    }
+    if (krasMut) {
+      return { recommendedTargetDrugId: 'sotorasib', matchedGeneLabel: `KRAS 突变 (${krasMut?.subtype || 'G12C'})` };
+    }
+    if (metMut) {
+      return { recommendedTargetDrugId: 'savolitinib', matchedGeneLabel: `MET 异常 (${metMut?.subtype || 'exon 14'})` };
+    }
+    return { 
+      recommendedTargetDrugId: 'osimertinib', 
+      matchedGeneLabel: profile.stage ? `${profile.stage}期常规辅助用药评估` : '常规靶向辅助用药评估' 
+    };
+  }, [profile]);
+
   if (loading) {
     return (
       <div className="py-20 text-center space-y-3 animate-fade-in">
@@ -456,8 +551,8 @@ export default function ClinicalTimelineView() {
       </div>
 
 
-      {/* 2. Empty State (When user has 0 records) */}
-      {events.length === 0 ? (
+      {/* 2. Empty State (When user has 0 records and no saved profile) */}
+      {events.length === 0 && !profile ? (
         <EmptyState
           icon="calendar"
           title="您尚未录入任何检查报告"
@@ -492,6 +587,19 @@ export default function ClinicalTimelineView() {
         />
       ) : (
         <>
+          {/* Longitudinal Dynamics: CT Nodule Trajectory & VDT Dashboard (Schwartz Model) */}
+          <NoduleTimelineChart 
+            history={followUpHistory} 
+            profile={profile} 
+          />
+
+          {/* Molecular Pathology & Driver Gene Profiling (NGS Panel & DDI Action) */}
+          <MolecularProfileCard 
+            profile={profile} 
+            events={events}
+            onOpenDdiModal={() => setShowDdiModal(true)} 
+          />
+
           {/* 3. View Mode Toggle & Category Filter Controls */}
           <div className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -756,6 +864,27 @@ export default function ClinicalTimelineView() {
           events={events.length > 0 ? events : DEFAULT_TIMELINE_EVENTS}
           onClose={() => setShowSummaryModal(false)}
         />
+      )}
+
+      {/* DDI Drug-Drug Interaction Modal */}
+      {showDdiModal && (
+        <div 
+          onClick={() => setShowDdiModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-y-auto"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl shadow-2xl my-auto overflow-hidden bg-white"
+          >
+            <DdiCheckerVisual
+              initialTargetDrugId={recommendedTargetDrugId}
+              geneInfo={matchedGeneLabel}
+              isEarlyStageIA={Boolean(profile?.stage?.startsWith("IA") || ((profile?.tStage === "T1a" || profile?.tStage === "T1b" || profile?.tStage === "T1c" || profile?.tStage === "T1mi") && (profile?.nStage === "N0" || !profile?.nStage)))}
+              isModalMode={true}
+              onClose={() => setShowDdiModal(false)}
+            />
+          </div>
+        </div>
       )}
 
     </div>
