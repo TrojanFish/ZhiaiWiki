@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   HeartHandshake, 
+  ChevronLeft,
   BookOpen, 
   Microscope, 
   ClipboardList, 
@@ -76,11 +77,11 @@ export default function AboutPage() {
         
         {/* Top Navigation */}
         <div className="flex items-center justify-between">
-
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors"
           >
+            <ChevronLeft className="w-4 h-4 text-slate-500" />
             <span>返回首页</span>
           </Link>
           <span className="text-xs text-slate-400 font-mono">OncoPath · 创作者初衷</span>
@@ -338,6 +339,16 @@ export default function AboutPage() {
             </div>
             <div className="font-bold text-slate-700">
               —— OncoPath 创作者 · 与您并肩同行
+            </div>
+          </div>
+
+          {/* Quick Sub-Links */}
+          <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div>© 2026 OncoPath 创作者初衷 · 官方网址：lung.dpdns.org</div>
+            <div className="flex items-center gap-3">
+              <Link href="/terms" className="text-blue-600 hover:underline font-medium">查看《服务协议与免责声明》</Link>
+              <span>·</span>
+              <Link href="/privacy" className="text-blue-600 hover:underline font-medium">查看完整《隐私政策》</Link>
             </div>
           </div>
 
