@@ -50,9 +50,14 @@ export default function VdtGauge({
             <Activity className="w-4 h-4 text-sky-600" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-xs sm:text-sm font-bold text-slate-800 leading-snug truncate">
-              VDT 肿瘤倍增时间仪表盘 (Schwartz 模型)
-            </h4>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-800 leading-snug truncate">
+                VDT 肿瘤倍增时间仪表盘
+              </h4>
+              <span className="text-[10px] font-mono font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                Fleischner 2024 / Schwartz 模型
+              </span>
+            </div>
             <span className="text-xs text-slate-400 font-mono block truncate">
               基于历次薄层 CT 三维体积测算结节生长速度
             </span>
@@ -164,7 +169,7 @@ export default function VdtGauge({
       <div className="grid grid-cols-3 gap-2 text-center pt-2 border-t border-slate-200/70">
         <div className="bg-white p-2.5 rounded-xl border border-slate-100 min-w-0 shadow-2xs">
           <div className="text-xs text-slate-500 truncate mb-0.5">测算倍增时间</div>
-          <div className="text-xs sm:text-sm font-black font-mono text-slate-900 truncate">
+          <div className="text-xs sm:text-sm font-black font-mono tabular-nums text-slate-900 truncate">
             {growthCategory === "shrinking"
               ? "吸收缩小"
               : growthCategory === "stable"
@@ -177,14 +182,14 @@ export default function VdtGauge({
 
         <div className="bg-white p-2.5 rounded-xl border border-slate-100 min-w-0 shadow-2xs">
           <div className="text-xs text-slate-500 truncate mb-0.5">实性/总径变化</div>
-          <div className={`text-xs sm:text-sm font-black font-mono truncate ${sizeChangeMm > 0 ? "text-amber-700" : sizeChangeMm < 0 ? "text-emerald-700" : "text-slate-900"}`}>
+          <div className={`text-xs sm:text-sm font-black font-mono tabular-nums truncate ${sizeChangeMm > 0 ? "text-amber-700" : sizeChangeMm < 0 ? "text-emerald-700" : "text-slate-900"}`}>
             {sizeChangeMm > 0 ? `+${sizeChangeMm} mm` : sizeChangeMm < 0 ? `${sizeChangeMm} mm` : "0.0 mm"}
           </div>
         </div>
 
         <div className="bg-white p-2.5 rounded-xl border border-slate-100 min-w-0 shadow-2xs">
           <div className="text-xs text-slate-500 truncate mb-0.5">随访跨度</div>
-          <div className="text-xs sm:text-sm font-black font-mono text-slate-900 truncate">
+          <div className="text-xs sm:text-sm font-black font-mono tabular-nums text-slate-900 truncate">
             {recordCount > 1 ? `${recordCount} 次检查` : "首次基线"}
           </div>
         </div>

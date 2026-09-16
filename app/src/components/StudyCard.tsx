@@ -63,7 +63,7 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
             {STUDY_TYPE_LABELS[study.studyType as keyof typeof STUDY_TYPE_LABELS] || study.studyType}
           </span>
           <div className="flex items-center gap-2 text-xs text-text-muted">
-            <span>{study.patientN.toLocaleString()}例</span>
+            <span className="font-mono tabular-nums">{study.patientN.toLocaleString()}例</span>
             <EvidenceRating level={study.evidenceLevel} maxLevel={5} size="sm" />
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
             <h3 className="text-slate-900 text-sm font-bold leading-snug">{study.title}</h3>
           </div>
           <div className="flex-shrink-0 text-right">
-            <div className="text-lg font-bold text-slate-900">{study.patientN > 0 ? study.patientN.toLocaleString() : "N/A"}</div>
+            <div className="text-lg font-black font-mono tabular-nums text-slate-900">{study.patientN > 0 ? study.patientN.toLocaleString() : "N/A"}</div>
             <div className="text-slate-400 text-[11px]">例患者队列</div>
           </div>
         </div>
@@ -106,15 +106,15 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
 
         {/* Frontier Biomarker & Intervention badges if available */}
         {(study.biomarkerDetails || study.riskReduction || study.interventionArm) && (
-          <div className="mb-4 p-3 rounded-xl bg-blue-50/60 border border-blue-100 text-xs space-y-1.5">
+          <div className="mb-4 p-3 rounded-r-xl border border-slate-200/90 border-l-4 border-l-sky-600 bg-slate-50/80 text-xs space-y-1.5 shadow-2xs">
             {study.biomarkerDetails && (
-              <div className="text-blue-900 font-semibold flex items-center gap-1.5">
-                <Dna className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>靶点亚型: {study.biomarkerDetails}</span>
+              <div className="text-slate-800 font-semibold flex items-center gap-1.5">
+                <Dna className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                <span>靶点亚型: <strong className="font-mono text-slate-900">{study.biomarkerDetails}</strong></span>
               </div>
             )}
             {study.riskReduction && (
-              <div className="text-emerald-700 font-bold flex items-center gap-1.5">
+              <div className="text-emerald-700 font-bold flex items-center gap-1.5 font-mono tabular-nums">
                 <TrendingDown className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span>临床获益: {study.riskReduction}</span>
               </div>
@@ -144,7 +144,7 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
       <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-1.5 flex-wrap">
           {study.relevantFactors.slice(0, 3).map((f) => (
-            <span key={f} className="bg-slate-100 text-slate-600 text-[11px] font-medium px-2 py-0.5 rounded">
+            <span key={f} className="font-mono text-[10px] font-semibold bg-slate-100/90 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60">
               {f}
             </span>
           ))}
@@ -158,10 +158,10 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
               href={sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-accent-blue text-accent-blue hover:text-white border border-blue-200 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>查看原文出处</span>
+              <span>查看原文 (DOI)</span>
             </a>
           ) : (
             <span className="text-[11px] text-slate-400">已收录于内部医学库</span>

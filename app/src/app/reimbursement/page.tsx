@@ -755,7 +755,7 @@ export default function ReimbursementPage() {
                     <span className="text-xs font-bold text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/30">
                       {currentDrug.insuranceCategory}
                     </span>
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
+                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30 font-mono tabular-nums">
                       综合减负约 {stats.savingsPercent}%
                     </span>
                   </div>
@@ -764,28 +764,28 @@ export default function ReimbursementPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                   <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
                     <div className="text-[10px] text-slate-400">国谈前原自费</div>
-                    <div className="text-sm sm:text-base font-bold text-slate-400 line-through font-mono">
+                    <div className="text-sm sm:text-base font-bold text-slate-400 line-through font-mono tabular-nums">
                       ¥{currentDrug.originalPrice}/月
                     </div>
                   </div>
 
                   <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
                     <div className="text-[10px] text-slate-400">现行医保基准价</div>
-                    <div className="text-sm sm:text-base font-bold text-sky-300 font-mono">
+                    <div className="text-sm sm:text-base font-bold text-sky-300 font-mono tabular-nums">
                       ¥{currentDrug.negotiatedPrice}/月
                     </div>
                   </div>
 
                   <div className="p-3 bg-blue-900/60 rounded-xl border border-blue-500/50">
                     <div className="text-[10px] text-blue-300">医保统筹报销预估</div>
-                    <div className="text-sm sm:text-base font-bold text-blue-200 font-mono">
+                    <div className="text-sm sm:text-base font-bold text-blue-200 font-mono tabular-nums">
                       -¥{stats.insurancePaid}/月
                     </div>
                   </div>
 
                   <div className="p-3 bg-emerald-950/80 rounded-xl border border-emerald-500/60">
                     <div className="text-[10px] text-emerald-300 font-bold">个人月自负预估</div>
-                    <div className="text-lg sm:text-xl font-black text-emerald-400 font-mono">
+                    <div className="text-lg sm:text-xl font-black text-emerald-400 font-mono tabular-nums">
                       ¥{stats.personalMonthly}
                       <span className="text-xs font-normal text-emerald-200">/月</span>
                     </div>

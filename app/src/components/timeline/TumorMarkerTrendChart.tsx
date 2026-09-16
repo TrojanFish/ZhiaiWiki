@@ -369,7 +369,7 @@ export default function TumorMarkerTrendChart({
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-[11px] font-bold font-mono ${isSyncedHover ? "text-indigo-900 underline" : "text-slate-800"}`}>
+                    <span className={`text-[11px] font-bold font-mono tabular-nums ${isSyncedHover ? "text-indigo-900 underline" : "text-slate-800"}`}>
                       {pt.date}
                     </span>
                     <span
@@ -388,7 +388,7 @@ export default function TumorMarkerTrendChart({
                   <div>
                     <div className="flex items-baseline justify-between">
                       <span className="text-xs text-slate-500 font-semibold">{markerDef.nameZh.split(" ")[0]}</span>
-                      <span className={`text-sm font-extrabold font-mono ${isSafe ? "text-emerald-700" : "text-amber-700"}`}>
+                      <span className={`text-sm font-black font-mono tabular-nums ${isSafe ? "text-emerald-700" : "text-amber-700"}`}>
                         {pt.value} <span className="text-[10px] font-normal text-slate-400">{markerDef.unit}</span>
                       </span>
                     </div>
@@ -404,7 +404,7 @@ export default function TumorMarkerTrendChart({
                     </div>
                     <div className="flex justify-between text-[9px] text-slate-400 mt-1">
                       <span>0</span>
-                      <span className="font-bold text-emerald-600">安全线: {CEILING}</span>
+                      <span className="font-bold font-mono tabular-nums text-emerald-600">安全线: {CEILING}</span>
                     </div>
                   </div>
                 </div>
@@ -427,14 +427,14 @@ export default function TumorMarkerTrendChart({
                 <th className="px-4 py-3">状态判定</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-mono">
+            <tbody className="divide-y divide-slate-100 font-mono tabular-nums">
               {markerPoints.map((pt, idx) => {
                 const isSafe = pt.value <= CEILING;
                 return (
                   <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
                     <td className="px-4 py-3 font-semibold text-slate-900">{pt.date}</td>
                     <td className="px-4 py-3 font-sans text-slate-700">{pt.title || markerDef.nameZh}</td>
-                    <td className={`px-4 py-3 font-bold text-sm ${isSafe ? "text-emerald-700" : "text-amber-700"}`}>
+                    <td className={`px-4 py-3 font-bold font-mono tabular-nums text-sm ${isSafe ? "text-emerald-700" : "text-amber-700"}`}>
                       {pt.value} {markerDef.unit}
                     </td>
                     <td className="px-4 py-3 text-slate-500 font-sans">{markerDef.refRange}</td>

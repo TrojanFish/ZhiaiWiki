@@ -148,7 +148,7 @@ export function TumorMarkersCard({
                       <div className="text-xs font-mono text-slate-400">生理安全带范围: {evalItem.refRange}</div>
                     </div>
                     <div className="text-right">
-                      <div className={`text-base font-black font-mono ${
+                      <div className={`text-base font-black font-mono tabular-nums ${
                         isNormal ? "text-emerald-700" : "text-amber-700"
                       }`}>
                         {evalItem.value} <span className="text-xs font-normal text-slate-500">{evalItem.unit}</span>
@@ -174,7 +174,7 @@ export function TumorMarkersCard({
                         style={{ width: `${percent}%` }}
                       />
                     </div>
-                    <div className="flex justify-between text-xs font-mono text-slate-400">
+                    <div className="flex justify-between text-xs font-mono tabular-nums text-slate-400">
                       <span>0</span>
                       <span className="text-emerald-700 font-bold">生理安全上限: {evalItem.refMax}</span>
                       <span>{maxGauge.toFixed(1)}</span>
@@ -182,7 +182,7 @@ export function TumorMarkersCard({
                   </div>
 
                   {/* Plain Language Reassurance */}
-                  <div className="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/80 leading-relaxed font-medium">
+                  <div className="text-xs text-slate-700 bg-white p-3 rounded-r-xl rounded-l-xs border border-slate-200/80 border-l-4 border-l-teal-600 leading-relaxed font-medium shadow-2xs">
                     {evalItem.reassuranceText}
                   </div>
                 </div>

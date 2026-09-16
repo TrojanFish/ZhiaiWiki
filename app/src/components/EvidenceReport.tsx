@@ -229,10 +229,15 @@ export default function EvidenceReport({
               </div>
               
               {/* 白话安心总结 */}
-              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80 relative space-y-2.5">
-                <div className="flex items-center gap-2 text-sky-700 font-bold text-sm">
-                  <BrainCircuit className="w-4 h-4 text-sky-600" />
-                  <span>智能循证临床综合解读</span>
+              <div className="bg-slate-50/90 rounded-r-2xl rounded-l-xs p-5 border border-slate-200/90 border-l-4 border-l-sky-600 relative space-y-2.5 shadow-2xs">
+                <div className="flex items-center justify-between gap-2 text-sky-800 font-bold text-sm flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <BrainCircuit className="w-4 h-4 text-sky-600" />
+                    <span>智能循证临床综合解读</span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-sky-800 bg-sky-100/70 px-2 py-0.5 rounded border border-sky-200">
+                    IASLC / NCCN 临床对照
+                  </span>
                 </div>
                 <p className="text-slate-700 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
                   {llmReport?.evidence_summary || result.summaryZh}
@@ -245,10 +250,10 @@ export default function EvidenceReport({
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
                 综合风险分层
               </span>
-              <span className={`text-3xl sm:text-4xl font-extrabold ${riskColorMap[result.riskLevel]} mb-1.5`}>
+              <span className={`text-3xl sm:text-4xl font-black font-mono tabular-nums ${riskColorMap[result.riskLevel]} mb-1.5`}>
                 {result.riskLabel}
               </span>
-              <span className={`text-xs px-3 py-1 rounded-full border font-semibold ${riskBgMap[result.riskLevel]} mb-2`}>
+              <span className={`text-xs px-3 py-1 rounded-full border font-bold font-mono tabular-nums ${riskBgMap[result.riskLevel]} mb-2`}>
                 {result.riskPercentile}
               </span>
               <span className="text-2xs text-slate-400">
@@ -702,14 +707,14 @@ function StatBlock({ label, value, sub, color }: { label: string; value: string;
   const colorMap: Record<string, string> = {
     teal: "text-accent-teal",
     blue: "text-accent-blue",
-    purple: "text-purple-400",
+    purple: "text-purple-600",
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm text-center">
-      <div className={`text-2xl font-bold ${colorMap[color]} mb-1`}>{value}</div>
-      <div className="text-text-primary text-sm font-medium">{label}</div>
-      <div className="text-text-muted text-xs">{sub}</div>
+    <div className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs text-center">
+      <div className={`text-2xl font-black font-mono tabular-nums ${colorMap[color]} mb-1`}>{value}</div>
+      <div className="text-slate-800 text-sm font-bold">{label}</div>
+      <div className="text-slate-400 text-xs">{sub}</div>
     </div>
   );
 }
