@@ -66,7 +66,7 @@ export default function Modal({
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-hidden sm:overflow-y-auto animate-fade-in"
     >
       {/* 标准高质感毛玻璃遮罩 */}
       <div
@@ -78,8 +78,13 @@ export default function Modal({
       {/* 弹窗主体卡片 (3-Tier Structure) */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${maxWidth} bg-white rounded-3xl border border-slate-200 shadow-2xl z-10 animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col my-auto overflow-hidden ${className}`}
+        className={`relative w-full ${maxWidth} bg-white rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col overflow-hidden pb-safe sm:pb-0 ${className}`}
       >
+        {/* iOS HIG Sheet Grabber for Mobile */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+          <div className="sheet-grabber !my-0" />
+        </div>
+
         {/* Tier 1: 顶部标题栏 (固定吸顶) */}
         {!hideHeader && (title || showCloseButton) && (
           <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-start justify-between gap-4 bg-white shrink-0">

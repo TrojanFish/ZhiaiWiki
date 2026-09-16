@@ -870,12 +870,16 @@ export default function ClinicalTimelineView() {
       {showDdiModal && (
         <div 
           onClick={() => setShowDdiModal(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl shadow-2xl my-auto overflow-hidden bg-white"
+            className="relative w-full sm:max-w-4xl max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-3xl shadow-2xl border-t sm:border border-slate-200 overflow-hidden bg-white animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+              <div className="sheet-grabber !my-0" />
+            </div>
             <DdiCheckerVisual
               initialTargetDrugId={recommendedTargetDrugId}
               geneInfo={matchedGeneLabel}

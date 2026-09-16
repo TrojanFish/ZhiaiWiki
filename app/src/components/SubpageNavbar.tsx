@@ -280,16 +280,20 @@ export default function SubpageNavbar() {
         </div>
       )}
 
-      {/* Coffee / Sponsorship Modal */}
+      {/* Coffee / Sponsorship Modal (iOS Bottom Sheet on Mobile, Centered Dialog on Desktop) */}
       {coffeeModalOpen && (
         <div 
           onClick={() => setCoffeeModalOpen(false)}
-          className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer animate-fade-in"
+          className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 cursor-pointer animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl p-5 sm:p-7 max-w-sm w-full border border-slate-200/90 shadow-2xl flex flex-col items-center text-center space-y-4 animate-fade-in-up cursor-default"
+            className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-7 sm:max-w-sm w-full border-t sm:border border-slate-200/90 shadow-2xl flex flex-col items-center text-center space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-7 max-h-[92vh] overflow-y-auto"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden -mt-2 mb-1 flex justify-center shrink-0 w-full">
+              <div className="sheet-grabber !my-0" />
+            </div>
             {/* Modal Header */}
             <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">

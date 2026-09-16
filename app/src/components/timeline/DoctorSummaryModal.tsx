@@ -265,10 +265,15 @@ export default function DoctorSummaryModal({ events, onClose }: DoctorSummaryMod
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2.5 sm:p-6 animate-fade-in print:p-0 print:static">
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto print:p-0 print:static">
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm print:hidden" onClick={onClose} />
-      <div className="bg-white w-full max-w-4xl rounded-2xl p-4 sm:p-7 md:p-8 border border-slate-200 shadow-2xl relative z-10 animate-fade-in-up text-slate-900 max-h-[94vh] flex flex-col print:max-h-none print:shadow-none print:border-none print:p-4">
+      <div className="bg-white w-full sm:max-w-4xl rounded-t-3xl sm:rounded-2xl p-4 sm:p-7 md:p-8 border-t sm:border border-slate-200 shadow-2xl relative z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[94vh] flex flex-col pb-safe sm:pb-8 print:max-h-none print:shadow-none print:border-none print:p-4">
         
+        {/* iOS HIG Sheet Grabber for Mobile */}
+        <div className="sm:hidden -mt-1 pb-1 flex justify-center shrink-0 print:hidden">
+          <div className="sheet-grabber !my-0" />
+        </div>
+
         {/* Modal Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200 shrink-0 print:hidden">
           <div className="flex items-center justify-between sm:justify-start gap-2.5">

@@ -892,12 +892,17 @@ export default function PatientDashboard() {
       {showUpdateModal && (
         <div 
           onClick={() => setShowUpdateModal(false)}
-          className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-fade-in-up my-auto"
+            className="bg-white rounded-t-3xl sm:rounded-3xl max-w-lg w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+              <div className="sheet-grabber !my-0" />
+            </div>
+
             {/* Tier 1: Fixed Sticky Header */}
             <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
               <div className="flex items-center gap-2.5">
@@ -997,12 +1002,17 @@ export default function PatientDashboard() {
       {showDeleteModal && (
         <div 
           onClick={() => setShowDeleteModal(false)}
-          className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-fade-in-up my-auto"
+            className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+              <div className="sheet-grabber !my-0" />
+            </div>
+
             {/* Tier 1: Fixed Sticky Header */}
             <div className="px-5 sm:px-6 py-4 border-b border-rose-100 bg-rose-50/50 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
@@ -1084,12 +1094,16 @@ export default function PatientDashboard() {
       {showDdiModal && (
         <div 
           onClick={() => setShowDdiModal(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl shadow-2xl my-auto overflow-hidden bg-white"
+            className="relative w-full sm:max-w-4xl max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-3xl shadow-2xl border-t sm:border border-slate-200 overflow-hidden bg-white animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+              <div className="sheet-grabber !my-0" />
+            </div>
             <DdiCheckerVisual
               initialTargetDrugId={recommendedTargetDrugId}
               geneInfo={matchedGeneLabel}

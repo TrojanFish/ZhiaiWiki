@@ -1368,12 +1368,17 @@ export default function EvidenceReportPage() {
       {exportedImageUrl && (
         <div 
           onClick={() => setExportedImageUrl(null)}
-          className="fixed inset-0 z-[1000] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-[1000] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden my-auto text-slate-900"
+            className="bg-white rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl border-t sm:border border-slate-200 overflow-hidden text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+              <div className="sheet-grabber !my-0" />
+            </div>
+
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
               <div className="flex items-center gap-2.5">

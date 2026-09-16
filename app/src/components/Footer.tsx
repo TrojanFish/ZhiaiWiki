@@ -10,7 +10,7 @@ interface FooterProps {
 
 export default function Footer({ maxWidth = "max-w-7xl", className = "" }: FooterProps) {
   return (
-    <footer className={`w-full bg-white border-t border-slate-200/80 pt-3.5 sm:pt-6 md:pt-8 pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] md:pb-8 px-4 sm:px-6 mt-auto print:hidden ${className}`}>
+    <footer className={`hidden md:block w-full bg-white border-t border-slate-200/80 pt-6 md:pt-8 pb-8 px-4 sm:px-6 mt-auto print:hidden ${className}`}>
       <div className={`${maxWidth} mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 sm:gap-4 md:gap-6`}>
         {/* Brand & Quick Links */}
         <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 text-center sm:text-left">

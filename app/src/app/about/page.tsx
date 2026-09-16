@@ -311,12 +311,17 @@ export default function AboutPage() {
 
         <div 
           onClick={() => setPreviewImage(null)}
-          className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer animate-fade-in"
+          className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 cursor-pointer animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border border-slate-200 shadow-2xl flex flex-col items-center text-center space-y-4 animate-fade-in-up"
+            className="bg-white rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 max-w-sm w-full border-t sm:border border-slate-200 shadow-2xl flex flex-col items-center text-center space-y-4 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-8"
           >
+            {/* iOS HIG Sheet Grabber for Mobile */}
+            <div className="sm:hidden -mt-3 pb-1 flex justify-center shrink-0 w-full">
+              <div className="sheet-grabber !my-0" />
+            </div>
+
             <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
               <span className="text-sm font-bold text-slate-900">{previewImage.title}</span>
               <button 

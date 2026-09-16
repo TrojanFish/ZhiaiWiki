@@ -34,12 +34,16 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
   if (!mounted || !isOpen) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto">
       {/* 3-Tier Window Card */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-fade-in-up my-auto"
+        className="bg-white rounded-t-3xl sm:rounded-2xl max-w-xl w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
       >
+        {/* iOS HIG Sheet Grabber for Mobile */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+          <div className="sheet-grabber !my-0" />
+        </div>
         {/* Tier 1: Fixed Sticky Header */}
         <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-white shrink-0">
           <div className="w-10 h-10 rounded-xl overflow-hidden shadow-xs flex items-center justify-center shrink-0 bg-slate-900 border border-slate-800">

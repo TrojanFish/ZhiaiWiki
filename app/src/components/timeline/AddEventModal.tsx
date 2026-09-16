@@ -216,13 +216,18 @@ export default function AddEventModal({ onClose, onAdd, onUpdate, initialEvent }
   return (
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
     >
       {/* Modal Card (3-Tier Window Architecture) */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-w-xl rounded-3xl border border-slate-200 shadow-2xl relative z-10 animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col my-auto overflow-hidden"
+        className="bg-white w-full sm:max-w-xl rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl relative z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col overflow-hidden pb-safe sm:pb-0"
       >
+        {/* iOS HIG Sheet Grabber for Mobile */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+          <div className="sheet-grabber !my-0" />
+        </div>
+
         {/* 1. Modal Header */}
         <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
           <div className="flex items-center gap-2.5">
