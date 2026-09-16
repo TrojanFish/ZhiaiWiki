@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { 
   Check, 
   BookOpen, 
-  TrendingUp, 
   XCircle, 
   CheckCircle2, 
   Scan, 
@@ -40,6 +39,7 @@ const KnowledgeMapPreview = dynamic(() => import("@/components/KnowledgeMapPrevi
 export default function HomePage() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [hasProfile, setHasProfile] = useState(false);
+  const [activeDemoCase, setActiveDemoCase] = useState<"ia1" | "stas">("ia1");
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -116,14 +116,21 @@ export default function HomePage() {
                 不再面对晦涩冰冷的医学术语盲目焦虑。AI 自动结构化提取 CT 影像征象、TNM 分期与分子靶点，无缝匹配 JTO、Lancet、JCO 顶级期刊真实患者队列与生存数据。
               </p>
 
-              {/* CTA Action Buttons: min-w-[210px] prevents horizontal button resize jitter upon auth detection */}
+              {/* Dual Funnel CTA Action Buttons */}
               <div className="flex flex-wrap items-center gap-3.5 pt-2 animate-fade-in-up stagger-3">
                 <Link
                   href="/profile"
-                  className="btn-primary min-w-[210px] px-7 py-3.5 rounded-2xl text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="btn-primary min-w-[200px] px-7 py-3.5 rounded-2xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <FileText className="w-5 h-5 shrink-0" />
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                   <span suppressHydrationWarning>{hasProfile || userEmail ? "进入我的临床数字档案" : "建立临床数字档案"}</span>
+                </Link>
+                <Link
+                  href="/wiki"
+                  className="px-6 py-3.5 rounded-2xl text-sm sm:text-base font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:text-blue-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
+                  <span>免录入 · 查40+循证词条</span>
                 </Link>
               </div>
 
@@ -180,68 +187,190 @@ export default function HomePage() {
 
             </div>
 
-            {/* Right Column: High-Impact Telemedicine Clinical Mockup */}
+            {/* Right Column: Interactive Clinical Evidence Engine Live Preview Card */}
             <div className="lg:col-span-5 relative animate-fade-in-up stagger-2">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 bg-white group">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200/90 bg-white/95 backdrop-blur-md p-5 sm:p-6 space-y-4">
                 
-                {/* Hero Consultation Image */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                  <img
-                    src="/hero-consultation.jpg"
-                    alt="OncoPath 肿瘤循证推演平台"
-                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
-                </div>
-
-                {/* Floating Top-Right Patient Badge */}
-                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200/80 shadow-lg flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                  <div className="text-xs font-bold text-slate-800">
-                    IA1 期 · STAS 阴性 · 低风险
-                  </div>
-                </div>
-
-                {/* Floating Bottom-Left Doctor Consultation Card */}
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/80 shadow-lg flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src="/doctor-avatar.jpg"
-                      alt="林美 教授"
-                      className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm shrink-0"
-                    />
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>林美 教授</span>
-                        <span className="text-xs text-slate-500 font-normal">主任医师 / 肿瘤病理专家</span>
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        正在基于 JCOG0804 队列进行循证推演
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="shrink-0">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      Live 队列已联通
+                {/* Header: Title & Status Indicator */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
+                      OncoPath 实时循证推演演示
                     </span>
                   </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span>IASLC 9th · 0幻觉</span>
+                  </span>
                 </div>
+
+                {/* Case Switcher Tabs */}
+                <div className="grid grid-cols-2 p-1 bg-slate-100/90 rounded-2xl border border-slate-200/60 text-xs font-bold gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveDemoCase("ia1")}
+                    className={`py-2 px-2.5 rounded-xl transition-all text-center cursor-pointer ${
+                      activeDemoCase === "ia1"
+                        ? "bg-white text-blue-700 shadow-xs"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    示例一：磨玻璃微浸润 (IA1期)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveDemoCase("stas")}
+                    className={`py-2 px-2.5 rounded-xl transition-all text-center cursor-pointer ${
+                      activeDemoCase === "stas"
+                        ? "bg-white text-blue-700 shadow-xs"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    示例二：伴高危气道播散 (STAS+)
+                  </button>
+                </div>
+
+                {activeDemoCase === "ia1" ? (
+                  /* Case 1: Early GGO Micro-invasive Adenocarcinoma (Minimal Risk) */
+                  <div className="space-y-3.5 animate-fade-in">
+                    {/* Input Parameters Box */}
+                    <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-3.5 border border-slate-200/70 space-y-1.5">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                        <span>【模拟输入】病理与影像参数</span>
+                        <span className="text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded font-mono text-[10px]">纯磨/微浸润</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-0.5">
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700">
+                          右肺上叶磨玻璃 18mm
+                        </span>
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700">
+                          实性成分 4mm (CTR 22%)
+                        </span>
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700">
+                          STAS 阴性 · R0切缘
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Staging Decision */}
+                    <div className="bg-gradient-to-r from-blue-50/80 to-teal-50/50 rounded-2xl p-3.5 border border-blue-200/80 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-blue-900">IASLC / AJCC 第 9 版判定</span>
+                        <span className="text-xs font-extrabold text-blue-700 bg-white px-2 py-0.5 rounded-lg border border-blue-200 shadow-2xs">
+                          pT1mi N0 M0 · IA1 期
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-blue-800/90 leading-relaxed pt-0.5">
+                        💡 <strong>规则解读</strong>：依据国际金标准以实性浸润径（4mm）折算定级，非按 18mm 结节全径误报为更高分期。
+                      </p>
+                    </div>
+
+                    {/* Cohort & Survival Figures */}
+                    <div className="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-200/70 space-y-2.5">
+                      <div className="text-[11px] font-bold text-slate-600 flex items-center justify-between">
+                        <span>匹配队列：JCOG0804 / JCOG1211 (N=3,120)</span>
+                        <span className="text-[10px] text-teal-700 bg-teal-100/70 px-1.5 py-0.2 rounded font-bold">1级前瞻证据</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200/80 text-center">
+                          <div className="text-[10px] text-slate-400 font-bold uppercase">5年无复发生存率</div>
+                          <div className="text-lg sm:text-xl font-black text-emerald-600 tabular-nums">99.7%</div>
+                          <div className="text-[10px] text-slate-500">规范切除后达临床根治</div>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200/80 text-center">
+                          <div className="text-[10px] text-slate-400 font-bold uppercase">5年总生存率 (OS)</div>
+                          <div className="text-lg sm:text-xl font-black text-teal-600 tabular-nums">99.8%</div>
+                          <div className="text-[10px] text-slate-500">肺功能长期充分保留</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Guardrail: Anti-Overtreatment Warning */}
+                    <div className="bg-emerald-50/90 rounded-2xl p-3 border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="leading-relaxed">
+                        <strong>【防过度医疗红线】</strong>：IA1期属于极低危惰性病变，<strong>指南绝对不推荐术后辅助化疗，常规不推荐辅助靶向</strong>。遵医嘱定期薄层 CT 随访即可。
+                      </div>
+                    </div>
+
+                    {/* Source Footnote */}
+                    <div className="text-[10px] text-slate-400 flex items-center justify-between pt-1">
+                      <span>出处：JTO 2021 & Lancet Respir Med 2023</span>
+                      <span className="font-mono text-slate-500">DOI: 10.1016/j.jtho.2021.03.010</span>
+                    </div>
+                  </div>
+                ) : (
+                  /* Case 2: Invasive Adenocarcinoma with STAS+ (Precision Intervention) */
+                  <div className="space-y-3.5 animate-fade-in">
+                    {/* Input Parameters Box */}
+                    <div className="bg-slate-50/90 rounded-2xl p-3 sm:p-3.5 border border-slate-200/70 space-y-1.5">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                        <span>【模拟输入】病理与浸润指标</span>
+                        <span className="text-amber-700 bg-amber-100/70 px-1.5 py-0.2 rounded font-mono text-[10px]">微观高危特征</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-0.5">
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700">
+                          左下叶腺癌 2.2cm
+                        </span>
+                        <span className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-xs font-bold text-amber-800">
+                          气道播散 STAS+ (阳性)
+                        </span>
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700">
+                          脉管瘤栓 LVI- · R0切缘
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Staging Decision */}
+                    <div className="bg-gradient-to-r from-amber-50/80 to-blue-50/50 rounded-2xl p-3.5 border border-amber-200/80 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-amber-900">IASLC / AJCC 第 9 版判定</span>
+                        <span className="text-xs font-extrabold text-amber-800 bg-white px-2 py-0.5 rounded-lg border border-amber-200 shadow-2xs">
+                          pT1c N0 M0 · IA3 期 (伴高危)
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-amber-900/90 leading-relaxed pt-0.5">
+                        💡 <strong>机制破译</strong>：STAS 提示肿瘤细胞沿肺泡微腔播散。若切缘充足或行解剖性肺叶切除，可显著拉平复发风险。
+                      </p>
+                    </div>
+
+                    {/* Cohort & Survival Figures */}
+                    <div className="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-200/70 space-y-2.5">
+                      <div className="text-[11px] font-bold text-slate-600 flex items-center justify-between">
+                        <span>匹配队列：Eguchi JCO 2019 / Wang Meta (N=25,467)</span>
+                        <span className="text-[10px] text-blue-700 bg-blue-100/70 px-1.5 py-0.2 rounded font-bold">多中心大数据</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200/80 text-center">
+                          <div className="text-[10px] text-slate-400 font-bold uppercase">标准解剖切除5年RFS</div>
+                          <div className="text-lg sm:text-xl font-black text-blue-700 tabular-nums">88.5% ~ 92.0%</div>
+                          <div className="text-[10px] text-slate-500">切缘充足有效阻断播散</div>
+                        </div>
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200/80 text-center">
+                          <div className="text-[10px] text-slate-400 font-bold uppercase">相对风险比 (HR)</div>
+                          <div className="text-lg sm:text-xl font-black text-amber-700 tabular-nums">1.87</div>
+                          <div className="text-[10px] text-slate-500">95% CI: 1.52 ~ 2.29</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Guidance Card */}
+                    <div className="bg-blue-50/90 rounded-2xl p-3 border border-blue-200 text-xs text-blue-900 flex items-start gap-2">
+                      <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                      <div className="leading-relaxed">
+                        <strong>【门诊决策指引】</strong>：建议切缘净距需 ≥ 20mm；建议与主管医生探讨完善 EGFR/ALK 基因检测，前两年每 6 个月随访胸部薄层 CT。
+                      </div>
+                    </div>
+
+                    {/* Source Footnote */}
+                    <div className="text-[10px] text-slate-400 flex items-center justify-between pt-1">
+                      <span>出处：Journal of Clinical Oncology (JCO 2019)</span>
+                      <span className="font-mono text-slate-500">DOI: 10.1200/JCO.18.02002</span>
+                    </div>
+                  </div>
+                )}
 
               </div>
-
-              {/* Secondary Floating Mini Metric Card */}
-              <div className="hidden sm:flex absolute -bottom-6 -left-6 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xl items-center gap-3 z-20">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-accent-blue flex items-center justify-center shrink-0">
-                  <TrendingUp className="w-5 h-5 text-accent-blue" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-slate-400 uppercase">JCOG0804 5年无复发率</div>
-                  <div className="text-sm font-extrabold text-slate-900 tabular-nums">99.7% (RFS) · 亚肺叶切除获益</div>
-                </div>
-              </div>
-
             </div>
 
           </div>
