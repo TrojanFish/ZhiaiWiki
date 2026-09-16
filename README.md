@@ -1,8 +1,8 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/TrojanFish/OncoPath/main/app/public/logo.png" width="100" alt="OncoPath Logo">
   <h1>OncoPath</h1>
-  <p><strong>Evidence-Based Oncology AI Agent & Clinical Navigation OS</strong></p>
-  <p><em>An intelligent lung oncology clinical decision support system grounded in peer-reviewed literature, AJCC/IASLC guidelines, and real-world multi-center prospective cohorts.</em></p>
+  <p><strong>Evidence-Based Oncology Knowledge Platform & Clinical Navigation OS</strong></p>
+  <p><em>An evidence-based lung oncology knowledge and clinical consultation support platform grounded in peer-reviewed literature, AJCC/IASLC guidelines, and real-world multi-center prospective cohorts.</em></p>
 
   <p>
     <a href="README.md"><strong>English</strong></a> |
@@ -11,7 +11,7 @@
 
   <p>
     <img src="https://img.shields.io/badge/Next.js-16.2.12-blue?style=flat-square&logo=next.js" alt="Next.js" />
-    <img src="https://img.shields.io/badge/Vitest-62_Unit_Tests_Passed-success?style=flat-square&logo=vitest" alt="Vitest" />
+    <img src="https://img.shields.io/badge/Vitest-71_Unit_Tests_Passed-success?style=flat-square&logo=vitest" alt="Vitest" />
     <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql" alt="PostgreSQL" />
     <img src="https://img.shields.io/badge/Nginx-SSE_Streaming-009639?style=flat-square&logo=nginx" alt="Nginx" />
     <img src="https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square&logo=tailwindcss" alt="TailwindCSS" />
@@ -28,22 +28,22 @@
 OncoPath bridges the communication gap between complex oncology literature and patients by strictly adhering to the **"Evidence-First, AI-Second"** standard:
 1. **Zero Hallucinations & Deterministic Rules**: Core staging, hazard ratios, and clinical paths are hard-coded. Large Language Models (LLMs) are strictly restricted from making arbitrary prognostic guesses or writing prescriptions.
 2. **100% Peer-Reviewed Traceability**: Every Hazard Ratio (HR) and 5-year Recurrence-Free Survival (RFS) rate is directly linked to seminal studies (e.g., JTO, Lancet Oncology, JCO, Chest, JCOG0804, ADAURA) with active DOI and PubMed hyperlinks.
-3. **Informed Consent & Clinical Collaboration**: Generates structured consultation pocket cards and A4 prescription-grade checklists empowering patients and families to communicate effectively with their attending oncologists.
+3. **Informed Consent & Clinical Collaboration**: Generates structured consultation pocket cards and A4 printable consultation checklists empowering patients and families to communicate effectively with their attending oncologists.
 
 ---
 
 ## ✨ Key Features & Architecture
 
 ### 1. 🏥 Clinical Workstation & Multimodal AI
-- 🩺 **Telemedicine Clinical Workstation**: Modern healthcare interface with interactive simulation sandboxes and real-time data boards.
+- 🩺 **Clinical Communication & Evidence Workstation**: Modern healthcare interface with interactive simulation sandboxes and real-time data boards.
 - 🔬 **Multimodal AI Pathology Parser**: Extracts TNM staging, Spread Through Air Spaces (STAS), Visceral Pleural Invasion (VPI), Lymphovascular Invasion (LVI), IASLC grades, and driver mutations via photo or text.
 - 🗺️ **4D Dynamic Oncology Knowledge Graph**: Interactive visual canvas linking pathological risk factors to recurrence pathways and targeted therapy nodes.
-- ⚡ **AI Evidence Reasoning Ticker (`ReasoningTicker`)**: Progressive 4-step streaming MDT consensus engine with sub-second elapsed timers.
+- ⚡ **AI Evidence Reasoning Ticker (`ReasoningTicker`)**: Progressive 4-step streaming literature alignment engine with sub-second elapsed timers.
 
 ### 2. 🛡️ Clinical Reassurance & Longitudinal Tracking
 - 🟢 **Tumor Marker Physiological Safety Band**: Semi-transparent 0~5.0 ng/mL green safe floating bands for CEA & CYFRA21-1 with reassuring golden principle banners.
 - ⏱️ **VDT Speedometer & Dual-Phase CT Comparison Lens (`VdtGauge` & `CtComparisonLens`)**: Driven by the Schwartz volume doubling formula with clear indolent/active growth categorization and absolute delta tracking (Δ mm & Δ %).
-- 🚦 **Post-Op Tri-Color Symptom Triage (`PostOpSymptomTriage`)**: Covers post-operative cough, intercostal numbness/pain, exertional dyspnea, and benign hemoptysis with 24-hour home recovery guidance.
+- 🚦 **Post-Op Tri-Color Home Recovery Assistant (`PostOpSymptomTriage`)**: Covers post-operative cough, intercostal numbness/pain, exertional dyspnea, and benign hemoptysis with 24-hour home recovery guidance.
 
 ### 3. 📚 Evidence Visual Encyclopedia (Wiki) & Social Sharing
 - 📖 **38 Deeply Structured Clinical Topics**: Comprehensive coverage from GGN evolution to pathology risk factors, targeted immunotherapy, and long-term recovery.
@@ -55,7 +55,7 @@ OncoPath bridges the communication gap between complex oncology literature and p
 - 🔀 **Global Simplified/Traditional Chinese Auto-Conversion (`LangSwitch`)**: Designed for international and overseas Chinese communities, powered by a lightweight client-side OpenCC engine with a permanent toggle button on the right side of the navigation bar for both desktop and mobile; full DOM, AI streaming reports, and knowledge graphs adapt seamlessly.
 
 ### 5. 🔒 Production Security & Compliance
-- 🛡️ **Singapore PDPA / PIPL Privacy & Right-to-be-Forgotten**: Built-in PII sanitizer automatically masking ID numbers, phone numbers, and hospital IDs; one-click permanent profile destruction.
+- 🛡️ **Global Data Privacy (PIPL / HIPAA Compliant) & Right-to-be-Forgotten**: Built-in PII sanitizer automatically masking ID numbers, phone numbers, and hospital IDs; one-click permanent profile destruction.
 - 🔐 **PBKDF2 210,000 Rounds Hashing & Anti-Tampering HMAC Session Cookies**: Secure authentication guarding against credential forgery.
 - ⚡ **Production-Tuned Nginx SSE Streaming & Cloudflare Proxy**: Restores client IP with `CF-Connecting-IP`, zero-buffering reverse proxy for smooth typewriter report streaming, 1-year immutable caching for static assets, and IP rate limiting.
 
