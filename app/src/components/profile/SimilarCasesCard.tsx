@@ -139,7 +139,7 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
             </span>
           </div>
 
-          <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-blue-600 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-blue-700 font-mono tabular-nums tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
             {cohort.rfs5Year}
           </div>
 
@@ -176,7 +176,7 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
             </span>
           </div>
 
-          <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-teal-600 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-teal-700 font-mono tabular-nums tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
             {cohort.os5Year}
           </div>
 
@@ -223,8 +223,8 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
               {cohort.source}
             </span>
           </div>
-          <span className="text-xs text-slate-400 font-mono">
-            Level-1 Evidence · Peer-Reviewed
+          <span className="text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
+            Oxford CEBM Level 1a · 多中心前瞻队列
           </span>
         </div>
       </div>

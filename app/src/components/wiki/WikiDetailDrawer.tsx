@@ -337,22 +337,30 @@ export function WikiDetailDrawer({
 
               {/* 关键循证数据 */}
               {topic.keyMetric && (
-                <div className="bg-blue-50/60 p-4 rounded-2xl border border-blue-100 space-y-2">
-                  <div className="flex items-center justify-between gap-2 text-xs font-bold text-blue-900">
+                <div className="border-l-4 border-l-sky-600 border border-slate-200/90 bg-slate-50/80 p-4 rounded-r-xl rounded-l-xs space-y-2.5 shadow-2xs">
+                  <div className="flex items-center justify-between gap-2 text-xs font-bold text-slate-900 flex-wrap">
                     <div className="flex items-center gap-1.5">
-                      <BookmarkCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                      <span>核心循证结论与依据：</span>
+                      <BookmarkCheck className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                      <span>核心循证结论与文献依据：</span>
                     </div>
-                    <span className="text-[10px] font-semibold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-full border border-blue-200/60 truncate max-w-[200px]">
-                      {topic.keyMetric.label}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-mono font-bold text-sky-800 bg-sky-100/80 px-2 py-0.5 rounded border border-sky-200">
+                        Level 1a · Peer-Reviewed
+                      </span>
+                      <span className="text-[10px] font-semibold text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200 truncate max-w-[180px]">
+                        {topic.keyMetric.label}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-sm font-bold text-slate-800 leading-relaxed">
+                  <p className="text-sm font-bold text-slate-900 font-mono tabular-nums leading-relaxed">
                     {topic.keyMetric.value}
                   </p>
-                  <div className="text-[11px] text-slate-500 pt-1.5 border-t border-blue-100/80 flex items-center gap-1">
-                    <span className="text-slate-400">循证出处：</span>
-                    <span className="text-slate-700 font-medium">{topic.keyMetric.source}</span>
+                  <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-200/80 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 min-w-0 truncate">
+                      <span className="text-slate-400 shrink-0">循证出处：</span>
+                      <span className="text-slate-700 font-medium font-mono truncate">{topic.keyMetric.source}</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 shrink-0 hidden sm:inline">Oxford CEBM Standard</span>
                   </div>
                 </div>
               )}

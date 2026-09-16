@@ -830,12 +830,15 @@ export default function PatientDashboard() {
             </div>
 
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="font-extrabold text-slate-900 text-base sm:text-lg">
                 {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
                   ? (profile.riskLevel === 'high' ? '建议胸外科微创评估' : '建议 3~6 个月随访观察')
                   : (isAllSafe ? '早期低复发风险组' : '需积极辅助随访组')
                 }
+              </span>
+              <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' ? 'Fleischner 2024 / JCOG' : 'IASLC 第9版 · 2024'}
               </span>
             </div>
 
