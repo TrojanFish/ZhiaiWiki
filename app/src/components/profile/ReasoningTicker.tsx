@@ -116,7 +116,7 @@ export default function ReasoningTicker({ isGenerating }: ReasoningTickerProps) 
         {REASONING_STEPS.map((stepInfo, idx) => {
           const isDone = idx < currentStepIndex;
           const isCurrent = idx === currentStepIndex;
-          const isPending = idx > currentStepIndex;
+          const _isPending = idx > currentStepIndex;
           const IconComponent = stepInfo.icon;
 
           return (

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { TestTube2, ShieldCheck, ChevronDown, ChevronUp, AlertCircle, ArrowRight, Calendar, Building2 } from "lucide-react";
+import { TestTube2, ShieldCheck, ChevronDown, ChevronUp, ArrowRight, Calendar } from "lucide-react";
 import Link from "next/link";
 import type { TumorMarkersData } from "@/lib/types";
 import { evaluateTumorMarkers } from "@/lib/tumorMarkers";

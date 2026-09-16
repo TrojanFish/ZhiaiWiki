@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Activity, ShieldCheck, Search, ArrowRight } from "lucide-react";
+import { Activity, ShieldCheck, Search } from "lucide-react";
 
 export function MrdCtdnaVisual() {
   return (

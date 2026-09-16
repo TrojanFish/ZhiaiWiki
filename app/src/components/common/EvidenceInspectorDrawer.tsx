@@ -4,12 +4,7 @@ import React from "react";
 import { 
   BookOpen, 
   ExternalLink, 
-  Layers, 
   ShieldCheck, 
-  BarChart2, 
-  TrendingUp, 
-  Award, 
-  CheckCircle2, 
   FileCheck 
 } from "lucide-react";
 import BottomSheet from "./BottomSheet";

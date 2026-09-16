@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useMemo } from "react";
 import { 
   BookOpen, 
@@ -14,10 +13,7 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  Sparkles,
-  ShieldCheck,
-  Check,
-  Globe2
+  Sparkles
 } from "lucide-react";
 import Footer from "@/components/Footer";
 

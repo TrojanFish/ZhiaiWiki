@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Crosshair, ArrowRight, ShieldCheck } from "lucide-react";
+import { Crosshair } from "lucide-react";
 
 export function Her2AdcVisual() {
   return (

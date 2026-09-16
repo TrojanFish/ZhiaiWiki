@@ -12,8 +12,7 @@ import {
   Trash2, 
   Edit3,
   ChevronDown, 
-  ChevronUp, 
-  FileText 
+  ChevronUp 
 } from "lucide-react";
 import { TimelineEventItem, TIMELINE_CATEGORIES } from "@/lib/timelineTypes";
 import TimelineCategoryIcon from "./TimelineCategoryIcon";

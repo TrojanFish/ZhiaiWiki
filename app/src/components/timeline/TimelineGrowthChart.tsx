@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { TrendingUp, Zap, ShieldCheck, Activity, Eye } from "lucide-react";
+import { TrendingUp, Zap, ShieldCheck, Activity } from "lucide-react";
 import { TimelineEventItem } from "@/lib/timelineTypes";
 
 interface TimelineGrowthChartProps {

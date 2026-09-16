@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, ClipboardList, Microscope, Scan, AlertTriangle, Sparkles, RotateCcw } from "lucide-react";
+import { Check, ClipboardList, Microscope, Scan, AlertTriangle } from "lucide-react";
 import type { PatientProfile } from "@/lib/types";
 
 interface ProfileFormProps {
@@ -13,7 +13,7 @@ const DRAFT_STORAGE_KEY = "oncopath_profile_draft";
 
 export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps) {
   const [step, setStep] = useState(1);
-  const [hasDraftRestored, setHasDraftRestored] = useState(false);
+  const [_hasDraftRestored, _setHasDraftRestored] = useState(false);
   const [form, setForm] = useState<Partial<PatientProfile>>(() => {
     if (initialData) return initialData;
     if (typeof window !== "undefined") {
@@ -50,7 +50,7 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
     }
   }, [form]);
 
-  const clearDraft = () => {
+  const _clearDraft = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem(DRAFT_STORAGE_KEY);
       window.location.reload();

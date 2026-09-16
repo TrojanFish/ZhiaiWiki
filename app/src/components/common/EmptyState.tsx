@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Calendar, FileText, Inbox, ShieldCheck, HelpCircle } from "lucide-react";
+import { Search, Calendar, FileText, Inbox, ShieldCheck } from "lucide-react";
 
 export interface EmptyStateProps {
   icon?: "search" | "calendar" | "file" | "inbox" | "shield" | React.ReactNode;

@@ -596,7 +596,7 @@ export default function HomePage() {
 
 
 
-function LogoMark() {
+function _LogoMark() {
   return (
     <div className="flex items-center gap-2.5">
       <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center shadow-xs">

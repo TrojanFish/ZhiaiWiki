@@ -4,7 +4,6 @@ import {
   BrainCircuit,
   AlertTriangle,
   BookOpen,
-  Bot,
   BarChart2,
   Microscope,
   Calendar,
@@ -13,14 +12,10 @@ import {
   Search,
   Network,
   Info,
-  FileText,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
   X,
 } from "lucide-react";
 import type { PatientProfile } from "@/lib/types";
-import { analyzePatientProfile, EVIDENCE_FACTORS, FEATURED_STUDIES, STUDY_TYPE_LABELS, type PatientMatchResult } from "@/lib/evidence-data";
+import { analyzePatientProfile, EVIDENCE_FACTORS, type PatientMatchResult } from "@/lib/evidence-data";
 import { generateReport } from "@/lib/api";
 import StudyCard from "./StudyCard";
 import KnowledgeMapPreview from "./KnowledgeMapPreview";
@@ -28,7 +23,6 @@ import { ReportSkeleton } from "@/components/common/MedicalSkeleton";
 import SpeechReaderButton from "@/components/common/SpeechReaderButton";
 import EvidenceInspectorDrawer from "@/components/common/EvidenceInspectorDrawer";
 import MobileStickyActionBar from "@/components/common/MobileStickyActionBar";
-import ClinicalBadge from "@/components/common/ClinicalBadge";
 import { showToast } from "@/components/common/Toast";
 
 interface EvidenceReportProps {
@@ -357,7 +351,7 @@ export default function EvidenceReport({
 
 // ========== Tab Components ==========
 
-function OverviewTab({ result, profile, riskColorMap }: { result: PatientMatchResult; profile: PatientProfile; riskColorMap: Record<string, string> }) {
+function OverviewTab({ result, profile, riskColorMap: _riskColorMap }: { result: PatientMatchResult; profile: PatientProfile; riskColorMap: Record<string, string> }) {
   const [animatedRfs, setAnimatedRfs] = useState(0);
 
   useEffect(() => {
@@ -703,49 +697,6 @@ function FollowupTab({ result, profile }: { result: PatientMatchResult; profile:
 
 // ========== Helper Components ==========
 
-function LoadingScreen() {
-  const steps = [
-    "正在分析病理特征...",
-    "匹配国际研究数据库...",
-    "计算风险分层...",
-    "生成循证报告...",
-  ];
-  const [currentStep, setCurrentStep] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentStep((s) => (s < steps.length - 1 ? s + 1 : s));
-    }, 500);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-20 h-20 mx-auto mb-8 relative">
-          <div className="absolute inset-0 rounded-full border-2 border-accent-blue/20 animate-spin-slow" />
-          <div className="absolute inset-2 rounded-full border-2 border-t-accent-blue border-transparent animate-spin" />
-          <div className="absolute inset-4 rounded-full bg-accent-blue/10 flex items-center justify-center">
-            <Microscope className="w-6 h-6 text-accent-blue" />
-          </div>
-        </div>
-        <h2 className="text-xl font-semibold text-text-primary mb-2">正在生成循证报告</h2>
-        <p className="text-accent-teal text-sm animate-pulse">{steps[currentStep]}</p>
-        <div className="flex gap-1 justify-center mt-6">
-          {steps.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 rounded-full transition-all duration-500 ${
-                i <= currentStep ? "w-8 bg-blue-600" : "w-4 bg-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function StatBlock({ label, value, sub, color }: { label: string; value: string; sub: string; color: string }) {
   const colorMap: Record<string, string> = {
     teal: "text-accent-teal",
@@ -829,7 +780,7 @@ function TimelineItem({ period, action, note, color }: { period: string; action:
   );
 }
 
-function RadarChart({ profile, result }: { profile: PatientProfile; result: PatientMatchResult }) {
+function RadarChart({ profile, result: _result }: { profile: PatientProfile; result: PatientMatchResult }) {
   const size = 160;
   const center = size / 2;
   const radius = 60;

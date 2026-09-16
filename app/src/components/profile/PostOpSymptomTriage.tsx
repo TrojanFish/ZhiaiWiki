@@ -7,7 +7,6 @@ import {
   AlertTriangle, 
   AlertOctagon, 
   CheckCircle2, 
-  Info, 
   Sparkles,
   Stethoscope,
   ChevronRight,
@@ -149,7 +148,7 @@ export default function PostOpSymptomTriage() {
     redFlagAnswers.highFever || 
     redFlagAnswers.severePain;
 
-  const triageLevel: "emergency" | "outpatient" | "homecare" = hasAnyRedFlag
+  const _triageLevel: "emergency" | "outpatient" | "homecare" = hasAnyRedFlag
     ? "emergency"
     : "homecare";
 

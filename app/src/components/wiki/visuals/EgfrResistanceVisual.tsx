@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GitBranch, ShieldCheck, Zap, ArrowRight } from "lucide-react";
+import { GitBranch } from "lucide-react";
 
 export function EgfrResistanceVisual() {
   return (

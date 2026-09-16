@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { fetchFactors } from "@/lib/api";
 import type { PatientProfile } from "@/lib/types";
 import type { KnowledgeNode, EdgeEvidence } from "@/lib/knowledgeGraphData";
 import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
@@ -63,7 +62,7 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
   const [timeYears, setTimeYears] = useState<number>(0);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setPersonalMode(!!profile);
   }, [profile]);
 

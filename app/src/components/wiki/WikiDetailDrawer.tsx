@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   X,
@@ -16,11 +16,9 @@ import {
   HeartPulse,
   Sparkles,
   PlusCircle,
-  Image,
+  Image as ImageIcon,
   BookmarkCheck,
   ArrowRight,
-  Crosshair,
-  Layers,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import type { WikiTopic } from "@/lib/wikiData";
@@ -73,7 +71,7 @@ interface WikiDetailDrawerProps {
 export function WikiDetailDrawer({
   topic,
   allTopics,
-  isMatchedProfile,
+  isMatchedProfile: _isMatchedProfile,
   onClose,
   onNavigate,
 }: WikiDetailDrawerProps) {
@@ -240,7 +238,7 @@ export function WikiDetailDrawer({
                   title="生成微信分享海报"
                   className="w-8 h-8 rounded-xl border border-blue-200 bg-blue-50/80 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all cursor-pointer active:scale-95 shadow-xs"
                 >
-                  <Image className="w-3.5 h-3.5" />
+                  <ImageIcon className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"

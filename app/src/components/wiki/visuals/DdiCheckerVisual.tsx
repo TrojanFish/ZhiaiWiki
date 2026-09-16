@@ -19,8 +19,7 @@ import {
   TARGETED_DRUGS,
   CHRONIC_DRUG_CATEGORIES,
   ALL_CHRONIC_DRUGS,
-  checkDrugInteractions,
-  TargetedDrug
+  checkDrugInteractions
 } from "@/lib/ddiData";
 
 export interface DdiCheckerVisualProps {
@@ -36,7 +35,7 @@ export interface DdiCheckerVisualProps {
 export function DdiCheckerVisual({
   initialTargetDrugId,
   initialChronicDrugIds,
-  patientName,
+  patientName: _patientName,
   geneInfo,
   isEarlyStageIA = false,
   isModalMode = false,
@@ -432,7 +431,6 @@ export function DdiCheckerVisual({
             const { chronicDrug, rule } = item;
             const isSevere = rule.riskLevel === "severe_contraindication";
             const isCaution = rule.riskLevel === "timing_caution";
-            const isSafe = rule.riskLevel === "compatible_safe";
 
             return (
               <div

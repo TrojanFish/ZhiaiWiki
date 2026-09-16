@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, Target, AlertTriangle, CheckCircle2, Award } from "lucide-react";
+import { ShieldCheck, Target, CheckCircle2 } from "lucide-react";
 
 export function BiopsySafetyVisual() {
   return (

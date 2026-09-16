@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Eye, Stethoscope, Sparkles, CheckCircle2, ShieldCheck } from "lucide-react";
+import { Eye, CheckCircle2 } from "lucide-react";
 
 export function EbusTbnaVisual() {
   return (

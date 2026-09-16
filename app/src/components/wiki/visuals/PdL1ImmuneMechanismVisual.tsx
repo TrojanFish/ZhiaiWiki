@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Activity, Zap, Info } from "lucide-react";
+import { ShieldCheck, Activity } from "lucide-react";
 
 export function PdL1ImmuneMechanismVisual() {
   const [isTreated, setIsTreated] = useState<boolean>(true);

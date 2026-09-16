@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Calendar,
   Scan,
   Ruler,
   AlertTriangle,
@@ -21,7 +20,6 @@ import {
   Camera,
   Trash2,
   Share2,
-  Image as ImageIcon,
   Pill,
   Sparkles,
 } from "lucide-react";
@@ -47,7 +45,7 @@ const ReportUploader = dynamic(() => import("./ReportUploader"), {
 
 
 import ConsentModal from "@/components/ConsentModal";
-import type { PatientProfile, FollowUpRecord, TumorMarkersData } from "@/lib/types";
+import type { PatientProfile } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
 import Link from "next/link";
 
@@ -298,7 +296,7 @@ export default function PatientDashboard() {
   const isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
   const isFemale = (profile.gender as string) === 'female' || (profile.sex as string) === 'female' || (profile.gender as string) === '女' || (profile.sex as string) === '女';
   const isMale = (profile.gender as string) === 'male' || (profile.sex as string) === 'male' || (profile.gender as string) === '男' || (profile.sex as string) === '男';
-  const genderText = isFemale ? '女性' : isMale ? '男性' : '性别待确认';
+  const _genderText = isFemale ? '女性' : isMale ? '男性' : '性别待确认';
 
   const noduleLabel = profile.noduleType === 'pure_ggo' 
     ? '纯磨玻璃结节 (pGGO)' 

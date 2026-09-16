@@ -6,13 +6,9 @@ import {
   Search, 
   Sparkles, 
   Layers, 
-  ShieldCheck, 
-  ExternalLink,
-  Filter,
+  ShieldCheck,
   Microscope,
-  Flame,
-  Activity,
-  Award
+  Activity
 } from "lucide-react";
 import StudyCard, { StudyItem } from "@/components/StudyCard";
 import Footer from "@/components/Footer";

@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Microscope, Dna, Stethoscope, Activity } from "lucide-react";
-import type { WikiTopic, WikiCategory } from "@/lib/wikiData";
+import type { WikiTopic } from "@/lib/wikiData";
 import { RISK_LEVEL_CONFIG, WIKI_CATEGORIES } from "@/lib/wikiData";
 import WikiTopicIcon from "./WikiTopicIcon";
 

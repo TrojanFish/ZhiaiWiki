@@ -15,7 +15,7 @@ import {
   ArrowRight,
   Sparkles,
   PlusCircle,
-  Image,
+  Image as ImageIcon,
   BookmarkCheck,
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -226,7 +226,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
                 title="生成 2x 视网膜高清微信分享海报卡"
                 className="text-xs px-2.5 py-1 rounded-full border border-blue-200 bg-blue-50/90 text-blue-700 hover:bg-blue-100 transition-all cursor-pointer flex items-center gap-1 shadow-2xs whitespace-nowrap flex-shrink-0 active:scale-95"
               >
-                <Image className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                <ImageIcon className="w-3 h-3 text-blue-600 flex-shrink-0" />
                 <span className="text-xs font-bold">海报</span>
               </button>
             </div>

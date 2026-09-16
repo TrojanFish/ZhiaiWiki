@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, Info, Check } from "lucide-react";
+import { ShieldCheck, Info } from "lucide-react";
 
 export function IplnLymphVisual() {
   return (

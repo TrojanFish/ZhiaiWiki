@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Globe, DownloadCloud, BookOpen, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Search, DownloadCloud, AlertCircle } from "lucide-react";
 import { StudyListSkeleton } from "@/components/common/MedicalSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 

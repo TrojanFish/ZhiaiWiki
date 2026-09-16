@@ -11,7 +11,6 @@ import {
   Compass, 
   Info, 
   ArrowRight,
-  Menu,
   X,
   CreditCard,
   Search,

@@ -7,10 +7,7 @@ import {
   Pill, 
   ShieldCheck, 
   AlertTriangle, 
-  Calendar, 
-  Info,
-  Sparkles,
-  ChevronRight
+  Calendar
 } from "lucide-react";
 import { TimelineEventItem } from "@/lib/timelineTypes";
 import { triggerHaptic } from "@/lib/haptics";

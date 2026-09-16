@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Check, X, AlertTriangle, ShieldCheck, HeartPulse, Leaf } from "lucide-react";
+import { Check, X, AlertTriangle, Leaf } from "lucide-react";
 
 export function TcmBoundaryVisual() {
   return (

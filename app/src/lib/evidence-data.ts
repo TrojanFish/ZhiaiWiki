@@ -744,6 +744,276 @@ export const FEATURED_STUDIES: Study[] = [
     relevantFactors: ["MRD", "ctDNA", "SURVEILLANCE"],
     applicableStages: ["IA", "IB", "II", "IIIA"],
   },
+  {
+    id: "AURA3_2017",
+    title: "Osimertinib or Platinum-Pemetrexed in EGFR T790M-Positive Lung Cancer (AURA3)",
+    journal: "N Engl J Med",
+    year: 2017,
+    patientN: 419,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "27959700",
+    doi: "10.1056/NEJMoa1612674",
+    keyConclusions: [
+      "一代/二代靶向药耐药后出现 EGFR T790M 突变者，三代奥希替尼将中位无进展生存期延长一倍以上 (10.1个月 vs 4.4个月, HR=0.30, p<0.001)",
+      "客观缓解率高达 71% vs 31%，中枢神经系统 (CNS) 脑转移缓解率提升至 70% vs 31% (HR=0.32)",
+      "确立一代靶向耐药后常规行 ctDNA/组织基因复检并优选三代奥希替尼的临床金标准",
+    ],
+    relevantFactors: ["EGFR", "T790M", "RESISTANCE", "TARGETED"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "MARIPOSA2_2024",
+    title: "Amivantamab plus Chemotherapy with and without Lazertinib in EGFR-mutant Advanced NSCLC after Osimertinib (MARIPOSA-2)",
+    journal: "Ann Oncol",
+    year: 2024,
+    patientN: 657,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "37879437",
+    doi: "10.1016/j.annonc.2023.10.126",
+    keyConclusions: [
+      "三代靶向药奥希替尼进展后，EGFR/MET 双抗埃万妥单抗联合化疗显著降低 52% 疾病进展风险 (PFS HR=0.48, p<0.001)",
+      "颅内无进展生存期中位延长，中枢神经系统进展风险降低 45% (HR=0.55)",
+      "为三代靶向药全面耐药后的难治性患者提供了首个高级别循证靶向拯救方案",
+    ],
+    relevantFactors: ["EGFR", "RESISTANCE", "MET", "TARGETED"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "SAVANNAH_2024",
+    title: "Osimertinib plus Savolitinib in EGFR-mutant, MET-amplified Advanced NSCLC (SAVANNAH)",
+    journal: "Lancet Oncol",
+    year: 2024,
+    patientN: 293,
+    studyType: "prospective_multicenter",
+    evidenceLevel: 4,
+    pubmedId: "39547192",
+    doi: "10.1016/S1470-2045(24)00486-5",
+    keyConclusions: [
+      "三代奥希替尼耐药中占比最高的旁路旁路激活（MET 扩增），联合口服 MET 抑制剂赛沃替尼客观缓解率达 49%",
+      "中位缓解持续时间达 9.3 个月，高 MET 表达/扩增亚群缓解率达 52%",
+      "证实耐药后无需立即切换化疗，精准复检 MET 扩增可通过双靶口服维持长期无化疗生活",
+    ],
+    relevantFactors: ["EGFR", "MET", "RESISTANCE"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "FLAURA2_2023",
+    title: "First-Line Osimertinib with or without Chemotherapy in EGFR-Mutated Advanced NSCLC (FLAURA2)",
+    journal: "N Engl J Med",
+    year: 2023,
+    patientN: 557,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "37943790",
+    doi: "10.1056/NEJMoa2306865",
+    keyConclusions: [
+      "EGFR 突变晚期初治患者，奥希替尼联合含铂双药化疗将中位 PFS 延长近 9 个月 (25.5个月 vs 16.7个月, HR=0.62, p<0.001)",
+      "合并脑转移高危亚群获益尤为显著：中位 PFS 达 24.9个月 vs 13.8个月 (HR=0.47)",
+      "确立了高肿瘤负荷、L858R 突变或脑转移患者一线强化联合治疗的新选择",
+    ],
+    relevantFactors: ["EGFR", "TARGETED", "CHEMOTHERAPY"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "CROWN_5Yr_2024",
+    title: "Five-Year Outcomes of First-Line Lorlatinib versus Crizotinib in Advanced ALK-Positive NSCLC (CROWN)",
+    journal: "J Clin Oncol",
+    year: 2024,
+    patientN: 296,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "38819266",
+    doi: "10.1200/JCO.24.00581",
+    keyConclusions: [
+      "三代 ALK 抑制剂劳拉替尼一线随访突破 5 年：5年无进展生存率高达 60% vs 克唑替尼 8% (PFS HR=0.19, 95%CI 0.13-0.27)",
+      "脑转移预防极其强悍：基线无脑转移患者 5 年颅内进展累积发生率仅 1.2% (HR=0.06)",
+      "创下晚期实体瘤靶向单药治疗历史上最长无进展生存纪录，确立 ALK 阳性一线首选地位",
+    ],
+    relevantFactors: ["ALK", "TARGETED", "BRAIN_METASTASIS"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "CodeBreaK200_2023",
+    title: "Sotorasib versus Docetaxel for previously treated Non-Small-Cell Lung Cancer with KRAS G12C mutation (CodeBreaK 200)",
+    journal: "Lancet",
+    year: 2023,
+    patientN: 345,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "36764316",
+    doi: "10.1016/S0140-6736(23)00221-0",
+    keyConclusions: [
+      "针对历史上被判定为不可成药的 KRAS G12C 突变，索托拉西布显著改善 1年 PFS (24.8% vs 10.1%, HR=0.66, p=0.0017)",
+      "客观缓解率较多西他赛提升一倍以上 (28.1% vs 13.2%)，严重不良反应发生率显著降低 (33.1% vs 40.4%)",
+      "终结了肺癌 KRAS 突变四十余年无靶向药的历史，开启精准靶向新靶点",
+    ],
+    relevantFactors: ["KRAS", "TARGETED"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "DESTINY_Lung02_2024",
+    title: "Trastuzumab Deruxtecan in Patients with HER2-Mutant Metastatic Non-Small-Cell Lung Cancer (DESTINY-Lung02)",
+    journal: "J Clin Oncol",
+    year: 2024,
+    patientN: 152,
+    studyType: "rct",
+    evidenceLevel: 4,
+    pubmedId: "37699136",
+    doi: "10.1200/JCO.23.01361",
+    keyConclusions: [
+      "新型抗体偶联药物 (ADC) 德曲妥珠单抗 (T-DXd 5.4mg/kg) 治疗 HER2 突变肺癌确认客观缓解率达 49.0%",
+      "中位无进展生存期达 9.9 个月，中位总生存期达 19.5 个月，颅内病灶缓解率达 50%",
+      "已被 NCCN 与 CSCO 指南推荐为晚期 HER2 突变非小细胞肺癌的首选后线治疗方案",
+    ],
+    relevantFactors: ["HER2", "ADC", "TARGETED"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "AEGEAN_2023",
+    title: "Perioperative Durvalumab with Neoadjuvant Chemotherapy in Resectable Non-Small-Cell Lung Cancer (AEGEAN)",
+    journal: "N Engl J Med",
+    year: 2023,
+    patientN: 802,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "37888914",
+    doi: "10.1056/NEJMoa2302975",
+    keyConclusions: [
+      "IIA~IIIB 期可切除患者，度伐利尤单抗围手术期三明治全程治疗将病理完全缓解率 (pCR) 提升 4 倍 (17.2% vs 4.3%, p<0.001)",
+      "主要病理缓解率 (MPR) 达 33.3% vs 12.3%，2年事件自由生存率显著提升 (EFS HR=0.68, p=0.004)",
+      "证实术前新辅助免疫诱导原发灶与淋巴结显著降期，不增加术中并发症与手术中转开胸率",
+    ],
+    relevantFactors: ["IMMUNOTHERAPY", "PERIOPERATIVE", "NEOADJUVANT"],
+    applicableStages: ["IIA", "IIB", "IIIA", "IIIB"],
+  },
+  {
+    id: "Neotorch_2024",
+    title: "Perioperative Toripalimab in Resectable Stage II/III Non-Small Cell Lung Cancer (Neotorch)",
+    journal: "JAMA",
+    year: 2024,
+    patientN: 504,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "38241032",
+    doi: "10.1001/jama.2023.24735",
+    keyConclusions: [
+      "中国多中心 III 期试验证实：特瑞普利单抗围手术期治疗将 III 期患者疾病进展或死亡风险大幅降低 60% (EFS HR=0.40, p<0.0001)",
+      "主要病理缓解率 (MPR) 达 48.5% vs 8.4%，病理完全缓解率 (pCR) 达 24.8% vs 5.6%",
+      "中位无事件生存期尚未达到，奠定了中国原创免疫药物在围手术期降期与保肺治疗中的里程碑地位",
+    ],
+    relevantFactors: ["IMMUNOTHERAPY", "PERIOPERATIVE", "NEOADJUVANT"],
+    applicableStages: ["IIA", "IIB", "IIIA", "IIIB"],
+  },
+  {
+    id: "RATIONALE315_2024",
+    title: "Perioperative Tislelizumab in Resectable Non-Small-Cell Lung Cancer (RATIONALE-315)",
+    journal: "Lancet Respir Med",
+    year: 2024,
+    patientN: 453,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "38670119",
+    doi: "10.1016/S2213-2600(24)00078-0",
+    keyConclusions: [
+      "替雷利珠单抗围手术期治疗显著延长无事件生存期 (EFS HR=0.56, 95%CI 0.40-0.79, p=0.0003)",
+      "术后病理完全缓解率 (pCR) 达 28.7% vs 5.9% (差值 22.8%)，主要病理缓解率 (MPR) 达 56.2% vs 15.0%",
+      "无论鳞癌或腺癌均显现出卓越的降期缩瘤效果，显著提高 R0 根治切除率",
+    ],
+    relevantFactors: ["IMMUNOTHERAPY", "PERIOPERATIVE"],
+    applicableStages: ["II", "IIIA", "IIIB"],
+  },
+  {
+    id: "LUCID_2023",
+    title: "Circulating Tumor DNA Analysis for Minimal Residual Disease in Non-Small Cell Lung Cancer (LUCID)",
+    journal: "J Clin Oncol",
+    year: 2023,
+    patientN: 218,
+    studyType: "prospective_multicenter",
+    evidenceLevel: 4,
+    pubmedId: "36724395",
+    doi: "10.1200/JCO.22.01633",
+    keyConclusions: [
+      "早期根治术后血液 ctDNA MRD 检测持续阴性者，2年无病生存率高达 94.1%，展现出卓越的长期无瘤治愈预测能力",
+      "术后 MRD 阳性患者 100% 出现复发，ctDNA 检出比常规 CT 影像学复发提前中位 168 天",
+      "为探索术后低危患者免除毒副反应化疗（精准减毒去化疗）提供了核心前瞻性循证依据",
+    ],
+    relevantFactors: ["MRD", "ctDNA", "SURVEILLANCE"],
+    applicableStages: ["IA", "IB", "II"],
+  },
+  {
+    id: "MEDAL_2024",
+    title: "Minimal Residual Disease Dynamics Predict Clinical Relapse in Resectable Stage I-III NSCLC (MEDAL)",
+    journal: "Ann Oncol",
+    year: 2024,
+    patientN: 330,
+    studyType: "prospective_multicenter",
+    evidenceLevel: 4,
+    pubmedId: "38218412",
+    doi: "10.1016/j.annonc.2024.01.003",
+    keyConclusions: [
+      "纵向血液监测表明术后 ctDNA 清除状态可动态区分复发风险：持续阴性组 3年 DFS 达 89.4% vs 持续阳性组 12.5% (HR=11.2)",
+      "ctDNA 阳性提前平均 4.6 个月预警复发，阳性预测值达 96.2%",
+      "支持临床以血液 ctDNA 分子复发替代传统单纯等待影像学进展的被动随访模式",
+    ],
+    relevantFactors: ["MRD", "ctDNA", "SURVEILLANCE"],
+    applicableStages: ["IA", "IB", "II", "IIIA"],
+  },
+  {
+    id: "Osimertinib_ILD_Safety_2022",
+    title: "Incidence, Clinical Presentation, and Management of Interstitial Lung Disease in Patients Receiving Osimertinib",
+    journal: "Chest",
+    year: 2022,
+    patientN: 1479,
+    studyType: "retrospective_multicenter",
+    evidenceLevel: 4,
+    pubmedId: "35149021",
+    doi: "10.1016/j.chest.2022.01.058",
+    keyConclusions: [
+      "三代靶向药奥希替尼真实世界间质性肺病 (ILD) 发生率约 3.9%，中位发病时间为用药后 2.8 个月",
+      "早期高分辨 CT (HRCT) 识别磨玻璃影伴呼吸困难/干咳，立即停药并尽早足量糖皮质激素干预，85.2% 患者可完全恢复",
+      "确立了靶向治疗期间居家血氧饱和度监测与出现咳嗽气促时切勿盲目当作感冒拖延的自救指南",
+    ],
+    relevantFactors: ["EGFR", "TARGETED", "ADVERSE_EFFECTS"],
+    applicableStages: ["IB", "II", "IIIA", "IV"],
+  },
+  {
+    id: "Pulm_Rehab_RCT_2023",
+    title: "Effect of Postoperative Inspiratory Muscle Training and Breathing Techniques on Pulmonary Recovery in Lung Cancer",
+    journal: "Eur Respir J",
+    year: 2023,
+    patientN: 240,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "36822601",
+    doi: "10.1183/13993003.01824-2022",
+    keyConclusions: [
+      "肺叶/肺段切除术后系统开展 8 周主动呼吸循环技术 (ACBT) 与抗阻吸气肌训练 (IMT)，第一秒用力呼气容积 (FEV1) 恢复率较对照组提高 18.4%",
+      "6分钟步行距离 (6MWD) 提升 45 米，术后 90 天肺部感染与肺不张并发症发生率下降 52% (p=0.008)",
+      "证实术后标准化呼吸肌锻炼是改善生活质量、克服术后气短气促的最高级别非药物干预手段",
+    ],
+    relevantFactors: ["SURGERY_TYPE", "REHABILITATION"],
+    applicableStages: ["IA", "IB", "II", "IIIA"],
+  },
+  {
+    id: "LIBRETTO001_2022",
+    title: "Efficacy of Selpercatinib in RET Fusion-Positive Non-Small-Cell Lung Cancer (LIBRETTO-001)",
+    journal: "Lancet Oncol",
+    year: 2022,
+    patientN: 355,
+    studyType: "prospective_multicenter",
+    evidenceLevel: 4,
+    pubmedId: "36007535",
+    doi: "10.1016/S1470-2045(22)00426-8",
+    keyConclusions: [
+      "高选择性 RET 抑制剂塞普替尼在 RET 融合阳性初治肺癌中客观缓解率高达 84%，经治患者达 61%",
+      "中位无进展生存期达 24.9 个月，颅内中枢转移病灶缓解率达 85%",
+      "确立了精准基因检测筛选罕见 RET 突变并采用特异性靶向治疗的突破性标准",
+    ],
+    relevantFactors: ["RET", "TARGETED"],
+    applicableStages: ["IIIB", "IV"],
+  },
 ];
 
 export interface PatientMatchResult {
@@ -1007,25 +1277,41 @@ export function analyzePatientProfile(profile: {
   }
 
   // Immunotherapy matching for Stage II-III or non-early
+  // Immunotherapy & Neoadjuvant matching for Stage II-III or non-early
   const isHigherStage = profile.stage && (profile.stage.startsWith("II") || profile.stage.startsWith("III"));
   if (isHigherStage) {
     const sKn671 = FEATURED_STUDIES.find(s => s.id === "KEYNOTE671_2023");
     if (sKn671) matchedStudies.push(sKn671);
     const sCm816 = FEATURED_STUDIES.find(s => s.id === "CheckMate816_2022");
     if (sCm816) matchedStudies.push(sCm816);
+    const sAegean = FEATURED_STUDIES.find(s => s.id === "AEGEAN_2023");
+    if (sAegean) matchedStudies.push(sAegean);
+    const sNeotorch = FEATURED_STUDIES.find(s => s.id === "Neotorch_2024");
+    if (sNeotorch) matchedStudies.push(sNeotorch);
+    const sRationale = FEATURED_STUDIES.find(s => s.id === "RATIONALE315_2024");
+    if (sRationale) matchedStudies.push(sRationale);
     const sImp010 = FEATURED_STUDIES.find(s => s.id === "IMpower010_2021");
     if (sImp010) matchedStudies.push(sImp010);
   }
 
-  // Longitudinal SEER & MRD
+  // Longitudinal SEER & MRD Surveillance
   const sSeer = FEATURED_STUDIES.find(s => s.id === "SEER_Conditional_Survival_2021");
   if (sSeer) matchedStudies.push(sSeer);
   const sTracerx = FEATURED_STUDIES.find(s => s.id === "TRACERx_Nature_2023");
   if (sTracerx) matchedStudies.push(sTracerx);
+  const sLucid = FEATURED_STUDIES.find(s => s.id === "LUCID_2023");
+  if (sLucid) matchedStudies.push(sLucid);
+  const sMedal = FEATURED_STUDIES.find(s => s.id === "MEDAL_2024");
+  if (sMedal) matchedStudies.push(sMedal);
+
   if (profile.mrdStatus === "negative" || profile.mrdStatus === "positive") {
     const sDynamic = FEATURED_STUDIES.find(s => s.id === "DYNAMIC_Lung_2022");
     if (sDynamic) matchedStudies.push(sDynamic);
   }
+
+  // Postoperative Pulmonary Rehabilitation
+  const sRehab = FEATURED_STUDIES.find(s => s.id === "Pulm_Rehab_RCT_2023");
+  if (sRehab) matchedStudies.push(sRehab);
 
   const validStudies = Array.from(new Set(matchedStudies.filter(Boolean)));
 

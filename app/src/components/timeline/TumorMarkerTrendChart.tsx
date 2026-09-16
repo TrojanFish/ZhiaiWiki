@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { TestTube2, ShieldCheck, AlertCircle, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { TestTube2, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { TimelineEventItem } from "@/lib/timelineTypes";
 import { TUMOR_MARKER_DEFINITIONS } from "@/lib/tumorMarkers";
 

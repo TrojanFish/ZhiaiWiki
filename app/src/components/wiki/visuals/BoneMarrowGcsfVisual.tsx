@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Activity, ShieldCheck, AlertCircle, Syringe, Info } from "lucide-react";
+import { AlertCircle, Syringe } from "lucide-react";
 
 export function BoneMarrowGcsfVisual() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FileText, Volume2, ArrowUp, Sparkles, Share2 } from "lucide-react";
+import { Volume2, ArrowUp, Share2 } from "lucide-react";
 
 import { showToast } from "./Toast";
 

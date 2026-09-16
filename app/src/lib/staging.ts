@@ -438,8 +438,6 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   });
 
   const stage = (rawProfile.stage && rawProfile.stage !== "unknown") ? rawProfile.stage : staging.stage;
-  const nStage = staging.nStage;
-  const mStage = staging.mStage;
   const ctr = staging.ctr;
   const isStas = rawProfile.stas === "positive" || rawProfile.stas === true;
   const isVpi = rawProfile.vpi === "positive" || rawProfile.vpi === true;
@@ -449,7 +447,6 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   const ki67Val = rawProfile.ki67 != null && rawProfile.ki67 !== "" ? parseFloat(String(rawProfile.ki67)) : null;
   const isHighKi67 = ki67Val !== null && !isNaN(ki67Val) && ki67Val > 20;
   const isPreOp = rawProfile.reportType === "ct_imaging" || rawProfile.currentStage === "evaluation" || rawProfile.currentStage === "discovery";
-  const surgeryType = rawProfile.surgeryType || (isPreOp ? "unknown" : "segmentectomy");
 
   // Molecular driver gene status
   const geneMutations = Array.isArray(rawProfile.geneMutations) 
@@ -495,7 +492,6 @@ export function getClinicalCohortForProfile(rawProfile: any): ClinicalCohortResu
   const isPureGgo = staging.noduleType === "pure_ggo" || (ctr !== null && ctr === 0);
   const isSubsolidLow = staging.noduleType === "mixed_ggo" && ctr !== null && ctr > 0 && ctr <= 0.50;
   const isSubsolidHigh = staging.noduleType === "mixed_ggo" && ctr !== null && ctr > 0.50;
-  const isPureSolid = staging.noduleType === "pure_solid" || (ctr !== null && ctr >= 1.0);
 
   const morphologyLabel = isPureGgo 
     ? "纯磨玻璃结节 (pGGO / CTR=0)" 

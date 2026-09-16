@@ -50,7 +50,7 @@ function LungSVG({ mode }: { mode: SurgicalMode }) {
   const healthyLobe = "#e2e8f0";
   const healthyStroke = "#94a3b8";
 
-  const isWedge = mode === "wedge";
+  const _isWedge = mode === "wedge";
   const isSeg = mode === "segment";
   const isLobe = mode === "lobe";
 

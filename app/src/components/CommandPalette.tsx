@@ -11,8 +11,7 @@ import {
   ArrowRight, 
   X, 
   Command, 
-  Sparkles, 
-  ExternalLink
+  Sparkles
 } from "lucide-react";
 import { triggerHaptic } from "@/lib/haptics";
 

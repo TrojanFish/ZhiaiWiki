@@ -23,13 +23,10 @@ import {
   Crosshair,
   Zap,
   Activity,
-  Award,
   Tag,
   Scan,
   TestTube2,
   FileBadge2,
-  Stethoscope,
-  Pill,
   BrainCircuit,
   Info,
 } from "lucide-react";

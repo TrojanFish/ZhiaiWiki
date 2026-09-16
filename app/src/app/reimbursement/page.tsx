@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { 
   ShieldCheck, 
-  CreditCard, 
   FileText, 
   HelpCircle, 
   Calculator, 
@@ -12,20 +10,13 @@ import {
   AlertTriangle, 
   Building2, 
   Copy, 
-  Check, 
-  ExternalLink,
-  ChevronRight,
-  Pill,
+  Check,
   Sparkles,
   HeartHandshake,
   MapPin,
   FileCheck,
   AlertOctagon,
-  Search,
   Filter,
-  BadgeAlert,
-  Layers,
-  ArrowUpRight,
   Info,
   Smartphone,
   Lightbulb

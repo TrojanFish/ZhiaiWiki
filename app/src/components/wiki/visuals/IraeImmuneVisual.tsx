@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Activity, ShieldAlert, Heart, Wind, Droplets, Zap } from "lucide-react";
+import { Activity, ShieldAlert, Heart, Wind, Droplets } from "lucide-react";
 
 export function IraeImmuneVisual() {
   const [selectedOrgan, setSelectedOrgan] = useState<"lung" | "thyroid" | "gut" | "heart">("lung");

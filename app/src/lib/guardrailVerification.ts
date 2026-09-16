@@ -3,7 +3,7 @@
  * Automated verification suite for clinical rules, ethical red lines, and data privacy.
  */
 
-import { sanitizeClinicalText, sanitizePatientProfile } from './privacy';
+import { sanitizeClinicalText } from './privacy';
 import { checkRateLimit } from './rateLimit';
 import type { PatientProfile } from './types';
 

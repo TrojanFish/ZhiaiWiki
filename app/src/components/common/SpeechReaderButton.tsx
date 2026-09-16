@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Pause, Play, Loader2 } from "lucide-react";
+import { Volume2, VolumeX, Play } from "lucide-react";
 
 interface SpeechReaderButtonProps {
   text: string;

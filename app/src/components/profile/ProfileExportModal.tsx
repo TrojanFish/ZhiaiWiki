@@ -7,18 +7,13 @@ import {
   Share2, 
   Check, 
   Sparkles, 
-  ShieldCheck, 
-  HeartPulse, 
   Scan, 
   Ruler, 
   Microscope, 
   Activity, 
-  Layers, 
-  BrainCircuit, 
-  Calendar,
+  BrainCircuit,
   AlertTriangle,
   Sun,
-  Apple,
   Dna
 } from "lucide-react";
 import { toPng } from "html-to-image";
@@ -47,7 +42,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
   const isMarginSafe = profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false;
   const isN0Safe = profile.nStage === 'N0' || profile.lymphNodes === 'N0';
   const isGrade3 = profile.iaslcGrade === '3' || profile.grade === '3';
-  const isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
+  const _isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
   const isFemale = (profile.gender as string) === 'female' || (profile.sex as string) === 'female' || (profile.gender as string) === '女' || (profile.sex as string) === '女';
   const isMale = (profile.gender as string) === 'male' || (profile.sex as string) === 'male' || (profile.gender as string) === '男' || (profile.sex as string) === '男';
   const genderText = isFemale ? '女性' : isMale ? '男性' : '性别待确认';
@@ -324,7 +319,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5 relative z-10">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-blue-500/30 shrink-0 bg-slate-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                { }
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
               </div>
               <div>

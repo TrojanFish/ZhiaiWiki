@@ -2,7 +2,7 @@ import React from 'react';
 import type { EdgeEvidence } from '@/lib/knowledgeGraphData';
 import { MiniForestPlot } from '../MiniForestPlot';
 
-export function EdgeEvidencePanel({ edgeKey, evidence, onClose }: { edgeKey: string; evidence: EdgeEvidence; onClose: () => void }) {
+export function EdgeEvidencePanel({ edgeKey: _edgeKey, evidence, onClose }: { edgeKey: string; evidence: EdgeEvidence; onClose: () => void }) {
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 border border-blue-200/80 flex-1 overflow-y-auto max-h-[550px]">
       {/* Header */}

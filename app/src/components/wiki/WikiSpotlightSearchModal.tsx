@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Search, X, CornerDownLeft, Command, Clock, Trash2 } from "lucide-react";
@@ -369,7 +369,7 @@ function ResultItem({ topic, query, isActive, onHover, onSelect }: { topic: Wiki
   useEffect(() => { if (isActive) ref.current?.scrollIntoView({ block: "nearest" }); }, [isActive]);
 
   return (
-    <button ref={ref} type="button" onClick={onSelect} onMouseEnter={onHover}
+    <button ref={ref} type="button" role="option" onClick={onSelect} onMouseEnter={onHover}
       className={`w-full flex items-start gap-3 px-4 sm:px-5 py-3 transition-colors cursor-pointer text-left border-l-2 ${isActive ? "bg-blue-50 border-blue-400" : "border-transparent hover:bg-slate-50"}`}
       aria-selected={isActive}
     >

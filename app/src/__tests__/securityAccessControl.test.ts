@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { GET as getTimeline, PUT as putTimeline, DELETE as deleteTimeline } from '../app/api/timeline/route';
+import { GET as getTimeline, DELETE as deleteTimeline } from '../app/api/timeline/route';
 import { GET as getProfile, DELETE as deleteProfile } from '../app/api/profile/route';
 import { isCookieSecure } from '../lib/userAuth';
 import { validateAdminCredentials } from '../lib/adminAuth';

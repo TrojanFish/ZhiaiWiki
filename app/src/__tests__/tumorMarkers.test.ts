@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { evaluateTumorMarkers, TUMOR_MARKER_DEFINITIONS } from '../lib/tumorMarkers';
+import { evaluateTumorMarkers } from '../lib/tumorMarkers';
 
 describe('Tumor Markers Evaluation & Physiological Fluctuation Engine', () => {
   it('should return empty list when no data is provided', () => {

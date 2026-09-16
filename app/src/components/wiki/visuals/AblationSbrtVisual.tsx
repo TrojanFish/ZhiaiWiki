@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Flame, Radio, ShieldCheck, Target } from "lucide-react";
+import { Flame, Radio, Target } from "lucide-react";
 
 export function AblationSbrtVisual() {
   return (

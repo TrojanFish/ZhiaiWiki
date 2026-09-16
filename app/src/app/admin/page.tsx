@@ -19,8 +19,6 @@ import {
   ExternalLink,
   Trash2,
   AlertTriangle,
-  CheckCircle2,
-  Lock,
 } from "lucide-react";
 import { EvidenceRating } from "@/components/common/EvidenceRating";
 
@@ -386,7 +384,7 @@ export default function AdminPage() {
         showToast("文献已成功移除");
         loadStudies();
       }
-    } catch (err) {
+    } catch {
       alert("删除失败");
     }
   };

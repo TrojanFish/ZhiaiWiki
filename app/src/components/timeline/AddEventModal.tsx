@@ -8,16 +8,13 @@ import {
   Scan, 
   TestTube2, 
   Microscope, 
-  HeartPulse, 
-  Building2,
+  HeartPulse,
   Edit3,
   ShieldCheck,
   Eye,
   CheckCircle2,
   Check,
-  ChevronRight,
-  Sparkles,
-  Layers
+  Sparkles
 } from "lucide-react";
 import { TimelineCategory, TimelineEventItem, TIMELINE_CATEGORIES } from "@/lib/timelineTypes";
 import TimelineCategoryIcon from "./TimelineCategoryIcon";

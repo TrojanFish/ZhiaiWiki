@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { DEFAULT_GRAPH_NODES, DEFAULT_EDGE_EVIDENCES } from '../src/lib/defaultGraphData';
+import { FEATURED_STUDIES } from '../src/lib/evidence-data';
 
 const prisma = new PrismaClient();
 
@@ -92,6 +93,53 @@ async function main() {
   }
 
   console.log('✅ Knowledge Graph nodes and edges seeded successfully.');
+
+  // 3. Seed Ingested Landmark Studies
+  console.log(`Seeding ${FEATURED_STUDIES.length} landmark clinical studies into IngestedStudy table...`);
+  for (const study of FEATURED_STUDIES) {
+    const conclusionsStr = study.keyConclusions.join('；');
+    const applicableStagesStr = JSON.stringify(study.applicableStages);
+    const relevantFactorsStr = JSON.stringify(study.relevantFactors);
+    const url = study.doi 
+      ? `https://doi.org/${study.doi}` 
+      : (study.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${study.pubmedId}/` : undefined);
+
+    await prisma.ingestedStudy.upsert({
+      where: { id: study.id },
+      update: {
+        title: study.title,
+        journal: study.journal,
+        year: study.year,
+        patientN: study.patientN,
+        studyType: study.studyType,
+        evidenceLevel: study.evidenceLevel,
+        doi: study.doi || null,
+        pubmedId: study.pubmedId || null,
+        applicableStages: applicableStagesStr,
+        relevantFactors: relevantFactorsStr,
+        conclusion: conclusionsStr,
+        summary: study.keyConclusions[0] || '',
+        url: url || null,
+      },
+      create: {
+        id: study.id,
+        title: study.title,
+        journal: study.journal,
+        year: study.year,
+        patientN: study.patientN,
+        studyType: study.studyType,
+        evidenceLevel: study.evidenceLevel,
+        doi: study.doi || null,
+        pubmedId: study.pubmedId || null,
+        applicableStages: applicableStagesStr,
+        relevantFactors: relevantFactorsStr,
+        conclusion: conclusionsStr,
+        summary: study.keyConclusions[0] || '',
+        url: url || null,
+      }
+    });
+  }
+  console.log(`✅ All ${FEATURED_STUDIES.length} landmark studies seeded successfully.`);
 }
 
 main()

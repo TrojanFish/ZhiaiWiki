@@ -9,13 +9,10 @@ import {
   Download, 
   Printer, 
   FileText, 
-  Image as ImageIcon, 
   Share2, 
   ClipboardList, 
   Sparkles, 
-  Check, 
-  AlertTriangle,
-  ShieldCheck
+  Check
 } from "lucide-react";
 import type { PatientProfile } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
@@ -943,7 +940,7 @@ export default function EvidenceReportPage() {
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  h2: ({ node, children, ...props }) => {
+                  h2: ({ node: _node, children, ...props }) => {
                     const text = String(children || "");
                     const isChecklist = text.includes("问诊清单") || text.includes("就医便签") || text.includes("3.");
                     return (
@@ -965,10 +962,10 @@ export default function EvidenceReportPage() {
                       </div>
                     );
                   },
-                  h3: ({ node, ...props }) => (
+                  h3: ({ node: _node, ...props }) => (
                     <h3 className="text-base md:text-lg font-bold text-slate-800 mt-6 mb-2 flex items-center gap-1.5" {...props} />
                   ),
-                  blockquote: ({ node, children, ...props }) => {
+                  blockquote: ({ node: _node, children, ...props }) => {
                     const contentStr = String(children || "");
                     const isSummary = contentStr.includes("核心研判") || contentStr.includes("🌟") || contentStr.includes("Executive Summary");
                     const isDisclaimer = contentStr.includes("免责声明") || contentStr.includes("🛡️");
@@ -1016,7 +1013,7 @@ export default function EvidenceReportPage() {
                       </blockquote>
                     );
                   },
-                  ul: ({ node, ...props }) => (
+                  ul: ({ node: _node, ...props }) => (
                     <ul className="space-y-2 my-3 pl-1 list-none" {...props} />
                   ),
                   li: ({ node, children, className, ...props }) => {
@@ -1035,7 +1032,7 @@ export default function EvidenceReportPage() {
                       </li>
                     );
                   },
-                  input: ({ node, ...props }) => {
+                  input: ({ node: _node, ...props }) => {
                     if (props.type === 'checkbox') {
                       return (
                         <input 
@@ -1047,24 +1044,24 @@ export default function EvidenceReportPage() {
                     }
                     return <input {...props} />;
                   },
-                  table: ({ node, ...props }) => (
+                  table: ({ node: _node, ...props }) => (
                     <div className="overflow-x-auto my-5 rounded-2xl border border-slate-200 shadow-xs">
                       <table className="min-w-full divide-y divide-slate-200 text-sm" {...props} />
                     </div>
                   ),
-                  thead: ({ node, ...props }) => (
+                  thead: ({ node: _node, ...props }) => (
                     <thead className="bg-slate-100/80" {...props} />
                   ),
-                  th: ({ node, ...props }) => (
+                  th: ({ node: _node, ...props }) => (
                     <th className="px-4 py-3 text-left font-bold text-slate-700 text-xs uppercase tracking-wider" {...props} />
                   ),
-                  td: ({ node, ...props }) => (
+                  td: ({ node: _node, ...props }) => (
                     <td className="px-4 py-3 border-t border-slate-100 text-slate-700" {...props} />
                   ),
-                  hr: ({ node, ...props }) => (
+                  hr: ({ node: _node, ...props }) => (
                     <hr className="my-6 border-slate-200" {...props} />
                   ),
-                  strong: ({ node, ...props }) => (
+                  strong: ({ node: _node, ...props }) => (
                     <strong className="font-bold text-slate-900 bg-amber-50/90 text-amber-950 px-1 py-0.5 rounded" {...props} />
                   )
                 }}
@@ -1200,7 +1197,7 @@ export default function EvidenceReportPage() {
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800 relative z-10">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl overflow-hidden shadow-md flex-shrink-0 bg-slate-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                { }
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -1407,7 +1404,7 @@ export default function EvidenceReportPage() {
 
             {/* Scrollable Image Preview Area */}
             <div className="flex-1 overflow-y-auto p-4 bg-slate-950 flex justify-center items-start min-h-[220px]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <img
                 src={exportedImageUrl}
                 alt="OncoPath 门诊就医问诊便签卡"

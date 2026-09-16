@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CircleDot, Info, Sparkles, ShieldAlert, Layers } from "lucide-react";
+import { CircleDot, Info, Sparkles } from "lucide-react";
 
 export function MediastinalLNMapVisual() {
   const [selectedStation, setSelectedStation] = useState<string>("7");

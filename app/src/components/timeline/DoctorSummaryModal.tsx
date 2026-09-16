@@ -10,17 +10,13 @@ import {
   Scan, 
   Microscope, 
   Zap, 
-  TestTube2, 
-  Activity,
+  TestTube2,
   Dna,
-  ShieldCheck,
   FileText,
   Sparkles,
   HelpCircle,
-  AlertCircle,
   Copy,
   Calendar,
-  Layers,
   ChevronRight
 } from "lucide-react";
 import { TimelineEventItem } from "@/lib/timelineTypes";
@@ -56,7 +52,7 @@ export default function DoctorSummaryModal({ events, onClose }: DoctorSummaryMod
   const pathologyList = sortedEvents.filter((e) => e.category === "pathology");
   const serologyList = sortedEvents.filter((e) => e.category === "serology");
   const milestoneList = sortedEvents.filter((e) => e.category === "milestone");
-  const molecularList = sortedEvents.filter((e) => e.category === "molecular" || e.subType === "NGS");
+  const _molecularList = sortedEvents.filter((e) => e.category === "molecular" || e.subType === "NGS");
   const latestImaging = imagingList[0];
   const latestSerology = serologyList[0];
   const latestPathology = pathologyList[0];
@@ -706,7 +702,7 @@ export default function DoctorSummaryModal({ events, onClose }: DoctorSummaryMod
                 <div className="border-b-2 border-slate-900 pb-3 sm:pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 shadow-xs bg-slate-100">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      { }
                       <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
                     </div>
                     <div>
@@ -900,7 +896,7 @@ export default function DoctorSummaryModal({ events, onClose }: DoctorSummaryMod
             <div className="border-b-2 border-slate-900 pb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 shadow-xs bg-slate-100 border border-slate-200">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  { }
                   <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
                 </div>
                 <div>

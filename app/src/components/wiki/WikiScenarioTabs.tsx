@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { CircleDot, Microscope, Dna, HeartPulse, LayoutGrid } from "lucide-react";
-import { WIKI_TOPICS, WIKI_CATEGORIES, type WikiCategory } from "@/lib/wikiData";
+import { WIKI_TOPICS, type WikiCategory } from "@/lib/wikiData";
 
 interface WikiScenarioTabsProps {
   activeCategory: WikiCategory | "all";
@@ -10,7 +10,7 @@ interface WikiScenarioTabsProps {
 }
 
 // 每个分类下高危词条数
-function countHighRisk(category: WikiCategory | "all") {
+function _countHighRisk(category: WikiCategory | "all") {
   const list = category === "all" ? WIKI_TOPICS : WIKI_TOPICS.filter((t) => t.category === category);
   return list.filter((t) => t.riskLevel === "high").length;
 }

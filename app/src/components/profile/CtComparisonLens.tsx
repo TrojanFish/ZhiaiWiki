@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Layers, ArrowRight, TrendingUp, TrendingDown, Minus, Calendar, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Layers, ArrowRight, ShieldCheck, AlertTriangle } from "lucide-react";
 import type { FollowUpRecord, PatientProfile } from "@/lib/types";
 
 interface CtComparisonLensProps {

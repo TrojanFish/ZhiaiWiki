@@ -4,14 +4,12 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   FileText,
   Scan,
-  Globe,
   Microscope,
   Camera,
   Dna,
   User,
   Lightbulb,
   AlertTriangle,
-  BookOpen,
   X,
   CircleDot,
   ShieldCheck,
@@ -26,9 +24,8 @@ import {
   TestTube2,
   Award,
 } from "lucide-react";
-import type { PatientProfile, SecondaryNodule, FollowUpRecord, TumorMarkersData } from "@/lib/types";
+import type { SecondaryNodule, FollowUpRecord } from "@/lib/types";
 import { computeClinicalTnmStage } from "@/lib/staging";
-import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 
 interface ReportUploaderProps {
   onParsed: (data: any) => void;
@@ -603,7 +600,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
     setCustomIsComutation(false);
   };
 
-  const handleRemoveGene = (id: string) => {
+  const _handleRemoveGene = (id: string) => {
     const currentList = Array.isArray(parsedData?.geneMutations) ? [...parsedData.geneMutations] : [];
     setParsedData({
       ...parsedData,

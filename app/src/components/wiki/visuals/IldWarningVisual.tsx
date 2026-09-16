@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AlertTriangle, Flame, PhoneCall, Stethoscope, Activity, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, Flame } from "lucide-react";
 
 export function IldWarningVisual() {
   return (

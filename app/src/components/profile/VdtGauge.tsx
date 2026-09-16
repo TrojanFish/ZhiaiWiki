@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Activity, ShieldCheck, AlertTriangle, Clock } from "lucide-react";
+import { Activity } from "lucide-react";
 
 interface VdtGaugeProps {
   vdtDays: number | null;

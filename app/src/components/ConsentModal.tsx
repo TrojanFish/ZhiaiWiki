@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ShieldCheck, Lock, AlertCircle, FileCheck, Check } from "lucide-react";
+import { ShieldCheck, Check } from "lucide-react";
 import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
 
 interface ConsentModalProps {
@@ -43,7 +43,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
         {/* Tier 1: Fixed Sticky Header */}
         <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-white shrink-0">
           <div className="w-10 h-10 rounded-xl overflow-hidden shadow-xs flex items-center justify-center shrink-0 bg-slate-900 border border-slate-800">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            { }
             <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
           </div>
           <div>

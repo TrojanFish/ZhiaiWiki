@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, ShieldCheck, AlertCircle, Pill, ChevronRight } from "lucide-react";
+import { Sparkles, ShieldCheck, Pill } from "lucide-react";
 
 export function TargetedSideEffectsVisual() {
   const [activeTab, setActiveTab] = useState<"rash" | "paronychia" | "diarrhea" | "stomatitis">("paronychia");

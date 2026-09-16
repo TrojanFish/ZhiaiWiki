@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { User, AlertCircle, X, LogIn, UserPlus, Lock, Mail } from "lucide-react";
+import { AlertCircle, X, LogIn, UserPlus, Lock, Mail } from "lucide-react";
 import { login, register } from "@/lib/api";
 
 interface AuthModalProps {
