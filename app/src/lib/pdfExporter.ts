@@ -123,12 +123,12 @@ export async function exportElementToA4Pdf(
       pdf.setFontSize(7.5);
       pdf.setTextColor(148, 163, 184); // slate-400
       pdf.text(
-        "本便签由 OncoPath 循证引擎生成 · 仅供就医参考，请以临床医师综合诊断为准",
+        "OncoPath 肺结节循证决策系统 · lung.dpdns.org | 本文档供就医沟通与学术参考，请以临床医师现场诊疗为准",
         marginXMm,
         a4HeightMm - 6
       );
       pdf.text(
-        `第 ${page + 1} / ${totalPages} 页`,
+        `第 ${page + 1} / ${totalPages} 页 · lung.dpdns.org`,
         a4WidthMm - marginXMm,
         a4HeightMm - 6,
         { align: "right" }

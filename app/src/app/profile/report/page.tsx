@@ -22,6 +22,7 @@ import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
 import { exportElementToA4Pdf } from "@/lib/pdfExporter";
 import { showToast } from "@/components/common/Toast";
 import LangSwitch from "@/components/LangSwitch";
+import ExportBrandFooter from "@/components/common/ExportBrandFooter";
 
 
 export default function EvidenceReportPage() {
@@ -354,7 +355,7 @@ export default function EvidenceReportPage() {
       }
       await new Promise((r) => setTimeout(r, 100));
 
-      // Fast, lightweight, pixel-perfect render of the Consultation Pocket Card (560px)
+      // Fast, lightweight, pixel-perfect render of the Consultation Pocket Card (600px)
       let imgData = "";
       try {
         imgData = await toPng(consultationCardRef.current, {
@@ -362,7 +363,7 @@ export default function EvidenceReportPage() {
           pixelRatio: 2,
           skipAutoScale: true,
           fontEmbedCSS: "",
-          backgroundColor: "#0f172a",
+          backgroundColor: "#ffffff",
           cacheBust: true,
         });
       } catch (primaryErr) {
@@ -376,13 +377,13 @@ export default function EvidenceReportPage() {
             scale: 2,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: "#0f172a",
+            backgroundColor: "#ffffff",
             logging: false,
             scrollX: 0,
             scrollY: 0,
             x: 0,
             y: 0,
-            width: 560,
+            width: 600,
             windowWidth: 1200,
           });
           imgData = canvas.toDataURL("image/png");
@@ -1191,22 +1192,21 @@ export default function EvidenceReportPage() {
       >
         <div
           ref={consultationCardRef}
-          className="w-[560px] bg-slate-900 text-white rounded-3xl p-6 shadow-2xl border border-slate-700/80 relative overflow-hidden font-sans"
+          className="w-[600px] bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 relative overflow-hidden font-sans"
         >
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800 relative z-10">
+          <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 relative z-10">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl overflow-hidden shadow-md flex-shrink-0 bg-slate-800">
-                { }
+              <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs flex-shrink-0 bg-slate-100 border border-slate-200">
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wider text-white">OncoPath · 肺癌循证决策系统</div>
-                <div className="text-[10px] text-slate-400">门诊就医问诊便签卡 · 医患高效协同</div>
+                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证决策系统</div>
+                <div className="text-[10px] text-slate-500">门诊就医问诊便签卡 · 医患高效协同</div>
               </div>
             </div>
             <div className="text-right">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                 {new Date().toLocaleDateString('zh-CN')}
               </span>
             </div>
@@ -1214,19 +1214,19 @@ export default function EvidenceReportPage() {
 
           {/* Patient Overview & Clinical Parameters */}
           {profile && (
-            <div className="mb-4 bg-slate-800/90 rounded-2xl p-4 border border-slate-700/80 relative z-10 space-y-3">
+            <div className="mb-4 bg-slate-50 rounded-2xl p-4 border border-slate-200 relative z-10 space-y-3">
               {/* Row 1: Age, Gender, Stage & Risk Badge */}
-              <div className="flex items-start justify-between gap-3 border-b border-slate-700/60 pb-3">
+              <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-black text-white">
+                    <span className="text-sm font-black text-slate-900">
                       {profile.age ? `${profile.age}岁 · ` : ''}{genderText}
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[11px] font-black font-mono">
+                    <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-black font-mono">
                       {profile.tStage || "T1a"}{profile.nStage || "N0"}{profile.mStage || "M0"}
                     </span>
                   </div>
-                  <div className="text-xs font-bold text-sky-400">
+                  <div className="text-xs font-bold text-blue-700">
                     {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging'
                       ? (profile.stage ? `c${profile.stage} 期肺结节` : '早期肺结节')
                       : (profile.stage ? `${profile.stage} 期${histologyText}` : `早期${histologyText}`)
@@ -1237,8 +1237,8 @@ export default function EvidenceReportPage() {
                 <div className="text-right shrink-0">
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-lg font-extrabold text-[11px] border shadow-xs ${
                     isAllSafe 
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
-                      : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                      : 'bg-amber-50 text-amber-800 border-amber-200'
                   }`}>
                     {riskLabel}
                   </span>
@@ -1246,16 +1246,16 @@ export default function EvidenceReportPage() {
               </div>
 
               {/* Row 2: Surgery Type */}
-              <div className="flex items-center justify-between text-xs bg-slate-900/60 px-3 py-2 rounded-xl border border-slate-700/50">
-                <span className="text-slate-400 text-[11px]">手术术式</span>
-                <span className="font-bold text-white bg-slate-800 px-2.5 py-0.5 rounded-md border border-slate-600/60 text-[11px]">
+              <div className="flex items-center justify-between text-xs bg-white px-3 py-2 rounded-xl border border-slate-200">
+                <span className="text-slate-500 text-[11px]">手术术式</span>
+                <span className="font-bold text-slate-800 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200 text-[11px]">
                   {surgeryText}
                 </span>
               </div>
 
               {/* Row 3: CT Tumor Size & CTR Calculation */}
-              <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-700/60 text-xs flex items-center justify-between flex-wrap gap-2">
-                <span className="text-slate-300 flex items-center gap-1.5">
+              <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between flex-wrap gap-2 text-slate-700">
+                <span className="flex items-center gap-1.5">
                   <span>📏</span>
                   {isPureSolid ? (
                     <span><strong>病灶最大径</strong>: {tumorVal} cm · <strong>性质</strong>: 纯实性软组织病变</span>
@@ -1265,46 +1265,46 @@ export default function EvidenceReportPage() {
                     <span><strong>结节总全径</strong>: {tumorVal} cm · <strong>CT 实性成分</strong>: {solidVal} cm</span>
                   )}
                 </span>
-                <span className="px-2 py-0.5 rounded-md bg-teal-500/20 text-teal-300 border border-teal-400/30 font-mono font-bold text-[11px] shrink-0">
+                <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-mono font-bold text-[11px] shrink-0">
                   CTR: {calculatedCtr}
                 </span>
               </div>
 
               {/* Row 4: 6 Core Pathology Indicators Pills */}
               <div className="grid grid-cols-3 gap-1.5 text-[11px]">
-                <div className="bg-slate-900/90 px-2 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px]">切缘状态</span>
-                  <span className={`font-bold ${!isMarginSafe ? 'text-rose-400' : 'text-emerald-400'}`}>
+                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <span className="text-slate-500 text-[10px]">切缘状态</span>
+                  <span className={`font-bold ${!isMarginSafe ? 'text-rose-600' : 'text-emerald-700'}`}>
                     {!isMarginSafe ? '阳性(残留)' : '阴性(R0)'}
                   </span>
                 </div>
-                <div className="bg-slate-900/90 px-2 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px]">淋巴结分期</span>
-                  <span className={`font-bold ${isN0Safe ? 'text-emerald-400' : profile.nStage === 'N1' ? 'text-amber-400' : 'text-rose-400'}`}>
+                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <span className="text-slate-500 text-[10px]">淋巴结分期</span>
+                  <span className={`font-bold ${isN0Safe ? 'text-emerald-700' : profile.nStage === 'N1' ? 'text-amber-700' : 'text-rose-600'}`}>
                     {profile.nStage === 'N0' || !profile.nStage ? 'N0 (无)' : profile.nStage === 'N1' ? 'N1 (肺门)' : profile.nStage === 'N2a' ? 'N2a (单站)' : profile.nStage === 'N2b' ? 'N2b (多站)' : profile.nStage}
                   </span>
                 </div>
-                <div className="bg-slate-900/90 px-2 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px]">胸膜侵犯</span>
-                  <span className={`font-bold ${!isVpiSafe ? 'text-amber-400' : 'text-emerald-400'}`}>
+                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <span className="text-slate-500 text-[10px]">胸膜侵犯</span>
+                  <span className={`font-bold ${!isVpiSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
                     {!isVpiSafe ? 'PL1/2 (阳性)' : 'PL0 (阴性)'}
                   </span>
                 </div>
-                <div className="bg-slate-900/90 px-2 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px]">气道播散</span>
-                  <span className={`font-bold ${!isStasSafe ? 'text-amber-400' : 'text-emerald-400'}`}>
+                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <span className="text-slate-500 text-[10px]">气道播散</span>
+                  <span className={`font-bold ${!isStasSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
                     {!isStasSafe ? '阳性(高危)' : '阴性(-)'}
                   </span>
                 </div>
-                <div className="bg-slate-900/90 px-2 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px]">脉管瘤栓</span>
-                  <span className={`font-bold ${!isLviSafe ? 'text-amber-400' : 'text-emerald-400'}`}>
+                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <span className="text-slate-500 text-[10px]">脉管瘤栓</span>
+                  <span className={`font-bold ${!isLviSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
                     {!isLviSafe ? '阳性(高危)' : '阴性(-)'}
                   </span>
                 </div>
-                <div className="bg-slate-900/90 px-2 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px]">病理分级</span>
-                  <span className={`font-bold ${isGrade3 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <span className="text-slate-500 text-[10px]">病理分级</span>
+                  <span className={`font-bold ${isGrade3 ? 'text-amber-700' : 'text-emerald-700'}`}>
                     {isGrade3 ? 'G3(低分化)' : profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1(高分化)' : 'G2(中分化)'}
                   </span>
                 </div>
@@ -1312,9 +1312,9 @@ export default function EvidenceReportPage() {
 
               {/* Row 5: Ki-67 Strip if available */}
               {profile.ki67 != null && profile.ki67 !== "" && (
-                <div className="bg-purple-950/40 px-2.5 py-1 rounded-lg border border-purple-800/50 flex items-center justify-between text-[11px]">
-                  <span className="text-purple-300 text-[10px]">🔬 Ki-67 细胞增殖指数</span>
-                  <span className="font-bold text-purple-200">
+                <div className="bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200 flex items-center justify-between text-[11px]">
+                  <span className="text-purple-800 text-[10px]">🔬 Ki-67 细胞增殖指数</span>
+                  <span className="font-bold text-purple-900">
                     {profile.ki67}%
                   </span>
                 </div>
@@ -1324,37 +1324,38 @@ export default function EvidenceReportPage() {
 
           {/* Section 3 Consultation Checklist Items */}
           <div className="space-y-2.5 mb-4 relative z-10">
-            <div className="text-xs font-bold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
               <span>📋 向主管医生门诊咨询清单 (建议按序请教)</span>
             </div>
 
             {checklistItems.map((item, idx) => (
-              <div key={idx} className="bg-slate-800/90 rounded-2xl p-3 border border-slate-700/80 space-y-1">
+              <div key={idx} className="bg-white rounded-2xl p-3 border border-slate-200 space-y-1 shadow-xs">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-blue-500 text-white font-black text-[11px] flex items-center justify-center flex-shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-black text-[11px] flex items-center justify-center flex-shrink-0">
                     {idx + 1}
                   </span>
-                  <span className="font-bold text-white text-xs">
+                  <span className="font-bold text-slate-900 text-xs">
                     {item.title}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed pl-7 font-normal">
+                <p className="text-[11px] text-slate-600 leading-relaxed pl-7 font-normal">
                   {item.content}
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Footer Tips & Evidence Citation */}
-          <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between relative z-10">
-            <span className="flex items-center gap-1">
-              <span>💡</span>
-              <span>面诊时可直接出示本便签，高效表达关切</span>
-            </span>
-            <span className="text-slate-500 font-mono">
-              NCCN · CSCO · IASLC
-            </span>
+          {/* Doctor's Notes Area for Clinical Consultations */}
+          <div className="mb-4 p-3 rounded-xl border border-dashed border-slate-300 bg-slate-50/70 text-xs relative z-10">
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 mb-1.5">
+              <span>✍️ 主管医生门诊面诊指导 / 笔录备忘（支持打印后现场手写）：</span>
+              <span className="font-normal text-[10px] text-slate-400">医师签名：__________ 日期：____/__/__</span>
+            </div>
+            <div className="h-8 border-b border-dashed border-slate-200" />
           </div>
+
+          {/* Footer with lung.dpdns.org brand and QR code */}
+          <ExportBrandFooter variant="light" compact />
         </div>
       </div>
 

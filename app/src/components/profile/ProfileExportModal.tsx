@@ -20,6 +20,7 @@ import { toPng } from "html-to-image";
 import type { PatientProfile } from "@/lib/types";
 import { getClinicalCohortForProfile } from "@/lib/staging";
 import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
+import ExportBrandFooter from "@/components/common/ExportBrandFooter";
 
 interface ProfileExportModalProps {
   profile: PatientProfile;
@@ -84,6 +85,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
           pixelRatio: 2,
           skipAutoScale: true,
           fontEmbedCSS: "", // Critical to prevent cross-origin stylesheet SecurityErrors
+          backgroundColor: "#ffffff",
           cacheBust: true,
         });
       } catch (primaryErr) {
@@ -98,13 +100,13 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
             scale: 2,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: "#020617",
+            backgroundColor: "#ffffff",
             logging: false,
             scrollX: 0,
             scrollY: 0,
             x: 0,
             y: 0,
-            width: 560,
+            width: 600,
             windowWidth: 1200,
           });
           imgData = canvas.toDataURL("image/png");
@@ -232,7 +234,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
 
           {exportedImageUrl && !isExporting && (
             <div className="w-full flex flex-col items-center space-y-3">
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-xl max-h-[60vh] overflow-y-auto bg-slate-950">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-xl max-h-[60vh] overflow-y-auto bg-slate-100">
                 <img
                   src={exportedImageUrl}
                   alt="患者临床数字档案全景速览卡"
@@ -286,13 +288,13 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
         </div>
       </div>
 
-      {/* OFFSCREEN DOM TO RENDER FOR HIGH RES POSTER (Fixed 560px Width, Precise Geometry at 0,0) */}
+      {/* OFFSCREEN DOM TO RENDER FOR HIGH RES POSTER (Fixed 600px Width, Precise Geometry at 0,0) */}
       <div 
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          width: "560px",
+          width: "600px",
           zIndex: -9999,
           opacity: 0,
           pointerEvents: "none",
@@ -302,34 +304,29 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
       >
         <div
           ref={offscreenPosterRef}
-          className="w-[560px] text-white p-7 font-sans relative overflow-hidden"
+          className="w-[600px] text-slate-900 p-7 font-sans relative overflow-hidden"
           style={{
             fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-            background: "linear-gradient(180deg, #020617 0%, #0f172a 40%, #1e1b4b 100%)",
+            background: "#FFFFFF",
+            border: "1.5px solid #E2E8F0",
             boxSizing: "border-box",
             margin: 0,
           }}
         >
-
-          {/* Subtle Ambient Glows */}
-          <div className="absolute -top-16 -right-16 w-64 h-64 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
-
           {/* Header Brand */}
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5 relative z-10">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5 relative z-10">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-blue-500/30 shrink-0 bg-slate-800">
-                { }
+              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-xs shrink-0 bg-slate-100 border border-slate-200">
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-sm font-extrabold text-white tracking-tight flex items-center gap-1.5">
+                <div className="text-sm font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5">
                   <span>OncoPath Navigator</span>
-                  <span className="text-[10px] font-bold text-sky-400 bg-sky-500/20 px-2 py-0.5 rounded-full border border-sky-400/30">
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                     循证医学
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400">
+                <div className="text-[10px] text-slate-500">
                   患者临床数字档案 · 循证全景速览卡
                 </div>
               </div>
@@ -339,46 +336,45 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
               <div className="text-[10px] text-slate-400 font-mono">
                 档案生成日期
               </div>
-              <div className="text-xs font-bold text-slate-200 font-mono">
+              <div className="text-xs font-bold text-slate-700 font-mono">
                 {currentDateStr}
               </div>
             </div>
           </div>
 
           {/* SECTION 1: Patient Basic Profile & Clinical Diagnosis */}
-          <div className="bg-slate-800/70 rounded-2xl p-4 border border-slate-700/70 mb-4 relative z-10 space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-700/60 pb-2.5">
+          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 relative z-10 space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
               <div className="flex items-center gap-2">
-                <div className="text-sm font-extrabold text-white">
+                <div className="text-sm font-extrabold text-slate-900">
                   {(profile as any).name || "患者数字档案"}
                 </div>
-                <span className="text-[11px] text-slate-300 font-semibold px-2 py-0.5 bg-slate-700 rounded-md">
+                <span className="text-[11px] text-slate-700 font-semibold px-2 py-0.5 bg-slate-200/80 rounded-md">
                   {profile.age ? `${profile.age} 岁 · ` : ''}{genderText}
                 </span>
-
               </div>
-              <span className="text-xs font-extrabold text-emerald-400 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
+              <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
                 {profile.stage ? `${profile.stage} 期` : "待定分期"} ({profile.tStage || "Tx"} {profile.nStage || "N0"} {profile.mStage || "M0"})
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2.5 text-xs">
-              <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                  <Scan className="w-3 h-3 text-sky-400" />
+              <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
+                <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                  <Scan className="w-3 h-3 text-blue-600" />
                   <span>结节形态与部位</span>
                 </span>
-                <div className="font-bold text-slate-200 text-[11px]">
+                <div className="font-bold text-slate-800 text-[11px]">
                   {profile.noduleLocation || "肺部病灶"} · {profile.tumorSize != null ? noduleLabel.split(" ")[0] : "待影像学确认"}
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                  <Ruler className="w-3 h-3 text-teal-400" />
+              <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
+                <span className="text-[10px] text-slate-500 flex items-center gap-1">
+                  <Ruler className="w-3 h-3 text-teal-600" />
                   <span>结节全径与实性浸润</span>
                 </span>
-                <div className="font-bold text-slate-200 text-[11px]">
+                <div className="font-bold text-slate-800 text-[11px]">
                   {profile.tumorSize == null && profile.solidSize == null
                     ? "未提供 CT 报告 · 结节大小待查"
                     : profile.noduleType === 'pure_solid' || (profile.ctr != null && profile.ctr >= 1.0)
@@ -393,124 +389,124 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
           </div>
 
           {/* SECTION 2: 5-Year Survival Benchmark (Prognosis High-Light Card) */}
-          <div className="bg-gradient-to-br from-blue-950/80 via-slate-900 to-teal-950/80 rounded-2xl p-4.5 border border-teal-500/40 mb-4 relative z-10 space-y-3 shadow-lg">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+          <div className="bg-gradient-to-br from-blue-50/80 via-white to-teal-50/80 rounded-2xl p-4.5 border border-teal-200 mb-4 relative z-10 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between border-b border-teal-100 pb-2">
               <div>
-                <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-600" />
                   <span>SIMILAR CLINICAL COHORTS · 国际顶刊相似队列</span>
                 </span>
-                <div className="text-xs font-extrabold text-white mt-0.5">
+                <div className="text-xs font-extrabold text-slate-900 mt-0.5">
                   匹配到 {cohort.cohortSize.toLocaleString()} 例特征相似的真实世界患者
                 </div>
               </div>
-              <span className="text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">
+              <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                 {cohort.confidenceRating} {cohort.confidenceLevel.split(" ")[0]}
               </span>
             </div>
 
             {/* Large 2-Metric High-Gloss Grid */}
             <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="p-3.5 bg-blue-900/40 rounded-xl border border-blue-500/40">
-                <div className="text-[10px] text-blue-300 font-bold">5年无复发生存率 (RFS)</div>
-                <div className="text-2xl sm:text-3xl font-black text-blue-400 font-mono tracking-tight my-0.5">
+              <div className="p-3.5 bg-white rounded-xl border border-blue-200 shadow-xs">
+                <div className="text-[10px] text-blue-700 font-bold">5年无复发生存率 (RFS)</div>
+                <div className="text-2xl sm:text-3xl font-black text-blue-700 font-mono tracking-tight my-0.5">
                   {cohort.rfs5Year}
                 </div>
-                <div className="text-[9px] text-blue-200/80">临床治愈与无瘤生存指标</div>
+                <div className="text-[9px] text-slate-500">临床治愈与无瘤生存指标</div>
               </div>
 
-              <div className="p-3.5 bg-emerald-900/40 rounded-xl border border-emerald-500/40">
-                <div className="text-[10px] text-emerald-300 font-bold">5年总生存率 (OS)</div>
-                <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono tracking-tight my-0.5">
+              <div className="p-3.5 bg-white rounded-xl border border-emerald-200 shadow-xs">
+                <div className="text-[10px] text-emerald-700 font-bold">5年总生存率 (OS)</div>
+                <div className="text-2xl sm:text-3xl font-black text-emerald-700 font-mono tracking-tight my-0.5">
                   {cohort.os5Year}
                 </div>
-                <div className="text-[9px] text-emerald-200/80">长期健在终极金标准</div>
+                <div className="text-[9px] text-slate-500">长期健在终极金标准</div>
               </div>
             </div>
 
-            <div className="text-[10px] text-slate-300 leading-relaxed bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+            <div className="text-[10px] text-slate-600 leading-relaxed bg-white p-2.5 rounded-xl border border-slate-200">
               <span className="text-slate-400">文献来源：</span>
-              <strong className="text-sky-300">{cohort.source}</strong> · {cohort.description}
+              <strong className="text-blue-700">{cohort.source}</strong> · {cohort.description}
             </div>
           </div>
 
           {/* SECTION 3: Micro Pathology & Invasive Factors Matrix */}
-          <div className="bg-slate-800/70 rounded-2xl p-4 border border-slate-700/70 mb-4 relative z-10 space-y-2.5">
-            <div className="text-xs font-bold text-purple-300 flex items-center justify-between">
+          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 relative z-10 space-y-2.5">
+            <div className="text-xs font-bold text-slate-800 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <Microscope className="w-3.5 h-3.5 text-purple-400" />
+                <Microscope className="w-3.5 h-3.5 text-purple-600" />
                 <span>组织病理与浸润微观指标排查</span>
               </span>
-              <span className="text-[10px] text-slate-400">
+              <span className="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
                 {profile.surgeryType ? (profile.surgeryType === 'segmentectomy' ? '解剖性肺段' : '根治术式') : '金标准'}
               </span>
             </div>
 
             {(profile.pathologyTumorSize != null || profile.pathologyInvasiveSize != null) && (
-              <div className="p-2 rounded-xl bg-purple-950/40 border border-purple-800/60 flex items-center justify-between text-[11px] text-purple-200">
-                <span>标本大体全径: <strong className="text-purple-300">{profile.pathologyTumorSize != null ? `${profile.pathologyTumorSize} cm` : '未单独标注'}</strong></span>
-                <span>镜下浸润大小: <strong className="text-purple-300">{profile.pathologyInvasiveSize != null ? `${profile.pathologyInvasiveSize} cm` : '未标明'}</strong></span>
+              <div className="p-2 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between text-[11px] text-purple-900">
+                <span>标本大体全径: <strong className="text-purple-800">{profile.pathologyTumorSize != null ? `${profile.pathologyTumorSize} cm` : '未单独标注'}</strong></span>
+                <span>镜下浸润大小: <strong className="text-purple-800">{profile.pathologyInvasiveSize != null ? `${profile.pathologyInvasiveSize} cm` : '未标明'}</strong></span>
               </div>
             )}
 
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">切缘状态 (Margin)</div>
+              <div className="p-2 rounded-xl bg-white border border-slate-200">
+                <div className="text-[9px] text-slate-500">切缘状态 (Margin)</div>
                 <div className={`font-bold text-[11px] mt-0.5 ${
-                  isMarginSafe ? "text-emerald-400" :
-                  profile.marginStatus === 'positive' || profile.margin === 'positive' ? "text-rose-400" : "text-slate-400"
+                  isMarginSafe ? "text-emerald-700" :
+                  profile.marginStatus === 'positive' || profile.margin === 'positive' ? "text-rose-600" : "text-slate-400"
                 }`}>
                   {isMarginSafe ? "R0 阴性安全" : profile.marginStatus === 'positive' || profile.margin === 'positive' ? "阳性 (有残留)" : "未检测 / 待查"}
                 </div>
               </div>
 
-              <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">淋巴结 (N分期)</div>
+              <div className="p-2 rounded-xl bg-white border border-slate-200">
+                <div className="text-[9px] text-slate-500">淋巴结 (N分期)</div>
                 <div className={`font-bold text-[11px] mt-0.5 ${
-                  isN0Safe ? "text-emerald-400" :
-                  profile.nStage === 'N1' || profile.nStage === 'N2a' ? "text-amber-400" :
-                  profile.nStage === 'Nx' || !profile.nStage ? "text-slate-400" : "text-rose-400"
+                  isN0Safe ? "text-emerald-700" :
+                  profile.nStage === 'N1' || profile.nStage === 'N2a' ? "text-amber-700" :
+                  profile.nStage === 'Nx' || !profile.nStage ? "text-slate-400" : "text-rose-600"
                 }`}>
                   {isN0Safe ? "N0 无转移" : profile.nStage === 'Nx' || !profile.nStage ? "Nx 待查" : profile.nStage}
                 </div>
               </div>
 
-              <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">胸膜侵犯 (VPI)</div>
+              <div className="p-2 rounded-xl bg-white border border-slate-200">
+                <div className="text-[9px] text-slate-500">胸膜侵犯 (VPI)</div>
                 <div className={`font-bold text-[11px] mt-0.5 ${
-                  isVpiSafe ? "text-emerald-400" :
-                  profile.vpi === 'positive' || (profile.vpi as any) === true ? "text-amber-400" : "text-slate-400"
+                  isVpiSafe ? "text-emerald-700" :
+                  profile.vpi === 'positive' || (profile.vpi as any) === true ? "text-amber-700" : "text-slate-400"
                 }`}>
                   {isVpiSafe ? "PL0 未侵犯" : profile.vpi === 'positive' || (profile.vpi as any) === true ? "阳性 (侵犯)" : "未检测"}
                 </div>
               </div>
 
-              <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">气道播散 (STAS)</div>
+              <div className="p-2 rounded-xl bg-white border border-slate-200">
+                <div className="text-[9px] text-slate-500">气道播散 (STAS)</div>
                 <div className={`font-bold text-[11px] mt-0.5 ${
-                  isStasSafe ? "text-emerald-400" :
-                  profile.stas === 'positive' || (profile.stas as any) === true ? "text-amber-400" : "text-slate-400"
+                  isStasSafe ? "text-emerald-700" :
+                  profile.stas === 'positive' || (profile.stas as any) === true ? "text-amber-700" : "text-slate-400"
                 }`}>
                   {isStasSafe ? "阴性 / 无" : profile.stas === 'positive' || (profile.stas as any) === true ? "阳性 (高危)" : "未检测"}
                 </div>
               </div>
 
-              <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">脉管癌栓 (LVI)</div>
+              <div className="p-2 rounded-xl bg-white border border-slate-200">
+                <div className="text-[9px] text-slate-500">脉管癌栓 (LVI)</div>
                 <div className={`font-bold text-[11px] mt-0.5 ${
-                  isLviSafe ? "text-emerald-400" :
-                  profile.lvi === 'positive' || (profile.lvi as any) === true ? "text-amber-400" : "text-slate-400"
+                  isLviSafe ? "text-emerald-700" :
+                  profile.lvi === 'positive' || (profile.lvi as any) === true ? "text-amber-700" : "text-slate-400"
                 }`}>
                   {isLviSafe ? "阴性 / 无" : profile.lvi === 'positive' || (profile.lvi as any) === true ? "阳性 (高危)" : "未检测"}
                 </div>
               </div>
 
-              <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div className="text-[9px] text-slate-400">IASLC 分级</div>
+              <div className="p-2 rounded-xl bg-white border border-slate-200">
+                <div className="text-[9px] text-slate-500">IASLC 分级</div>
                 <div className={`font-bold text-[11px] mt-0.5 ${
-                  isGrade3 ? "text-rose-400" :
-                  profile.iaslcGrade === '1' || profile.grade === '1' ? "text-emerald-400" :
-                  profile.iaslcGrade === '2' || profile.grade === '2' ? "text-blue-400" : "text-slate-400"
+                  isGrade3 ? "text-rose-600" :
+                  profile.iaslcGrade === '1' || profile.grade === '1' ? "text-emerald-700" :
+                  profile.iaslcGrade === '2' || profile.grade === '2' ? "text-blue-700" : "text-slate-400"
                 }`}>
                   {profile.iaslcGrade || profile.grade ? `G${profile.iaslcGrade || profile.grade}` : "未分级"}
                 </div>
@@ -518,12 +514,12 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
             </div>
 
             {profile.ki67 != null && profile.ki67 !== "" && (
-              <div className="p-2 bg-purple-950/40 rounded-xl border border-purple-800/50 flex items-center justify-between text-[11px]">
-                <span className="text-purple-300 font-semibold flex items-center gap-1">
-                  <Activity className="w-3 h-3 text-purple-400" />
-                  <span>Ki-67 增殖指数：<strong>{profile.ki67}%</strong></span>
+              <div className="p-2 bg-purple-50 rounded-xl border border-purple-200 flex items-center justify-between text-[11px]">
+                <span className="text-purple-800 font-semibold flex items-center gap-1">
+                  <Activity className="w-3 h-3 text-purple-600" />
+                  <span>Ki-67 增殖指数：<strong className="text-purple-900">{profile.ki67}%</strong></span>
                 </span>
-                <span className="text-purple-200 text-[10px]">
+                <span className="text-purple-700 text-[10px]">
                   {Number(profile.ki67) <= 5 ? "惰性分裂 · 极高预后安全性" : "常规代谢"}
                 </span>
               </div>
@@ -541,13 +537,13 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
             const pdl1 = profile.pdl1Tps || profile.molecular?.pdl1Tps;
 
             return (
-              <div className="bg-slate-800/70 rounded-2xl p-4 border border-slate-700/70 mb-4 relative z-10 space-y-2.5">
-                <div className="text-xs font-bold text-indigo-300 flex items-center justify-between">
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 relative z-10 space-y-2.5">
+                <div className="text-xs font-bold text-slate-800 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
-                    <Dna className="w-3.5 h-3.5 text-indigo-400" />
+                    <Dna className="w-3.5 h-3.5 text-indigo-600" />
                     <span>驱动基因突变与分子靶向 (NGS Panel)</span>
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">
+                  <span className="text-[10px] text-slate-500 font-mono">
                     {testStatus === "tested" ? `已检出 ${mutations.length} 项突变` : testStatus === "negative" ? "全野生型 (未检出敏感突变)" : "未做检测"}
                   </span>
                 </div>
@@ -558,30 +554,30 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                       {mutations.map((m: any, idx: number) => (
                         <div
                           key={idx}
-                          className="px-2.5 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/50 flex items-center gap-1.5 text-xs font-mono"
+                          className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 flex items-center gap-1.5 text-xs font-mono shadow-xs"
                         >
-                          <span className="font-extrabold text-indigo-200">{m.gene}</span>
-                          {m.subtype && <span className="text-indigo-400 text-[10.5px]">({m.subtype})</span>}
-                          {m.abundance && <span className="text-slate-400 text-[10px]">{m.abundance}%</span>}
+                          <span className="font-extrabold text-indigo-900">{m.gene}</span>
+                          {m.subtype && <span className="text-indigo-600 text-[10.5px]">({m.subtype})</span>}
+                          {m.abundance && <span className="text-slate-500 text-[10px]">{m.abundance}%</span>}
                           {m.isComutation && (
-                            <span className="text-[9px] font-bold text-amber-300 bg-amber-500/20 px-1 rounded">伴随突变</span>
+                            <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-1 rounded">伴随突变</span>
                           )}
                         </div>
                       ))}
                       {pdl1 && pdl1 !== "unknown" && (
-                        <div className="px-2.5 py-1 rounded-lg bg-teal-950/80 border border-teal-500/50 flex items-center gap-1.5 text-xs font-mono">
-                          <span className="font-extrabold text-teal-200">PD-L1</span>
-                          <span className="text-teal-400 text-[10.5px]">{pdl1}</span>
+                        <div className="px-2.5 py-1 rounded-lg bg-white border border-teal-200 flex items-center gap-1.5 text-xs font-mono shadow-xs">
+                          <span className="font-extrabold text-teal-800">PD-L1</span>
+                          <span className="text-teal-600 text-[10.5px]">{pdl1}</span>
                         </div>
                       )}
                     </div>
                   </div>
                 ) : testStatus === "negative" ? (
-                  <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-emerald-400">
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200 text-[11px] text-emerald-700">
                     全基因野生型（EGFR / ALK / ROS1 / KRAS 等常见靶点均阴性无突变）
                   </div>
                 ) : (
-                  <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400">
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200 text-[11px] text-slate-500">
                     当前档案未做基因大 Panel 检测（IA 期早期手术根治后常规无需靶向辅助用药）
                   </div>
                 )}
@@ -590,37 +586,30 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
           })()}
 
           {/* SECTION 5: Decision Engine Next Step */}
-          <div className="bg-slate-800/70 rounded-2xl p-3.5 border border-slate-700/70 mb-4 relative z-10 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-blue-50/70 rounded-2xl p-3.5 border border-blue-200 mb-4 relative z-10 flex items-start gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
               <BrainCircuit className="w-3.5 h-3.5" />
             </div>
             <div className="space-y-0.5 text-xs">
-              <div className="font-bold text-sky-300 text-[11px]">
+              <div className="font-bold text-blue-900 text-[11px]">
                 临床随访与行动建议：
               </div>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+              <p className="text-slate-700 text-[11px] leading-relaxed">
                 {profile.nextAction || profile.clinicalRecommendation || "建议遵医嘱于术后 6 个月复查胸部薄层 CT（层厚 ≤1mm），按指南规律随访即可。"}
               </p>
             </div>
           </div>
 
-          {/* SECTION 6: Warm Empathy Banner & Disclaimer Footer */}
-          <div className="bg-gradient-to-r from-amber-950/40 to-teal-950/40 rounded-2xl p-3 border border-amber-500/30 text-[10px] text-amber-200/90 leading-relaxed mb-4 flex items-center gap-2">
-            <Sun className="w-4 h-4 text-amber-400 shrink-0" />
+          {/* SECTION 6: Warm Empathy Banner */}
+          <div className="bg-amber-50 rounded-2xl p-3 border border-amber-200 text-[10px] text-amber-900 leading-relaxed mb-4 flex items-center gap-2">
+            <Sun className="w-4 h-4 text-amber-600 shrink-0" />
             <span>
               <strong>温暖寄语：</strong>数据是群体的历史，而奇迹由您亲自书写。保持营养摄入与乐观从容的心态，享受充满生机的每一天。
             </span>
           </div>
 
-          {/* Bottom Stamp & Disclaimer */}
-          <div className="border-t border-slate-800/80 pt-3 text-[9px] text-slate-500 flex items-center justify-between relative z-10">
-            <div>
-              <span>免责声明：本卡片基于循证医学文献与个人录入报告生成，供就诊沟通参考。</span>
-            </div>
-            <div className="font-mono text-slate-400 font-bold">
-              ONCOPATH-NAVIGATOR
-            </div>
-          </div>
+          {/* Bottom Stamp & Standardized Verification Footer */}
+          <ExportBrandFooter variant="light" />
         </div>
       </div>
     </div>

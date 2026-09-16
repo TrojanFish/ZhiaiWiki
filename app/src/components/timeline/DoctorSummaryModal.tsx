@@ -23,6 +23,7 @@ import { TimelineEventItem } from "@/lib/timelineTypes";
 import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
 import { exportElementToA4Pdf } from "@/lib/pdfExporter";
 import { showToast } from "@/components/common/Toast";
+import ExportBrandFooter from "@/components/common/ExportBrandFooter";
 
 interface DoctorSummaryModalProps {
   events: TimelineEventItem[];
@@ -1076,10 +1077,14 @@ export default function DoctorSummaryModal({ events, onClose }: DoctorSummaryMod
               </div>
             </div>
 
-            {/* Print Footer Disclaimer */}
-            <div className="pt-4 border-t border-slate-200 text-xs text-slate-400 text-center leading-relaxed">
-              注：本便签由 OncoPath 循证引擎基于患者临床报告结构化生成，仅供就医沟通参考，请以临床医师综合现场诊疗为准。
-            </div>
+            {/* Standardized Verification Footer */}
+            <ExportBrandFooter 
+              variant="light" 
+              compact 
+              title="OncoPath 肺结节长程随访中心"
+              subtitle="结构化门诊病历速览 · 医患协同"
+              scanHint="扫码查阅完整时序"
+            />
           </div>
         </div>
 
