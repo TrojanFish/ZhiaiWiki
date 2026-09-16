@@ -178,9 +178,9 @@ export default function PostOpSymptomTriage() {
             </div>
             <div className="min-w-0 flex-1">
               <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug flex items-center gap-2">
-                <span>术后症状红绿灯智能分诊器</span>
+                <span>术后康复症状红绿灯自查助手</span>
                 <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
-                  3步分诊自查
+                  3步居家自查
                 </span>
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">
@@ -192,7 +192,7 @@ export default function PostOpSymptomTriage() {
 
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold shrink-0 self-start sm:self-auto">
           <ShieldCheck className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-          <span>24小时居家分诊指引</span>
+          <span>居家康复护理指引</span>
         </div>
       </div>
 
@@ -201,7 +201,7 @@ export default function PostOpSymptomTriage() {
         {[
           { step: 1, title: "1. 症状主诉定位", desc: currentSymptom.name.split(" / ")[0] },
           { step: 2, title: "2. 危险红线排查", desc: hasAnyRedFlag ? "检出急诊红线" : "4项指标安全" },
-          { step: 3, title: "3. 循证对策处方", desc: hasAnyRedFlag ? "急诊返院指引" : "居家舒缓与门诊要点" },
+          { step: 3, title: "3. 循证居家护理建议", desc: hasAnyRedFlag ? "急诊返院指引" : "居家舒缓与门诊要点" },
         ].map((item) => {
           const isActive = currentStep === item.step;
           const isDone = currentStep > item.step;

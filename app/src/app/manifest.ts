@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "OncoPath — 肺癌全病程精准决策与循证医学系统",
+    name: "OncoPath — 肺癌全病程循证知识与就医辅助平台",
     short_name: "OncoPath",
     description: "把复杂的医学研究翻译成患者能理解的语言。每一句话都有证据来源。",
     start_url: "/",

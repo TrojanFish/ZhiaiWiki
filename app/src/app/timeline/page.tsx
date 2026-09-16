@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "检查报告时间生命线 - OncoPath 肺癌全景时序诊疗管理",
   description:
-    "按时间轴与临床类别结构化归集历次薄层CT、手术大体病理、靶向基因测序（NGS）与血液肿瘤标志物，提供病灶生长曲线、实性占比演变与一键名医就诊清单导出。",
+    "按时间轴与临床类别结构化归集历次薄层CT、手术大体病理、靶向基因测序（NGS）与血液肿瘤标志物，提供病灶生长曲线、实性占比演变与一键门诊就诊沟通清单导出。",
 };
 
 export default function TimelinePage() {

@@ -19,7 +19,7 @@ export async function exportElementToA4Pdf(
   try {
     const {
       fileName = "OncoPath_门诊就医便签.pdf",
-      headerTitle = "OncoPath 肺结节与肺腺癌临床数字档案 · 门诊会诊便签",
+      headerTitle = "OncoPath 肺结节与肺腺癌临床数字档案 · 门诊就医沟通问诊便签",
       reportDate = new Date().toISOString().split("T")[0],
     } = options;
 
@@ -123,7 +123,7 @@ export async function exportElementToA4Pdf(
       pdf.setFontSize(7.5);
       pdf.setTextColor(148, 163, 184); // slate-400
       pdf.text(
-        "OncoPath 肺结节循证决策系统 · lung.dpdns.org | 本文档供就医沟通与学术参考，请以临床医师现场诊疗为准",
+        "OncoPath 肺结节循证知识平台 · lung.dpdns.org | 本文档供就医沟通与学术参考，请以临床医师现场诊疗为准",
         marginXMm,
         a4HeightMm - 6
       );

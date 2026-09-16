@@ -236,7 +236,7 @@ export default function AddEventModal({ onClose, onAdd, onUpdate, initialEvent }
                 {isEditMode ? "编辑检查报告 / 诊疗事件" : "录入检查报告 / 诊疗事件"}
               </h3>
               <p className="text-[11px] text-slate-500 mt-0.5">
-                3步向导式智能归档 · 自动同步至垂直时序生命线与名医问诊清单
+                3步向导式智能归档 · 自动同步至垂直时序生命线与门诊就医沟通清单
               </p>
             </div>
           </div>
@@ -629,7 +629,7 @@ export default function AddEventModal({ onClose, onAdd, onUpdate, initialEvent }
                   >
                     <AlertTriangle className="w-4 h-4 text-rose-600" />
                     <span>🔴 手术/警示</span>
-                    <span className="text-[10px] text-rose-700 font-normal">需名医面诊评估</span>
+                    <span className="text-[10px] text-rose-700 font-normal">需专科面诊评估</span>
                   </button>
                 </div>
               </div>

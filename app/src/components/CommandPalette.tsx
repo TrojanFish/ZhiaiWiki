@@ -101,7 +101,7 @@ export default function CommandPalette() {
     },
     {
       id: "tool_report",
-      title: "名医就医沟通报告 (一键导出打印)",
+      title: "门诊就医沟通报告 (一键导出打印)",
       subtitle: "结构化汇总病理分期、证据链与用药禁忌，支持 ⌘P 打印",
       category: "clinical_tool",
       categoryLabel: "核心工具",

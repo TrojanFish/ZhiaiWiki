@@ -46,7 +46,7 @@ const REASONING_STEPS: StepInfo[] = [
     step: 4,
     title: "编排门诊就诊便签卡与结构化问诊清单",
     subtitle: "提炼核心沟通决策树，定制《向主治医生当面咨询的关键问题》",
-    details: "生成 2x Retina 门诊便签与 A4 处方级打印版就医指南",
+    details: "生成 2x Retina 门诊便签与 A4 打印版就医沟通清单",
     icon: FileSpreadsheet,
   },
 ];
@@ -96,7 +96,7 @@ export default function ReasoningTicker({ isGenerating }: ReasoningTickerProps) 
           </div>
           <div>
             <h4 className="text-sm font-extrabold tracking-wide text-slate-100 flex items-center gap-2">
-              <span>OncoPath 多学科会诊 (MDT) 循证推演流</span>
+              <span>OncoPath 循证指南与文献对照引擎</span>
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             </h4>
             <p className="text-[11px] text-slate-400">

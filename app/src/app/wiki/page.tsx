@@ -246,7 +246,7 @@ export default function WikiPage() {
             filteredCount={filteredTopics.length}
           />
 
-          {/* 术后康复症状分诊（recovery 专区或全部默认状态时展示） */}
+          {/* 术后康复症状自查助手（recovery 专区或全部默认状态时展示） */}
           {(activeCategory === "recovery" || (activeCategory === "all" && !searchQuery && selectedRisk === "all")) && (
             <div className="animate-fade-in">
               <PostOpSymptomTriage />

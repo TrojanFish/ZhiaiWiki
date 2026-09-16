@@ -25,10 +25,10 @@ export interface ExportBrandFooterProps {
 export default function ExportBrandFooter({
   variant = "light",
   compact = false,
-  title = "OncoPath 肺结节循证决策系统",
+  title = "OncoPath 肺结节循证知识平台",
   subtitle = "基于 NCCN · CSCO · IASLC 国际现行肺癌诊疗指南与顶刊证据",
   disclaimer = "免责声明：本卡片由 OncoPath 循证引擎基于临床报告提取生成，仅供就医沟通与学术参考，请以主管医师现场诊疗为准。",
-  scanHint = "扫码直达免费评估",
+  scanHint = "扫码查阅循证文献",
 }: ExportBrandFooterProps) {
   const isLight = variant === "light";
   const qrDataUri = isLight ? LUNG_QR_SVG_LIGHT_DATA_URI : LUNG_QR_SVG_DARK_DATA_URI;

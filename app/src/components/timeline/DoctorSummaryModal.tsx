@@ -905,7 +905,7 @@ export default function DoctorSummaryModal({ events, onClose }: DoctorSummaryMod
                     肺部疾病长程随访与临床时序便签卡
                   </h1>
                   <p className="text-xs text-slate-600 mt-0.5">
-                    OncoPath 肺结节与肺腺癌循证医学决策系统 · 结构化门诊病历速览
+                    OncoPath 肺结节与肺腺癌循证知识平台 · 结构化门诊病历速览
                   </p>
                 </div>
               </div>

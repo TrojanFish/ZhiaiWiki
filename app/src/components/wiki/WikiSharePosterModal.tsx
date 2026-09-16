@@ -168,7 +168,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证决策系统</div>
+                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证知识平台</div>
                 <div className="text-[10px] text-slate-500">权威医学百科 · 100% 顶刊出处可溯</div>
               </div>
             </div>

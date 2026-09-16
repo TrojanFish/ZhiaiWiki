@@ -77,7 +77,7 @@ export default function TermsPage() {
               OncoPath 用户服务协议与全方位医疗免责声明
             </h1>
             <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
-              欢迎访问 <strong>OncoPath 肺结节与肺腺癌循证决策系统</strong>（官方域名：<code>lung.dpdns.org</code>，以下简称“本平台”）。在您使用本平台提供的任何学术检索、病理结构化梳理或便签生成功能前，<strong>请务必审慎、完整地阅读并充分理解本协议的全部条款，尤其是其中限制、免除开发者责任的粗体及高亮条款</strong>。如您不同意本协议的任何内容，请立即停止访问并终止使用本平台。您的任何浏览、录入、查询或导出行为均视为对本协议全部条款的无条件知情与完全同意。
+              欢迎访问 <strong>OncoPath 肺结节与肺腺癌循证知识平台</strong>（官方域名：<code>lung.dpdns.org</code>，以下简称“本平台”）。在您使用本平台提供的任何学术检索、病理结构化梳理或便签生成功能前，<strong>请务必审慎、完整地阅读并充分理解本协议的全部条款，尤其是其中限制、免除开发者责任的粗体及高亮条款</strong>。如您不同意本协议的任何内容，请立即停止访问并终止使用本平台。您的任何浏览、录入、查询或导出行为均视为对本协议全部条款的无条件知情与完全同意。
             </p>
           </div>
 
@@ -266,7 +266,7 @@ export default function TermsPage() {
 
           {/* Quick Sub-Links */}
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-            <div>© 2026 OncoPath 肺结节与肺腺癌循证决策系统 · 官方网址：lung.dpdns.org</div>
+            <div>© 2026 OncoPath 肺结节与肺腺癌循证知识平台 · 官方网址：lung.dpdns.org</div>
             <div className="flex items-center gap-3">
               <Link href="/about" className="text-blue-600 hover:underline font-medium">关于系统初衷</Link>
               <span>·</span>

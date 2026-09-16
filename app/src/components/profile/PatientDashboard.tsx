@@ -816,10 +816,10 @@ export default function PatientDashboard() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                    智能临床决策引擎
+                    循证推演与文献对照引擎
                   </h3>
                   <p className="text-xs font-bold text-blue-600/80 uppercase tracking-wider mt-0.5 truncate">
-                    AI DECISION ENGINE · ACTIONABLE NEXT STEPS
+                    EVIDENCE-BASED ENGINE · LITERATURE ALIGNMENT
                   </p>
                 </div>
               </div>

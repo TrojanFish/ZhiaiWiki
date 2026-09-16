@@ -968,7 +968,7 @@ export default function EvidenceReportPage() {
                   ),
                   blockquote: ({ node: _node, children, ...props }) => {
                     const contentStr = String(children || "");
-                    const isSummary = contentStr.includes("核心研判") || contentStr.includes("🌟") || contentStr.includes("Executive Summary");
+                    const isSummary = contentStr.includes("核心研判") || contentStr.includes("循证推演与文献对照") || contentStr.includes("🌟") || contentStr.includes("Executive Summary");
                     const isDisclaimer = contentStr.includes("免责声明") || contentStr.includes("🛡️");
                     const isWarning = contentStr.includes("警示信号") || contentStr.includes("🚨") || contentStr.includes("提前返院");
 
@@ -977,7 +977,7 @@ export default function EvidenceReportPage() {
                         <div className="my-6 p-5 md:p-6 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50/80 to-sky-50 border-2 border-teal-300 shadow-sm text-slate-900">
                           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-teal-800 mb-2">
                             <span className="text-base">🌟</span>
-                            <span>专家组核心研判 · 一句话全景省流</span>
+                            <span>临床特征与文献对照 · 一句话全景速览</span>
                           </div>
                           <div className="text-sm md:text-[15px] font-medium leading-relaxed text-slate-800">
                             {children}
@@ -1074,7 +1074,7 @@ export default function EvidenceReportPage() {
             {isGenerating && reportMarkdown && (
               <div className="mt-6 flex gap-1.5 items-center justify-center text-accent-blue text-xs font-semibold print:hidden">
                 <span className="w-2 h-2 bg-accent-blue rounded-full animate-ping" />
-                <span>AI 专家正在持续撰写中...</span>
+                <span>循证分析引擎正在整理文献与推演中...</span>
               </div>
             )}
             
@@ -1201,7 +1201,7 @@ export default function EvidenceReportPage() {
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证决策系统</div>
+                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证知识平台</div>
                 <div className="text-[10px] text-slate-500">门诊就医问诊便签卡 · 医患高效协同</div>
               </div>
             </div>

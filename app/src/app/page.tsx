@@ -463,7 +463,7 @@ export default function HomePage() {
               <div className="bg-white p-6 rounded-2xl border border-emerald-300 shadow-sm space-y-3">
                 <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>OncoPath 严谨循证医学决策系统</span>
+                  <span>OncoPath 严谨循证医学知识平台</span>
                 </div>
                 <ul className="space-y-2 text-xs text-slate-700 leading-relaxed font-medium">
                   <li className="flex items-start gap-2">

@@ -98,7 +98,7 @@ const SCENARIO_TABS = [
     icon: HeartPulse,
     headline: "术后身体恢复与长期随访",
     subline: "咳喘、标志物波动是复发了吗？",
-    badge: "康复调适 · 症状分诊",
+    badge: "康复调适 · 症状自查",
     keywords: "咳喘 · 标志物 · 复查 · 胸闷",
     theme: {
       active:   "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/25",

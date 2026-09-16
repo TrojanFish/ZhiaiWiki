@@ -171,7 +171,7 @@ export default function EvidenceReport({
           </button>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-slate-900 font-bold text-xs sm:text-sm">循证分析决策报告</span>
+            <span className="text-slate-900 font-bold text-xs sm:text-sm">循证分析与就医参考报告</span>
           </div>
           <div className="flex items-center gap-2">
             {/* Knowledge Graph shortcut */}

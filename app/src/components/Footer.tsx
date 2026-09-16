@@ -35,7 +35,7 @@ export default function Footer({ maxWidth = "max-w-7xl", className = "" }: Foote
 
         {/* Copyright & Evidence Disclaimer */}
         <div className="text-[11px] sm:text-xs text-slate-400 text-center md:text-right space-y-0.5 shrink-0">
-          <div>© 2026 OncoPath · 肺癌循证决策系统</div>
+          <div>© 2026 OncoPath · 肺癌循证知识平台</div>
           <div className="hidden md:block text-[10px] text-slate-400">数据均可追溯至 JTO、Lancet、JCO、NCCN、CSCO 等权威期刊与指南</div>
         </div>
       </div>
