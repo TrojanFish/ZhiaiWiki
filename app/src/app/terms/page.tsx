@@ -50,7 +50,7 @@ export default function TermsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <main className="flex-1 max-w-4xl mx-auto w-full space-y-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-12 sm:pb-16 px-2.5 sm:px-6 lg:px-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full space-y-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8">
         
         {/* Navigation Back */}
         <div className="flex items-center justify-between">
@@ -279,7 +279,7 @@ export default function TermsPage() {
       </main>
 
       {/* Unified Global Footer */}
-      <Footer maxWidth="max-w-4xl" />
+      <Footer maxWidth="max-w-7xl" />
     </div>
   );
 }
