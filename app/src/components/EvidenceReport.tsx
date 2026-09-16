@@ -46,6 +46,7 @@ export default function EvidenceReport({
   const result = useMemo(() => analyzePatientProfile({
       stage: profile.stage || "待定 (Tx)",
       ctr: profile.ctr ?? (profile.solidSize != null && profile.tumorSize ? Math.min(1, Math.round((profile.solidSize / profile.tumorSize) * 100) / 100) : null),
+      noduleType: profile.noduleType || undefined,
       stas: profile.stas || "unknown",
       lvi: profile.lvi || "unknown",
       vpi: profile.vpi || "unknown",

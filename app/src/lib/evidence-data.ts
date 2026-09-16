@@ -1014,6 +1014,114 @@ export const FEATURED_STUDIES: Study[] = [
     relevantFactors: ["RET", "TARGETED"],
     applicableStages: ["IIIB", "IV"],
   },
+  {
+    id: "NELSON_NEJM_2020",
+    title: "Reduced Lung-Cancer Mortality with Volume CT Screening in a Randomized Trial (NELSON)",
+    journal: "N Engl J Med",
+    year: 2020,
+    patientN: 15792,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "31995683",
+    doi: "10.1056/NEJMoa1911793",
+    keyConclusions: [
+      "全球 15,792 例大样本 RCT 证实：基于结节三维体积与体积倍增时间 (VDT) 的低剂量螺旋 CT 筛查，10年随访使男性肺癌死亡率降低 24% (RR=0.76, 95%CI 0.61-0.94, p=0.01)，女性降低 33% (RR=0.67)",
+      "确立了结节三维体积与 VDT 动态监测远优于传统二维径线测量的全球筛查基准（VDT > 600天为高度稳定低危病变）",
+      "证实科学的倍增时间随访策略可显著减少 60% 以上的不必要穿刺活检与过度切除手术",
+    ],
+    relevantFactors: ["CTR", "VDT", "SCREENING", "NODULE_VOLUME"],
+    applicableStages: ["0", "IA", "IA1", "IA2"],
+  },
+  {
+    id: "MARIPOSA_NEJM_2024",
+    title: "Amivantamab plus Lazertinib in Previously Untreated EGFR-Mutated Advanced NSCLC (MARIPOSA)",
+    journal: "N Engl J Med",
+    year: 2024,
+    patientN: 1074,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "38924738",
+    doi: "10.1056/NEJMoa2403614",
+    keyConclusions: [
+      "全球 1,074 例 III 期 RCT 确证：EGFR/MET 双抗埃万妥单抗联合三代 TKI 拉泽替尼对比奥希替尼单药一线治疗，中位无进展生存期显著延长至 23.7 个月 vs 16.6 个月 (HR=0.70, 95%CI 0.58-0.85, p<0.001)",
+      "疾病进展或死亡风险显著降低 30%，中位缓解持续时间延长 9 个月 (25.8个月 vs 16.8个月)",
+      "显著延缓颅内中枢神经转移发生，已被 FDA 批准作为晚期 EGFR 突变一线强化治疗新巅峰",
+    ],
+    relevantFactors: ["EGFR", "TARGETED", "FIRST_LINE"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "PACIFIC_5Yr_2022",
+    title: "Five-Year Survival Outcomes From the PACIFIC Trial: Durvalumab After Chemoradiotherapy in Stage III NSCLC",
+    journal: "J Clin Oncol",
+    year: 2022,
+    patientN: 713,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "35113707",
+    doi: "10.1200/JCO.21.01308",
+    keyConclusions: [
+      "不可切除局部晚期（III期）肺癌同步放化疗后度伐利尤单抗维持 1 年，5 年总生存率高达 42.9% vs 安慰剂 33.4% (OS HR=0.72, 95%CI 0.59-0.89)",
+      "5 年无进展生存率达 33.1% vs 19.0% (PFS HR=0.55, 95%CI 0.45-0.68)",
+      "创造了著名的“PACIFIC 模式”：证实约三分之一不可切除 III 期患者实现 5 年无复发临床治愈，成为全球唯一最高级别推荐标准",
+    ],
+    relevantFactors: ["IMMUNOTHERAPY", "CHEMORADIOTHERAPY", "UNRESECTABLE"],
+    applicableStages: ["IIIA", "IIIB", "IIIC"],
+  },
+  {
+    id: "KEYNOTE042_5Yr_2023",
+    title: "Five-Year Outcomes With Pembrolizumab for Metastatic NSCLC With PD-L1 TPS ≥ 1% (KEYNOTE-042)",
+    journal: "J Clin Oncol",
+    year: 2023,
+    patientN: 1274,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "36306479",
+    doi: "10.1200/JCO.21.02885",
+    keyConclusions: [
+      "1,274 例晚期无驱动基因初治大队列证实：帕博利珠单抗单药一线 5 年总生存率达 16.6% vs 化疗 8.5% (OS HR=0.79, 95%CI 0.70-0.89)",
+      "PD-L1 高表达 (TPS≥50%) 患者 5 年 OS 率达 21.9% vs 10.1% (OS HR=0.68, 95%CI 0.57-0.81)",
+      "确立了免疫治疗跨越 5 年的长尾平台效应：完成 35 周期全程治疗者，82.1% 在 5 年时仍然健康生存",
+    ],
+    relevantFactors: ["PDL1", "IMMUNOTHERAPY", "FIRST_LINE"],
+    applicableStages: ["IIIB", "IV"],
+  },
+  {
+    id: "LUNG_ART_LancetOncol_2021",
+    title: "Postoperative Radiotherapy versus No Postoperative Radiotherapy in Completely Resected N2 NSCLC (LUNG-ART)",
+    journal: "Lancet Oncol",
+    year: 2021,
+    patientN: 501,
+    studyType: "rct",
+    evidenceLevel: 5,
+    pubmedId: "34537139",
+    doi: "10.1016/S1470-2045(21)00606-6",
+    keyConclusions: [
+      "完全切除 (R0) 且纵隔淋巴结转移 (N2) 患者，术后预防性放疗 (PORT) 3年 DFS 与未放疗组无统计学差异 (47.1% vs 43.8%, HR=0.86, p=0.18)",
+      "放疗组放射性心肺严重毒性死亡率显著上升 (心血管致死率达 4.9% vs 1.6%)",
+      "彻底改写数十年来临床惯性：根治术后 R0 切除的 N2 患者常规严禁预防性放疗，避免造成不可逆的心肺二次放射损伤",
+    ],
+    relevantFactors: ["RADIOTHERAPY", "OVERTREATMENT_PREVENTION", "N2_LYMPH_NODES"],
+    applicableStages: ["IIIA", "IIIB"],
+  },
+  {
+    id: "China_Screening_Lancet_2022",
+    title: "Low-Dose CT Screening for Lung Cancer in Urban China: A Multicentre Prospective Cohort Study",
+    journal: "Lancet Public Health",
+    year: 2022,
+    patientN: 1016740,
+    studyType: "prospective_multicenter",
+    evidenceLevel: 5,
+    pubmedId: "35460613",
+    doi: "10.1016/S2468-2667(22)00059-5",
+    keyConclusions: [
+      "中国国家癌症中心逾 100 万人前瞻性早筛大队列揭示本土特征：非吸烟女性由于室内油烟暴露、被动吸烟及遗传易感性，肺腺癌发病占比显著高于欧美人群",
+      "低剂量螺旋 CT (LDCT) 筛查使中国早期肺癌 (I期) 确诊比例由历史的 20% 跃升至 74.3%，显著降低晚期恶性病死率",
+      "证实绝大多数中国本土磨玻璃结节 (pGGO) 随访 3~5 年尺寸高度稳定，为避免对良性/惰性结节过度外科干预提供了最坚实的大数据底座",
+    ],
+    relevantFactors: ["CHINA_COHORT", "SCREENING", "NON_SMOKING", "pGGO"],
+    applicableStages: ["0", "IA", "IA1"],
+  },
 ];
 
 export interface PatientMatchResult {
@@ -1046,6 +1154,7 @@ import type { HistologyItem } from "./types";
 export function analyzePatientProfile(profile: {
   stage: string;
   ctr?: number | null;
+  noduleType?: string;
   stas: string;
   lvi: string;
   vpi: string;
@@ -1236,21 +1345,28 @@ export function analyzePatientProfile(profile: {
   const sLace = FEATURED_STUDIES.find(s => s.id === "LACE_Meta_2008");
   if (sLace) matchedStudies.push(sLace);
 
-  // CTR & Surgical Studies
-  if (profile.ctr != null) {
-    if (profile.ctr <= 0.25) {
-      const s0804 = FEATURED_STUDIES.find(s => s.id === "JCOG0804_2022");
-      if (s0804) matchedStudies.push(s0804);
-    } else if (profile.ctr <= 0.5) {
-      const s1211 = FEATURED_STUDIES.find(s => s.id === "JCOG1211_2023");
-      if (s1211) matchedStudies.push(s1211);
-      const sHattori = FEATURED_STUDIES.find(s => s.id === "Hattori_JTO_2021");
-      if (sHattori) matchedStudies.push(sHattori);
-    } else {
-      const s0802 = FEATURED_STUDIES.find(s => s.id === "JCOG0802_2022");
-      if (s0802) matchedStudies.push(s0802);
-      const sCalgb = FEATURED_STUDIES.find(s => s.id === "CALGB140503_2023");
-      if (sCalgb) matchedStudies.push(sCalgb);
+  // CTR, Nodule Volume & Screening Cohort (NELSON & China National Cohort)
+  if (profile.ctr != null || profile.noduleType != null) {
+    const sNelson = FEATURED_STUDIES.find(s => s.id === "NELSON_NEJM_2020");
+    if (sNelson) matchedStudies.push(sNelson);
+    const sChina = FEATURED_STUDIES.find(s => s.id === "China_Screening_Lancet_2022");
+    if (sChina) matchedStudies.push(sChina);
+
+    if (profile.ctr != null) {
+      if (profile.ctr <= 0.25) {
+        const s0804 = FEATURED_STUDIES.find(s => s.id === "JCOG0804_2022");
+        if (s0804) matchedStudies.push(s0804);
+      } else if (profile.ctr <= 0.5) {
+        const s1211 = FEATURED_STUDIES.find(s => s.id === "JCOG1211_2023");
+        if (s1211) matchedStudies.push(s1211);
+        const sHattori = FEATURED_STUDIES.find(s => s.id === "Hattori_JTO_2021");
+        if (sHattori) matchedStudies.push(sHattori);
+      } else {
+        const s0802 = FEATURED_STUDIES.find(s => s.id === "JCOG0802_2022");
+        if (s0802) matchedStudies.push(s0802);
+        const sCalgb = FEATURED_STUDIES.find(s => s.id === "CALGB140503_2023");
+        if (sCalgb) matchedStudies.push(sCalgb);
+      }
     }
   }
 
@@ -1270,15 +1386,18 @@ export function analyzePatientProfile(profile: {
   if (profile.egfr === "positive") {
     const sAdaura = FEATURED_STUDIES.find(s => s.id === "ADAURA_2023");
     if (sAdaura) matchedStudies.push(sAdaura);
+    const sMariposa = FEATURED_STUDIES.find(s => s.id === "MARIPOSA_NEJM_2024");
+    if (sMariposa) matchedStudies.push(sMariposa);
   }
   if (profile.alk === "positive") {
     const sAlina = FEATURED_STUDIES.find(s => s.id === "ALINA_NEJM_2024");
     if (sAlina) matchedStudies.push(sAlina);
+    const sCrown = FEATURED_STUDIES.find(s => s.id === "CROWN_5Yr_2024");
+    if (sCrown) matchedStudies.push(sCrown);
   }
 
-  // Immunotherapy matching for Stage II-III or non-early
   // Immunotherapy & Neoadjuvant matching for Stage II-III or non-early
-  const isHigherStage = profile.stage && (profile.stage.startsWith("II") || profile.stage.startsWith("III"));
+  const isHigherStage = profile.stage && (profile.stage.startsWith("II") || profile.stage.startsWith("III") || profile.stage.startsWith("IV"));
   if (isHigherStage) {
     const sKn671 = FEATURED_STUDIES.find(s => s.id === "KEYNOTE671_2023");
     if (sKn671) matchedStudies.push(sKn671);
@@ -1292,6 +1411,12 @@ export function analyzePatientProfile(profile: {
     if (sRationale) matchedStudies.push(sRationale);
     const sImp010 = FEATURED_STUDIES.find(s => s.id === "IMpower010_2021");
     if (sImp010) matchedStudies.push(sImp010);
+    const sPacific = FEATURED_STUDIES.find(s => s.id === "PACIFIC_5Yr_2022");
+    if (sPacific) matchedStudies.push(sPacific);
+    const sLungArt = FEATURED_STUDIES.find(s => s.id === "LUNG_ART_LancetOncol_2021");
+    if (sLungArt) matchedStudies.push(sLungArt);
+    const sKn042 = FEATURED_STUDIES.find(s => s.id === "KEYNOTE042_5Yr_2023");
+    if (sKn042) matchedStudies.push(sKn042);
   }
 
   // Longitudinal SEER & MRD Surveillance
