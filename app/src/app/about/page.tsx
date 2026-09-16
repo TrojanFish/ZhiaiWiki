@@ -9,8 +9,6 @@ import {
   Microscope, 
   ClipboardList, 
   AlertTriangle, 
-  MessageCircle, 
-  QrCode, 
   Coffee, 
   Mail, 
   Check, 
@@ -204,67 +202,22 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              
-              {/* Card 1: WeChat Community QR */}
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 text-center flex flex-col items-center justify-between space-y-4 hover:border-teal-300 transition-colors">
-                <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-teal-100 text-teal-800 text-[11px] font-bold">
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>病友交流与互助</span>
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-900">微信扫码入群 / 添加作者</h4>
-                  <p className="text-xs text-slate-500">与同路人互相打气、分享康复经验，抗癌路上不再孤单</p>
-                </div>
-
-                {/* QR Slot */}
-                <div 
-                  onClick={() => setPreviewImage({ src: "/wechat_qr.png", title: "微信交流二维码" })}
-                  className="w-48 h-48 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-teal-400 hover:shadow-md transition-all"
-                  title="点击放大查看 / 微信扫码"
-                >
-                  <img 
-                    src="/wechat_qr.png" 
-                    alt="微信交流二维码" 
-                    className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
-                      const fallback = document.getElementById('wechat-qr-placeholder');
-                      if (fallback) fallback.style.display = 'flex';
-                    }}
-                  />
-                  <div id="wechat-qr-placeholder" className="hidden flex-col items-center justify-center text-slate-400 text-center p-2">
-                    <QrCode className="w-10 h-10 text-slate-400 mb-1.5" />
-                    <span className="text-xs font-bold text-slate-600">微信交流二维码</span>
-                  </div>
-                  <div className="absolute inset-0 bg-teal-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                    <span className="bg-white/90 text-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs backdrop-blur-xs flex items-center gap-1">
-                      <ZoomIn className="w-3 h-3" />
-                      <span>点击放大</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-slate-400">
-                  扫码请注明来意：“OncoPath 病友”
-                </div>
-              </div>
-
-              {/* Card 2: Server Support Tip / Sponsorship */}
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 text-center flex flex-col items-center justify-between space-y-4 hover:border-amber-300 transition-colors">
+            {/* Sponsorship Card */}
+            <div className="max-w-md mx-auto w-full">
+              <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200 text-center flex flex-col items-center justify-between space-y-4 hover:border-amber-300 transition-colors shadow-2xs">
                 <div className="space-y-1">
                   <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
                     <Coffee className="w-3.5 h-3.5" />
                     <span>支持服务器与算力支出</span>
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900">请喝咖啡 · 自愿赞赏</h4>
+                  <h4 className="text-base font-bold text-slate-900">请喝咖啡 · 自愿赞赏</h4>
                   <p className="text-xs text-slate-500">所有赞助将全部用于覆盖 VPS 服务器、域名与大模型 Token 成本</p>
                 </div>
 
                 {/* QR Slot */}
                 <div 
                   onClick={() => setPreviewImage({ src: "/sponsor_qr.png?v=2026", title: "请喝咖啡 · 赞赏支持码" })}
-                  className="w-48 h-48 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400 hover:shadow-md transition-all"
+                  className="w-52 h-52 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400 hover:shadow-md transition-all"
                   title="点击放大查看 / 微信扫码"
                 >
                   <img 
@@ -293,7 +246,6 @@ export default function AboutPage() {
                   金额随心 · 感谢每一份让公益平台长久活下去的温暖鼓励
                 </div>
               </div>
-
             </div>
 
             {/* Email Contact & Bug Report */}

@@ -74,13 +74,13 @@ export default function PrivacyPage() {
           <div className="space-y-4 border-b border-slate-100 pb-8">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
               <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
-              <span>数据安全保护 (Singapore PDPA / PIPL) 合规认证</span>
+              <span>数据安全与隐私保护 (PIPL / US HIPAA Safe Harbor) 体系</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               OncoPath 隐私政策与个人健康信息保护规则
             </h1>
             <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
-              OncoPath（官方域名：<code>lung.dpdns.org</code>，以下简称“本平台”）深知个人健康医疗数据对您及家属的极端敏感性与重要性。我们严格遵循<strong>《中华人民共和国个人信息保护法》(PIPL)</strong>、<strong>新加坡《个人数据保护法》(PDPA 2012)</strong>以及国际医疗数据去标识化标准（HIPAA Safe Harbor），承诺为您的病理指标、影像参数及就诊记录构建<strong>金融级端侧去标识化、本地优先存储（Local-First）与零商业变现</strong>的严密隐私防线。
+              OncoPath（官方域名：<code>lung.dpdns.org</code>，以下简称“本平台”）深知个人健康医疗数据对您及家属的极端敏感性与重要性。本平台网络服务与算力节点<strong>物理部署于美利坚合众国（United States）</strong>。我们严格遵循<strong>《中华人民共和国个人信息保护法》(PIPL)</strong>、美国健康保险流通与责任法案去标识化标准（<strong>HIPAA Safe Harbor</strong>）以及国际公认的数据隐私规范，承诺为您的病理指标、影像参数及就诊记录构建<strong>金融级端侧去标识化、本地优先存储（Local-First）与零商业变现</strong>的严密隐私防线。
             </p>
           </div>
 
@@ -174,6 +174,9 @@ export default function PrivacyPage() {
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/90 border border-slate-200 space-y-2 text-xs sm:text-sm">
                 <p>
                   • <strong>本地浏览器独享</strong>：您的病历画像与时间轴记录默认且仅保存于您个人设备的浏览器本地数据库（LocalStorage）中。关闭网页或清理浏览器后，数据完全由您本人掌管。
+                </p>
+                <p>
+                  • <strong>海外节点无状态中继</strong>：服务器物理部署于美国，仅负责向客户端分发静态页面资源及处理无状态学术检索，不在服务器端持久化存储任何患者敏感健康档案。
                 </p>
                 <p>
                   • <strong>匿名访客免登模式</strong>：对于免注册体验的用户，系统仅分配一串无任何实名联系的伪随机字符（Guest ID），不与微信、手机号或任何第三方账号发生身份绑定。

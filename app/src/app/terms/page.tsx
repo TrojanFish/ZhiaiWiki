@@ -202,17 +202,17 @@ export default function TermsPage() {
               </div>
             </section>
 
-            {/* Section 8: Governing Law & Jurisdiction */}
+            {/* Section 8: Server Location, Governing Law & Jurisdiction */}
             <section className="space-y-3">
               <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2.5">
                 <span className="w-7 h-7 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-black shrink-0">8</span>
-                <span>管辖法律、争议解决与条款可分割性</span>
+                <span>服务器部署地、管辖法律与争议解决</span>
               </h2>
               <p>
-                <strong>8.1 管辖法律</strong>：本协议的订立、执行、解释及争议解决均优先适用<strong>新加坡共和国法律（Laws of the Republic of Singapore）</strong>；涉及中国境内用户个人信息保护等强制性法定权利的，适用《中华人民共和国个人信息保护法》相关强制性规定。
+                <strong>8.1 服务器部署地与适用法律</strong>：本平台的网络服务器及数据算力节点<strong>物理部署于美利坚合众国（United States）</strong>。本协议的订立、执行、解释及争议解决均适用<strong>服务器托管所在法域法律及通用互联网法律规范</strong>；涉及中国境内用户个人信息保护等强制性法定权利的，遵循《中华人民共和国个人信息保护法》(PIPL) 相关强制性规定。
               </p>
               <p>
-                <strong>8.2 友好协商与管辖法院</strong>：如因本协议或使用本平台产生任何争议，双方应秉持医学人道主义原则先行友好协商；协商不成的，任何一方均应将争议提交运营方所在地有管辖权的新加坡法院通过诉讼方式裁决。
+                <strong>8.2 友好协商与管辖法院</strong>：如因本协议或使用本平台产生任何争议，双方应秉持医学人道主义与理性互信原则先行友好协商；协商不成的，任何一方均应将争议提交服务器物理托管所在地有管辖权的法院通过诉讼方式裁决。
               </p>
               <p>
                 <strong>8.3 条款可分割性</strong>：若本协议中的任何条款被任何有管辖权的法庭认定为无效、非法或不可执行，该条款的无效不影响本协议其他条款的法律效力，其余条款仍对双方具有完全约束力。
