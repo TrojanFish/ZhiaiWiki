@@ -12,7 +12,8 @@ venv/
 .venv/
 env/
 .DS_Store
-.agents/
+.agents/*
+!.agents/skills/
 *.jpeg
 *.jpg
 *.pem

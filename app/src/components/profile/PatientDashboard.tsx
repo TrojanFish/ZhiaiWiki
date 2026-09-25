@@ -53,6 +53,7 @@ const ReportUploader = dynamic(() => import("./ReportUploader"), {
 
 import ConsentModal from "@/components/ConsentModal";
 import type { PatientProfile, CancerType } from "@/lib/types";
+import { CancerRegistry } from "@/lib/cancerRegistry";
 import { getGuestId } from "@/lib/guest";
 import Link from "next/link";
 import { useCancerType } from "@/components/common/CancerSwitch";
@@ -90,7 +91,7 @@ export default function PatientDashboard() {
     if (typeof window !== "undefined") {
       return getDualPrimarySummary();
     }
-    return { slots: [] as CancerType[], isDualPrimary: false, lungProfile: null, breastProfile: null, colonProfile: null, rectalProfile: null, colorectalProfile: null, gastricProfile: null, liverProfile: null, esophagealProfile: null, thyroidProfile: null, endometrialProfile: null, cervicalProfile: null };
+    return { slots: [] as CancerType[], isDualPrimary: false, lungProfile: null, breastProfile: null, colonProfile: null, rectalProfile: null, colorectalProfile: null, gastricProfile: null, liverProfile: null, esophagealProfile: null, thyroidProfile: null, endometrialProfile: null, cervicalProfile: null, pancreaticProfile: null };
   });
 
   const [profile, setProfile] = useState<PatientProfile | null>(() => {
@@ -122,6 +123,7 @@ export default function PatientDashboard() {
   const isThyroid = activeType === 'thyroid';
   const isEndometrial = activeType === 'endometrial';
   const isCervical = activeType === 'cervical';
+  const isPancreatic = activeType === 'pancreatic';
   const isLung = activeType === 'lung';
 
   // 仅在首次装载个人档案时同步一次默认癌种，绝不在用户手动切换全局癌种时强行倒灌覆盖
@@ -199,6 +201,17 @@ export default function PatientDashboard() {
       return { 
         recommendedTargetDrugId: 'levothyroxine', 
         matchedGeneLabel: rawData.recurrenceRisk ? `${rawData.recurrenceRisk}复发风险 (L-T4 术后促甲状腺激素 TSH 抑制治疗)` : '分化型甲状腺癌 TSH 抑制与激素替代基石' 
+      };
+    }
+
+    if (isPancreatic || profile.cancerType === 'pancreatic') {
+      const rawData = (profile as any).clinicalData || (profile as any).cancerSpecificData || profile;
+      if (rawData.hasBrcaMutation || rawData.brcaStatus === 'mutated') {
+        return { recommendedTargetDrugId: 'pancreatic_olaparib', matchedGeneLabel: 'gBRCA1/2 胚系突变 (POLO 研究奥拉帕利维持一线)' };
+      }
+      return { 
+        recommendedTargetDrugId: 'pancreatic_olaparib', 
+        matchedGeneLabel: '胰腺导管腺癌精准靶向与维持治疗评估 (POLO 研究)' 
       };
     }
 
@@ -474,7 +487,7 @@ export default function PatientDashboard() {
   };
 
   const handleAddSecondCancer = () => {
-    const allCancers: CancerType[] = ["lung", "breast", "colorectal"];
+    const allCancers = CancerRegistry.getSupportedTypes();
     const nextSlot = allCancers.find(c => c !== activeSlot && !availableSlots.includes(c)) ||
                      allCancers.find(c => c !== activeSlot) || "lung";
     handleSelectSlot(nextSlot);
@@ -684,7 +697,7 @@ export default function PatientDashboard() {
         
         setProfile(null);
         setAvailableSlots([]);
-        setDualSummary({ slots: [], isDualPrimary: false, lungProfile: null, breastProfile: null, colonProfile: null, rectalProfile: null, colorectalProfile: null, gastricProfile: null, liverProfile: null, esophagealProfile: null, thyroidProfile: null, endometrialProfile: null, cervicalProfile: null });
+        setDualSummary({ slots: [], isDualPrimary: false, lungProfile: null, breastProfile: null, colonProfile: null, rectalProfile: null, colorectalProfile: null, gastricProfile: null, liverProfile: null, esophagealProfile: null, thyroidProfile: null, endometrialProfile: null, cervicalProfile: null, pancreaticProfile: null });
         setShowUploader(true);
       }
       setShowDeleteModal(false);
@@ -724,6 +737,9 @@ export default function PatientDashboard() {
             liverProfile={dualSummary.liverProfile || (activeSlot === 'liver' ? profile : getProfileBySlot('liver'))}
             esophagealProfile={dualSummary.esophagealProfile || (activeSlot === 'esophageal' ? profile : getProfileBySlot('esophageal'))}
             thyroidProfile={dualSummary.thyroidProfile || (activeSlot === 'thyroid' ? profile : getProfileBySlot('thyroid'))}
+            endometrialProfile={dualSummary.endometrialProfile || (activeSlot === 'endometrial' ? profile : getProfileBySlot('endometrial'))}
+            cervicalProfile={dualSummary.cervicalProfile || (activeSlot === 'cervical' ? profile : getProfileBySlot('cervical'))}
+            pancreaticProfile={dualSummary.pancreaticProfile || (activeSlot === 'pancreatic' ? profile : getProfileBySlot('pancreatic'))}
             onSelectSlot={handleSelectSlot}
             onAddSecondCancer={handleAddSecondCancer}
           />
@@ -731,7 +747,7 @@ export default function PatientDashboard() {
         {!profile && (
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              {availableSlots.length > 0 ? `建立【${activeSlot === 'gastric' ? '胃癌' : activeSlot === 'breast' ? '乳腺癌' : activeSlot === 'colon' ? '结肠癌' : activeSlot === 'rectal' ? '直肠癌' : activeSlot === 'colorectal' ? '结直肠癌' : activeSlot === 'liver' ? '肝癌' : activeSlot === 'esophageal' ? '食管癌' : activeSlot === 'thyroid' ? '甲状腺癌' : '肺癌'}】原发肿瘤病案` : '建立个人医学档案'}
+              {availableSlots.length > 0 ? `建立【${CancerRegistry.get(activeSlot)?.name || '原发'}】原发肿瘤病案` : '建立个人医学档案'}
             </h1>
             <p className="text-slate-500 text-sm mt-1.5">导入病理诊断与影像报告，系统将自动进行临床要素解析与指南循证对齐</p>
           </div>
@@ -832,6 +848,8 @@ export default function PatientDashboard() {
               ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CME 规范 · IDEA 3个月减毒方案'
               : isRectal
               ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · TME/HR-MRI · RAPIDO/PRODIGE 23 全程新辅助 TNT'
+              : isPancreatic
+              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 NCCN / CSCO 2024 胰腺癌指南 · 薄层增强CT/MRI血管侵犯三分类 · mFOLFIRINOX 转化 · Whipple R0切缘'
               : isColorectal
               ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/NCCN 2024 · IDEA 协作组前瞻队列'
               : 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 IASLC / AJCC 第 9 版 实性成分与前瞻性临床队列'}
@@ -850,7 +868,7 @@ export default function PatientDashboard() {
           </button>
 
           {/* 2. 用药自检 (Clinical Diagnostic Utility - Purple) */}
-          <button
+          <button 
             onClick={() => {
               setInitialDdiDrugId(undefined);
               setShowDdiModal(true);
@@ -863,7 +881,7 @@ export default function PatientDashboard() {
           </button>
 
           {/* 3. 导出图片 (Output & Sharing Utility - Slate) */}
-          <button
+          <button 
             onClick={() => setShowExportModal(true)}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-slate-700 hover:bg-white/80 hover:shadow-2xs text-xs font-bold transition-all active:scale-95 cursor-pointer"
             title="一键导出高清数字档案全景卡 (PNG)"
@@ -900,6 +918,9 @@ export default function PatientDashboard() {
         liverProfile={dualSummary.liverProfile || (activeSlot === 'liver' ? profile : getProfileBySlot('liver'))}
         esophagealProfile={dualSummary.esophagealProfile || (activeSlot === 'esophageal' ? profile : getProfileBySlot('esophageal'))}
         thyroidProfile={dualSummary.thyroidProfile || (activeSlot === 'thyroid' ? profile : getProfileBySlot('thyroid'))}
+        endometrialProfile={dualSummary.endometrialProfile || (activeSlot === 'endometrial' ? profile : getProfileBySlot('endometrial'))}
+        cervicalProfile={dualSummary.cervicalProfile || (activeSlot === 'cervical' ? profile : getProfileBySlot('cervical'))}
+        pancreaticProfile={dualSummary.pancreaticProfile || (activeSlot === 'pancreatic' ? profile : getProfileBySlot('pancreatic'))}
         onSelectSlot={handleSelectSlot}
         onAddSecondCancer={handleAddSecondCancer}
       />

@@ -14,6 +14,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { useCancerType, CANCER_TYPE_OPTIONS } from "@/components/common/CancerSwitch";
+import { CancerRegistry } from "@/lib/cancerRegistry";
 import { CancerIcon } from "@/components/common/CancerIcons";
 import { useLanguage, type LangScript } from "@/components/LangSwitch";
 import type { CancerType } from "@/lib/types";
@@ -142,7 +143,51 @@ export default function SettingsModal({
           <div className="space-y-2">
             {CANCER_TYPE_OPTIONS.map((opt) => {
               const isSelected = cancerType === opt.type;
-              const isLung = opt.type === "lung";
+              const plugin = CancerRegistry.get(opt.type);
+              const themeStyles = opt.type === "breast"
+                ? "bg-pink-50/90 border-pink-300 ring-2 ring-pink-200/80 text-pink-950 shadow-xs"
+                : opt.type === "colon" || opt.type === "colorectal"
+                ? "bg-emerald-50/90 border-emerald-300 ring-2 ring-emerald-200/80 text-emerald-950 shadow-xs"
+                : opt.type === "rectal"
+                ? "bg-teal-50/90 border-teal-300 ring-2 ring-teal-200/80 text-teal-950 shadow-xs"
+                : opt.type === "pancreatic"
+                ? "bg-orange-50/90 border-orange-300 ring-2 ring-orange-200/80 text-orange-950 shadow-xs"
+                : opt.type === "gastric"
+                ? "bg-amber-50/90 border-amber-300 ring-2 ring-amber-200/80 text-amber-950 shadow-xs"
+                : opt.type === "liver"
+                ? "bg-rose-50/90 border-rose-300 ring-2 ring-rose-200/80 text-rose-950 shadow-xs"
+                : opt.type === "esophageal"
+                ? "bg-orange-50/90 border-orange-300 ring-2 ring-orange-200/80 text-orange-950 shadow-xs"
+                : opt.type === "thyroid"
+                ? "bg-indigo-50/90 border-indigo-300 ring-2 ring-indigo-200/80 text-indigo-950 shadow-xs"
+                : opt.type === "endometrial"
+                ? "bg-purple-50/90 border-purple-300 ring-2 ring-purple-200/80 text-purple-950 shadow-xs"
+                : opt.type === "cervical"
+                ? "bg-fuchsia-50/90 border-fuchsia-300 ring-2 ring-fuchsia-200/80 text-fuchsia-950 shadow-xs"
+                : "bg-sky-50/90 border-sky-300 ring-2 ring-sky-200/80 text-sky-950 shadow-xs";
+
+              const checkBg = opt.type === "breast"
+                ? "bg-pink-600"
+                : opt.type === "colon" || opt.type === "colorectal"
+                ? "bg-emerald-600"
+                : opt.type === "rectal"
+                ? "bg-teal-700"
+                : opt.type === "pancreatic"
+                ? "bg-orange-600"
+                : opt.type === "gastric"
+                ? "bg-amber-600"
+                : opt.type === "liver"
+                ? "bg-rose-600"
+                : opt.type === "esophageal"
+                ? "bg-orange-600"
+                : opt.type === "thyroid"
+                ? "bg-indigo-600"
+                : opt.type === "endometrial"
+                ? "bg-purple-600"
+                : opt.type === "cervical"
+                ? "bg-fuchsia-600"
+                : "bg-sky-600";
+
               return (
                 <button
                   key={opt.type}
@@ -150,9 +195,7 @@ export default function SettingsModal({
                   onClick={() => handleSelectCancer(opt.type)}
                   className={`w-full p-2.5 sm:p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between group ${
                     isSelected
-                      ? isLung
-                        ? "bg-sky-50/90 border-sky-300 ring-2 ring-sky-200/80 text-sky-950 shadow-xs"
-                        : "bg-pink-50/90 border-pink-300 ring-2 ring-pink-200/80 text-pink-950 shadow-xs"
+                      ? themeStyles
                       : "bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-700 hover:border-slate-300"
                   }`}
                 >
@@ -160,9 +203,7 @@ export default function SettingsModal({
                     <div
                       className={`w-8 h-8 rounded-xl flex items-center justify-center border shadow-2xs shrink-0 transition-transform group-hover:scale-105 ${
                         isSelected
-                          ? isLung
-                            ? "bg-white text-sky-600 border-sky-200"
-                            : "bg-white text-pink-600 border-pink-200"
+                          ? "bg-white border-slate-200"
                           : "bg-white text-slate-400 border-slate-200"
                       }`}
                     >
@@ -171,22 +212,18 @@ export default function SettingsModal({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-bold text-slate-900">{opt.label}专区</span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {isLung ? "IASLC 9th" : "AJCC 8/9th"}
+                        <span className="text-[10px] text-slate-400 font-mono truncate max-w-[130px]">
+                          {plugin?.enName || opt.enName}
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-500 truncate max-w-[260px] mt-0.5">
-                        {isLung
-                          ? "原发性腺鳞癌、小细胞癌 · 实性成分折算"
-                          : "浸润性乳腺癌 · BI-RADS 评估与分子分型"}
+                        {plugin?.guidelineStandard || "权威国际指南与前瞻性队列"}
                       </p>
                     </div>
                   </div>
                   {isSelected && (
                     <span
-                      className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] shadow-2xs shrink-0 ${
-                        isLung ? "bg-sky-600" : "bg-pink-600"
-                      }`}
+                      className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] shadow-2xs shrink-0 ${checkBg}`}
                     >
                       <Check className="w-3 h-3 stroke-[3]" />
                     </span>

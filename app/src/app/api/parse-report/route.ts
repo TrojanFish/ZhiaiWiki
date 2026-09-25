@@ -22,6 +22,7 @@ const SYSTEM_PROMPT = `
 - "thyroid": 报告涉及甲状腺、彩超 TI-RADS、甲状腺乳头状癌/滤泡癌、中央区清扫、BRAF、TSH、Tg/TgAb等；
 - "endometrial": 报告涉及子宫内膜、子宫体、绝经后流血、肌层浸润深度、POLE、MMR/MSI、p53、高剂量孕激素保育等；
 - "cervical": 报告涉及宫颈、宫颈鳞癌/腺癌、HPV持续感染、TCT/CIN/SIL、锥切切缘、宫旁浸润、顺铂增敏同步放化疗(CCRT)、近距离后装放疗等；
+- "pancreatic": 报告涉及胰腺（胰头/胰体/胰尾）、胰管扩张、主胰管、壶腹部、CA19-9、Whipple术式/胰十二指肠切除、肠系膜上动脉/静脉 (SMA/SMV) 侵犯、腹腔干包裹、门静脉包裹、可切除性三分类（可切除/交界可切除/局部晚期）、BRCA1/2突变、KRAS G12D/V、mFOLFIRINOX、奥拉帕利等；
 - "lung": 报告涉及双肺、肺叶、肺段、胸膜、气道、磨玻璃结节 (GGO)、实性成分、Lung-RADS、STAS、EGFR/ALK等。
 
 【第一步：智能判断报告模态 (reportType)】
@@ -569,6 +570,12 @@ export async function POST(request: Request) {
       riskLevel = unifiedStaging?.stage?.startsWith("IA") ? "low" : (isLocallyAdvanced ? "high" : "moderate");
       psychState = riskLevel === "low" ? "hopeful" : (riskLevel === "high" ? "decision" : "understanding");
       nextAction = unifiedStaging?.treatmentDirection || "建议遵医嘱规范开展同步放化疗 (CCRT) 或开腹术后随访。";
+    } else if (detectedCancerType === "pancreatic") {
+      const isResectable = extracted.resectabilityStatus === "resectable" || unifiedStaging?.stage === "I" || unifiedStaging?.stage === "IA" || unifiedStaging?.stage === "IB";
+      currentStage = extracted.resectabilityStatus === "borderline_resectable" || extracted.resectabilityStatus === "locally_advanced" ? "peri_op" : "post_op";
+      riskLevel = isResectable ? "moderate" : "high";
+      psychState = isResectable ? "hopeful" : "decision";
+      nextAction = unifiedStaging?.treatmentDirection || "建议由肝胆胰外科与肿瘤内科开展 MDT 多学科会诊，明确血管可切除性与转化化疗策略。";
     } else if (detectedCancerType === "gastric") {
       currentStage = "post_op";
       const isEarlyGastric = unifiedStaging?.stage === "I" || unifiedStaging?.stage === "IA";

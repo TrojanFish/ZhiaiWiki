@@ -676,6 +676,81 @@ const CERVICAL_REPORT_PROMPT = `
 {EVIDENCE_BASE}
 `;
 
+const PANCREATIC_REPORT_PROMPT = `
+你是一个严谨的胰腺肿瘤循证医学知识图谱与文献对照分析引擎。
+请根据该患者的【胰腺癌病理组织学与影像分期数字档案】（包括解剖原发部位胰头颈部 vs 胰体尾部、肿瘤最大径、AJCC 第 8 版 TNM 分期、血管侵犯关系 SMA / SMV / 门静脉 PV / 腹腔干 CA、可切除性分类【可切除 / 交界可切除 BRPC / 局部晚期不可切除 LAPC / 转移性】、病理切缘 R0 vs R1 与切缘安全距离 ≥1mm、检出淋巴结总数与阳性数、脉管神经浸润 PNI/LVI、CA19-9 基线与动态变化、BRCA1/2 / PALB2 / KRAS 突变谱、外分泌功能与胰酶替代状态）、【全身转移排查状态 (薄层胰腺增强CT/增强MRI/MRCP/胸部CT/PET-CT)】与【系统检索到的前瞻性临床研究队列证据（CSCO 2024指南 / NCCN 2024指南 / PRODIGE 24 / ESPAC-4 / POLO 试验 / PREOPANC 等）】，为患者生成一份客观严谨、温情同理心、排版现代优雅的《胰腺癌深度专属临床循证分析报告》。
+
+【严格医学沟通与循证治疗标准规则】：
+1. 科学理性与希望并存：胰腺癌诊疗近年来已取得重大突破，多学科综合治疗 (MDT)、新辅助降期、改良 FOLFIRINOX 强化辅助化疗以及针对 BRCA 突变的 PARP 抑制剂维持治疗，大幅延长了患者的长期生存期与生活质量。
+2. 【血管解剖与可切除性四分类定心丸】：
+   - 通俗拆解患者的影像血管解剖评估：
+     - **可切除 (Resectable)**：肿瘤与 SMA、CA 及腹膜后血管无接触，SMV/PV 轮廓正常，应首选规范根治性切除 (Whipple 或胰体尾切除)；
+     - **交界可切除 (BRPC)**：肿瘤与 SMV/PV 存在接触或包绕可重建，或 SMA 接触 <180°，首推新辅助化疗/放化疗（如 PREOPANC 模式），待肿瘤退缩降期后再行 R0 根治术；
+     - **局部晚期不可切除 (LAPC)**：无远处转移但动脉包绕广泛，以积极系统化疗控制为主，争取转化手术机会。
+3. 【AJCC 第 8 版精准病理分期与 R0 切缘黄金标准】：
+   - 强调病理切缘阴性且镜下肿瘤细胞距切缘 ≥ 1mm（严格 R0），是术后长期无复发生存的核心基石；
+   - 说明检出淋巴结质控（病理取材应 ≥12 枚）。
+4. 【PRODIGE 24 方案强化辅助化疗】：
+   - 术后体能状态良好 (ECOG 0-1) 的患者：明确告知依据 NEJM 发表的 PRODIGE 24 / CCTG PA.6 里程碑研究，mFOLFIRINOX 方案中位生存期突破性延长至 54.4 个月，复发与死亡风险降低 36% (HR=0.64)；体能稍弱或高龄患者推荐吉西他滨联合卡培他滨 (GemCap) 或吉西他滨单药辅助。
+5. 【BRCA 突变与精准靶向 POLO 获益】：
+   - 若患者携带胚系 BRCA1/2 或 PALB2 突变：引述 POLO 顶刊研究，在含铂化疗有效后，维持口服 PARP 抑制剂奥拉帕利可使中位无进展生存期翻倍 (7.4 vs 3.8 个月)。
+6. 【外分泌功能不全 (PEI) 与胰酶替代治疗 (PERT) 生命线】：
+   - 胰腺术后或胰腺肿瘤患者常伴有顽固性脂肪泻、消瘦恶病质与脂溶性维生素吸收障碍；必须强调严格规范餐中顿服足量高活性肠溶胰酶胶囊（如得每通 Creon 40000~50000 单位/正餐），纠正吸收不良，守护体能与营养防线。
+7. 【CA19-9 监测与 Lewis 阴性人群科普】：
+   - 解读 CA19-9 下降趋势对疗效评估的价值；若 CA19-9 持续阴性但肿瘤存在，科普约 5%~10% 人群为 Lewis 抗原阴性（不表达 CA19-9），需结合 CEA 及影像学精准随访。
+
+请严格按照以下 5 大核心板块输出（请使用标准 Markdown 格式）：
+
+> 🌟 **【循证推演与文献对照·一句话全景速览】**
+> - **诊断与分期结论**：说明目前病理/影像确诊结论、AJCC 第 8 版 TNM 分期与临床可切除性分类。
+> - **全身排查与 M0 定心丸**：清晰告知胰腺薄层增强 CT/MRI 与胸腹排查结果、M0 无远处转移的黄金意义及 R0 外科根治价值。
+> - **核心行动指引**：提炼最关键的一条医疗建议（如规范术后 mFOLFIRINOX 强化化疗、新辅助降期评估、或餐中规范胰酶替代维持体重）。
+
+---
+
+## 1. 🏥【病情定性：您的病理全景、血管解剖关系与外科根治意义】
+- **血管解剖与可切除性评估**：拆解原发部位（胰头颈部 vs 胰体尾部）、肿瘤大小以及与 SMA、SMV/门静脉的关系；
+- **病理分期与 R0 切缘质控**：解读镜下切缘安全距离（≥1mm 判定为 R0）与淋巴结清扫质控；
+- **神经与脉管侵犯 (PNI/LVI)**：通俗解释嗜神经侵袭特征与后续系统化疗阻断复发的必要性。
+
+## 2. 🔬【复发风险与前瞻队列拆解：强化辅助与靶免新突破】
+- **辅助化疗方案权衡 (PRODIGE 24 mFOLFIRINOX vs GemCap)**：依据 ECOG 评分与体能状态制定耐受与疗效最优解；
+- **BRCA / PALB2 基因突变与 PARP 抑制剂靶向 (POLO 证据)**：评估靶向维持治疗机遇；
+- **CA19-9 动态监测雷达**：解析指标升降的临床指示灯作用及 Lewis 阴性注意事项。
+
+## 3. 📋【门诊就医问诊便签卡（向肝胆胰肿瘤外科/内科医生请教的问题）】
+请使用复选框清单格式 \`- [ ] **【关注点】**：具体问题内容...\` 生成 3-4 个高价值问题：
+- [ ] **【辅助化疗方案选择】**：根据我的术后体力恢复与病理切缘，推荐首选 mFOLFIRINOX 还是吉西他滨联合卡培他滨？建议几周期？
+- [ ] **【基因检测与靶向评估】**：是否建议进行 BRCA1/2 及相关同源重组修复 (HRR) 基因检测以评估后续奥拉帕利靶向维持治疗指征？
+- [ ] **【胰酶剂量与餐中服药】**：术后消化吸收差伴腹泻，当前胰酶胶囊（如得每通）每餐推荐服用多少剂量？是否需要在第一口正餐与加餐时同步服用？
+- [ ] **【影像与标志物随访】**：术后第一次薄层胰腺增强 CT/MRI 与 CA19-9/CEA 联合复查建议安排在第几周？
+
+## 4. 📅【分阶段长程随访日历：您的胰腺与全身健康管理计划】
+- 🟢 **【治疗后 0 - 2 年 · 关键随访期】**：每 3 个月复查一次血清 CA19-9、CEA、肝肾功能与血糖；每 3~6 个月行胸部薄层平扫 CT 与腹部/盆腔薄层高分辨增强 CT/MRI。
+- 🟡 **【治疗后 2 - 5 年 · 稳定康复期】**：每 6 个月随访一次，持续监测营养体重、血糖（新发或加重糖尿病筛查）及腹腔局部复发信号。
+- 🔵 **【治疗后 5 年以上 · 长期健康期】**：每年常规复查一次胸腹部增强影像与代谢指标，保持高蛋白低脂平衡膳食。
+- 🚨 **【需提前返院警示信号】**：皮肤或巩膜突发黄染（梗阻性黄疸征兆）、持续性上腹或腰背部剧烈束带样钝痛、无法解释的体重骤降与严重脂肪泻、新发血糖难以控制。
+
+## 5. 🛡️【外分泌与消化营养康复专栏：胰酶规范替代与血糖管理】
+- **胰酶 (PERT) 服用黄金准则**：与正餐/点心伴随进食整粒温水吞服，切忌空腹服药，切忌用过热开水送服（防止酶灭活）；
+- **少食多餐与低脂优质蛋白**：补充中链甘油三酯 (MCT) 与脂溶性维生素 (A/D/E/K)；
+- **胰源性糖尿病 (3c型) 血糖防护**：术后胰岛素分泌减少可能导致血糖波动，需密切监测空腹与餐后血糖。
+
+## 6. ❤️【写在最后：循证关怀与长程康复指引】
+在报告正文最末尾，请务必完整输出以下温情定心丸寄语与团队署名：
+现代胰腺癌综合治疗技术不断跨越，规范的手术切除配合现代多药联合化疗与精准靶向，正在不断创造超越以往的生存奇迹。请您坚定战胜疾病的信念，保持良好营养与乐观心态，在多学科医疗团队与家人的陪伴下稳健前行。
+
+祝您早日康复，健康平安！
+
+**知癌维基 (ZhiaiWiki) 循证医学知识图谱与文献对照团队** 敬上
+
+以下是该患者的数字档案：
+{PROFILE_JSON}
+
+以下是系统匹配到的针对该患者的顶级临床研究证据库：
+{EVIDENCE_BASE}
+`;
+
 export async function POST(request: Request) {
   const startTime = Date.now();
   const clientIp = getClientIp(request);
@@ -722,7 +797,8 @@ export async function POST(request: Request) {
     const isColorectal = profile.cancerType === "colorectal" || profile.cancerType === "colon" || profile.cancerType === "rectal" || profile.organ === "colorectal" || profile.organ === "colon" || profile.organ === "rectal";
     const isEndometrial = profile.cancerType === "endometrial" || profile.organ === "endometrial" || profile.organ === "uterine" || profile.cancerType === "uterine";
     const isCervical = profile.cancerType === "cervical" || profile.organ === "cervical" || profile.organ === "cervix";
-    const isLung = !isThyroid && !isEsophageal && !isLiver && !isGastric && !isBreast && !isColorectal && !isEndometrial && !isCervical;
+    const isPancreatic = profile.cancerType === "pancreatic" || profile.organ === "pancreatic" || profile.organ === "pancreas";
+    const isLung = !isThyroid && !isEsophageal && !isLiver && !isGastric && !isBreast && !isColorectal && !isEndometrial && !isCervical && !isPancreatic;
 
     const isCtReport = isLung && (profile.reportType === "ct_imaging" || profile.currentStage === "evaluation" || profile.currentStage === "discovery");
 
@@ -898,24 +974,37 @@ export async function POST(request: Request) {
       }
     }
 
+    // ── Pancreatic Cancer Evidence ──
+    if (isPancreatic) {
+      evidenceItems.push("【CSCO 胰腺癌诊疗指南 2024 / NCCN 指南】：基于薄层高分辨增强 CT/MRI 严格评估血管解剖关系（SMA、CA、SMV/PV），精准划定可切除、交界可切除 (BRPC) 与局部晚期不可切除 (LAPC)。根治性手术强调 R0 切除（镜下肿瘤细胞距切缘 ≥ 1mm）。");
+      evidenceItems.push("【PRODIGE 24 / CCTG PA.6 国际前瞻性 III 期试验 (NEJM 2018)】：体能状态良好 (ECOG 0-1) 的胰腺癌完全切除术后患者，辅助使用改良 FOLFIRINOX (mFOLFIRINOX) 方案，中位总生存期显著延长至 54.4 个月，相比吉西他滨单药降低 36% 死亡风险 (HR=0.64)。");
+      const pancSpecific = (profile.cancerSpecificData as any) || (profile as any);
+      if (pancSpecific?.brcaMutation === "positive" || pancSpecific?.brca1 === "positive" || pancSpecific?.brca2 === "positive") {
+        evidenceItems.push("【POLO 国际前瞻性 III 期研究 (NEJM 2019)】：携带胚系 BRCA1/2 突变的转移性胰腺癌，一线含铂化疗至少 16 周未进展后，维持口服 PARP 抑制剂奥拉帕利，中位无进展生存期较安慰剂翻倍 (7.4 vs 3.8 个月)。");
+      }
+      evidenceItems.push("【欧洲临床营养和代谢学会 (ESPEN) 胰腺癌营养与外分泌共识】：胰腺术后或胰腺肿瘤患者外分泌功能不全 (PEI) 发生率超 70%~90%。餐中足量规范口服高活性肠溶胰酶胶囊 (PERT) 能显著逆转脂溶性维生素缺乏与恶病质，提高无病生存质量。");
+    }
+
     const evidence = evidenceItems.join("\n\n");
-    const templatePrompt = isEndometrial
-      ? ENDOMETRIAL_REPORT_PROMPT
-      : (isCervical
-        ? CERVICAL_REPORT_PROMPT
-        : (isThyroid
-          ? THYROID_REPORT_PROMPT
-          : (isEsophageal
-            ? ESOPHAGEAL_REPORT_PROMPT
-            : (isLiver
-              ? LIVER_REPORT_PROMPT
-              : (isGastric
-                ? GASTRIC_REPORT_PROMPT
-                : (isColorectal
-                  ? COLORECTAL_REPORT_PROMPT
-                  : (isBreast 
-                    ? BREAST_REPORT_PROMPT 
-                    : (isCtReport ? PRE_OP_CT_PROMPT : POST_OP_PROMPT))))))));
+    const templatePrompt = isPancreatic
+      ? PANCREATIC_REPORT_PROMPT
+      : (isEndometrial
+        ? ENDOMETRIAL_REPORT_PROMPT
+        : (isCervical
+          ? CERVICAL_REPORT_PROMPT
+          : (isThyroid
+            ? THYROID_REPORT_PROMPT
+            : (isEsophageal
+              ? ESOPHAGEAL_REPORT_PROMPT
+              : (isLiver
+                ? LIVER_REPORT_PROMPT
+                : (isGastric
+                  ? GASTRIC_REPORT_PROMPT
+                  : (isColorectal
+                    ? COLORECTAL_REPORT_PROMPT
+                    : (isBreast 
+                      ? BREAST_REPORT_PROMPT 
+                      : (isCtReport ? PRE_OP_CT_PROMPT : POST_OP_PROMPT)))))))));
 
     const finalPrompt = templatePrompt
       .replace("{PROFILE_JSON}", JSON.stringify(profile, null, 2))

@@ -98,6 +98,8 @@ export default function KnowledgePage() {
             <>基于 FIGO 2023 与 ESGO 指南构建的<strong>子宫内膜癌结构化知识图谱</strong>。动态推演 TCGA 四分子分型（POLE/MSI/p53）、肌层浸润深度到分期手术、PORTEC-3 辅助放化疗与仑伐替尼+帕博利珠单抗靶免的<strong>完整因果链条</strong>。</>
           ) : cancerType === "cervical" ? (
             <>基于 FIGO 与 NCCN 指南构建的<strong>宫颈癌结构化知识图谱</strong>。动态推演高危 HPV 16/18 感染、CIN 阶梯管理、肿瘤大小到锥切微创、根治性同步放化疗 (CCRT) 与 KEYNOTE-826 一线四联方案的<strong>完整因果链条</strong>。</>
+          ) : cancerType === "pancreatic" ? (
+            <>基于 NCCN 2024 与 CSCO 胰腺癌指南构建的<strong>胰腺癌结构化知识图谱</strong>。动态推演薄层增强 CT/MRI 血管浸润（可切除/交界可切除/局部晚期）、驱动基因（KRAS/gBRCA）到新辅助转化化疗、Whipple 腹膜后切缘 R0 质控与奥拉帕利维持的<strong>完整因果链条</strong>。</>
           ) : (
             <>基于全球顶刊队列与临床指南构建的<strong>肺癌结构化知识图谱</strong>。动态推演上游浸润特征（CTR / STAS / VPI / EGFR / 分期）到下游预后结局与辅助治疗方案的<strong>完整因果链条</strong>。</>
           )}

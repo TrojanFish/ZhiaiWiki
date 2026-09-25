@@ -11,6 +11,7 @@ import { ESOPHAGEAL_STUDIES } from "@/lib/esophagealStudiesData";
 import { THYROID_STUDIES } from "@/lib/thyroidStudiesData";
 import { ENDOMETRIAL_STUDIES } from "@/lib/endometrialStudiesData";
 import { CERVICAL_STUDIES } from "@/lib/cervicalStudiesData";
+import { PANCREATIC_STUDIES } from "@/lib/pancreaticStudiesData";
 
 const RAW_STUDIES = [
   ...FEATURED_STUDIES,
@@ -22,17 +23,18 @@ const RAW_STUDIES = [
   ...(THYROID_STUDIES as any[]),
   ...(ENDOMETRIAL_STUDIES as any[]),
   ...(CERVICAL_STUDIES as any[]),
+  ...(PANCREATIC_STUDIES as any[]),
 ];
 
 const UNIQUE_STUDIES = Array.from(new Map(RAW_STUDIES.map((s) => [s.id, s])).values());
-const defaultTotalStudies = Math.max(UNIQUE_STUDIES.length, 86);
+const defaultTotalStudies = Math.max(UNIQUE_STUDIES.length, 92);
 const calculatedPatients = UNIQUE_STUDIES.reduce((sum, s) => sum + (s.patientN || 0), 0);
-const defaultTotalPatients = Math.max(calculatedPatients, 168500);
+const defaultTotalPatients = Math.max(calculatedPatients, 175000);
 const defaultRctCount = Math.max(
   UNIQUE_STUDIES.filter((s) => s.studyType === "rct" || s.studyType === "prospective_multicenter").length,
-  46
+  50
 );
-const TOTAL_SUPPORTED_CANCERS = 8; // 肺癌、乳腺癌、结直肠癌、胃癌、原发性肝癌、食管癌、甲状腺癌、妇科肿瘤
+const TOTAL_SUPPORTED_CANCERS = 9; // 肺癌、乳腺癌、结直肠癌、胃癌、原发性肝癌、食管癌、甲状腺癌、妇科肿瘤、胰腺癌
 
 export default function StatsBanner() {
   const [animated, setAnimated] = useState(false);

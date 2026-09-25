@@ -13,6 +13,7 @@ import {
   ThyroidIcon,
   EndometrialIcon,
   CervicalIcon,
+  PancreaticIcon,
 } from "@/components/common/CancerIcons";
 import { WIKI_TOPICS, type WikiCategory, type WikiTopic } from "@/lib/wikiData";
 import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
@@ -25,6 +26,7 @@ import { ESOPHAGEAL_WIKI_TOPICS } from "@/lib/esophagealWikiData";
 import { THYROID_WIKI_TOPICS } from "@/lib/thyroidWikiData";
 import { ENDOMETRIAL_WIKI_TOPICS } from "@/lib/endometrialWikiData";
 import { CERVICAL_WIKI_TOPICS } from "@/lib/cervicalWikiData";
+import { PANCREATIC_WIKI_TOPICS } from "@/lib/pancreaticWikiData";
 import type { CancerType } from "@/lib/types";
 import { useCancerType } from "@/components/common/CancerSwitch";
 import { cn } from "@/lib/cn";
@@ -1149,6 +1151,105 @@ export const CERVICAL_SCENARIO_TABS: ScenarioTabConfig[] = [
   },
 ];
 
+// 胰腺癌专区情景卡配置表
+export const PANCREATIC_SCENARIO_TABS: ScenarioTabConfig[] = [
+  {
+    category: "all",
+    icon: LayoutGrid,
+    headline: "胰腺癌循证指标全景大盘",
+    subline: "覆盖胰腺实性占位、可切除评估到转化与术后康复全链路",
+    badge: "全部词条",
+    keywords: "可切除评估 · Whipple · mFOLFIRINOX · 胰酶替代",
+    theme: {
+      active:   "bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-900/20",
+      inactive: "bg-white border-slate-200 text-slate-800 hover:border-slate-400 hover:shadow-md",
+      iconBg:   "bg-slate-100 text-slate-700",
+      iconBgActive: "bg-white/15 text-white",
+      countColor:   "text-slate-400",
+      countColorActive: "text-white/70",
+      badgeInactive: "bg-slate-100 text-slate-600 border-slate-200",
+      badgeActive:   "bg-white/15 text-white border-white/20",
+      dot: "bg-slate-500",
+    },
+  },
+  {
+    category: "nodule",
+    icon: PancreaticIcon,
+    headline: "胰腺占位初查与血管评估",
+    subline: "CA19-9诊断阈值与薄层增强CT/MRI血管包裹三分类",
+    badge: "影像初查 · 血管界定",
+    keywords: "胰头占位 · CA19-9 · 薄层增强CT · 门静脉浸润",
+    theme: {
+      active:   "bg-orange-600 border-orange-600 text-white shadow-lg shadow-orange-500/25",
+      inactive: "bg-white border-slate-200 text-slate-800 hover:border-orange-400 hover:shadow-md",
+      iconBg:   "bg-orange-50 text-orange-600",
+      iconBgActive: "bg-white/15 text-white",
+      countColor:   "text-orange-600",
+      countColorActive: "text-white/70",
+      badgeInactive: "bg-orange-50 text-orange-700 border-orange-200",
+      badgeActive:   "bg-white/15 text-white border-white/20",
+      dot: "bg-orange-500",
+    },
+  },
+  {
+    category: "pathology",
+    icon: Microscope,
+    headline: "可切除性分类与R0切缘病理",
+    subline: "交界可切除新辅助转化与腹膜后切缘≥1mm安全红线",
+    badge: "病理解密 · R0切缘",
+    keywords: "交界可切除 · Whipple术式 · 腹膜后切缘 · R0切除",
+    theme: {
+      active:   "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/25",
+      inactive: "bg-white border-slate-200 text-slate-800 hover:border-blue-400 hover:shadow-md",
+      iconBg:   "bg-blue-50 text-blue-600",
+      iconBgActive: "bg-white/15 text-white",
+      countColor:   "text-blue-600",
+      countColorActive: "text-white/70",
+      badgeInactive: "bg-blue-50 text-blue-700 border-blue-200",
+      badgeActive:   "bg-white/15 text-white border-white/20",
+      dot: "bg-blue-500",
+    },
+  },
+  {
+    category: "genetics",
+    icon: Dna,
+    headline: "驱动基因与mFOLFIRINOX转化",
+    subline: "KRAS靶向进展、胚系BRCA与奥拉帕利维持前沿",
+    badge: "基因靶向 · 转化化疗",
+    keywords: "KRAS G12D · gBRCA · 奥拉帕利 · mFOLFIRINOX",
+    theme: {
+      active:   "bg-purple-600 border-purple-600 text-white shadow-lg shadow-purple-500/25",
+      inactive: "bg-white border-slate-200 text-slate-800 hover:border-purple-400 hover:shadow-md",
+      iconBg:   "bg-purple-50 text-purple-600",
+      iconBgActive: "bg-white/15 text-white",
+      countColor:   "text-purple-600",
+      countColorActive: "text-white/70",
+      badgeInactive: "bg-purple-50 text-purple-700 border-purple-200",
+      badgeActive:   "bg-white/15 text-white border-white/20",
+      dot: "bg-purple-500",
+    },
+  },
+  {
+    category: "recovery",
+    icon: HeartPulse,
+    headline: "Whipple术后与胰酶替代PERT",
+    subline: "吻合口防瘘质控、外分泌功能不全与血糖营养重建",
+    badge: "术后防瘘 · 消化酶替代",
+    keywords: "Whipple吻合口 · 胰漏管理 · 得每通PERT · 营养支持",
+    theme: {
+      active:   "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/25",
+      inactive: "bg-white border-slate-200 text-slate-800 hover:border-amber-400 hover:shadow-md",
+      iconBg:   "bg-amber-50 text-amber-600",
+      iconBgActive: "bg-white/15 text-white",
+      countColor:   "text-amber-600",
+      countColorActive: "text-white/70",
+      badgeInactive: "bg-amber-50 text-amber-700 border-amber-200",
+      badgeActive:   "bg-white/15 text-white border-white/20",
+      dot: "bg-amber-500",
+    },
+  },
+];
+
 export function WikiScenarioTabs({
   activeCategory,
   onSelectCategory,
@@ -1160,6 +1261,7 @@ export function WikiScenarioTabs({
 
   // 根据当前激活的癌种选择情景卡方案与词条集合
   const scenarioTabs = 
+    cancerType === "pancreatic" ? PANCREATIC_SCENARIO_TABS :
     cancerType === "endometrial" ? ENDOMETRIAL_SCENARIO_TABS :
     cancerType === "cervical" ? CERVICAL_SCENARIO_TABS :
     cancerType === "thyroid" ? THYROID_SCENARIO_TABS :
@@ -1173,6 +1275,7 @@ export function WikiScenarioTabs({
     LUNG_SCENARIO_TABS;
 
   const currentTopics = topics ?? (
+    cancerType === "pancreatic" ? PANCREATIC_WIKI_TOPICS :
     cancerType === "endometrial" ? ENDOMETRIAL_WIKI_TOPICS :
     cancerType === "cervical" ? CERVICAL_WIKI_TOPICS :
     cancerType === "thyroid" ? THYROID_WIKI_TOPICS :

@@ -12,6 +12,7 @@ import {
   ENDOMETRIAL_GRAPH_NODES, ENDOMETRIAL_EDGE_EVIDENCE,
   CERVICAL_GRAPH_NODES, CERVICAL_EDGE_EVIDENCE 
 } from '@/lib/gynecologicalKnowledgeGraphData';
+import { CancerRegistry } from '@/lib/cancerRegistry';
 
 const CACHE_HEADERS = {
   headers: {
@@ -78,6 +79,18 @@ export async function GET(request: Request) {
         nodes: CERVICAL_GRAPH_NODES,
         edgeEvidences: CERVICAL_EDGE_EVIDENCE
       }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'pancreatic' || (cancerType && CancerRegistry.has(cancerType))) {
+      try {
+        const plugin = CancerRegistry.get(cancerType);
+        if (plugin?.content?.graphNodes && plugin.content.graphNodes.length > 0) {
+          return NextResponse.json({
+            nodes: plugin.content.graphNodes,
+            edgeEvidences: plugin.content.edgeEvidences || {}
+          }, CACHE_HEADERS);
+        }
+      } catch {}
     }
 
     // 1. Fetch nodes and their outgoing edges from DB

@@ -322,6 +322,16 @@ const CANCER_MATRIX_CARDS: Array<{
     badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
     hoverColor: "hover:border-purple-400",
   },
+  {
+    id: "pancreatic",
+    name: "胰腺癌专区",
+    enName: "NCCN 2024 · AJCC 8th",
+    guideline: "NCCN 2024 · CSCO 胰腺癌 2024 · AJCC 第8版",
+    description: "涵盖薄层增强 CT/MRI 血管浸润可切除性三分类、交界可切除新辅助转化、Whipple 腹膜后切缘 R0 质控、胚系 BRCA 突变与奥拉帕利维持及外分泌替代 (PERT)。",
+    tags: ["血管浸润三分类", "mFOLFIRINOX 转化", "Whipple R0切缘", "gBRCA & PERT"],
+    badgeColor: "bg-orange-50 text-orange-700 border-orange-200",
+    hoverColor: "hover:border-orange-400",
+  },
 ];
 
 // Dynamically import the heavy 4D Knowledge Graph canvas to drastically slim the initial homepage JS chunk
@@ -2015,8 +2025,8 @@ export default function HomePage() {
             subtitle="严格对齐国际指南与前瞻性队列，覆盖各实体肿瘤核心病理特征与诊疗路径"
           />
 
-          {/* Desktop 8 Cancer Cards Matrix */}
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Desktop 9 Cancer Cards Matrix */}
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {CANCER_MATRIX_CARDS.map((card) => {
               const isCurrentActive =
                 cancerType === card.id ||
@@ -2091,9 +2101,9 @@ export default function HomePage() {
             })}
           </div>
 
-          {/* Mobile Compact 4x2 Cancer Launcher & Quick Control Strip */}
+          {/* Mobile Compact 3x3 Cancer Launcher & Quick Control Strip */}
           <div className="md:hidden space-y-3.5">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {CANCER_MATRIX_CARDS.map((card) => {
                 const isCurrentActive =
                   cancerType === card.id ||

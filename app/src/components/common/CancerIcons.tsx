@@ -242,6 +242,29 @@ export function CervicalIcon(props: CancerIconProps) {
 }
 
 /**
+ * 胰腺解剖与胰头体尾及十二指肠 C 环矢量 SVG 图标 (Health Icons 官方国际医疗解剖标准)
+ */
+export function PancreaticIcon({ size, className = "w-3.5 h-3.5", style, ...props }: CancerIconProps) {
+  const mergedStyle = size ? { width: size, height: size, ...style } : style;
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="currentColor"
+      className={className}
+      style={mergedStyle}
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M13.5 6C10.4624 6 8 8.46243 8 11.5V36.5C8 39.5376 10.4624 42 13.5 42H16C16.5523 42 17 41.5523 17 41V38.5C17 37.9477 16.5523 37.5 16 37.5H13.5C12.1193 37.5 11 36.3807 11 35V13C11 11.6193 12.1193 10.5 13.5 10.5H16C16.5523 10.5 17 10.0523 17 9.5V7C17 6.44772 16.5523 6 16 6H13.5ZM19 14.5C16.2386 14.5 14 16.7386 14 19.5V28.5C14 31.2614 16.2386 33.5 19 33.5C21.4142 33.5 23.4253 31.7893 23.8824 29.5H27.5C29.8315 29.5 32.1118 28.3245 34.2014 27.2443C36.3854 26.1154 38.4878 25.0287 40.8541 25.0003C42.3486 24.9823 43.5 23.7712 43.5 22.2764C43.5 20.7655 42.3168 19.5424 40.806 19.5244C38.0195 19.4912 35.6322 20.725 33.1904 21.9871C31.2989 22.9647 29.3582 23.9678 27.2 24H23.8824C23.4253 21.7107 21.4142 20 19 20C18.4477 20 18 19.5523 18 19C18 18.4477 18.4477 18 19 18C20.3056 18 21.4727 18.6252 22.2152 19.5937C22.6105 19.043 23.1368 18.5833 23.7547 18.2575C22.7844 16.0371 20.5756 14.5 18 14.5H19ZM18.5 22.5C17.1193 22.5 16 23.6193 16 25C16 26.3807 17.1193 27.5 18.5 27.5C19.8807 27.5 21 26.3807 21 25C21 23.6193 19.8807 22.5 18.5 22.5Z"
+      />
+    </svg>
+  );
+}
+
+/**
  * 癌种矢量图标统一分发渲染器 (Health Icons 官方国际医疗解剖标准)
  */
 export function CancerIcon({
@@ -282,6 +305,10 @@ export function CancerIcon({
   if (type === "cervical") {
     return <CervicalIcon size={size} className={className} {...props} />;
   }
+  if (type === "pancreatic") {
+    return <PancreaticIcon size={size} className={className} {...props} />;
+  }
   return <LungIcon size={size} className={className} {...props} />;
 }
+
 

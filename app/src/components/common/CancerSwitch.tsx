@@ -24,17 +24,17 @@ export const CANCER_TYPE_OPTIONS: CancerTypeOption[] = CancerRegistry.getOptions
  */
 const UPCOMING_CANCERS = [
   {
+    id: "prostate",
+    name: "前列腺癌专区",
+    enName: "Prostate Cancer (PCa)",
+    guidelineStandard: "CSCO 2024 · PSA动力学 · ISUP分级 · mCRPC新型内分泌与PARP抑制剂",
+    badge: "规划中",
+  },
+  {
     id: "nasopharyngeal",
     name: "鼻咽癌专区",
     enName: "Nasopharyngeal Carcinoma (NPC)",
     guidelineStandard: "CSCO 2024 · EBV-DNA 拷贝数监测 · 根治性调强放疗 (IMRT) · JUPITER-02",
-    badge: "规划中",
-  },
-  {
-    id: "pancreatic",
-    name: "胰腺癌专区",
-    enName: "Pancreatic Cancer (PDAC)",
-    guidelineStandard: "CSCO 2024 · mFOLFIRINOX / AG 方案 · CA19-9 · 转化切除评估",
     badge: "规划中",
   },
 ];
@@ -257,6 +257,55 @@ export default function CancerSwitch({
               badge: "bg-emerald-200 text-emerald-800",
               check: "bg-emerald-600 text-white",
             }
+          : plugin.id === "pancreatic"
+          ? {
+              card: "bg-orange-50/90 border border-orange-200 text-orange-950 shadow-2xs ring-1 ring-orange-300/40",
+              icon: "bg-orange-100 text-orange-600 border-orange-300",
+              badge: "bg-orange-200 text-orange-800",
+              check: "bg-orange-600 text-white",
+            }
+          : plugin.id === "gastric"
+          ? {
+              card: "bg-amber-50/90 border border-amber-200 text-amber-950 shadow-2xs ring-1 ring-amber-300/40",
+              icon: "bg-amber-100 text-amber-600 border-amber-300",
+              badge: "bg-amber-200 text-amber-800",
+              check: "bg-amber-600 text-white",
+            }
+          : plugin.id === "liver"
+          ? {
+              card: "bg-rose-50/90 border border-rose-200 text-rose-950 shadow-2xs ring-1 ring-rose-300/40",
+              icon: "bg-rose-100 text-rose-600 border-rose-300",
+              badge: "bg-rose-200 text-rose-800",
+              check: "bg-rose-600 text-white",
+            }
+          : plugin.id === "esophageal"
+          ? {
+              card: "bg-orange-50/90 border border-orange-200 text-orange-950 shadow-2xs ring-1 ring-orange-300/40",
+              icon: "bg-orange-100 text-orange-600 border-orange-300",
+              badge: "bg-orange-200 text-orange-800",
+              check: "bg-orange-600 text-white",
+            }
+          : plugin.id === "thyroid"
+          ? {
+              card: "bg-indigo-50/90 border border-indigo-200 text-indigo-950 shadow-2xs ring-1 ring-indigo-300/40",
+              icon: "bg-indigo-100 text-indigo-600 border-indigo-300",
+              badge: "bg-indigo-200 text-indigo-800",
+              check: "bg-indigo-600 text-white",
+            }
+          : plugin.id === "endometrial"
+          ? {
+              card: "bg-purple-50/90 border border-purple-200 text-purple-950 shadow-2xs ring-1 ring-purple-300/40",
+              icon: "bg-purple-100 text-purple-600 border-purple-300",
+              badge: "bg-purple-200 text-purple-800",
+              check: "bg-purple-600 text-white",
+            }
+          : plugin.id === "cervical"
+          ? {
+              card: "bg-fuchsia-50/90 border border-fuchsia-200 text-fuchsia-950 shadow-2xs ring-1 ring-fuchsia-300/40",
+              icon: "bg-fuchsia-100 text-fuchsia-600 border-fuchsia-300",
+              badge: "bg-fuchsia-200 text-fuchsia-800",
+              check: "bg-fuchsia-600 text-white",
+            }
           : {
               card: "bg-sky-50/90 border border-sky-200 text-sky-950 shadow-2xs ring-1 ring-sky-300/40",
               icon: "bg-sky-100 text-sky-600 border-sky-300",
@@ -366,6 +415,20 @@ export default function CancerSwitch({
             ? "bg-teal-50/95 text-teal-800 border-teal-200/90 hover:bg-teal-100 hover:border-teal-300 shadow-teal-500/5"
             : activePlugin?.id === "colon" || activePlugin?.id === "colorectal"
             ? "bg-emerald-50/95 text-emerald-700 border-emerald-200/90 hover:bg-emerald-100 hover:border-emerald-300 shadow-emerald-500/5"
+            : activePlugin?.id === "pancreatic"
+            ? "bg-orange-50/95 text-orange-700 border-orange-200/90 hover:bg-orange-100 hover:border-orange-300 shadow-orange-500/5"
+            : activePlugin?.id === "gastric"
+            ? "bg-amber-50/95 text-amber-700 border-amber-200/90 hover:bg-amber-100 hover:border-amber-300 shadow-amber-500/5"
+            : activePlugin?.id === "liver"
+            ? "bg-rose-50/95 text-rose-700 border-rose-200/90 hover:bg-rose-100 hover:border-rose-300 shadow-rose-500/5"
+            : activePlugin?.id === "esophageal"
+            ? "bg-orange-50/95 text-orange-700 border-orange-200/90 hover:bg-orange-100 hover:border-orange-300 shadow-orange-500/5"
+            : activePlugin?.id === "thyroid"
+            ? "bg-indigo-50/95 text-indigo-700 border-indigo-200/90 hover:bg-indigo-100 hover:border-indigo-300 shadow-indigo-500/5"
+            : activePlugin?.id === "endometrial"
+            ? "bg-purple-50/95 text-purple-700 border-purple-200/90 hover:bg-purple-100 hover:border-purple-300 shadow-purple-500/5"
+            : activePlugin?.id === "cervical"
+            ? "bg-fuchsia-50/95 text-fuchsia-700 border-fuchsia-200/90 hover:bg-fuchsia-100 hover:border-fuchsia-300 shadow-fuchsia-500/5"
             : "bg-sky-50/95 text-sky-700 border-sky-200/90 hover:bg-sky-100 hover:border-sky-300 shadow-sky-500/5"
         }${className ? ` ${className}` : ""}`}
         title={`当前循证专区: ${activePlugin?.name} (点击切换癌种)`}
@@ -382,6 +445,20 @@ export default function CancerSwitch({
               ? "text-teal-700"
               : activePlugin?.id === "colon" || activePlugin?.id === "colorectal"
               ? "text-emerald-600"
+              : activePlugin?.id === "pancreatic"
+              ? "text-orange-600"
+              : activePlugin?.id === "gastric"
+              ? "text-amber-600"
+              : activePlugin?.id === "liver"
+              ? "text-rose-600"
+              : activePlugin?.id === "esophageal"
+              ? "text-orange-600"
+              : activePlugin?.id === "thyroid"
+              ? "text-indigo-600"
+              : activePlugin?.id === "endometrial"
+              ? "text-purple-600"
+              : activePlugin?.id === "cervical"
+              ? "text-fuchsia-600"
               : "text-sky-600"
           }`}
         />

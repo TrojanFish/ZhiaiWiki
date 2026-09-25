@@ -140,7 +140,17 @@ export function saveProfileToSlot(profile: PatientProfile, targetSlot?: CancerTy
   if (!isBrowser()) return;
 
   const slot: CancerType = targetSlot || (
-    profile.cancerType === "liver" || (profile as any).organ === "liver" || (profile as any).organ === "hcc"
+    profile.cancerType === "pancreatic" || (profile as any).organ === "pancreas" || (profile as any).organ === "pancreatic"
+      ? "pancreatic"
+      : profile.cancerType === "thyroid" || (profile as any).organ === "thyroid"
+      ? "thyroid"
+      : profile.cancerType === "esophageal" || (profile as any).organ === "esophageal" || (profile as any).organ === "esophagus" || (profile as any).organ === "escc"
+      ? "esophageal"
+      : profile.cancerType === "endometrial" || (profile as any).organ === "endometrial" || (profile as any).organ === "uterine" || (profile as any).cancerType === "uterine"
+      ? "endometrial"
+      : profile.cancerType === "cervical" || (profile as any).organ === "cervical" || (profile as any).organ === "cervix"
+      ? "cervical"
+      : profile.cancerType === "liver" || (profile as any).organ === "liver" || (profile as any).organ === "hcc"
       ? "liver"
       : profile.cancerType === "gastric" || (profile as any).organ === "gastric" || (profile as any).organ === "stomach"
       ? "gastric"
@@ -258,6 +268,7 @@ export function getDualPrimarySummary(): {
   thyroidProfile: PatientProfile | null;
   endometrialProfile: PatientProfile | null;
   cervicalProfile: PatientProfile | null;
+  pancreaticProfile: PatientProfile | null;
 } {
   const slots = getAvailableProfileSlots();
   return {
@@ -274,5 +285,6 @@ export function getDualPrimarySummary(): {
     thyroidProfile: getProfileBySlot("thyroid"),
     endometrialProfile: getProfileBySlot("endometrial"),
     cervicalProfile: getProfileBySlot("cervical"),
+    pancreaticProfile: getProfileBySlot("pancreatic"),
   };
 }
