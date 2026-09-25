@@ -103,7 +103,7 @@ export function PwaInstallBanner() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-fade-in">
+    <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 animate-fade-in">
       <div className="bg-slate-900/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-sky-500/30 flex items-start gap-3.5">
         <div className="p-2.5 rounded-xl bg-sky-500/20 text-sky-400 shrink-0 border border-sky-500/30">
           <Smartphone className="w-5 h-5" />

@@ -509,7 +509,7 @@ export default function WikiPage() {
       <button
         type="button"
         onClick={() => setIsSpotlightOpen(true)}
-        className="fixed bottom-20 right-4 z-40 md:hidden w-14 h-14 rounded-full btn-primary text-white shadow-xl shadow-sky-500/30 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 animate-fade-in"
+        className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] right-4 z-40 md:hidden w-14 h-14 rounded-full btn-primary text-white shadow-xl shadow-sky-500/30 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 animate-fade-in"
         aria-label="快速搜索百科词条"
       >
         <Search className="w-6 h-6" />

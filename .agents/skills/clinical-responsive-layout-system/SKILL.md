@@ -116,10 +116,10 @@ export default function StandardPageTemplate() {
 ### 4.3 悬浮元素 (FAB) 与吐司通知 (Toast) 锚定
 
 * **移动端快速操作浮钮 (FAB)**：
-  必须设置为 `fixed bottom-20 right-4 z-40 md:hidden`（`bottom-20` 即 80px，避让底部 56px 的 `MobileBottomNav` 与安全区）。
+  必须设置为 `fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] right-4 z-40 md:hidden`（动态避让底部 `MobileBottomNav` 的物理高度与 iOS Home 指示条安全区，保持约 16~24px 的优雅悬浮间隙，严禁使用旧版写死的 `bottom-20`）。
 * **操作反馈提示 (Toast / Copied Banner)**：
   - 顶部型：`fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-[9999]`；
-  - 底部型：`fixed bottom-20 left-1/2 -translate-x-1/2 z-[9999]`。
+  - 底部型：`fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] left-1/2 -translate-x-1/2 z-[9999]`。
 
 ### 4.4 2K/4K 超宽屏防拉伸与可读视宽治理 (Ultra-Wide & Large Display Governance)
 
@@ -157,6 +157,15 @@ export default function StandardPageTemplate() {
     <div className="sheet-grabber !my-0" />
   </div>
   ```
+
+### 5.4 移动端底部常驻导航栏避让铁律 (Mobile Bottom Nav Clearance)
+由于 `MobileBottomNav` 采用 `fixed bottom-0` 浮动常驻（物理高度约为 60px~88px 含安全区）：
+1. **全局文档流避让占位块 (Safe Document-Flow Spacer)**：
+   在 `MobileBottomNav.tsx` 中直接渲染高度为 `calc(4.5rem + env(safe-area-inset-bottom, 0px))` 的普通文档流占位块（桌面端自动 `md:hidden`），确保全站所有页面拉到底部时，内容与操作按钮完整展现在底部导航条上方，绝不发生遮挡。
+2. **长文与表单页面保底**：
+   页面主内容容器 `<main>` 统一采用 `pb-8 sm:pb-12`，配合占位块形成优雅的 32px 呼吸缓冲。
+3. **悬浮气泡与安装提示避让**：
+   任何置底浮层（如 PWA 安装横条、百科搜索气泡）在移动端必须使用 `bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))]`，严禁使用写死的 `bottom-4` 或 `bottom-20`。
 
 ---
 

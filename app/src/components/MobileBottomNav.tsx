@@ -53,15 +53,25 @@ export default function MobileBottomNav() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden print:hidden pointer-events-none">
-      <nav 
-        className="w-full bg-white/92 backdrop-blur-xl border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(15,23,42,0.06)] pointer-events-auto transition-all"
+    <>
+      {/* 移动端文档流物理避让占位块：确保页面拉到底部时，内容与操作按钮绝不被 fixed 底部导航条遮挡 */}
+      <div 
+        className="w-full shrink-0 md:hidden print:hidden pointer-events-none select-none" 
         style={{
-          paddingBottom: "max(0.4rem, env(safe-area-inset-bottom, 0.4rem))"
+          height: "calc(4.5rem + env(safe-area-inset-bottom, 0px))"
         }}
-        aria-label="移动端快速导航栏"
-      >
-        <div className="grid grid-cols-4 items-center max-w-md mx-auto pt-1 px-1">
+        aria-hidden="true"
+      />
+
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden print:hidden pointer-events-none">
+        <nav 
+          className="w-full bg-white/92 backdrop-blur-xl border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(15,23,42,0.06)] pointer-events-auto transition-all"
+          style={{
+            paddingBottom: "max(0.4rem, env(safe-area-inset-bottom, 0.4rem))"
+          }}
+          aria-label="移动端快速导航栏"
+        >
+          <div className="grid grid-cols-4 items-center max-w-md mx-auto pt-1 px-1">
           {TABS.map((tab) => {
             const isActive = tab.href === "/" 
               ? pathname === "/" 
@@ -131,5 +141,6 @@ export default function MobileBottomNav() {
         </div>
       </nav>
     </div>
+    </>
   );
 }

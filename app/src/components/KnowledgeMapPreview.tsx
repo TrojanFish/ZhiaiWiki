@@ -413,7 +413,7 @@ export default function KnowledgeMapPreview({ profile = null, cancerType: propCa
           <div className={`
             flex flex-col gap-4 
             lg:relative lg:translate-y-0 lg:h-auto lg:p-0 lg:bg-transparent lg:border-none lg:z-0 lg:shadow-none
-            fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 p-5 rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]
+            fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]
             transition-transform duration-300 ease-in-out max-h-[85vh] overflow-y-auto
             ${isPanelActive ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'}
           `}>
