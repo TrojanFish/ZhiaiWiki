@@ -27,7 +27,11 @@ import {
   ShieldCheck,
   Clock,
   Sparkles,
-  BookOpen
+  BookOpen,
+  CheckCircle2,
+  AlertOctagon,
+  MinusCircle,
+  Network
 } from "lucide-react";
 import type { PatientProfile, CancerType } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
@@ -822,12 +826,7 @@ export default function EvidenceReportPage() {
               href="/knowledge"
               className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-teal-700 bg-teal-50/80 hover:bg-teal-100/90 border border-teal-200 transition-all shadow-2xs group whitespace-nowrap"
             >
-              <svg className="w-3.5 h-3.5 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none">
-                <circle cx="6" cy="6" r="3" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.75" />
-                <circle cx="18" cy="18" r="3" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.75" />
-                <circle cx="18" cy="6" r="2.5" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.75" />
-                <path d="M8.5 7h7M18 8.5v7M8.5 7.5l7 7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-              </svg>
+              <Network className="w-3.5 h-3.5 transition-transform group-hover:scale-110 shrink-0" />
               <span>4D图谱</span>
             </Link>
 
@@ -2195,28 +2194,16 @@ function MatrixBadge({ label, value, type }: { label: string; value: string; typ
       </span>
       <span className="text-xs font-bold font-mono tabular-nums flex items-center gap-1.5">
         {type === 'safe' && (
-          <svg className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.75" />
-            <path d="M8.5 12.5l2.5 2.5 5-5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
         )}
         {type === 'warning' && (
-          <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <path d="M12 4L3 20h18L12 4z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M12 10v4M12 17h.01" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-          </svg>
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
         )}
         {type === 'danger' && (
-          <svg className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.75" />
-            <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <AlertOctagon className="w-3.5 h-3.5 text-rose-600 shrink-0" />
         )}
         {type === 'neutral' && (
-          <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
-            <path d="M8 12h8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-          </svg>
+          <MinusCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
         )}
         <span className="truncate">{value}</span>
       </span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sliders, AlertTriangle, X } from 'lucide-react';
+import { Sliders, AlertTriangle, X, Check } from 'lucide-react';
 import { SANDBOX_NODES } from '@/lib/knowledgeGraphData';
 
 export function SandboxPanel({ sandboxActive, onToggle, onExit }: { sandboxActive: Set<string>, onToggle: (id: string) => void, onExit: () => void }) {
@@ -43,9 +43,7 @@ export function SandboxPanel({ sandboxActive, onToggle, onExit }: { sandboxActiv
                 <div className="flex items-center gap-2">
                   <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${isActive ? 'bg-amber-500 border-amber-500' : 'border-slate-300'}`}>
                     {isActive && (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                        <path d="M5 12l5 5L20 7" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <Check className="w-3 h-3 text-white shrink-0" strokeWidth={3} />
                     )}
                   </div>
                   <span className={`font-medium text-sm ${isActive ? 'text-amber-700' : 'text-slate-800'}`}>{nodeData.label}</span>

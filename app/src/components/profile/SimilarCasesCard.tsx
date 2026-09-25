@@ -80,14 +80,18 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
           <LegalDisclaimerBadge variant="badge" />
 
           {/* Compact Integrated Confidence Pill */}
-          <div className="flex items-center gap-2 bg-slate-50/90 border border-slate-200/90 px-3 py-1.5 rounded-full shadow-2xs">
-            <div className="text-xs text-slate-500 font-bold whitespace-nowrap">循证置信度</div>
-            <div className="text-slate-300">|</div>
-            <span className="text-amber-600 text-xs font-bold flex items-center gap-1 shrink-0">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-slate-50/90 border border-slate-200/90 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-2xs max-w-full">
+            <span className="text-[11px] sm:text-xs text-slate-500 font-bold whitespace-nowrap hidden sm:inline">循证置信度</span>
+            <span className="text-[11px] text-slate-500 font-bold whitespace-nowrap sm:hidden">置信度</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-amber-500 text-xs font-bold flex items-center gap-1 shrink-0">
               <Star className="w-3.5 h-3.5 text-amber-500 shrink-0 fill-amber-400" />
-              <span>{cohort.confidenceRating}</span>
+              <span className="hidden sm:inline tracking-tight">{cohort.confidenceRating}</span>
+              <span className="sm:hidden text-amber-600 font-mono font-bold">
+                {cohort.confidenceRating?.includes("★") ? `${cohort.confidenceRating.split("★").length - 1}星` : cohort.confidenceRating}
+              </span>
             </span>
-            <span className="text-xs font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 shrink-0 whitespace-nowrap">
+            <span className="text-[10px] sm:text-xs font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 shrink-0 truncate max-w-[140px] sm:max-w-none">
               {cohort.confidenceLevel}
             </span>
           </div>

@@ -26,6 +26,9 @@ import {
   GitBranch,
   Radio,
   FileCheck2,
+  CheckCircle2,
+  AlertOctagon,
+  MinusCircle,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -2510,28 +2513,16 @@ function RiskBadge({ label, status, text }: { label: string; status: 'good' | 'w
     <div className={`rounded-xl p-3 border ${styles[status]} shadow-xs`}>
       <div className="text-xs font-semibold opacity-90 mb-1.5 flex items-center gap-1.5">
         {status === 'good' && (
-          <svg className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.75" />
-            <path d="M8.5 12.5l2.5 2.5 5-5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
         )}
         {status === 'warning' && (
-          <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <path d="M12 4L3 20h18L12 4z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M12 10v4M12 17h.01" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-          </svg>
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
         )}
         {status === 'danger' && (
-          <svg className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.75" />
-            <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <AlertOctagon className="w-3.5 h-3.5 text-rose-600 shrink-0" />
         )}
         {status === 'neutral' && (
-          <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
-            <path d="M8 12h8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-          </svg>
+          <MinusCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
         )}
         <span>{label}</span>
       </div>

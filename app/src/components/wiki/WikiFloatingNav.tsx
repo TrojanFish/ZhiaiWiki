@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search } from "lucide-react";
+import { Search, Globe, Microscope, Dna, Activity, ChevronUp } from "lucide-react";
 import type { WikiCategory } from "@/lib/wikiData";
 import { getWikiCategories } from "@/lib/wikiData";
 import type { CancerType } from "@/lib/types";
@@ -50,13 +50,7 @@ export function WikiFloatingNav({
       label: "全部词条",
       count: totalTopics,
       activeTheme: "bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-blue-500/30 ring-blue-400/40",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-          <path d="M2 12h20" />
-        </svg>
-      ),
+      icon: <Globe className="w-4 h-4 shrink-0" />,
     },
     {
       id: "nodule",
@@ -70,43 +64,21 @@ export function WikiFloatingNav({
       label: catCfg.pathology.label,
       count: categoryCounts.pathology || 0,
       activeTheme: "bg-gradient-to-tr from-blue-600 to-cyan-600 text-white shadow-blue-500/30 ring-blue-400/40",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 18h8" />
-          <path d="M3 22h18" />
-          <path d="M14 22a7 7 0 1 0-14 0" />
-          <path d="M9 14h2" />
-          <path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" />
-          <path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" />
-        </svg>
-      ),
+      icon: <Microscope className="w-4 h-4 shrink-0" />,
     },
     {
       id: "genetics",
       label: catCfg.genetics.label,
       count: categoryCounts.genetics || 0,
       activeTheme: "bg-gradient-to-tr from-purple-600 to-fuchsia-600 text-white shadow-purple-500/30 ring-purple-400/40",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 15c6.667-6 13.333 0 20-6" />
-          <path d="M2 9c6.667 6 13.333 0 20 6" />
-          <path d="m15 2-3.5 3.5" />
-          <path d="m9 22 3.5-3.5" />
-          <path d="M20 9l-2 2" />
-          <path d="M6 13l-2 2" />
-        </svg>
-      ),
+      icon: <Dna className="w-4 h-4 shrink-0" />,
     },
     {
       id: "recovery",
       label: catCfg.recovery.label,
       count: categoryCounts.recovery || 0,
       activeTheme: "bg-gradient-to-tr from-amber-600 to-orange-600 text-white shadow-amber-500/30 ring-amber-400/40",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-        </svg>
-      ),
+      icon: <Activity className="w-4 h-4 shrink-0" />,
     },
   ];
 
@@ -184,9 +156,7 @@ export function WikiFloatingNav({
           className="w-9 h-9 rounded-full aspect-square bg-slate-100/70 text-slate-600 hover:bg-slate-900 hover:text-white hover:scale-105 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
           aria-label="返回顶部"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m18 15-6-6-6 6" />
-          </svg>
+          <ChevronUp className="w-4 h-4 shrink-0" strokeWidth={2.5} />
         </button>
         <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-slate-900/95 text-white text-xs font-bold whitespace-nowrap shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 flex items-center gap-1 z-50">
           <span>回到顶部</span>

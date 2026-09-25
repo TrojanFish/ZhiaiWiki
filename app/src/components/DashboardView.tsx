@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
 import { getCases } from "@/lib/api";
 import type { PatientProfile } from "@/lib/types";
 
@@ -36,9 +37,7 @@ export default function DashboardView({ onBack, onViewReport }: DashboardViewPro
             onClick={onBack}
             className="flex items-center gap-2 text-accent-blue hover:text-accent-blue-light transition-colors"
           >
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <ArrowLeft className="w-5 h-5 shrink-0" />
             <span className="font-bold text-lg tracking-tight text-text-primary">
               Onco<span className="text-accent-teal">Path</span>
             </span>

@@ -571,8 +571,8 @@ export function TumorMarkersCard({
                   </div>
                 </div>
 
-                <div className="relative overflow-x-auto">
-                  <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-36 min-w-[420px] overflow-visible">
+                <div className="relative overflow-x-auto rounded-xl">
+                  <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-36 min-w-[340px] sm:min-w-[420px]">
                     {/* Semi-transparent Green Safety Band Area */}
                     <rect
                       x={paddingX}

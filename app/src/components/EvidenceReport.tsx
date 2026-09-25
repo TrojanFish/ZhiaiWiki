@@ -9,10 +9,13 @@ import {
   Calendar,
   ShieldCheck,
   Pill,
-  Search,
   Network,
   Info,
   X,
+  ArrowLeft,
+  ChevronDown,
+  Star,
+  Search,
 } from "lucide-react";
 import type { PatientProfile } from "@/lib/types";
 import { analyzePatientProfile, EVIDENCE_FACTORS, type PatientMatchResult } from "@/lib/evidence-data";
@@ -164,9 +167,7 @@ export default function EvidenceReport({
             id="report-back-btn"
             className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
           >
-            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <ArrowLeft className="w-4 h-4 shrink-0" />
             <span>返回修改</span>
           </button>
           <div className="flex items-center gap-2">
@@ -424,9 +425,10 @@ function OverviewTab({ result, profile, riskColorMap: _riskColorMap }: { result:
             <div key={item.stars} className="flex items-center gap-2">
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <svg key={i} width="10" height="10" viewBox="0 0 24 24" fill={i < item.stars ? "currentColor" : "none"} stroke="currentColor" className={i < item.stars ? item.color : "text-white/10"}>
-                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                  </svg>
+                  <Star
+                    key={i}
+                    className={`w-2.5 h-2.5 shrink-0 ${i < item.stars ? `${item.color} fill-current` : "text-white/10"}`}
+                  />
                 ))}
               </div>
               <span className="text-text-muted">{item.label}</span>
@@ -487,12 +489,9 @@ function FactorsTab({ result, onInspectStudy }: { result: PatientMatchResult; on
                 </div>
                 <div className="flex items-center gap-2">
                   <EvidenceStars count={factor.evidenceLevel} />
-                  <svg
-                    width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
-                    className={`text-slate-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                  >
-                    <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform shrink-0 ${isExpanded ? "rotate-180" : ""}`}
+                  />
                 </div>
               </div>
             </button>
@@ -690,9 +689,7 @@ function FollowupTab({ result, profile }: { result: PatientMatchResult; profile:
               }}
               className="btn-primary px-4 py-2 rounded-lg text-sm font-medium cursor-pointer inline-flex items-center gap-2"
             >
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.94 16.94l1.42 1.42M5.64 18.36l1.42-1.42M16.94 7.06l1.42-1.42"/>
-              </svg>
+              <Network className="w-4 h-4 shrink-0" />
               查看专属路径图谱
             </button>
           </div>
@@ -752,15 +749,10 @@ function EvidenceStars({ count }: { count: number }) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg
+        <Star
           key={i}
-          width="10" height="10" viewBox="0 0 24 24"
-          fill={i < count ? "currentColor" : "none"}
-          stroke="currentColor"
-          className={i < count ? "text-amber-400" : "text-gray-200"}
-        >
-          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-        </svg>
+          className={`w-3 h-3 ${i < count ? "text-amber-400 fill-amber-400" : "text-slate-200"}`}
+        />
       ))}
     </div>
   );

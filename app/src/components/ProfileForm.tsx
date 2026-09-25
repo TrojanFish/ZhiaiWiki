@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, ClipboardList, Microscope, Scan, AlertTriangle } from "lucide-react";
+import { Check, ClipboardList, Microscope, Scan, AlertTriangle, CheckCircle2 } from "lucide-react";
 import type { PatientProfile } from "@/lib/types";
 
 interface ProfileFormProps {
@@ -171,9 +171,7 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
                 canProceed() ? "btn-primary cursor-pointer" : "bg-gray-100 text-gray-400 cursor-not-allowed"
               }`}
             >
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
               生成循证报告
             </button>
           )}

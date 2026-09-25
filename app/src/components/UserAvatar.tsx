@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { FileText, Calendar, LogOut } from "lucide-react";
+import { FileText, Calendar, LogOut, User } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { getCurrentUser, logout } from "@/lib/api";
 
@@ -137,9 +137,7 @@ export default function UserAvatar() {
           title="登录账号 / 查看档案"
           aria-label="登录账号或查看档案"
         >
-          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" className="text-slate-400 group-hover:text-blue-600 transition-colors">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
-          </svg>
+          <User className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors shrink-0" />
           <span>登录</span>
         </button>
       )}

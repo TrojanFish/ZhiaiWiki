@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Compass, Stethoscope, Heart } from "lucide-react";
+import { Compass, Stethoscope, Heart, Check } from "lucide-react";
 
 interface JourneyMapProps {
   currentStage?: string; // 'discovery' | 'evaluation' | 'post_op' | 'follow_up'
@@ -185,9 +185,7 @@ function TrackRow({ title, icon, themeColor, stages, currentIndex, activeTag }: 
                   {isActive ? (
                     <div className={`w-2.5 h-2.5 rounded-full ${colors.activeDot} animate-pulse`} />
                   ) : isPast ? (
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-                      <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <Check className="w-3.5 h-3.5 shrink-0" strokeWidth={3} />
                   ) : (
                     <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
                   )}

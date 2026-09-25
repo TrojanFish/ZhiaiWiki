@@ -399,6 +399,47 @@ export default function StandardPageTemplate() {
     return createPortal(<div className="fixed inset-0 z-[9999] ...">...</div>, document.body);
     ```
 
+### 9.6 移动端超宽与水平溢出 (Horizontal Viewport Blowout) 终极防御规范
+* **问题背景**：移动端视口宽度仅 360px ~ 430px。任意行内元素未限制最大宽度、断点写错或复杂表单硬撑，就会导致页面水平溢出，产生整页横向滑动与右侧空白晃动。
+* ✅ **终极防御军规**：
+  1. **Inline-Flex 长文本撑爆防御**：
+     - `inline-flex` 默认不折行。若内含较长中文文案（如“支持拍摄/上传报告单 · AI 自动结构化提取分期与靶点”，31 汉字宽达 424px），在 390px 视口下将直接突破屏幕边界。
+     - **必须配置**：`inline-flex max-w-full min-w-0` 并在文本节点上添加 `truncate` 或移动端换行，严禁让未截断的长文本自由撑开 `inline-flex`。
+  2. **Tailwind v4 断点禁忌 (No `xs:`)**：
+     - Tailwind CSS v4 默认**不存在 `xs:` 断点**（仅支持 `sm:`, `md:`, `lg:`, `xl:`, `2xl:`）。
+     - 严禁书写 `hidden xs:inline-block`，否则在移动端将被直接解析为全局 `hidden` 或异常行为。
+     - 正确解法：使用移动端优先的 `truncate max-w-[200px] sm:max-w-none`，或标准的 `hidden sm:inline-block`。
+  3. **复杂表单输入与预设快选按钮的响应式解耦**：
+     - ❌ **反模式**：在单个水平 Flex 行内强行塞入数字输入框（`w-20`）+ 单位 + 多个快选预设按钮（如 Ki-67 细胞增殖指数的 `≤5% 惰性`、`15% 常规`、`>30% 活跃`）。在 375px/393px 手机屏上，输入框会被挤扁至不可见，按钮文字被挤压拆字折行。
+     - ✅ **标准规范**：移动端采用上下两段式架构——上方输入框带单位独立占满宽度；下方采用 `grid grid-cols-3 gap-1.5` 排布快选预设，并配备 `whitespace-nowrap`。桌面端再平滑过渡为单行横排（`sm:flex sm:items-center`）。
+  4. **SVG 图表防溢出与 `overflow-visible` 禁令**：
+     - 在横向滚动容器（`overflow-x-auto`）内放置 SVG 图表（如肿瘤标志物趋势图、结节倍增时间图）时，**绝对严禁在 `<svg>` 上添加 `overflow-visible`**！部分移动端 WebKit/Blink 内核会将溢出的路径计算进文档全局宽度，导致整页产生横向滚轮。
+     - 必须将 `<svg>` 严格约束在父级容器中，配置 `min-w-[340px] sm:min-w-[480px] rounded-xl`，杜绝生硬写死 `min-w-[500px]`。
+  5. **长徽章与置信度胶囊的小屏降级**：
+     - 超过 200px 的长文案胶囊徽章（如“循证置信度 | ★ 5星 最高循证 (RCT/Meta分析)”），在移动端必须采用响应式条件渲染：移动端展示紧凑版（`置信度 | ★ 5星`），桌面端展示完整版（`sm:inline`）。
+
+---
+
+### 9.7 统一 SVG 与全站图标规范系统 (Unified SVG & Icon Standard System - Wiki Benchmark)
+全站图标系统全面对齐**知癌百科（Wiki）词条典范**（如 `/wiki`、`WikiCompactCard`、`WikiTopicIcon` 与 `WikiDetailDrawer`），实现极致的统一感、克制感与专业感。
+
+* **1. 严禁散装手写 `<svg>` 路径**：
+  - 全站所有功能性、交互性与指示性图标（包括：箭头、返回、折叠、关闭、勾选、星级、搜索、齿轮、用户头像、知识图谱节点、外部链接、加载旋转圈等），**100% 统一引用 `lucide-react`**；
+  - 严禁在页面或组件中临时 copy/paste 原始 `<svg viewBox="0 0 24 24">` 代码，杜绝描边粗细不一、视口偏移和样式割裂。
+* **2. 合法自绘 SVG 的绝对边界（仅限临床图表与解剖模型）**：
+  - 仅以下两种场景允许使用原生自绘 `<svg>`：
+    1. **专属癌种器官解剖模型**：位于 `src/components/common/CancerIcons.tsx` 的 11 个癌种官方矢量器官图（肺、肝、胃、结直肠、乳腺、甲状腺、食管、胰腺、前列腺、宫颈、子宫内膜）；
+    2. **专业临床可视化图解与动态图表**：`src/components/wiki/visuals/*` 下的 20+ 个病理与影像交互模型（如毛刺征、胸膜凹陷、微钙化等），以及 `HeroKmCurve`、`KmSurvivalVisualizer`、`MiniForestPlot`、`TumorMarkersCard`、`NoduleTimelineChart`、`VdtGauge`、`RadarChart`。
+* **3. 图标基准尺寸阶梯 (Icon Sizing Scale)**：
+  - **微型内嵌图标**（胶囊、Tag、单行元数据）：`w-3 h-3` 或 `w-3.5 h-3.5`，必须附带 `shrink-0`；
+  - **标准按钮 / Tab 标签 / 面包屑图标**：`w-4 h-4 shrink-0`；
+  - **模块标题前导 / 重要卡片功能图标**：外层包裹标准方舱 `w-8 h-8 rounded-xl shrink-0 aspect-square flex items-center justify-center`，内嵌 `w-4 h-4` 或 `w-4.5 h-4.5`；
+  - **强调型状态大图标**（空状态、成功结算）：`w-8 h-8` ~ `w-12 h-12`。
+* **4. 图标抗挤压强制三件套**：
+  - 位于 Flex 横向排版（尤其是右侧有文字标题或换行文本）中的任何图标，**必须强制添加 `shrink-0` 与 `aspect-square`**，坚决杜绝因文字折行而把图标压成椭圆或挤没。
+* **5. 加载旋转器统一标准**：
+  - 严禁手写 SVG spinner，全站统一使用 `<Loader2 className="animate-spin w-4 h-4 shrink-0" />`（或依容器大小为 `w-5 h-5`）。
+
 ---
 
 ## 10. 反模式黑名单 (Anti-Patterns Prohibited)
@@ -409,7 +450,12 @@ export default function StandardPageTemplate() {
 | :--- | :--- | :--- |
 | `md:pt-32` / `md:pt-28` | 在悬浮导航栏下方留出 60px+ 的巨大视觉荒原 | `md:pt-20 lg:pt-24` |
 | 移动端中文标题使用 `text-3xl`（超过 12 字未分行） | 造成末尾单个汉字孤立换行（如“药”字单落一行） | `text-2xl sm:text-4xl` 配合智能语义 `<br className="sm:hidden" />` |
-| 胶囊 Badge 内文字超过 15 字且未配响应式折叠 | 在 393px 手机屏上右侧文字被直接切掉或发生粗暴折行 | 次级说明配置 `hidden xs:inline-block`，外层配置 `max-w-full` |
+| 使用不存在的 `xs:` 断点（如 `hidden xs:inline-block`） | Tailwind v4 无 `xs:`，小屏上直接被解析为 `hidden` 导致内容凭空消失 | 统一使用 `truncate max-w-[200px] sm:max-w-none` 或 `hidden sm:inline` |
+| `inline-flex` 内包裹超过 20 个字符且未加宽度限制 | 31 汉字宽达 424px，远超 390px 手机视口，引发全屏横向抖动白边 | 配置 `inline-flex max-w-full min-w-0` 与 `truncate` |
+| 手机端单行强塞“数字输入框 + 3个预设快选按钮” | 输入框被严重挤压不可用，按钮汉字被折断破坏布局 | 移动端输入框满宽一行，下方 `grid grid-cols-3 gap-1.5` 排布预设 |
+| 在横滑 SVG 图表上添加 `overflow-visible` | 导致部分移动端浏览器将超出路径算作文档宽度，导致整页横向可拖动 | 移除 `overflow-visible`，采用响应式 `min-w-[340px] sm:min-w-[480px]` |
+| 临时内嵌散装 `<svg viewBox="0 0 24 24">` 通用图标 | 视觉风格割裂，路径粗细不一，难以全局维护与换肤 | 100% 使用 `lucide-react` 标准图标，仅医学解剖/图表保留矢量自绘 |
+| 手写 SVG 动画圆圈实现 loading | 缺乏统一视觉标准，动效参数不一 | 统一使用 `<Loader2 className="animate-spin w-4 h-4 shrink-0" />` |
 | 在 Canvas 导出卡片容器上使用 `shadow-xs` / `shadow-2xl` | Canvas 栅格化产生严重亚像素灰黑色阴影伪影 | 移除所有 shadow，改用 `border border-slate-200` 纯线框 |
 | 导出卡片 Logo 容器使用 `bg-slate-100` 底色 | 0.5px 亚像素舍入导致右侧缝隙露出灰色杂边 | 统一固化为纯白 `bg-white` |
 | `pb-24` / `pb-16` (在 main 上) | 页面触底前产生冗长空洞，手机端极易产生手势疲劳 | `pb-12 sm:pb-16` |
@@ -431,13 +477,16 @@ export default function StandardPageTemplate() {
 - [ ] **顶部避让校验**：页面主容器或 Header 是否已采用 `pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24`？
 - [ ] **触底距离校验**：页面主容器底部是否已统一为 `pb-12 sm:pb-16`，彻底杜绝内容被移动端底栏截断？
 - [ ] **卡片间距规范校验**：卡片间距是否统一由外层容器的 `space-y-4 sm:space-y-5 md:space-y-6` 阶梯驱动，杜绝零散 `mb-6`？
+- [ ] **防超宽与横溢校验**：所有 `inline-flex` 是否配置了 `max-w-full min-w-0` 与截断，图表无 `overflow-visible`，手机端无横向滑动？
+- [ ] **断点有效性校验**：是否杜绝了无效的 `xs:` 断点？
+- [ ] **SVG 与图标标准校验**：通用图标是否 100% 采用 `lucide-react`，规范尺寸 + `shrink-0`，杜绝散装手绘 SVG？
 - [ ] **模态框 Portal 校验**：所有遮罩模态框是否已通过 `createPortal(..., document.body)` 挂载，彻底摆脱层叠上下文陷阱？
 - [ ] **图标自适应正方形校验**：列表与卡片头部的指示图标是否配备 `shrink-0 self-start aspect-square`？
 - [ ] **CTA 按钮触控标准校验**：核心操作按钮是否统一采用 `h-12`（48px 触控面积）与 `rounded-2xl`？
 - [ ] **复杂表格响应式降级校验**：列数 $\ge 4$ 的表格是否具备移动端卡片化降级视图？
 - [ ] **移动端标题排版校验**：中文长标题是否采用 `text-2xl` 并消除孤字末行折行？
-- [ ] **胶囊徽章响应式校验**：顶部 Badge 次级文案是否已设置 `hidden xs:inline-block` 防止小屏溢出？
 - [ ] **导出卡片渲染校验**：海报导出组件是否已 100% 移除 `shadow-*` 投影并采用纯色边框？
 - [ ] **交互状态锁校验**：向导与编辑模式是否具备 `useRef` 状态锁，防止异步加载闪退？
-- [ ] **自动化测试与真机视觉校验**：运行 `npm run test:unit` 全部通过，并可通过 `scripts/capture-visual-audit.ps1` 进行双端真实截图验收？
+- [ ] **自动化测试与真机视觉校验**：运行 `npm run test:unit` 全部通过，并通过双端真实截图验收无任何横向溢出与布局撕裂？
+
 

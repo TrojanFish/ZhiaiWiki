@@ -1,4 +1,5 @@
 import React from 'react';
+import { Star, X } from 'lucide-react';
 import type { KnowledgeNode } from '@/lib/knowledgeGraphData';
 import { typeColors, typeLabels } from '@/lib/knowledgeGraphData';
 
@@ -26,10 +27,11 @@ export function NodeInfoPanel({ node, onClose }: { node: KnowledgeNode; onClose?
         {onClose && (
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-7 h-7 rounded-full flex items-center justify-center transition-colors text-lg leading-none cursor-pointer flex-shrink-0"
+            className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-7 h-7 rounded-full flex items-center justify-center transition-colors cursor-pointer flex-shrink-0"
             title="关闭"
+            aria-label="关闭"
           >
-            ×
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
@@ -44,9 +46,10 @@ export function NodeInfoPanel({ node, onClose }: { node: KnowledgeNode; onClose?
         <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 text-center">
           <div className="flex justify-center gap-0.5 mb-1 mt-1">
             {Array.from({ length: 5 }).map((_, i) => (
-              <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill={i < node.evidence ? "currentColor" : "none"} stroke="currentColor" className={i < node.evidence ? "text-amber-500" : "text-slate-200"}>
-                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-              </svg>
+              <Star
+                key={i}
+                className={`w-3 h-3 shrink-0 ${i < node.evidence ? "text-amber-500 fill-amber-500" : "text-slate-200"}`}
+              />
             ))}
           </div>
           <div className="text-slate-500 text-xs">循证评级</div>

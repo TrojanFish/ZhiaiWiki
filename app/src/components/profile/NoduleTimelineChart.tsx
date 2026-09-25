@@ -209,10 +209,10 @@ export function NoduleTimelineChart({
             <div className="text-xs text-slate-400">单位: 厘米 (cm)</div>
           </div>
 
-          <div className="w-full overflow-x-auto">
+          <div className="w-full overflow-x-auto rounded-xl">
             <svg
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-              className="w-full h-44 min-w-[480px] overflow-visible"
+              className="w-full h-44 min-w-[340px] sm:min-w-[480px]"
             >
               {/* Grid Lines */}
               {[0.5, 1.0, 1.5, 2.0, 3.0].map((level) => {

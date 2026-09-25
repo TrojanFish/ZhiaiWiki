@@ -513,17 +513,17 @@ export default function HomePage() {
               </p>
 
               {/* Dual Funnel CTA Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5 pt-1 sm:pt-2 animate-fade-in-up stagger-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5 pt-1 sm:pt-2 animate-fade-in-up stagger-3 w-full max-w-md sm:max-w-none">
                 <Link
                   href="/profile"
-                  className="btn-primary min-w-[200px] h-12 px-6 sm:px-7 rounded-2xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center active:scale-98"
+                  className="btn-primary w-full sm:w-auto min-w-[200px] h-12 px-6 sm:px-7 rounded-2xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center active:scale-98"
                 >
                   <FileText className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                   <span suppressHydrationWarning>{hasProfile || userEmail ? "进入我的临床数字档案" : "建立临床数字档案"}</span>
                 </Link>
                 <Link
                   href="/wiki"
-                  className="min-w-[200px] h-12 px-6 sm:px-7 rounded-2xl text-sm sm:text-base font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:text-blue-700 transition-all flex items-center justify-center gap-2 cursor-pointer text-center active:scale-98"
+                  className="w-full sm:w-auto min-w-[200px] h-12 px-6 sm:px-7 rounded-2xl text-sm sm:text-base font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:text-blue-700 transition-all flex items-center justify-center gap-2 cursor-pointer text-center active:scale-98"
                 >
                   <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
                   <span>免录入 · 查40+循证词条</span>
@@ -531,19 +531,19 @@ export default function HomePage() {
               </div>
 
               {/* Report Upload / Smart Recognition Assist Hint */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50/80 border border-blue-200/70 text-[11px] sm:text-xs font-semibold text-blue-900 animate-fade-in-up stagger-3 shadow-2xs">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50/80 border border-blue-200/70 text-[11px] sm:text-xs font-semibold text-blue-900 animate-fade-in-up stagger-3 shadow-2xs max-w-full">
                 <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
                 </span>
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1.5 min-w-0">
                   <Camera className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span>支持拍摄/上传报告单 · AI 自动结构化提取分期与靶点</span>
+                  <span className="truncate">支持拍摄/上传报告单 · AI 自动结构化提取分期与靶点</span>
                 </span>
               </div>
 
               {/* Core Trust Pillars: 患者 3 大安心基石 (权威分期金标准 / 顶刊出处全溯源 / 医疗级隐私脱敏) */}
-              <div className="pt-4 sm:pt-6 border-t border-slate-200/60 grid grid-cols-3 gap-2 sm:gap-4 max-w-xl animate-fade-in-up stagger-4">
+              <div className="pt-4 sm:pt-6 border-t border-slate-200/60 grid grid-cols-3 gap-2 sm:gap-4 max-w-xl animate-fade-in-up stagger-4 w-full">
                 {/* Pillar 1: IASLC 9th & AJCC 8/9th Gold Standard */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none">
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0">

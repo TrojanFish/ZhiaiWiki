@@ -230,7 +230,15 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
   const [customIsComutation, setCustomIsComutation] = useState(false);
 
   // Segmented Step Wizard state (1: Imaging/Nodules, 2: Pathology/High-Risk, 3: Molecular/Genes, 4: Serology/Systemic)
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(() => {
+    if (typeof window !== 'undefined') {
+      const s = new URLSearchParams(window.location.search).get('step');
+      if (s === '2') return 2;
+      if (s === '3') return 3;
+      if (s === '4') return 4;
+    }
+    return 1;
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -2210,21 +2218,21 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 sm:max-w-xs w-full">
-                  <div className="relative flex-1">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:max-w-xs w-full">
+                  <div className="relative flex-1 min-w-0">
                     <input 
                       type="text" 
                       inputMode="decimal"
                       value={parsedData.ki67 !== undefined && parsedData.ki67 !== null ? String(parsedData.ki67).replace(/%/g, "") : ""}
                       onChange={e => setParsedData({ ...parsedData, ki67: e.target.value })}
                       placeholder="如 5 或 15"
-                      className="w-full h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 outline-none focus:bg-white focus:border-purple-400 font-mono"
+                      className="w-full h-10 px-3 py-2 pr-7 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 outline-none focus:bg-white focus:border-purple-400 font-mono"
                     />
                     <span className="absolute right-3 top-2.5 text-xs text-slate-400 font-bold pointer-events-none">%</span>
                   </div>
 
-                  {/* Preset Buttons */}
-                  <div className="flex gap-1">
+                  {/* Preset Buttons: Grid on mobile so Chinese characters never wrap, inline flex on desktop */}
+                  <div className="grid grid-cols-3 sm:flex gap-1.5 sm:gap-1 shrink-0">
                     {[
                       { val: "5", label: "≤5% 惰性" },
                       { val: "15", label: "15% 常规" },
@@ -2234,7 +2242,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                         key={preset.val}
                         type="button"
                         onClick={() => setParsedData({ ...parsedData, ki67: preset.val })}
-                        className={`h-10 px-2.5 text-[11px] font-bold rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+                        className={`h-9 sm:h-10 px-2 sm:px-2.5 text-[11px] sm:text-xs font-bold rounded-xl border transition-all cursor-pointer flex items-center justify-center whitespace-nowrap ${
                           String(parsedData.ki67).replace(/%/g, "") === preset.val
                             ? "bg-purple-600 text-white border-purple-600 shadow-2xs"
                             : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"

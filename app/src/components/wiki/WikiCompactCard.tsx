@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ArrowUpRight } from "lucide-react";
 import type { WikiTopic } from "@/lib/wikiData";
 import { RISK_LEVEL_CONFIG, getWikiCategories } from "@/lib/wikiData";
 import type { CancerType } from "@/lib/types";
@@ -119,9 +120,7 @@ export function WikiCompactCard({
           )}
           <span className="flex-shrink-0 text-[10px] font-semibold text-blue-600 group-hover:text-blue-700 flex items-center gap-0.5 transition-colors">
             深度解读
-            <svg className="w-3 h-3 -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" strokeWidth={2.5} />
           </span>
         </div>
       </div>
