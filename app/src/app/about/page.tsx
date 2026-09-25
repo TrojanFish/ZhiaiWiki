@@ -101,15 +101,15 @@ export default function AboutPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 px-3.5 sm:px-6 lg:px-8">
         
         {/* Top Navigation */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors shrink-0"
           >
             <ChevronLeft className="w-4 h-4 text-slate-500" />
             <span>返回首页</span>
           </Link>
-          <span className="text-xs text-slate-400 font-mono">知癌维基 ZhiaiWiki · 关于我们</span>
+          <span className="text-xs text-slate-400 font-mono truncate max-w-[180px] sm:max-w-none text-right">知癌维基 ZhiaiWiki · 关于我们</span>
         </div>
 
         {/* Main Article Card */}
@@ -121,8 +121,8 @@ export default function AboutPage() {
               <HeartHandshake className="w-3.5 h-3.5 text-blue-600" />
               <span>创作者自白 · 致同行者</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-              因为淋过雨，<br className="hidden sm:inline" />
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-snug">
+              因为淋过雨，<br className="sm:hidden" />
               所以想为同样迷茫的你撑一把伞
             </h1>
             <p className="text-sm sm:text-base text-slate-500 font-medium">

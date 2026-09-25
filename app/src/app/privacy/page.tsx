@@ -56,15 +56,15 @@ export default function PrivacyPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 px-3.5 sm:px-6 lg:px-8">
         
         {/* Navigation Back */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors shrink-0"
           >
             <ChevronLeft className="w-4 h-4 text-slate-500" />
             <span>返回首页</span>
           </Link>
-          <span className="text-xs text-slate-400 font-mono">知癌维基 ZhiaiWiki · 隐私政策</span>
+          <span className="text-xs text-slate-400 font-mono truncate max-w-[180px] sm:max-w-none text-right">知癌维基 ZhiaiWiki · 隐私政策</span>
         </div>
 
         {/* Main Content Card */}

@@ -358,15 +358,15 @@ export default function ResourcesPage() {
       {/* Hero Header */}
       <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Unified Top Pill Badge */}
-        <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs">
-          <BookOpen className="w-3.5 h-3.5 text-sky-600" />
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-2xs sm:text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs max-w-full">
+          <BookOpen className="w-3.5 h-3.5 text-sky-600 shrink-0" />
           <span>全球权威临床指南与顶刊库</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-          <span>专业医学循证导航</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse hidden xs:inline-block" />
+          <span className="hidden xs:inline-block">专业医学循证导航</span>
         </div>
 
         {/* Unified H1 */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           权威临床指南 · <span className="text-blue-700">专业医学循证导航</span>
         </h1>
 

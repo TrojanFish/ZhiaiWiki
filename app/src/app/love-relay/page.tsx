@@ -29,8 +29,11 @@ const CANCER_TABS = [
   { label: "结直肠癌", key: "结直肠癌" },
   { label: "胃癌", key: "胃癌" },
   { label: "肝癌", key: "肝癌" },
-  { label: "甲状腺癌", key: "甲状腺癌" },
   { label: "食管癌", key: "食管癌" },
+  { label: "甲状腺癌", key: "甲状腺癌" },
+  { label: "胰腺癌", key: "胰腺癌" },
+  { label: "子宫内膜癌", key: "子宫内膜癌" },
+  { label: "宫颈癌", key: "宫颈癌" },
   { label: "爱心同行", key: "爱心同行" },
 ];
 
@@ -182,7 +185,7 @@ export default function LoveRelayPage() {
             <div className="col-span-2 sm:col-span-1 p-3 rounded-2xl bg-teal-50/60 border border-teal-200/70">
               <div className="text-[11px] text-teal-800 font-medium">覆盖实体瘤专区</div>
               <div className="text-lg sm:text-xl font-black text-teal-900 mt-0.5 font-mono">
-                8 <span className="text-xs font-normal text-teal-700">大专区</span>
+                11 <span className="text-xs font-normal text-teal-700">大专区</span>
               </div>
             </div>
           </div>

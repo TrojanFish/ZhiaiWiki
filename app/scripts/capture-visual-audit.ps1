@@ -12,7 +12,17 @@ $pages = @(
     @{ Slug = "profile"; Url = "http://localhost:3000/profile?consent=1&template=ia1" },
     @{ Slug = "calibrate"; Url = "http://localhost:3000/profile?consent=1&mode=calibrate&template=ia1" },
     @{ Slug = "wiki"; Url = "http://localhost:3000/wiki?consent=1" },
-    @{ Slug = "report"; Url = "http://localhost:3000/profile/report?consent=1" }
+    @{ Slug = "report"; Url = "http://localhost:3000/profile/report?consent=1" },
+    @{ Slug = "love-relay"; Url = "http://localhost:3000/love-relay?consent=1" },
+    @{ Slug = "knowledge"; Url = "http://localhost:3000/knowledge?consent=1" },
+    @{ Slug = "reimbursement"; Url = "http://localhost:3000/reimbursement?consent=1" },
+    @{ Slug = "studies"; Url = "http://localhost:3000/studies?consent=1" },
+    @{ Slug = "timeline"; Url = "http://localhost:3000/timeline?consent=1" },
+    @{ Slug = "resources"; Url = "http://localhost:3000/resources?consent=1" },
+    @{ Slug = "about"; Url = "http://localhost:3000/about?consent=1" },
+    @{ Slug = "privacy"; Url = "http://localhost:3000/privacy?consent=1" },
+    @{ Slug = "terms"; Url = "http://localhost:3000/terms?consent=1" },
+    @{ Slug = "admin"; Url = "http://localhost:3000/admin?consent=1" }
 )
 
 foreach ($vp in $viewports) {

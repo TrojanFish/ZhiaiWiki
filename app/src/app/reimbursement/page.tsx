@@ -571,16 +571,19 @@ export default function ReimbursementPage() {
       {/* Unified Hero Header (Aligned with /wiki, /studies, /resources, /knowledge) */}
       <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Top Pill Badge */}
-        <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs">
-          <CancerIcon type={cancerType} className="w-3.5 h-3.5 text-sky-600" />
-          <span>{meta.badge}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-          <span>2024~2025 现行标准</span>
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-2xs sm:text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs max-w-full">
+          <CancerIcon type={cancerType} className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+          <span className="truncate">{meta.badge}</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 hidden xs:inline-block" />
+          <span className="hidden xs:inline-block">2024~2025 现行标准</span>
         </div>
 
         {/* Unified H1 */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          破除用药负担 · <span className="text-blue-600">{CancerRegistry.get(cancerType)?.name || "特药"}医保与慈善赠药</span>
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+          <span className="inline-block">破除用药负担</span>
+          <span className="hidden sm:inline"> · </span>
+          <br className="sm:hidden" />
+          <span className="text-blue-600 inline-block">{CancerRegistry.get(cancerType)?.name || "特药"}医保与慈善赠药</span>
         </h1>
 
         {/* Unified Subtitle */}

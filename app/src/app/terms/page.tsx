@@ -53,15 +53,15 @@ export default function TermsPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 px-3.5 sm:px-6 lg:px-8">
         
         {/* Navigation Back */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors shrink-0"
           >
             <ChevronLeft className="w-4 h-4 text-slate-500" />
             <span>返回首页</span>
           </Link>
-          <span className="text-xs text-slate-400 font-mono">知癌维基 ZhiaiWiki · 免责声明</span>
+          <span className="text-xs text-slate-400 font-mono truncate max-w-[180px] sm:max-w-none text-right">知癌维基 ZhiaiWiki · 免责声明</span>
         </div>
 
         {/* Main Content Card */}
@@ -69,9 +69,9 @@ export default function TermsPage() {
           
           {/* Header */}
           <div className="space-y-4 border-b border-slate-100 pb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-              <Scale className="w-3.5 h-3.5 text-blue-700" />
-              <span>多癌种用户服务协议 · 医疗学术免责声明 · 法律保护条款</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold max-w-full">
+              <Scale className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+              <span className="truncate">服务协议 · 医疗学术免责声明 · 法律保护条款</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               知癌维基 ZhiaiWiki 用户服务协议与全方位医疗免责声明
