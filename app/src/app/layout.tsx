@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "知癌维基 ZhiaiWiki — 肿瘤全病程循证与关怀平台",
-    description: "“知癌，方能治癌；每一次循证，皆因至爱。” 权威8大癌种循证医学与数字导航系统。",
+    description: "“知癌，方能治癌；每一次循证，皆因至爱。” 权威11大实体瘤循证医学与数字导航系统。",
     images: ["/logo.png"],
   },
   robots: {
@@ -98,7 +98,7 @@ const jsonLd = {
       "name": "知癌维基 ZhiaiWiki",
       "url": "https://zhiaiwiki.org",
       "logo": "https://zhiaiwiki.org/logo.png",
-      "description": "非营利性肿瘤全病程循证决策与患者就医数字导航平台，覆盖8大高发实体肿瘤临床指南与真实世界研究。",
+      "description": "非营利性肿瘤全病程循证决策与患者就医数字导航平台，覆盖11大高发实体肿瘤临床指南与真实世界研究。",
       "slogan": "知癌，方能治癌；每一次循证，皆因至爱",
       "medicalSpecialty": [
         "https://schema.org/Oncology",

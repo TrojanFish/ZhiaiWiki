@@ -1,11 +1,13 @@
+import type { CancerType } from "@/lib/types";
+
 /**
  * ZhiaiWiki Clinical Golden Evaluation Dataset (临床黄金评测基准用例库)
- * 覆盖 8 大实体瘤共 16 组里程碑、疑难与边界临床场景
+ * 覆盖 11 大实体瘤里程碑、疑难与边界临床场景
  */
 
 export interface ClinicalGoldenCase {
   id: string;
-  cancerType: 'lung' | 'breast' | 'colon' | 'rectal' | 'gastric' | 'liver' | 'esophageal' | 'thyroid' | 'endometrial' | 'cervical';
+  cancerType: CancerType;
   title: string;
   category: '分期与动力学基准' | '新辅助与病理缓解' | '靶向/免疫精准匹配' | 'DDI致命禁忌与协同' | '器官保留与去强化';
   description: string;
