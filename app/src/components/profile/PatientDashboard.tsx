@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Scan,
   Ruler,
@@ -104,6 +104,14 @@ export default function PatientDashboard() {
   const [showUploader, setShowUploader] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [editMode, setEditMode] = useState<'edit_direct' | 'upload_new' | null>(null);
+
+  // Sync refs to prevent async loadProfile from dismissing active calibration / uploader
+  const showUploaderRef = useRef(showUploader);
+  showUploaderRef.current = showUploader;
+  const showUpdateModalRef = useRef(showUpdateModal);
+  showUpdateModalRef.current = showUpdateModal;
+  const editModeRef = useRef(editMode);
+  editModeRef.current = editMode;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteOption, setDeleteOption] = useState<'single' | 'all'>('single');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -361,7 +369,7 @@ export default function PatientDashboard() {
       if (data && data.profile) {
         setProfile(data.profile);
         // Only clear uploader/edit mode if not actively interacting
-        if (!editMode && !showUpdateModal) {
+        if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
           setShowUploader(false);
           setEditMode(null);
         }
@@ -378,14 +386,18 @@ export default function PatientDashboard() {
         const localCached = getProfileBySlot(slot);
         if (localCached && (localCached.stage || (localCached as any).tStage || localCached.noduleType || localCached.tumorSize || localCached.organ || (localCached as any).biRads)) {
           setProfile(localCached);
-          setShowUploader(false);
-          setEditMode(null);
+          if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
+            setShowUploader(false);
+            setEditMode(null);
+          }
           setAvailableSlots(getAvailableProfileSlots());
           setDualSummary(getDualPrimarySummary());
           return;
         }
         setProfile(null);
-        setShowUploader(true);
+        if (!showUploaderRef.current) {
+          setShowUploader(true);
+        }
         setAvailableSlots(getAvailableProfileSlots());
         setDualSummary(getDualPrimarySummary());
       }
@@ -394,7 +406,9 @@ export default function PatientDashboard() {
       const localCached = getProfileBySlot(slot);
       if (localCached) {
         setProfile(localCached);
-        setShowUploader(false);
+        if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
+          setShowUploader(false);
+        }
       } else {
         setShowUploader(true);
       }
@@ -404,10 +418,19 @@ export default function PatientDashboard() {
   };
 
   useEffect(() => {
-    // 0. Check if URL specifies a demo template
+    // 0. Check if URL specifies calibration mode or a demo template
     let hasTemplate = false;
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
+      const modeParam = urlParams.get("mode");
+      const editParam = urlParams.get("edit");
+      if (modeParam === "calibrate" || modeParam === "edit" || editParam === "1" || editParam === "true") {
+        setEditMode('edit_direct');
+        setShowUploader(true);
+        showUploaderRef.current = true;
+        editModeRef.current = 'edit_direct';
+      }
+
       const templateKey = urlParams.get("template");
       if (templateKey && DEMO_TEMPLATES[templateKey]) {
         const item = DEMO_TEMPLATES[templateKey];

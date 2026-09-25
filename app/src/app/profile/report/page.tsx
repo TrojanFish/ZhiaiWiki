@@ -908,7 +908,7 @@ export default function EvidenceReportPage() {
 
             <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
               <Link
-                href="/profile"
+                href="/profile?mode=calibrate"
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700 hover:text-blue-700 bg-white hover:bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs hover:border-blue-200 transition-all cursor-pointer print:hidden group"
                 title="若指标有更新，点击前往个人档案修改"
               >
@@ -1772,12 +1772,12 @@ export default function EvidenceReportPage() {
       >
         <div
           ref={consultationCardRef}
-          className="w-[600px] bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 relative overflow-hidden font-sans"
+          className="w-[600px] bg-white text-slate-900 rounded-3xl p-6 border border-slate-200 relative overflow-hidden font-sans"
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 relative z-10">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs flex-shrink-0 bg-slate-100 border border-slate-200">
+              <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 bg-white border border-slate-200">
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="知癌维基 Logo" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -1819,7 +1819,7 @@ export default function EvidenceReportPage() {
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className={`inline-flex items-center px-2.5 py-1 rounded-lg font-extrabold text-[11px] border shadow-xs ${
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-lg font-extrabold text-[11px] border ${
                     isAllSafe 
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                       : 'bg-amber-50 text-amber-800 border-amber-200'
@@ -2031,7 +2031,7 @@ export default function EvidenceReportPage() {
             </div>
 
             {checklistItems.map((item, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-3 border border-slate-200 space-y-1 shadow-xs">
+              <div key={idx} className="bg-white rounded-2xl p-3 border border-slate-200 space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-black text-[11px] flex items-center justify-center flex-shrink-0">
                     {idx + 1}

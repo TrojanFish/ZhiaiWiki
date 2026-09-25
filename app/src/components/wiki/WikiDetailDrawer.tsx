@@ -180,7 +180,7 @@ export function WikiDetailDrawer({
       <div
         role="presentation"
         onClick={onClose}
-        className={`fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[9998] bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 ${
           isVisible && topic ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       />
@@ -193,7 +193,7 @@ export function WikiDetailDrawer({
         aria-modal="true"
         aria-label={topic ? `${topic.title} 详细解读` : "词条详情"}
         className={cn(
-          "fixed top-0 right-0 bottom-0 z-50",
+          "fixed top-0 right-0 bottom-0 z-[9999]",
           "w-full sm:w-[600px] lg:w-[680px]",
           "bg-white shadow-2xl shadow-slate-900/20",
           "flex flex-col overflow-hidden",
@@ -557,7 +557,7 @@ export function WikiDetailDrawer({
 
       {/* 浮动提示条 */}
       {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] left-1/2 -translate-x-1/2 z-[10000] bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
           <Check className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>

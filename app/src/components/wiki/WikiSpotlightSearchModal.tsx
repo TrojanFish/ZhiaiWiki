@@ -255,7 +255,7 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
           }}
           onKeyDown={handleKeyDown}
           placeholder="搜索词条、指标或症状…如 STAS、磨玻璃、EGFR、7组…"
-          className="flex-1 text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 bg-transparent border-none outline-none"
+          className="flex-1 text-base sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 bg-transparent border-none outline-none"
           autoComplete="off"
           spellCheck={false}
         />
@@ -398,7 +398,7 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
       </div>
       {/* 建议 #2: 移动端底部抽屉 Sheet */}
       <div className="fixed inset-x-0 bottom-0 z-[9999] sm:hidden animate-slide-up" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-center pt-2 pb-1"><div className="w-10 h-1.5 rounded-full bg-slate-300" /></div>
+        <div className="flex justify-center pt-2.5 pb-1"><div className="sheet-grabber !my-0" /></div>
         {panelContent(true)}
       </div>
     </>

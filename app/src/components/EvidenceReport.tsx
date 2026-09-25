@@ -119,11 +119,11 @@ export default function EvidenceReport({
   const hasHighRiskFactor = profile.stas === "positive" || profile.vpi === "positive" || profile.lvi === "positive" || profile.iaslcGrade === "3";
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col pb-20">
+    <div className="min-h-screen bg-slate-50 flex flex-col pb-8 sm:pb-12">
       {/* Knowledge Graph Overlay */}
       {showGraphOverlay && (
         <div
-          className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-md flex flex-col p-3 sm:p-6 md:p-8 animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex flex-col p-3 sm:p-6 md:p-8 animate-fade-in overflow-y-auto"
           onClick={(e) => { if (e.target === e.currentTarget) setShowGraphOverlay(false); }}
         >
           {/* Overlay Header */}

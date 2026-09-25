@@ -405,7 +405,7 @@ export default function KnowledgeMapPreview({ profile = null, cancerType: propCa
           
           {/* Mobile Overlay Background (only visible when active) */}
           <div 
-            className={`lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 ${isPanelActive ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+            className={`lg:hidden fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[9998] transition-opacity duration-300 ${isPanelActive ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
             onClick={() => { setSelectedNode(null); setHoveredNode(null); setSelectedEdge(null); }}
           />
 
@@ -413,12 +413,14 @@ export default function KnowledgeMapPreview({ profile = null, cancerType: propCa
           <div className={`
             flex flex-col gap-4 
             lg:relative lg:translate-y-0 lg:h-auto lg:p-0 lg:bg-transparent lg:border-none lg:z-0 lg:shadow-none
-            fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]
-            transition-transform duration-300 ease-in-out max-h-[85vh] overflow-y-auto
+            fixed bottom-0 left-0 right-0 z-[9999] bg-white border-t border-slate-200 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]
+            transition-transform duration-300 ease-in-out max-h-[85vh] max-h-[85dvh] overflow-y-auto overscroll-contain
             ${isPanelActive ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'}
           `}>
             {/* Mobile Drag Handle */}
-            <div className="lg:hidden w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4" />
+            <div className="lg:hidden pt-1 pb-2 flex justify-center shrink-0">
+              <div className="sheet-grabber !my-0" />
+            </div>
 
             {selectedEdge && edgeEvidences[selectedEdge] ? (
               <EdgeEvidencePanel

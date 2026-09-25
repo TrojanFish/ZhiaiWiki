@@ -127,13 +127,13 @@ export default function BottomSheet({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className={`relative w-full ${maxWidth} bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border border-slate-200/80 z-10 max-h-[90vh] sm:max-h-[85vh] flex flex-col animate-slide-up-drawer sm:animate-fade-in-up transition-transform duration-150 ${className}`}
+        className={`relative w-full ${maxWidth} bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border border-slate-200/80 z-10 max-h-[90vh] max-h-[90dvh] sm:max-h-[85vh] flex flex-col animate-slide-up-drawer sm:animate-fade-in-up transition-transform duration-150 pb-safe sm:pb-0 ${className}`}
         role="dialog"
         aria-modal="true"
       >
         {/* Mobile Swipe Bar Indicator */}
-        <div className="sm:hidden pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing">
-          <div className="w-10 h-1.2 bg-slate-300 rounded-full" />
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center cursor-grab active:cursor-grabbing">
+          <div className="sheet-grabber !my-0" />
         </div>
 
         {/* Header */}

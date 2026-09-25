@@ -154,7 +154,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
       >
         <div
           ref={offscreenPosterRef}
-          className="w-[520px] bg-white text-slate-900 rounded-3xl p-7 shadow-2xl border border-blue-200 space-y-5 font-sans relative"
+          className="w-[520px] bg-white text-slate-900 rounded-3xl p-7 border border-blue-200 space-y-5 font-sans relative"
           style={{
             background: "linear-gradient(180deg, #F0F9FF 0%, #FFFFFF 40%, #F0FDFA 100%)",
             boxSizing: "border-box",
@@ -164,7 +164,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-200 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs flex-shrink-0 bg-slate-100 border border-slate-200">
+              <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 bg-white border border-slate-200">
                 <img src={ZHIAIWIKI_LOGO_DATA_URI} alt="ZhiaiWiki Logo" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -179,7 +179,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
 
           {/* Title & Badge */}
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center flex-shrink-0 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center flex-shrink-0">
               <WikiTopicIcon icon={topic.icon} topicId={topic.id} size={24} />
             </div>
             <div className="space-y-1">
@@ -208,7 +208,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
 
           {/* Section 2: Visual Micro Diagram (权威医学视觉图解与征象模拟) */}
           {topic.visualComponent && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-3.5 overflow-hidden space-y-2 shadow-xs">
+            <div className="rounded-2xl border border-slate-200 bg-white p-3.5 overflow-hidden space-y-2">
               <div className="flex items-center justify-between text-[11px] font-bold text-blue-700">
                 <span className="flex items-center gap-1.5">
                   <Scan className="w-3.5 h-3.5 text-blue-600" />
@@ -230,7 +230,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
           )}
 
           {/* Section 3: Clinical Truth */}
-          <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2 text-xs shadow-xs">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2 text-xs">
             <div className="font-bold text-blue-900 flex items-center gap-1.5">
               <BookOpen className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <span>临床真相深度解读：</span>
@@ -285,7 +285,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
 
           {/* Section 6: Top FAQ */}
           {topic.faq && topic.faq.length > 0 && (
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2 text-xs shadow-xs">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2 text-xs">
               <div className="font-bold text-slate-900 flex items-center gap-1.5">
                 <HelpCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>患者高频疑问速答：</span>

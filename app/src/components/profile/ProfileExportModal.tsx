@@ -375,7 +375,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
   return (
     <>
       <div 
-        onClick={onClose}
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-fade-in overflow-hidden sm:overflow-y-auto print:hidden"
       >
       {/* Modal Container */}
@@ -383,7 +383,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
         onClick={(e) => e.stopPropagation()}
         className={`relative w-full ${
           activeMode === "consultation" ? "max-w-2xl" : "max-w-lg"
-        } bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200`}
+        } bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200`}
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
@@ -718,7 +718,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
           {/* Header Brand */}
           <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5 relative z-10">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-xs shrink-0 bg-slate-100 border border-slate-200">
+              <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 bg-white border border-slate-200">
                 <img src={ZHIAIWIKI_LOGO_DATA_URI} alt="ZhiaiWiki Logo" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -797,7 +797,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
           </div>
 
           {/* SECTION 2: 5-Year Survival Benchmark (Prognosis High-Light Card) */}
-          <div className="bg-gradient-to-br from-blue-50/80 via-white to-teal-50/80 rounded-2xl p-4.5 border border-teal-200 mb-4 relative z-10 space-y-3 shadow-xs">
+          <div className="bg-gradient-to-br from-blue-50/80 via-white to-teal-50/80 rounded-2xl p-4.5 border border-teal-200 mb-4 relative z-10 space-y-3">
             <div className="flex items-center justify-between border-b border-teal-100 pb-2">
               <div>
                 <span className="text-[10px] font-bold text-teal-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -815,7 +815,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
 
             {/* Large 2-Metric High-Gloss Grid */}
             <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="p-3.5 bg-white rounded-xl border border-blue-200 shadow-xs">
+              <div className="p-3.5 bg-white rounded-xl border border-blue-200">
                 <div className="text-[10px] text-blue-700 font-bold">5年无复发生存率 (RFS)</div>
                 <div className="text-2xl sm:text-3xl font-black text-blue-700 font-mono tracking-tight my-0.5">
                   {cohort.rfs5Year}
@@ -823,7 +823,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                 <div className="text-[9px] text-slate-500">临床治愈与无瘤生存指标</div>
               </div>
 
-              <div className="p-3.5 bg-white rounded-xl border border-emerald-200 shadow-xs">
+              <div className="p-3.5 bg-white rounded-xl border border-emerald-200">
                 <div className="text-[10px] text-emerald-700 font-bold">5年总生存率 (OS)</div>
                 <div className="text-2xl sm:text-3xl font-black text-emerald-700 font-mono tracking-tight my-0.5">
                   {cohort.os5Year}
@@ -1076,7 +1076,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                       {mutations.map((m: any, idx: number) => (
                         <div
                           key={idx}
-                          className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 flex items-center gap-1.5 text-xs font-mono shadow-xs"
+                          className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 flex items-center gap-1.5 text-xs font-mono"
                         >
                           <span className="font-extrabold text-indigo-900">{m.gene}</span>
                           {m.subtype && <span className="text-indigo-600 text-[10.5px]">({m.subtype})</span>}
@@ -1087,7 +1087,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                         </div>
                       ))}
                       {pdl1 && pdl1 !== "unknown" && (
-                        <div className="px-2.5 py-1 rounded-lg bg-white border border-teal-200 flex items-center gap-1.5 text-xs font-mono shadow-xs">
+                        <div className="px-2.5 py-1 rounded-lg bg-white border border-teal-200 flex items-center gap-1.5 text-xs font-mono">
                           <span className="font-extrabold text-teal-800">PD-L1</span>
                           <span className="text-teal-600 text-[10.5px]">{pdl1}</span>
                         </div>
@@ -1109,7 +1109,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
 
           {/* SECTION 5: Decision Engine Next Step */}
           <div className="bg-blue-50/70 rounded-2xl p-3.5 border border-blue-200 mb-4 relative z-10 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+            <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5">
               <Stethoscope className="w-3.5 h-3.5" />
             </div>
             <div className="space-y-0.5 text-xs">

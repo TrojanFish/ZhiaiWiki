@@ -38,7 +38,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
       {/* 3-Tier Window Card */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-t-3xl sm:rounded-2xl max-w-xl w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
+        className="bg-white rounded-t-3xl sm:rounded-2xl max-w-xl w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">

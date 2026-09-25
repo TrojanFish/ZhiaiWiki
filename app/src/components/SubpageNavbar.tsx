@@ -278,11 +278,11 @@ export default function SubpageNavbar() {
 
       {/* Mobile Slide-Over Drawer Menu (Pure Site Navigation, Zero Clutter) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] md:hidden">
+        <div className="fixed inset-0 z-[9999] md:hidden">
           {/* Backdrop with Frosted Blur */}
           <div 
-            className="fixed inset-0 bg-slate-950/50 backdrop-blur-sm animate-fade-in"
-            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
+            onClick={(e) => { if (e.target === e.currentTarget) setMobileMenuOpen(false); }}
           />
 
           {/* Drawer Panel: Clean & Streamlined, Zero Duplication */}

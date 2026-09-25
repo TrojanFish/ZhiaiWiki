@@ -174,7 +174,7 @@ export default function ExportBrandFooter({
                 height: "26px",
                 borderRadius: "7px",
                 objectFit: "cover",
-                boxShadow: isLight ? "0 1px 2px rgba(0,0,0,0.06)" : "0 1px 3px rgba(0,0,0,0.4)",
+                border: isLight ? "1px solid #E2E8F0" : "1px solid #334155",
                 flexShrink: 0,
               }}
             />
