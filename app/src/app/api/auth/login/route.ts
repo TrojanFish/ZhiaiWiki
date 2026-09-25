@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const rateLimit = checkRateLimit(`user_login_${clientIp}`, { intervalMs: 15 * 60 * 1000, maxRequests: 10 });
     if (!rateLimit.success) {
       return NextResponse.json(
-        { success: false, detail: "登录尝试次数过多，请稍候 15 分钟后再试。" },
+        { success: false, detail: "为了保障您的账户安全，连续登录尝试已触发安全防护，请稍候 15 分钟后再试。" },
         { status: 429, headers: { 'Retry-After': '900' } }
       );
     }

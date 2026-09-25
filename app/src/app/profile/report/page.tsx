@@ -24,7 +24,10 @@ import {
   Info,
   X,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  Clock,
+  Sparkles,
+  BookOpen
 } from "lucide-react";
 import type { PatientProfile, CancerType } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
@@ -40,6 +43,11 @@ import {
   getProfileBySlot, 
   EVENT_SLOT_CHANGED 
 } from "@/lib/profileStorage";
+import { 
+  formatClinicalAiError, 
+  isRateLimitOrQuotaError, 
+  type ClinicalErrorInfo 
+} from "@/lib/clinicalErrors";
 
 
 export default function EvidenceReportPage() {
@@ -49,6 +57,8 @@ export default function EvidenceReportPage() {
   const [isLoadedFromCache, setIsLoadedFromCache] = useState(false);
   const [cachedTime, setCachedTime] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [errorInfo, setErrorInfo] = useState<ClinicalErrorInfo | null>(null);
+  const [retryCountdown, setRetryCountdown] = useState(0);
   const [copied, setCopied] = useState(false);
   const [isExportingCard, setIsExportingCard] = useState(false);
   const [isExportingDirectPdf, setIsExportingDirectPdf] = useState(false);
@@ -260,6 +270,8 @@ export default function EvidenceReportPage() {
     setIsGenerating(true);
     setReportMarkdown("");
     setError("");
+    setErrorInfo(null);
+    setRetryCountdown(0);
     setIsLoadedFromCache(false);
 
     try {
@@ -274,8 +286,19 @@ export default function EvidenceReportPage() {
       });
 
       if (!reportRes.ok) {
-        const err = await reportRes.json();
-        throw new Error(err.error || "报告生成失败");
+        const errJson = await reportRes.json().catch(() => null);
+        const clinical = formatClinicalAiError(errJson || "报告生成失败", 'generate');
+        const finalInfo: ClinicalErrorInfo = {
+          title: errJson?.title || clinical.title,
+          message: errJson?.error || clinical.message,
+          isRateLimit: errJson?.isRateLimit ?? clinical.isRateLimit,
+          retryAfter: errJson?.retryAfter ?? clinical.retryAfter,
+          suggestion: errJson?.suggestion || clinical.suggestion,
+          badge: errJson?.badge || clinical.badge,
+        };
+        setErrorInfo(finalInfo);
+        setError(finalInfo.message);
+        throw new Error(finalInfo.message);
       }
 
       const reader = reportRes.body?.getReader();
@@ -343,11 +366,30 @@ export default function EvidenceReportPage() {
       }
 
     } catch (err: any) {
-      setError(err.message);
+      const clinical = formatClinicalAiError(err, 'generate');
+      setErrorInfo((prev) => prev || clinical);
+      setError((prev) => prev || clinical.message);
     } finally {
       setIsGenerating(false);
     }
   };
+
+  // Reassuring live countdown timer for rate limit buffer recovery
+  useEffect(() => {
+    if (errorInfo?.isRateLimit && (errorInfo?.retryAfter || 60)) {
+      setRetryCountdown(errorInfo.retryAfter || 60);
+      const timer = setInterval(() => {
+        setRetryCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [errorInfo]);
 
   // Initial Load: Check Local Cache & Database Persistence First (0ms Instant Load)
   useEffect(() => {
@@ -1327,31 +1369,126 @@ export default function EvidenceReportPage() {
         )}
 
         {error && (
-          <div className="bg-rose-50 text-rose-800 p-6 rounded-3xl border border-rose-200 mb-6 print:hidden shadow-xs space-y-3">
-            <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-2 text-rose-900">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>提示信息</span>
-            </h3>
-            <p className="text-xs sm:text-sm leading-relaxed">{error}</p>
-            <div className="pt-1 flex items-center gap-3 flex-wrap">
-              <Link
-                href="/profile"
-                className="btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
-              >
-                <ClipboardList className="w-3.5 h-3.5 shrink-0" />
-                <span>前往患者临床档案页</span>
-              </Link>
-              {profile && (
-                <button
-                  onClick={() => startGeneratingReport(profile)}
-                  className="px-4 py-2 rounded-xl bg-white hover:bg-rose-100/60 text-rose-700 font-bold border border-rose-300 transition-colors text-xs cursor-pointer inline-flex items-center gap-1.5"
+          (errorInfo?.isRateLimit || isRateLimitOrQuotaError(error)) ? (
+            <div className="bg-gradient-to-br from-amber-50/95 via-sky-50/70 to-indigo-50/50 text-slate-800 p-5 sm:p-7 rounded-3xl border border-amber-200/90 mb-6 print:hidden shadow-sm space-y-4 animate-fade-in">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-300/80 flex items-center justify-center text-amber-700 shrink-0">
+                    <Clock className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-[10px] sm:text-[11px] flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-amber-600" />
+                        <span>{errorInfo?.badge || "医学推理高负载保护 · 算力队列调度中"}</span>
+                      </span>
+                    </div>
+                    <h3 className="font-extrabold text-base sm:text-lg text-slate-900 mt-1">
+                      {errorInfo?.title || "AI 循证医学算力资源调度中"}
+                    </h3>
+                  </div>
+                </div>
+
+                {retryCountdown > 0 && (
+                  <div className="px-3 py-1.5 rounded-xl bg-white/90 border border-amber-200 text-amber-900 font-mono font-bold text-xs flex items-center gap-1.5 shadow-2xs">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                    <span>预计还需缓冲: {retryCountdown} 秒</span>
+                  </div>
+                )}
+              </div>
+
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                {errorInfo?.message || error}
+              </p>
+
+              {/* Countdown Progress Card */}
+              <div className="bg-white/85 p-3.5 sm:p-4 rounded-2xl border border-amber-200/80 space-y-2.5">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-amber-600" />
+                    <span>算力队列恢复进度</span>
+                  </span>
+                  <span className={`font-mono text-xs ${retryCountdown === 0 ? "text-emerald-700 font-extrabold" : "text-amber-800"}`}>
+                    {retryCountdown > 0 ? `通道缓冲中... (${retryCountdown}s)` : "✅ 算力通道已重新就绪"}
+                  </span>
+                </div>
+                <div className="w-full bg-amber-100/70 h-2.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-amber-500 via-sky-500 to-emerald-500 h-full transition-all duration-1000 rounded-full"
+                    style={{ width: `${Math.min(100, Math.max(5, ((60 - retryCountdown) / 60) * 100))}%` }}
+                  />
+                </div>
+                {errorInfo?.suggestion && (
+                  <p className="text-[11px] text-slate-600 leading-relaxed pt-0.5">
+                    💡 <strong>贴心建议</strong>：{errorInfo.suggestion}
+                  </p>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-1 flex items-center gap-2.5 flex-wrap">
+                {profile && (
+                  <button
+                    onClick={() => startGeneratingReport(profile)}
+                    disabled={isGenerating}
+                    className={`px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
+                      retryCountdown === 0
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white animate-pulse"
+                        : "bg-amber-600 hover:bg-amber-700 text-white"
+                    }`}
+                  >
+                    <RotateCcw className={`w-3.5 h-3.5 ${retryCountdown > 0 ? "animate-spin-slow" : ""}`} />
+                    <span>{retryCountdown === 0 ? "算力已就绪 · 立即生成报告" : `缓冲中 (${retryCountdown}s) · 提前重试`}</span>
+                  </button>
+                )}
+                <Link
+                  href="/wiki"
+                  className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-200 transition-colors text-xs flex items-center gap-1.5 shadow-2xs"
                 >
-                  <RotateCcw className="w-3.5 h-3.5 shrink-0" />
-                  <span>重新尝试生成报告</span>
-                </button>
-              )}
+                  <BookOpen className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span>查阅专科循证百科</span>
+                </Link>
+                <Link
+                  href="/profile"
+                  className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-200 transition-colors text-xs flex items-center gap-1.5 shadow-2xs"
+                >
+                  <FileEdit className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                  <span>核对病理分期指标</span>
+                </Link>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="bg-rose-50 text-rose-800 p-5 sm:p-6 rounded-3xl border border-rose-200 mb-6 print:hidden shadow-xs space-y-3">
+              <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-2 text-rose-900">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{errorInfo?.title || "服务提示"}</span>
+              </h3>
+              <p className="text-xs sm:text-sm leading-relaxed">{error}</p>
+              {errorInfo?.suggestion && (
+                <p className="text-xs text-rose-700 bg-white/60 p-2.5 rounded-xl border border-rose-200/60 leading-relaxed">
+                  💡 <strong>建议指引</strong>：{errorInfo.suggestion}
+                </p>
+              )}
+              <div className="pt-1 flex items-center gap-3 flex-wrap">
+                <Link
+                  href="/profile"
+                  className="btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
+                >
+                  <ClipboardList className="w-3.5 h-3.5 shrink-0" />
+                  <span>前往患者临床档案页</span>
+                </Link>
+                {profile && (
+                  <button
+                    onClick={() => startGeneratingReport(profile)}
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-rose-100/60 text-rose-700 font-bold border border-rose-300 transition-colors text-xs cursor-pointer inline-flex items-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+                    <span>重新尝试生成报告</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )
         )}
 
         {/* Report Content Main Container */}

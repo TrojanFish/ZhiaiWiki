@@ -8,6 +8,7 @@ import { evaluateBiRads } from '@/lib/biRadsCalculator';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { sanitizeClinicalText } from '@/lib/privacy';
 import { logEvent } from '@/lib/logger';
+import { formatClinicalAiError, getClinicalRateLimitMessage } from '@/lib/clinicalErrors';
 
 const SYSTEM_PROMPT = `
 你是一个专业的精准肿瘤医学报告结构化解析与信息提取引擎，精通从【胸部 CT / 肺癌病理】、【乳腺超声 / 钼靶 / BI-RADS / 乳腺病理免疫组化】、【结直肠镜 / 病理】、【胃镜活检 / 胃癌病理】、【肝脏影像 / HCC】、【食管镜 / 食管癌病理】、【甲状腺超声 TI-RADS / 病理】、【子宫内膜病理 / FIGO分子分型】、【宫颈TCT / 活检 / CCRT】、【全身转移排查报告（脑MRI、腹部B超、骨扫描、PET-CT）】与【血液肿瘤标志物检验】中高精度提取客观临床数据指标。
@@ -285,6 +286,7 @@ export async function POST(request: Request) {
     // 1. Production Rate Limiting (10 requests per minute per IP for OCR/Multimodal parsing)
     const rateLimit = checkRateLimit(`parse_report_${clientIp}`, { intervalMs: 60 * 1000, maxRequests: 10 });
     if (!rateLimit.success) {
+      const clinicalErr = getClinicalRateLimitMessage('parse');
       logEvent({
         level: 'warn',
         endpoint: '/api/parse-report',
@@ -294,8 +296,16 @@ export async function POST(request: Request) {
         message: 'Client exceeded report parsing rate limit'
       });
       return NextResponse.json(
-        { success: false, error: "解析请求过于频繁，请稍候 1 分钟后重试。" },
-        { status: 429, headers: { 'Retry-After': '60' } }
+        { 
+          success: false, 
+          error: clinicalErr.message,
+          title: clinicalErr.title,
+          isRateLimit: true,
+          retryAfter: clinicalErr.retryAfter,
+          suggestion: clinicalErr.suggestion,
+          badge: clinicalErr.badge
+        },
+        { status: 429, headers: { 'Retry-After': String(clinicalErr.retryAfter || 60) } }
       );
     }
 
@@ -897,15 +907,31 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: safeData });
   } catch (error: any) {
+    const clinicalErr = formatClinicalAiError(error, 'parse');
+    const statusCode = clinicalErr.isRateLimit ? 429 : 500;
     logEvent({
       level: 'error',
       endpoint: '/api/parse-report',
       clientIp,
       durationMs: Date.now() - startTime,
-      statusCode: 500,
+      statusCode,
       error: error.message || 'Unknown parsing error',
       action: 'parse_report_exception'
     });
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: clinicalErr.message,
+        title: clinicalErr.title,
+        isRateLimit: clinicalErr.isRateLimit,
+        retryAfter: clinicalErr.retryAfter,
+        suggestion: clinicalErr.suggestion,
+        badge: clinicalErr.badge
+      }, 
+      { 
+        status: statusCode,
+        headers: clinicalErr.isRateLimit ? { 'Retry-After': String(clinicalErr.retryAfter || 60) } : undefined
+      }
+    );
   }
 }

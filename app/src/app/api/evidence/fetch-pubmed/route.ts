@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     const rateLimit = checkRateLimit(`evidence_pubmed_${clientIp}`, { intervalMs: 60 * 1000, maxRequests: 15 });
     if (!rateLimit.success) {
       return NextResponse.json(
-        { success: false, error: "抓取请求过于频繁，请稍候 1 分钟后重试" },
-        { status: 429 }
+        { success: false, error: "文献检索通道访问较密集，正在进行短暂调度缓冲，请稍候 1 分钟后再试" },
+        { status: 429, headers: { 'Retry-After': '60' } }
       );
     }
 

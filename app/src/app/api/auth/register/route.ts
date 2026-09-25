@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const rateLimit = checkRateLimit(`user_register_${clientIp}`, { intervalMs: 15 * 60 * 1000, maxRequests: 5 });
     if (!rateLimit.success) {
       return NextResponse.json(
-        { success: false, detail: "注册尝试过于频繁，请稍候 15 分钟后再试。" },
+        { success: false, detail: "为了保障平台服务质量与安全，账号注册尝试已触发频率保护，请稍候 15 分钟后再试。" },
         { status: 429, headers: { 'Retry-After': '900' } }
       );
     }

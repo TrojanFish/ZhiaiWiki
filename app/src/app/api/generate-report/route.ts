@@ -3,6 +3,7 @@ import { ai } from '@/lib/gemini';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { sanitizePatientProfile } from '@/lib/privacy';
 import { logEvent } from '@/lib/logger';
+import { formatClinicalAiError, getClinicalRateLimitMessage } from '@/lib/clinicalErrors';
 
 const POST_OP_PROMPT = `
 你是一个严谨的胸部肿瘤循证医学知识图谱与文献对照分析引擎。
@@ -759,6 +760,7 @@ export async function POST(request: Request) {
     // 1. Production Rate Limiting (5 requests per minute per IP for high-cost LLM calls)
     const rateLimit = checkRateLimit(`gen_report_${clientIp}`, { intervalMs: 60 * 1000, maxRequests: 5 });
     if (!rateLimit.success) {
+      const clinicalErr = getClinicalRateLimitMessage('generate');
       logEvent({
         level: 'warn',
         endpoint: '/api/generate-report',
@@ -768,8 +770,16 @@ export async function POST(request: Request) {
         message: 'Client exceeded report generation rate limit'
       });
       return NextResponse.json(
-        { success: false, error: "您在短时间内请求过于频繁，请稍候 1 分钟后重试。" },
-        { status: 429, headers: { 'Retry-After': '60' } }
+        { 
+          success: false, 
+          error: clinicalErr.message,
+          title: clinicalErr.title,
+          isRateLimit: true,
+          retryAfter: clinicalErr.retryAfter,
+          suggestion: clinicalErr.suggestion,
+          badge: clinicalErr.badge
+        },
+        { status: 429, headers: { 'Retry-After': String(clinicalErr.retryAfter || 60) } }
       );
     }
 
@@ -1047,6 +1057,7 @@ export async function POST(request: Request) {
             }
           });
         } catch (e: any) {
+          const clinicalErr = formatClinicalAiError(e, 'generate');
           logEvent({
             level: 'error',
             endpoint: '/api/generate-report',
@@ -1055,6 +1066,12 @@ export async function POST(request: Request) {
             error: e.message || 'Stream processing error',
             action: 'report_stream_failed'
           });
+          try {
+            const errorAppendix = `\n\n> ⚠️ **【${clinicalErr.title}】**\n> ${clinicalErr.message}\n${clinicalErr.suggestion ? `> \n> 💡 *行动指引*：${clinicalErr.suggestion}\n` : ''}`;
+            controller.enqueue(new TextEncoder().encode(errorAppendix));
+          } catch {
+            // ignore if stream closed
+          }
           controller.error(e);
         }
       }
@@ -1067,15 +1084,31 @@ export async function POST(request: Request) {
       }
     });
   } catch (error: any) {
+    const clinicalErr = formatClinicalAiError(error, 'generate');
+    const statusCode = clinicalErr.isRateLimit ? 429 : 500;
     logEvent({
       level: 'error',
       endpoint: '/api/generate-report',
       clientIp,
       durationMs: Date.now() - startTime,
-      statusCode: 500,
+      statusCode,
       error: error.message || 'Unknown server error',
       action: 'generate_report_exception'
     });
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: clinicalErr.message,
+        title: clinicalErr.title,
+        isRateLimit: clinicalErr.isRateLimit,
+        retryAfter: clinicalErr.retryAfter,
+        suggestion: clinicalErr.suggestion,
+        badge: clinicalErr.badge
+      }, 
+      { 
+        status: statusCode,
+        headers: clinicalErr.isRateLimit ? { 'Retry-After': String(clinicalErr.retryAfter || 60) } : undefined
+      }
+    );
   }
 }
