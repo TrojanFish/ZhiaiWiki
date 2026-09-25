@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   X, 
   Coffee, 
@@ -54,6 +55,11 @@ export default function PublicWelfareDonationModal({
   const [isQrZoomed, setIsQrZoomed] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [relayList, setRelayList] = useState<LoveRelayItem[]>(LOVE_RELAY_ITEMS);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const contactEmail = "2909138455@qq.com";
 
@@ -126,9 +132,9 @@ export default function PublicWelfareDonationModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div 
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -564,6 +570,7 @@ export default function PublicWelfareDonationModal({
           }}
         />
       )}
-    </div>
+    </div>,
+    document.body
   );
 }

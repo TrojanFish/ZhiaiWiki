@@ -408,12 +408,12 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
       </div>
 
       {/* Public Welfare Love-Relay & Donation Banner */}
-      <div className="mt-5 relative z-10">
+      <div className="mt-5">
         <PublicWelfareBanner sourceContext="profile" />
       </div>
 
       {/* Legal Disclaimer Guardrail Card */}
-      <div className="mt-5 relative z-10">
+      <div className="mt-5">
         <LegalDisclaimerBadge variant="card" />
       </div>
 

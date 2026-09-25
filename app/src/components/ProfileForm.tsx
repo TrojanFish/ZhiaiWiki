@@ -72,9 +72,9 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
       age: form.age || 50,
       gender: form.gender || "female",
       stage: form.stage || "IA1",
-      tumorSize: (form.tumorSize || 15) / 10,
-      solidSize: (form.solidSize || 6) / 10,
-      ctr: form.ctr || (form.solidSize && form.tumorSize ? form.solidSize / form.tumorSize : 0.4),
+      tumorSize: (form.tumorSize ?? 15) / 10,
+      solidSize: (form.solidSize ?? (form.morphology === "pure_ggo" ? 0 : 6)) / 10,
+      ctr: form.ctr ?? (form.solidSize != null && form.tumorSize ? (form.tumorSize > 0 ? form.solidSize / form.tumorSize : 0) : (form.morphology === "pure_ggo" ? 0 : 0.4)),
       morphology: form.morphology || "mixed_ggo",
       stas: form.stas || "unknown",
       lvi: form.lvi || "unknown",
@@ -618,8 +618,9 @@ function Step3({ form, updateForm }: StepProps) {
         <FormField label={
           <div className="flex items-center justify-between">
             <span>CT 实性成分最大径（mm）</span>
-            {form.morphology === "pure_ggo" && <span className="text-xs text-emerald-600 font-bold">锁定为 0</span>}
-            {form.morphology === "pure_solid" && <span className="text-xs text-blue-600 font-bold">锁定同总径</span>}
+            {form.morphology === "pure_ggo" && <span className="text-xs text-emerald-600 font-bold">纯磨玻璃 (0mm)</span>}
+            {form.morphology === "pure_solid" && <span className="text-xs text-blue-600 font-bold">纯实性 (同总径)</span>}
+            {form.morphology === "mixed_ggo" && <span className="text-xs text-teal-600 font-bold">部分实性 (可直接修改)</span>}
           </div>
         }>
           <input
@@ -628,36 +629,41 @@ function Step3({ form, updateForm }: StepProps) {
             step="1"
             min="0"
             max="150"
-            disabled={form.morphology === "pure_ggo" || form.morphology === "pure_solid"}
             value={
-              form.morphology === "pure_ggo"
+              form.solidSize !== undefined && form.solidSize !== null
+                ? form.solidSize
+                : form.morphology === "pure_ggo"
                 ? 0
-                : form.morphology === "pure_solid"
-                ? (form.tumorSize !== undefined && form.tumorSize !== null ? form.tumorSize : "")
-                : (form.solidSize !== undefined && form.solidSize !== null ? form.solidSize : "")
+                : form.morphology === "pure_solid" && form.tumorSize
+                ? form.tumorSize
+                : ""
             }
             onChange={(e) => {
-              if (form.morphology !== "pure_ggo" && form.morphology !== "pure_solid") {
-                const str = e.target.value;
-                const v = str === "" ? 0 : parseFloat(str);
-                updateForm("solidSize", isNaN(v) ? 0 : v);
-                if (form.tumorSize && form.tumorSize > 0) {
-                  updateForm("ctr", Math.round((v / form.tumorSize) * 100) / 100);
+              const str = e.target.value;
+              const v = str === "" ? 0 : parseFloat(str);
+              const solidVal = isNaN(v) ? 0 : v;
+              updateForm("solidSize", solidVal);
+
+              const tumorVal = form.tumorSize || 0;
+              if (str === "") {
+                // Keep current morphology
+              } else if (solidVal === 0) {
+                updateForm("morphology", "pure_ggo");
+                updateForm("ctr", 0);
+              } else if (tumorVal > 0) {
+                if (solidVal >= tumorVal) {
+                  updateForm("morphology", "pure_solid");
+                  updateForm("ctr", 1.0);
+                } else {
+                  updateForm("morphology", "mixed_ggo");
+                  updateForm("ctr", Math.round((solidVal / tumorVal) * 100) / 100);
                 }
+              } else {
+                updateForm("morphology", "mixed_ggo");
               }
             }}
-            placeholder={
-              form.morphology === "pure_ggo"
-                ? "纯磨玻璃无实性成分 (0)"
-                : form.morphology === "pure_solid"
-                ? "同总径"
-                : "例如：8"
-            }
-            className={`input-artifact w-full px-4 py-3 rounded-lg ${
-              form.morphology === "pure_ggo" || form.morphology === "pure_solid"
-                ? "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
-                : ""
-            }`}
+            placeholder="例如：8 (纯磨填0，纯实性填同总径)"
+            className="input-artifact w-full px-4 py-3 rounded-lg"
           />
         </FormField>
       </div>

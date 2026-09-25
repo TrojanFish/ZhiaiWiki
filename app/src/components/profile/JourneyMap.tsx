@@ -51,22 +51,22 @@ export default function JourneyMap({
     <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
       
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
+      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-4 border-b border-slate-100">
+        <div className="flex items-start gap-2.5 min-w-0 flex-1">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 self-start aspect-square mt-0.5 shadow-2xs">
             <Compass className="w-4 h-4" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-sm font-bold text-slate-900 leading-snug">
               诊疗旅程定位 (Dual-Track Journey Map)
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
               医学规范干预与心理循证重建协同推进
             </p>
           </div>
         </div>
 
-        <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 shrink-0 whitespace-nowrap">
+        <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 shrink-0 self-start sm:self-center whitespace-nowrap">
           Cancer Journey OS
         </span>
       </div>

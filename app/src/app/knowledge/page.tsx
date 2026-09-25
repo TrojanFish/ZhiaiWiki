@@ -123,7 +123,7 @@ export default function KnowledgePage() {
       </header>
 
       {/* Knowledge Map */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-8 sm:pb-12 space-y-4">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         <div className="bg-white rounded-3xl p-2 border border-slate-200/90 shadow-xl shadow-slate-900/5">
           {profileLoaded && <KnowledgeMapPreview profile={profile} cancerType={cancerType} />}
         </div>

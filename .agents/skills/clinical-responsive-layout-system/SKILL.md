@@ -386,6 +386,19 @@ export default function StandardPageTemplate() {
   }
   ```
 
+### 9.5 全局模态框与 React Portal 逃逸规则 (Portal Stacking Context Escape)
+* **CSS 层叠上下文陷阱 (Stacking Context Trap)**：
+  当弹窗组件直接渲染在局部组件树中，若任何祖先元素设置了 `position: relative; z-index: 10;` 或 `transform`、`filter`、`overflow-hidden`，该弹窗即使设置了 `fixed inset-0 z-[9999]` 也**无法逃逸局部层叠上下文**！兄弟组件若同样具有 `relative z-10` 且在 DOM 树靠后，其内容会**直接覆盖并阻断弹窗内容**（如免责声明卡片强行盖在赞赏码上方）。
+* ✅ **微细节硬规范**：
+  - 全站所有全局弹窗（Modal / Dialog / Drawer）**必须统一使用 `createPortal(..., document.body)` 挂载到根节点**；
+  - 必须配合 `mounted` 挂载守卫以防御 Next.js SSR 水合不一致：
+    ```tsx
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+    if (!isOpen || !mounted) return null;
+    return createPortal(<div className="fixed inset-0 z-[9999] ...">...</div>, document.body);
+    ```
+
 ---
 
 ## 10. 反模式黑名单 (Anti-Patterns Prohibited)
@@ -399,9 +412,12 @@ export default function StandardPageTemplate() {
 | 胶囊 Badge 内文字超过 15 字且未配响应式折叠 | 在 393px 手机屏上右侧文字被直接切掉或发生粗暴折行 | 次级说明配置 `hidden xs:inline-block`，外层配置 `max-w-full` |
 | 在 Canvas 导出卡片容器上使用 `shadow-xs` / `shadow-2xl` | Canvas 栅格化产生严重亚像素灰黑色阴影伪影 | 移除所有 shadow，改用 `border border-slate-200` 纯线框 |
 | 导出卡片 Logo 容器使用 `bg-slate-100` 底色 | 0.5px 亚像素舍入导致右侧缝隙露出灰色杂边 | 统一固化为纯白 `bg-white` |
-| `pb-24` / `pb-16` (在 main 上) | 页面触底前产生冗长空洞，手机端极易产生手势疲劳 | `pb-8 sm:pb-12` |
-| `mb-16` / `mt-16` (在通用模块间) | 造成页面模块间严重的视觉撕裂感 | `mb-8 sm:mb-12` 或 `space-y-5 sm:space-y-6` |
-| `p-6` / `p-8` (移动端卡片直接使用) | 挤占手机横向 30% 面积，导致核心文本折行断裂 | `p-4 sm:p-5 md:p-8` |
+| `pb-24` / `pb-16` (在 main 上) | 页面触底前产生冗长空洞，手机端极易产生手势疲劳 | `pb-12 sm:pb-16` |
+| `mb-6` / `mb-8` 碎片化散落在各个卡片外层 | 造成手机端卡片框间距时大时小（部分 0px，部分 24px） | 容器统合 `space-y-4 sm:space-y-5 md:space-y-6`，卡片自身零外部纵向外距 |
+| 弹窗组件未使用 `createPortal` 挂载至 `document.body` | 被父级 `relative z-10` 锁死局部层叠上下文，导致后续兄弟卡片与底部导航遮挡弹窗 | 必须使用 `createPortal(..., document.body)` 配合 `mounted` 挂载锁 |
+| Flex 横排中的图标未配 `shrink-0 self-start aspect-square` | 右侧文本多行折行时，图标容器被 `align-items: stretch` 强行拉伸成长条椭圆 | 添加 `shrink-0 self-start aspect-square` 锁死正方形徽章 |
+| 双 CTA 按钮未配统一固定高度 | 一有边框一无边框，移动端并排或折行时高度相差 2px~4px | 统一配置 `h-12` (48px) 与 `rounded-2xl` |
+| 移动端 4 列以上大表格直接硬撑 | 手机横向仅 390px，单元格被挤压成每行仅 1 个汉字且底栏遮挡 | 移动端自动降级为卡片堆叠 (`sm:hidden`)，桌面端保留横滑表格 (`hidden sm:block`) |
 | 弹窗容器使用 `z-50` | 与桌面导航栏同层竞争，引发遮罩穿模 | 统一提升为 `z-[9999]` |
 | 移动端抽屉未配 `env(safe-area-bottom)` | 底部按钮被 iPhone 底部手势横条遮挡并误触 | `pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]` 或 `pb-safe` |
 | 异步数据加载直接无条件调用 `setShowUploader(false)` | 产生竞态条件，将用户刚刚打开的校对向导当场关闭 | 使用 `showUploaderRef` / `editModeRef` 引用锁做挂载守卫 |
@@ -413,11 +429,15 @@ export default function StandardPageTemplate() {
 任何修改或新建 UI 代码提交前，必须逐项核对：
 
 - [ ] **顶部避让校验**：页面主容器或 Header 是否已采用 `pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24`？
-- [ ] **触底距离校验**：页面主容器底部是否已统一为 `pb-8 sm:pb-12`，且不存在冗余双重嵌套？
+- [ ] **触底距离校验**：页面主容器底部是否已统一为 `pb-12 sm:pb-16`，彻底杜绝内容被移动端底栏截断？
+- [ ] **卡片间距规范校验**：卡片间距是否统一由外层容器的 `space-y-4 sm:space-y-5 md:space-y-6` 阶梯驱动，杜绝零散 `mb-6`？
+- [ ] **模态框 Portal 校验**：所有遮罩模态框是否已通过 `createPortal(..., document.body)` 挂载，彻底摆脱层叠上下文陷阱？
+- [ ] **图标自适应正方形校验**：列表与卡片头部的指示图标是否配备 `shrink-0 self-start aspect-square`？
+- [ ] **CTA 按钮触控标准校验**：核心操作按钮是否统一采用 `h-12`（48px 触控面积）与 `rounded-2xl`？
+- [ ] **复杂表格响应式降级校验**：列数 $\ge 4$ 的表格是否具备移动端卡片化降级视图？
 - [ ] **移动端标题排版校验**：中文长标题是否采用 `text-2xl` 并消除孤字末行折行？
 - [ ] **胶囊徽章响应式校验**：顶部 Badge 次级文案是否已设置 `hidden xs:inline-block` 防止小屏溢出？
 - [ ] **导出卡片渲染校验**：海报导出组件是否已 100% 移除 `shadow-*` 投影并采用纯色边框？
 - [ ] **交互状态锁校验**：向导与编辑模式是否具备 `useRef` 状态锁，防止异步加载闪退？
-- [ ] **安全区避让校验**：弹窗与抽屉是否配备 `pb-safe` 或动态 `env(safe-area-inset-bottom)`？
 - [ ] **自动化测试与真机视觉校验**：运行 `npm run test:unit` 全部通过，并可通过 `scripts/capture-visual-audit.ps1` 进行双端真实截图验收？
 

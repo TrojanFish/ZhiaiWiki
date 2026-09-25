@@ -471,30 +471,30 @@ export function TumorMarkersCard({
               })}
             </div>
 
-            {/* Chart / Table Toggle */}
-            <div className="inline-flex bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-2xs font-semibold self-start sm:self-auto shrink-0">
+            {/* Chart / Table Toggle (Standardized Segmented Capsule Dock) */}
+            <div className="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/90 text-xs font-bold self-start sm:self-auto shrink-0 shadow-2xs">
               <button
                 type="button"
                 onClick={() => setTrendSubView("chart")}
-                className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   trendSubView === "chart"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-500 hover:text-slate-800"
+                    ? "bg-white text-slate-900 shadow-xs font-extrabold"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <TrendingUp className="w-3 h-3 inline mr-1" />
+                <TrendingUp className="w-3.5 h-3.5 shrink-0" />
                 <span>趋势折线</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTrendSubView("table")}
-                className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   trendSubView === "table"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-500 hover:text-slate-800"
+                    ? "bg-white text-slate-900 shadow-xs font-extrabold"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <TableIcon className="w-3 h-3 inline mr-1" />
+                <TableIcon className="w-3.5 h-3.5 shrink-0" />
                 <span>明细表格</span>
               </button>
             </div>

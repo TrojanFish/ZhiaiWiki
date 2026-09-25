@@ -477,7 +477,7 @@ export default function HomePage() {
 
             
             {/* Left Column: Headline, Trust Badge & CTAs */}
-            <div className="lg:col-span-7 text-left space-y-5 sm:space-y-6">
+            <div className="lg:col-span-7 text-left space-y-4 sm:space-y-5 md:space-y-6">
               
               {/* Brand Manifesto & Dual-Language Slogan */}
               <div className="space-y-1 sm:space-y-1.5 animate-fade-in-up">
@@ -513,17 +513,17 @@ export default function HomePage() {
               </p>
 
               {/* Dual Funnel CTA Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3.5 pt-1 sm:pt-2 animate-fade-in-up stagger-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5 pt-1 sm:pt-2 animate-fade-in-up stagger-3">
                 <Link
                   href="/profile"
-                  className="btn-primary min-w-[200px] px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+                  className="btn-primary min-w-[200px] h-12 px-6 sm:px-7 rounded-2xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center active:scale-98"
                 >
                   <FileText className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                   <span suppressHydrationWarning>{hasProfile || userEmail ? "进入我的临床数字档案" : "建立临床数字档案"}</span>
                 </Link>
                 <Link
                   href="/wiki"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:text-blue-700 transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
+                  className="min-w-[200px] h-12 px-6 sm:px-7 rounded-2xl text-sm sm:text-base font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:text-blue-700 transition-all flex items-center justify-center gap-2 cursor-pointer text-center active:scale-98"
                 >
                   <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
                   <span>免录入 · 查40+循证词条</span>

@@ -815,12 +815,12 @@ export default function PatientDashboard() {
     : '混合磨玻璃结节 (mGGO)';
 
   return (
-    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pb-6">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
       <ConsentModal />
       
       {/* Demo Template Active Notification Banner */}
       {loadedTemplate && (
-        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-2xs">
               <FileCheck2 className="w-5 h-5 text-white" />
@@ -861,7 +861,7 @@ export default function PatientDashboard() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
             患者临床数字档案
@@ -967,7 +967,7 @@ export default function PatientDashboard() {
 
       {/* IASLC 9th Edition Version Bridge Notice Banner */}
       {profile.versionBridgeNotice && (
-        <div className="mb-6 p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-teal-50/90 via-emerald-50/80 to-sky-50/70 border border-teal-200 shadow-2xs flex items-start gap-3 animate-fade-in">
+        <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-teal-50/90 via-emerald-50/80 to-sky-50/70 border border-teal-200 shadow-2xs flex items-start gap-3 animate-fade-in">
           <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 mt-0.5">
             <GitBranch className="w-4 h-4" />
           </div>
@@ -984,7 +984,7 @@ export default function PatientDashboard() {
       )}
 
       {/* 2x2 Bento Grid Clinical Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
         
         {/* Bento Box 1: Primary Imaging & Morphology (T-Staging / BI-RADS) */}
         <div className="bg-white rounded-3xl p-4 sm:p-6 md:p-7 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-colors duration-200">
@@ -2195,44 +2195,34 @@ export default function PatientDashboard() {
 
       {/* Pulmonary Nodule Growth Dynamic VDT Trajectory (Lung Cancer only) */}
       {!isBreast && !isColorectal && profile.followUpHistory && profile.followUpHistory.length > 0 && (
-        <div className="mb-6">
-          <NoduleTimelineChart
-            history={profile.followUpHistory}
-            profile={profile}
-          />
-        </div>
+        <NoduleTimelineChart
+          history={profile.followUpHistory}
+          profile={profile}
+        />
       )}
 
       {/* Serum Biomarkers Monitoring & Longitudinal Trend (Multi-Cancer: Lung, Breast & Colorectal) */}
-      <div className="mb-6">
-        <TumorMarkersCard
-          markers={profile.tumorMarkers}
-          markersHistory={profile.tumorMarkersHistory}
-          gender={profile.gender || profile.sex}
-          cancerType={profile.cancerType || activeType}
-        />
-      </div>
+      <TumorMarkersCard
+        markers={profile.tumorMarkers}
+        markersHistory={profile.tumorMarkersHistory}
+        gender={profile.gender || profile.sex}
+        cancerType={profile.cancerType || activeType}
+      />
 
       {/* Molecular Pathology & Driver Genes NGS Panel (Lung Cancer) */}
       {!isBreast && !isColorectal && ((profile.geneMutations && profile.geneMutations.length > 0) || profile.egfr === 'positive' || profile.molecular) && (
-        <div className="mb-6">
-          <MolecularProfileCard
-            profile={profile}
-            onOpenDdiModal={() => setShowDdiModal(true)}
-            onOpenEdit={() => setShowUpdateModal(true)}
-          />
-        </div>
+        <MolecularProfileCard
+          profile={profile}
+          onOpenDdiModal={() => setShowDdiModal(true)}
+          onOpenEdit={() => setShowUpdateModal(true)}
+        />
       )}
 
       {/* Multidisciplinary Team (MDT) Consultation & Precision Roadmap Suite */}
-      <div className="mb-6">
-        <MdtConsultationHub profile={profile} />
-      </div>
+      <MdtConsultationHub profile={profile} />
 
       {/* Similar Cases & Cohorts Prognosis (5-Yr RFS/OS & Warm Empathy Words) */}
-      <div className="mb-6">
-        <SimilarCasesCard profile={profile} />
-      </div>
+      <SimilarCasesCard profile={profile} />
 
       {/* Profile Update Intent Router Modal (方案 A: 意图分流弹窗) */}
 

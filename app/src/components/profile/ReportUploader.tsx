@@ -400,9 +400,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       tStage: base.tStage || "T1a",
       nStage: base.nStage || "N0",
       mStage: base.mStage || "M0",
-      tumorSize: base.tumorSize || 1.5,
-      solidSize: base.solidSize || 0.8,
-      ctr: base.ctr || 0.53,
+      tumorSize: base.tumorSize ?? 1.5,
+      solidSize: base.solidSize ?? 0.8,
+      ctr: base.ctr ?? 0.53,
       noduleType: base.noduleType || "mixed_ggo",
       surgeryType: base.surgeryType || "unknown",
       currentStage: base.currentStage || "discovery",
@@ -1072,14 +1072,16 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     value={parsedData.tumorSize !== undefined && parsedData.tumorSize !== null ? parsedData.tumorSize : ""} 
                     onChange={e => {
                       const val = e.target.value;
-                      if (isPureSolid) {
+                      const tumorNum = parseFloat(val);
+                      const solidNum = parseFloat(String(parsedData.solidSize));
+                      if (parsedData.noduleType === "pure_solid") {
                         setParsedData({
                           ...parsedData,
                           tumorSize: val,
                           solidSize: val,
                           ctr: val ? 1.0 : null
                         });
-                      } else if (isPureGgo) {
+                      } else if (parsedData.noduleType === "pure_ggo") {
                         setParsedData({
                           ...parsedData,
                           tumorSize: val,
@@ -1087,9 +1089,13 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                           ctr: 0
                         });
                       } else {
+                        const newCtr = !isNaN(tumorNum) && tumorNum > 0 && !isNaN(solidNum) 
+                          ? Math.min(1, Math.round((solidNum / tumorNum) * 100) / 100) 
+                          : parsedData.ctr;
                         setParsedData({
                           ...parsedData,
-                          tumorSize: val
+                          tumorSize: val,
+                          ctr: newCtr
                         });
                       }
                     }}
@@ -1102,44 +1108,67 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
                     <span>CT 实性成分最大径 (cm)</span>
                     {isPureGgo && (
-                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                        锁定为 0
+                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                        纯磨玻璃 (0 cm)
                       </span>
                     )}
                     {isPureSolid && (
-                      <span className="text-[10px] text-blue-700 font-bold bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">
-                        锁定同总径
+                      <span className="text-[10px] text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                        纯实性 (同全径)
+                      </span>
+                    )}
+                    {!isPureGgo && !isPureSolid && (
+                      <span className="text-[10px] text-teal-700 font-bold bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
+                        部分实性 (可直接修改)
                       </span>
                     )}
                   </label>
                   <input 
                     type="text" 
                     inputMode="decimal"
-                    disabled={isPureGgo || isPureSolid}
                     value={
-                      isPureGgo 
-                        ? "0" 
-                        : isPureSolid 
-                        ? (parsedData.tumorSize !== undefined && parsedData.tumorSize !== null ? parsedData.tumorSize : "") 
-                        : (parsedData.solidSize !== undefined && parsedData.solidSize !== null ? parsedData.solidSize : "")
+                      parsedData.solidSize !== undefined && parsedData.solidSize !== null && parsedData.solidSize !== ""
+                        ? parsedData.solidSize
+                        : isPureGgo
+                        ? "0"
+                        : isPureSolid && parsedData.tumorSize
+                        ? parsedData.tumorSize
+                        : ""
                     } 
                     onChange={e => {
-                      if (!isPureGgo && !isPureSolid) {
-                        setParsedData({...parsedData, solidSize: e.target.value});
+                      const val = e.target.value;
+                      const solidNum = parseFloat(val);
+                      const tumorNum = parseFloat(String(parsedData.tumorSize));
+
+                      let newNoduleType = parsedData.noduleType || "mixed_ggo";
+                      let newCtr = parsedData.ctr;
+
+                      if (val === "" || isNaN(solidNum)) {
+                        newCtr = null;
+                      } else if (solidNum === 0) {
+                        newNoduleType = "pure_ggo";
+                        newCtr = 0;
+                      } else if (!isNaN(tumorNum) && tumorNum > 0) {
+                        if (solidNum >= tumorNum) {
+                          newNoduleType = "pure_solid";
+                          newCtr = 1.0;
+                        } else {
+                          newNoduleType = "mixed_ggo";
+                          newCtr = Math.min(1, Math.round((solidNum / tumorNum) * 100) / 100);
+                        }
+                      } else {
+                        newNoduleType = "mixed_ggo";
                       }
+
+                      setParsedData({
+                        ...parsedData,
+                        solidSize: val,
+                        noduleType: newNoduleType,
+                        ctr: newCtr
+                      });
                     }}
-                    className={`w-full h-10 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors font-mono ${
-                      isPureGgo || isPureSolid
-                        ? "bg-slate-100/90 border border-slate-200 text-slate-500 cursor-not-allowed select-none"
-                        : "bg-white border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
-                    }`}
-                    placeholder={
-                      isPureGgo
-                        ? "纯磨玻璃无实性成分 (0 cm)"
-                        : isPureSolid
-                        ? "纯实性病灶 (同总径)"
-                        : "未提供可留空，如: 0.8"
-                    }
+                    className="w-full h-10 px-3 py-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs sm:text-sm font-semibold transition-colors font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                    placeholder="未提供可留空，如: 0.8 (纯磨填0，纯实性填同总径)"
                   />
                 </div>
               </div>

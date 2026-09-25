@@ -618,8 +618,8 @@ export default function ReimbursementPage() {
         </div>
       </header>
 
-      {/* Main Content Area (Standard max-w-7xl) */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-8 sm:pb-12 space-y-5 sm:space-y-6">
+      {/* Main Content Area (Standard max-w-7xl with Responsive Card Rhythm) */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         
         {/* Segmented Navigation Tabs Bar (Scrollable) */}
         <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
@@ -1044,10 +1044,10 @@ export default function ReimbursementPage() {
 
         {/* TAB 2: COMPREHENSIVE 16 DRUGS REIMBURSEMENT LIMITS TABLE */}
         {activeTab === "reimbursement_table" && (
-          <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200 shadow-sm space-y-6 animate-fade-in">
-            <div className="border-b border-slate-100 pb-4">
-              <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-blue-600" />
+          <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200 shadow-sm space-y-4 sm:space-y-6 animate-fade-in">
+            <div className="border-b border-slate-100 pb-3.5 sm:pb-4">
+              <h2 className="text-base sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0" />
                 <span>{meta.tableTitle}</span>
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -1055,8 +1055,43 @@ export default function ReimbursementPage() {
               </p>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-left text-xs border-collapse">
+            {/* Mobile Card Stacking View (sm:hidden) */}
+            <div className="sm:hidden space-y-3">
+              {currentPolicies.map((drug) => (
+                <div key={drug.id} className="p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/90 space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-extrabold text-slate-900 text-sm leading-snug">{drug.name}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5 truncate">{drug.genericName} · {drug.target}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-mono font-black text-blue-600 text-xs">¥{drug.negotiatedPrice}</div>
+                      <span className="text-[10px] text-slate-400">/月医保基准</span>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200/60 text-xs leading-relaxed text-slate-700 space-y-0.5">
+                    <span className="font-bold text-emerald-900 block text-[11px]">医保限定支付 (可报销)：</span>
+                    <p className="text-[11px] leading-relaxed text-slate-700">{drug.reimbursementLimits}</p>
+                  </div>
+
+                  {drug.offLabelNotice ? (
+                    <div className="p-2.5 rounded-lg bg-rose-50/70 border border-rose-200/60 text-xs leading-relaxed text-rose-800 space-y-0.5">
+                      <span className="font-bold block text-[11px] text-rose-900">自费红线提示：</span>
+                      <p className="text-[11px] leading-relaxed font-medium">{drug.offLabelNotice}</p>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-slate-400 pl-1">
+                      自费提示：无对应基因靶点或超说明书用药不予医保支付
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View (hidden sm:block) */}
+            <div className="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200">
+              <table className="w-full min-w-[640px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                     <th className="p-3.5">药品名称 / 通用名</th>

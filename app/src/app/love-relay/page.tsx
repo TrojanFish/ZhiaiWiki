@@ -93,7 +93,7 @@ export default function LoveRelayPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 selection:bg-teal-500 selection:text-white">
-      <main className="flex-1 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 px-3.5 sm:px-6 lg:px-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full space-y-4 sm:space-y-5 md:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8">
         
         {/* Breadcrumb & Navigation */}
         <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
