@@ -360,9 +360,11 @@ export default function PatientDashboard() {
       const data = await res.json();
       if (data && data.profile) {
         setProfile(data.profile);
-        setShowUploader(false);
-        setEditMode(null);
-        setShowUpdateModal(false);
+        // Only clear uploader/edit mode if not actively interacting
+        if (!editMode && !showUpdateModal) {
+          setShowUploader(false);
+          setEditMode(null);
+        }
         saveProfileToSlot(data.profile, slot);
         if (Array.isArray(data.availableSlots)) {
           const merged = Array.from(new Set([...getAvailableProfileSlots(), ...data.availableSlots])) as CancerType[];
@@ -859,7 +861,11 @@ export default function PatientDashboard() {
         <div className="flex items-center bg-slate-100/80 p-1 sm:p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs self-start sm:self-center shrink-0">
           {/* 1. 校对指标 (Primary Core Action - White elevated pill with Blue accent) */}
           <button 
-            onClick={() => setShowUpdateModal(true)}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowUpdateModal(true);
+            }}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-blue-700 bg-white hover:bg-blue-50/80 border border-blue-200/60 shadow-2xs text-xs font-bold transition-all active:scale-95 cursor-pointer"
             title="校对或更新患者病理、分期与临床指标"
           >
@@ -1010,7 +1016,10 @@ export default function PatientDashboard() {
                 <div className="pt-1 flex items-center justify-center gap-2 flex-wrap">
                   <button
                     type="button"
-                    onClick={() => setShowUpdateModal(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowUpdateModal(true);
+                    }}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer ${
                       isBreast ? 'bg-pink-600 hover:bg-pink-700' : isColorectal ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-sky-600 hover:bg-sky-700'
                     }`}
@@ -2201,7 +2210,11 @@ export default function PatientDashboard() {
       {/* Profile Update Intent Router Modal (3-Tier Standard Architecture) */}
       {showUpdateModal && (
         <div 
-          onClick={() => setShowUpdateModal(false)}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowUpdateModal(false);
+            }
+          }}
           className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 
@@ -2311,7 +2324,11 @@ export default function PatientDashboard() {
       {/* PIPL Right-to-be-Forgotten Wipe Confirmation Modal (3-Tier Standard Architecture) */}
       {showDeleteModal && (
         <div 
-          onClick={() => setShowDeleteModal(false)}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowDeleteModal(false);
+            }
+          }}
           className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
         >
           <div 

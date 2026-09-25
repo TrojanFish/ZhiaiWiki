@@ -24,6 +24,7 @@ import LangSwitch from "@/components/LangSwitch";
 import CancerSwitch, { useCancerType, CANCER_TYPE_OPTIONS } from "@/components/common/CancerSwitch";
 import { CancerIcon } from "@/components/common/CancerIcons";
 import SettingsModal from "@/components/SettingsModal";
+import PublicWelfareDonationModal from "@/components/common/PublicWelfareDonationModal";
 
 import ZhiaiWikiLogo from "@/components/common/ZhiaiWikiLogo";
 
@@ -457,78 +458,13 @@ export default function SubpageNavbar() {
         </div>
       )}
 
-      {/* Coffee / Sponsorship Modal (iOS Bottom Sheet on Mobile, Centered Dialog on Desktop) */}
-      {coffeeModalOpen && (
-        <div 
-          onClick={() => setCoffeeModalOpen(false)}
-          className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 cursor-pointer animate-fade-in overflow-hidden sm:overflow-y-auto"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: "384px", width: "100%" }}
-            className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-7 sm:max-w-sm w-full border-t sm:border border-slate-200/90 shadow-2xl flex flex-col items-center text-center space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-7 max-h-[92vh] overflow-y-auto mx-auto"
-          >
-            {/* iOS HIG Sheet Grabber for Mobile */}
-            <div className="sm:hidden -mt-2 mb-1 flex justify-center shrink-0 w-full">
-              <div className="sheet-grabber !my-0" />
-            </div>
-            {/* Modal Header */}
-            <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
-                  <Coffee className="w-4 h-4 animate-coffee-wiggle" />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-sm font-extrabold text-slate-900">请作者喝杯咖啡</h3>
-                  <p className="text-[11px] text-slate-400">自愿赞赏 · 助力公益循证长久运转</p>
-                </div>
-              </div>
-              <button 
-                type="button"
-                onClick={() => setCoffeeModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center cursor-pointer transition-colors"
-                aria-label="关闭弹窗"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* QR Card */}
-            <div className="w-full bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col items-center space-y-2">
-              <div className="w-60 h-60 max-w-full bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/sponsor_qr.png?v=2026" 
-                  alt="给 Keiyee 赞赏" 
-                  className="w-full h-full object-contain rounded-lg"
-                />
-              </div>
-              <div className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
-                <span>微信扫一扫 · 金额随心</span>
-              </div>
-            </div>
-
-            {/* Purpose & Promise */}
-            <div className="text-xs text-slate-500 leading-relaxed text-left bg-amber-50/50 p-3 rounded-xl border border-amber-100/80 space-y-1">
-              <div className="font-bold text-amber-950 flex items-center gap-1 text-[11px]">
-                <Heart className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
-                <span>无商业广告 · 纯粹为病友服务</span>
-              </div>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                本平台核心功能永久免费。所有赞助将全额用于支付 VPS 服务器租用、国际域名维护以及大模型 Token 算力开销。感谢每一份温暖支持！
-              </p>
-            </div>
-
-            {/* Dismiss Button */}
-            <button
-              type="button"
-              onClick={() => setCoffeeModalOpen(false)}
-              className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
-            >
-              我知道了，谢谢你
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Unified Apple-Native Public Welfare & Coffee Sponsorship Modal */}
+      <PublicWelfareDonationModal
+        isOpen={coffeeModalOpen}
+        onClose={() => setCoffeeModalOpen(false)}
+        defaultTab="qr"
+        sourceContext="navbar"
+      />
 
       {/* Settings Modal (Preferences for Cancer Domain, Language & Evidence Guidelines) */}
       <SettingsModal

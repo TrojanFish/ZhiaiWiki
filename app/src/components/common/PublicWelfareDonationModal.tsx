@@ -32,9 +32,16 @@ interface PublicWelfareDonationModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTab?: "qr" | "ledger" | "relay";
-  sourceContext?: string; // 例如 "profile" 或 "wiki"
+  sourceContext?: string; // 例如 "navbar", "profile", "wiki", "love-relay"
 }
 
+/**
+ * 知癌维基 ZhiaiWiki · 请喝咖啡 / 公益赞赏模态框 (Apple iOS HIG 3-Tier Architecture)
+ * 1. Tier 1: Fixed Sticky Header (iOS HIG 握手条 + 磨砂圆钮 + 视网膜双行标)
+ * 2. Segmented Control: iOS 原生分段控制器 (自愿赞赏 / 运营账单 / 爱心接力)
+ * 3. Tier 2: Scrollable Body (弹性平滑滚动 + 苹果原生卡片排版)
+ * 4. Tier 3: Fixed Sticky Footer (固定吸底操作栏 + 免费公益保底承诺)
+ */
 export default function PublicWelfareDonationModal({
   isOpen,
   onClose,
@@ -49,6 +56,13 @@ export default function PublicWelfareDonationModal({
   const [relayList, setRelayList] = useState<LoveRelayItem[]>(LOVE_RELAY_ITEMS);
 
   const contactEmail = "2909138455@qq.com";
+
+  // 同步外部 defaultTab 变化
+  useEffect(() => {
+    if (isOpen && defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [isOpen, defaultTab]);
 
   // 拉取动态爱心接力列表
   useEffect(() => {
@@ -72,10 +86,11 @@ export default function PublicWelfareDonationModal({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
+      document.body.style.overflow = originalOverflow;
     };
   }, [isOpen, onClose]);
 
@@ -114,137 +129,158 @@ export default function PublicWelfareDonationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-      {/* Modal Container */}
+    <div 
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto cursor-pointer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="donation-modal-title"
+    >
+      {/* 弹窗主体容器 (Apple iOS HIG 3-Tier Architecture) */}
       <div 
-        className="relative w-full max-w-2xl max-h-[92vh] flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-xl md:max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200/90 shadow-2xl flex flex-col max-h-[92vh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 overflow-hidden cursor-default"
       >
-        {/* Top Decorative Gradient Line */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-teal-500 via-sky-500 to-rose-400 shrink-0" />
+        {/* iOS HIG Sheet Grabber for Mobile */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+          <div className="sheet-grabber !my-0" />
+        </div>
 
-        {/* Modal Header */}
-        <div className="px-5 sm:px-7 pt-5 pb-4 border-b border-slate-100 flex items-start justify-between gap-3 shrink-0">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-teal-50 text-teal-800 text-xs font-extrabold border border-teal-200">
-              <HeartHandshake className="w-3.5 h-3.5 text-teal-600" />
-              <span>纯学术开源 · 永久无商业广告</span>
+        {/* Tier 1: Fixed Sticky Header (固定吸顶) */}
+        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-50 to-orange-50 border border-amber-200/70 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+              <Coffee className="w-4.5 h-4.5 animate-coffee-wiggle" />
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
-              因为淋过雨，想为迷茫的你撑一把伞
-            </h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              这里没有诱导消费与收费门槛。您的每一份心意，都将 100% 用于维持开源服务器与学术算力运转。
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 id="donation-modal-title" className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-snug truncate">
+                  请作者喝杯咖啡 · 自愿赞赏
+                </h3>
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200/60 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  纯学术开源
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                永久无商业广告 · 100% 用于开源算力与文献解析
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center transition-colors shrink-0"
+            className="w-8 h-8 rounded-full bg-slate-100/90 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-colors active:scale-95 cursor-pointer shrink-0"
+            aria-label="关闭窗口"
             title="关闭窗口"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="px-5 sm:px-7 pt-3 flex items-center gap-2 border-b border-slate-100 bg-slate-50/60 shrink-0">
-          <button
-            type="button"
-            onClick={() => setActiveTab("qr")}
-            className={`pb-2.5 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-1.5 ${
-              activeTab === "qr"
-                ? "border-teal-600 text-teal-700"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <QrCode className="w-4 h-4" />
-            <span>自愿赞赏扫码</span>
-          </button>
+        {/* Apple Native Segmented Control (iOS 原生圆角分段切换胶囊) */}
+        <div className="px-5 sm:px-6 pt-3 pb-1 bg-white shrink-0">
+          <div className="bg-slate-100/90 p-1 rounded-2xl flex items-center gap-1 border border-slate-200/60 shadow-inner">
+            <button
+              type="button"
+              onClick={() => setActiveTab("qr")}
+              className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
+                activeTab === "qr"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <QrCode className="w-3.5 h-3.5 text-amber-600" />
+              <span>自愿赞赏扫码</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("ledger")}
-            className={`pb-2.5 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-1.5 ${
-              activeTab === "ledger"
-                ? "border-teal-600 text-teal-700"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <Receipt className="w-4 h-4" />
-            <span>透明运营账单</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("ledger")}
+              className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
+                activeTab === "ledger"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Receipt className="w-3.5 h-3.5 text-blue-600" />
+              <span>透明运营账单</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("relay")}
-            className={`pb-2.5 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 flex items-center gap-1.5 ${
-              activeTab === "relay"
-                ? "border-teal-600 text-teal-700"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <MessageSquareHeart className="w-4 h-4" />
-            <span>抗癌爱心接力</span>
-            <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("relay")}
+              className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
+                activeTab === "relay"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <MessageSquareHeart className="w-3.5 h-3.5 text-rose-500" />
+              <span>抗癌爱心接力</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+            </button>
+          </div>
         </div>
 
-        {/* Scrollable Content Body */}
-        <div className="p-5 sm:p-7 overflow-y-auto space-y-6 flex-1">
+        {/* Tier 2: Scrollable Body (弹性可滚动内容区域) */}
+        <div className="p-5 sm:p-6 flex-1 overflow-y-auto custom-scrollbar space-y-4 sm:space-y-5">
           
           {/* TAB 1: QR & Donation Tiers */}
           {activeTab === "qr" && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5">
               
-              {/* Preset Tier Cards */}
+              {/* Preset Tier Cards (Apple-Native Segmented Grid) */}
               <div className="space-y-2">
-                <label className="text-xs font-extrabold text-slate-800 flex items-center justify-between">
-                  <span>选择心意档位（金额随心）</span>
-                  <span className="text-[11px] text-teal-600 font-normal">支持微信扫码赞赏</span>
-                </label>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-extrabold text-slate-800">选择心意档位（自愿随心）</span>
+                  <span className="text-[11px] text-amber-700 font-medium">支持微信扫码赞赏</span>
+                </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {DONATION_TIERS.map((tier) => {
                     const isSelected = selectedTier === tier.amount;
                     return (
-                      <div
+                      <button
                         key={tier.id}
+                        type="button"
                         onClick={() => setSelectedTier(tier.amount)}
-                        className={`relative rounded-2xl p-3 border text-left cursor-pointer transition-all ${
+                        className={`relative rounded-2xl p-3 border text-left transition-all cursor-pointer select-none ${
                           isSelected
-                            ? "bg-teal-50/80 border-teal-500 shadow-sm ring-1 ring-teal-500/50"
-                            : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                            ? "bg-amber-50/80 border-amber-400 shadow-xs ring-2 ring-amber-300/40 text-slate-900"
+                            : "bg-slate-50/60 border-slate-200/80 hover:bg-white hover:border-slate-300 text-slate-800"
                         }`}
                       >
                         {tier.popular && (
-                          <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded-md bg-teal-600 text-white text-[9px] font-black tracking-tight shadow-xs">
+                          <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded-md bg-amber-600 text-white text-[9px] font-black tracking-tight shadow-2xs">
                             最多病友选
                           </span>
                         )}
-                        <div className="text-xs font-bold text-slate-800 truncate">
+                        <div className="text-xs font-bold truncate">
                           {tier.title}
                         </div>
-                        <div className="text-base sm:text-lg font-black text-teal-700 font-mono mt-0.5">
+                        <div className="text-base sm:text-lg font-black text-amber-700 font-mono mt-0.5">
                           {tier.amount === "custom" ? "随心" : `¥${tier.amount}`}
                         </div>
                         <div className="text-[10px] text-slate-500 leading-tight mt-1 truncate">
                           {tier.supportDesc}
                         </div>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* QR Code Container */}
-              <div className="bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200 flex flex-col sm:flex-row items-center justify-center gap-6 text-center sm:text-left">
+              {/* QR Code Presentation (Apple Frosted Card) */}
+              <div className="bg-slate-50/70 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col sm:flex-row items-center justify-center gap-5 text-center sm:text-left">
                 
                 {/* QR Image Slot */}
                 <div 
-                  onClick={() => setIsQrZoomed(!isQrZoomed)}
-                  className="w-44 h-44 sm:w-48 sm:h-48 rounded-2xl bg-white p-3 border border-slate-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-teal-500 hover:shadow-md transition-all shrink-0"
+                  onClick={() => setIsQrZoomed(true)}
+                  className="w-44 h-44 sm:w-48 sm:h-48 rounded-2xl bg-white p-2.5 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400 hover:shadow-md transition-all shrink-0"
                   title="点击放大查看赞赏码"
                 >
                   <img
@@ -258,13 +294,13 @@ export default function PublicWelfareDonationModal({
                     }}
                   />
                   <div id="modal-qr-placeholder" className="hidden flex-col items-center justify-center text-slate-400 text-center p-2">
-                    <Coffee className="w-10 h-10 text-teal-600 mb-1.5" />
+                    <Coffee className="w-10 h-10 text-amber-600 mb-1.5" />
                     <span className="text-xs font-bold text-slate-700">自愿赞赏支持码</span>
                     <span className="text-[10px] text-slate-400 mt-1">微信扫码支持</span>
                   </div>
 
-                  <div className="absolute inset-0 bg-teal-950/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                    <span className="bg-white/95 text-teal-800 text-[11px] font-bold px-3 py-1 rounded-full shadow-sm backdrop-blur-xs flex items-center gap-1">
+                  <div className="absolute inset-0 bg-slate-950/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span className="bg-white/95 text-slate-800 text-[11px] font-bold px-3 py-1 rounded-full shadow-sm backdrop-blur-xs flex items-center gap-1">
                       <ZoomIn className="w-3.5 h-3.5" />
                       <span>点击放大</span>
                     </span>
@@ -272,17 +308,17 @@ export default function PublicWelfareDonationModal({
                 </div>
 
                 {/* QR Guide & Reassurance */}
-                <div className="space-y-3 max-w-xs">
+                <div className="space-y-3 max-w-xs text-left">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1 text-xs font-bold text-teal-700">
-                      <Smartphone className="w-3.5 h-3.5 text-teal-600" />
+                    <div className="inline-flex items-center gap-1 text-xs font-bold text-amber-700">
+                      <Smartphone className="w-3.5 h-3.5 text-amber-600" />
                       <span>长按保存或微信扫一扫</span>
                     </div>
                     <h4 className="text-sm font-bold text-slate-900">
                       支持开发者兼病友 Keiyee
                     </h4>
                     <p className="text-xs text-slate-500 leading-relaxed">
-                      若您在使用中得到了一丝力量，欢迎赞赏支持。所有资金流向均在旁侧账单中公开。
+                      若您在使用中得到了一丝力量与清晰方向，欢迎赞赏支持。所有资金流向均在旁侧账单中公开。
                     </p>
                   </div>
 
@@ -291,7 +327,7 @@ export default function PublicWelfareDonationModal({
                     <button
                       type="button"
                       onClick={handleCopyEmail}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-900 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:border-teal-300 transition-all"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 hover:text-amber-950 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs hover:border-amber-300 transition-all cursor-pointer active:scale-95"
                     >
                       {copiedEmail ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                       <span>{copiedEmail ? "已复制邮箱" : "复制创作者邮箱"}</span>
@@ -301,27 +337,27 @@ export default function PublicWelfareDonationModal({
 
               </div>
 
-              {/* Ergonomic Direct Link: WeChat Sponsored -> Leave Blessing */}
-              <div className="space-y-2">
+              {/* Action Button: WeChat Sponsored -> Leave Blessing */}
+              <div className="space-y-1.5">
                 <button
                   type="button"
                   onClick={() => setShowSubmitModal(true)}
-                  className="w-full py-3 px-4 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white text-xs sm:text-sm font-extrabold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                  className="w-full py-3 px-4 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-extrabold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                 >
-                  <HeartHandshake className="w-4.5 h-4.5 text-teal-100" />
+                  <HeartHandshake className="w-4.5 h-4.5 text-amber-100" />
                   <span>已微信赞赏？点此留下抗癌寄语上墙</span>
-                  <ArrowRight className="w-4 h-4 text-teal-200" />
+                  <ArrowRight className="w-4 h-4 text-amber-200" />
                 </button>
                 <p className="text-[11px] text-center text-slate-400">
                   赞赏金额随心 · 填写寄语后站长将为您点亮专属绿色认证徽章
                 </p>
               </div>
 
-              {/* Bottom Reassurance Banner */}
-              <div className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/70 text-xs text-amber-900 flex items-start gap-2 leading-relaxed">
-                <Heart className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              {/* Warm Reassurance Callout */}
+              <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900 flex items-start gap-2.5 leading-relaxed">
+                <Heart className="w-4 h-4 text-amber-600 shrink-0 mt-0.5 fill-amber-500/20" />
                 <div>
-                  <strong>不勉强原则</strong>：如果当前正面临经济压力或高昂的医疗支出，<strong>请千万不要打赏</strong>！多给自己和家人补充一份优质营养蛋白。您的健康痊愈，就是对开源项目最大的鼓励！
+                  <strong>不勉强原则</strong>：如果当前正面临就医与经济压力，<strong>请千万不要打赏</strong>！请将每一分钱优先用于患者自身的营养与规范治疗。您的健康痊愈，就是对开源项目最大的鼓励！
                 </div>
               </div>
 
@@ -330,7 +366,7 @@ export default function PublicWelfareDonationModal({
 
           {/* TAB 2: Transparent Operational Ledger */}
           {activeTab === "ledger" && (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div className="space-y-1">
                 <h4 className="text-sm font-black text-slate-900">平台刚性技术开支公示</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
@@ -338,19 +374,19 @@ export default function PublicWelfareDonationModal({
                 </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {OPERATING_COST_LEDGER.map((item, idx) => (
                   <div 
                     key={idx} 
-                    className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-teal-300 transition-colors flex items-start gap-3.5"
+                    className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 transition-colors flex items-start gap-3"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-teal-100/70 text-teal-700 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                    <div className="w-8 h-8 rounded-xl bg-blue-100/70 text-blue-700 flex items-center justify-center shrink-0 mt-0.5 font-bold">
                       {idx === 0 ? <Server className="w-4 h-4" /> : idx === 1 ? <Globe className="w-4 h-4" /> : idx === 2 ? <ShieldCheck className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-extrabold text-slate-900 truncate">{item.name}</span>
-                        <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200/60 shrink-0">
+                        <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60 shrink-0">
                           {item.monthlyCost}
                         </span>
                       </div>
@@ -369,8 +405,9 @@ export default function PublicWelfareDonationModal({
                 <button
                   type="button"
                   onClick={() => setActiveTab("qr")}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-4 py-2 rounded-xl border border-teal-200 transition-all"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100/80 px-4 py-2 rounded-xl border border-amber-200/80 transition-all cursor-pointer"
                 >
+                  <Coffee className="w-3.5 h-3.5" />
                   <span>支持服务器持续运转 · 前往赞赏</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -393,11 +430,11 @@ export default function PublicWelfareDonationModal({
                 </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {relayList.map((item) => (
                   <div 
                     key={item.id}
-                    className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-slate-50 border border-slate-200 space-y-2 hover:shadow-2xs transition-shadow"
+                    className="p-3.5 rounded-2xl bg-white border border-slate-200/80 space-y-2 shadow-2xs hover:shadow-xs transition-shadow"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
@@ -413,7 +450,7 @@ export default function PublicWelfareDonationModal({
                           {item.cancerTag}
                         </span>
                       </div>
-                      <span className="text-xs font-black text-teal-700 font-mono shrink-0">
+                      <span className="text-xs font-black text-amber-700 font-mono shrink-0">
                         支持 {item.amount}
                       </span>
                     </div>
@@ -433,11 +470,11 @@ export default function PublicWelfareDonationModal({
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-3 border-t border-slate-100">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowSubmitModal(true)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 px-4 py-2.5 rounded-xl shadow-xs transition-all cursor-pointer active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-xl shadow-xs transition-all cursor-pointer active:scale-95"
                 >
                   <HeartHandshake className="w-3.5 h-3.5" />
                   <span>已赞赏？点此留下抗癌寄语上墙</span>
@@ -445,7 +482,7 @@ export default function PublicWelfareDonationModal({
                 <button
                   type="button"
                   onClick={() => setActiveTab("qr")}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-4 py-2.5 rounded-xl border border-teal-200 transition-all cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-bold text-amber-800 hover:text-amber-950 bg-amber-50 hover:bg-amber-100/80 px-4 py-2.5 rounded-xl border border-amber-200/80 transition-all cursor-pointer"
                 >
                   <Coffee className="w-3.5 h-3.5" />
                   <span>去微信扫码赞赏支持</span>
@@ -456,36 +493,37 @@ export default function PublicWelfareDonationModal({
 
         </div>
 
-        {/* Modal Footer */}
-        <div className="px-5 sm:px-7 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 shrink-0">
-          <span className="text-[11px] text-slate-400">
-            所有核心功能 100% 永久免费使用
-          </span>
+        {/* Tier 3: Fixed Sticky Footer (Apple HIG 规范吸底栏) */}
+        <div className="px-5 sm:px-6 py-3.5 border-t border-slate-200 bg-white shrink-0 rounded-b-3xl shadow-[0_-6px_20px_rgba(0,0,0,0.05)] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="text-[11px] sm:text-xs">知癌维基全站功能永久免费开放</span>
+          </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 font-bold transition-all"
+            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0"
           >
-            我先看看，暂不赞赏
+            我知道了 / 关闭
           </button>
         </div>
 
       </div>
 
-      {/* Enlarged QR Modal (If clicked) */}
+      {/* Enlarged QR Modal (Apple Frosted Overlay) */}
       {isQrZoomed && (
         <div 
-          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in cursor-pointer"
+          className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in cursor-pointer"
           onClick={() => setIsQrZoomed(false)}
         >
-          <div className="bg-white p-6 rounded-3xl max-w-sm w-full text-center space-y-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white p-6 rounded-3xl max-w-sm w-full text-center space-y-4 shadow-2xl cursor-default" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-700">微信扫一扫 · 自愿赞赏</span>
               <button 
                 type="button" 
                 onClick={() => setIsQrZoomed(false)}
-                className="text-slate-400 hover:text-slate-800"
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -505,7 +543,7 @@ export default function PublicWelfareDonationModal({
                 setIsQrZoomed(false);
                 setShowSubmitModal(true);
               }}
-              className="w-full py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <HeartHandshake className="w-4 h-4" />
               <span>已微信赞赏？点此留下抗癌寄语上墙</span>

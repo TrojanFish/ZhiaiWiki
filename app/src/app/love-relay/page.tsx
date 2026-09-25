@@ -354,12 +354,17 @@ export default function LoveRelayPage() {
 
       </main>
 
-      {/* Floating Action Button (Mobile) */}
-      <div className="sm:hidden fixed bottom-18 right-4 z-40">
+      {/* Floating Action Button (Mobile) - Dynamic clearance above MobileBottomNav & Safe Area */}
+      <div 
+        className="sm:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px)+1rem)] right-4 z-40"
+        style={{
+          bottom: "calc(4.5rem + env(safe-area-inset-bottom, 0px) + 1rem)"
+        }}
+      >
         <button
           type="button"
           onClick={() => setSubmitModalOpen(true)}
-          className="w-12 h-12 rounded-full bg-teal-600 text-white shadow-lg flex items-center justify-center active:scale-95 cursor-pointer"
+          className="w-12 h-12 rounded-full bg-teal-600 hover:bg-teal-700 text-white shadow-xl flex items-center justify-center active:scale-95 cursor-pointer border border-teal-500/30 transition-all"
           title="留下抗癌寄语"
           aria-label="留下抗癌寄语"
         >
