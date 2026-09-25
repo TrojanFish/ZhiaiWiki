@@ -345,9 +345,9 @@ export default function WikiPage() {
 
         {/* Hero Section */}
         <section className="text-center space-y-4 pb-4">
-          <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200 shadow-xs">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full">
             <CancerIcon type={cancerType} className="w-4 h-4 text-sky-600 shrink-0" />
-            <span>
+            <span className="truncate">
               {cancerType === "esophageal"
                 ? "食管解剖与食管鳞癌全景循证视觉百科"
                 : cancerType === "liver"
@@ -370,11 +370,11 @@ export default function WikiPage() {
                 ? "宫颈筛查与宫颈癌全景循证视觉百科"
                 : "肺结节与肺癌全景循证视觉百科"}
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-            <span>按风险优先级排序</span>
+            <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+            <span className="hidden sm:inline shrink-0">按风险优先级排序</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
             从未知恐慌走向 · <span className="text-blue-600">从容笃定</span>
           </h1>
 

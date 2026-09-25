@@ -806,23 +806,27 @@ export async function GET(request: Request) {
     }
 
     let profile: any = null;
-    if (requestedCancerType) {
-      const normalizedReq = normalizeCancerType(requestedCancerType);
-      const cancerTypeFilter = normalizedReq === 'lung'
-        ? { OR: [{ cancerType: 'lung' }, { cancerType: null }, { organ: 'lung' }] }
-        : { OR: [{ cancerType: normalizedReq }, { organ: normalizedReq }] };
+    try {
+      if (requestedCancerType) {
+        const normalizedReq = normalizeCancerType(requestedCancerType);
+        const cancerTypeFilter = normalizedReq === 'lung'
+          ? { OR: [{ cancerType: 'lung' }, { cancerType: null }, { organ: 'lung' }] }
+          : { OR: [{ cancerType: normalizedReq }, { organ: normalizedReq }] };
 
-      profile = await prisma.patientProfile.findFirst({
-        where: {
-          AND: [userFilter, cancerTypeFilter]
-        },
-        orderBy: { createdAt: 'desc' }
-      });
-    } else {
-      profile = await prisma.patientProfile.findFirst({
-        where: userFilter,
-        orderBy: { createdAt: 'desc' }
-      });
+        profile = await prisma.patientProfile.findFirst({
+          where: {
+            AND: [userFilter, cancerTypeFilter]
+          },
+          orderBy: { createdAt: 'desc' }
+        });
+      } else {
+        profile = await prisma.patientProfile.findFirst({
+          where: userFilter,
+          orderBy: { createdAt: 'desc' }
+        });
+      }
+    } catch (profileErr) {
+      console.warn("Notice: Prisma query profile error:", profileErr);
     }
     
     if (!profile) {

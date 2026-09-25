@@ -420,11 +420,13 @@ export default function PatientDashboard() {
   useEffect(() => {
     // 0. Check if URL specifies calibration mode or a demo template
     let hasTemplate = false;
+    let isCalibrate = false;
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const modeParam = urlParams.get("mode");
       const editParam = urlParams.get("edit");
       if (modeParam === "calibrate" || modeParam === "edit" || editParam === "1" || editParam === "true") {
+        isCalibrate = true;
         setEditMode('edit_direct');
         setShowUploader(true);
         showUploaderRef.current = true;
@@ -442,7 +444,9 @@ export default function PatientDashboard() {
         saveProfileToSlot(item.profile, targetSlot);
         setLoadedTemplate(item);
         setLoading(false);
-        setShowUploader(false);
+        if (!isCalibrate) {
+          setShowUploader(false);
+        }
         setAvailableSlots(getAvailableProfileSlots());
         setDualSummary(getDualPrimarySummary());
         hasTemplate = true;
@@ -458,7 +462,9 @@ export default function PatientDashboard() {
       if (localCached && (localCached.stage || (localCached as any).tStage || localCached.noduleType || localCached.tumorSize || localCached.organ || (localCached as any).biRads)) {
         setProfile(localCached);
         setLoading(false);
-        setShowUploader(false);
+        if (!isCalibrate) {
+          setShowUploader(false);
+        }
         hasCached = true;
       }
       setAvailableSlots(getAvailableProfileSlots());
@@ -2281,6 +2287,8 @@ export default function PatientDashboard() {
               <button
                 type="button"
                 onClick={() => {
+                  showUploaderRef.current = true;
+                  editModeRef.current = 'edit_direct';
                   setEditMode('edit_direct');
                   setShowUpdateModal(false);
                   setShowUploader(true);
@@ -2307,6 +2315,8 @@ export default function PatientDashboard() {
               <button
                 type="button"
                 onClick={() => {
+                  showUploaderRef.current = true;
+                  editModeRef.current = 'upload_new';
                   setEditMode('upload_new');
                   setShowUpdateModal(false);
                   setShowUploader(true);

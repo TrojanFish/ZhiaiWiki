@@ -495,14 +495,14 @@ export default function HomePage() {
                 <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
                   <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-sky-600" />
                 </span>
-                <span suppressHydrationWarning className="truncate sm:whitespace-normal">覆盖 8 大癌种前瞻循证队列 · 160,000+ 例数据 · 顶刊出处可溯</span>
+                <span suppressHydrationWarning className="truncate sm:whitespace-normal">覆盖 11 大实体瘤前瞻循证队列 · 160,000+ 例数据 · 顶刊出处可溯</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 leading-[1.15] tracking-tight animate-fade-in-up stagger-1">
+              <h1 className="text-2xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 leading-[1.18] tracking-tight animate-fade-in-up stagger-1">
                 知癌维基 · 肿瘤循证平台
                 <br />
-                <span className="text-blue-700 text-2xl sm:text-4xl lg:text-[3.25rem]">
+                <span className="text-blue-700 text-xl sm:text-4xl lg:text-[3.25rem]">
                   让影像与病理报告 清晰透彻 · 严密可溯
                 </span>
               </h1>
@@ -555,7 +555,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-[9px] text-sky-700 font-bold sm:hidden mt-0.5">国际金标准</div>
                     <div className="text-[11px] text-slate-500 leading-snug mt-0.5 hidden sm:block">
-                      8大实体肿瘤国际分期矩阵
+                      11大实体肿瘤国际分期矩阵
                     </div>
                   </div>
                 </div>
