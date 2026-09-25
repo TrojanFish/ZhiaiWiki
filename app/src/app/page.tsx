@@ -479,19 +479,16 @@ export default function HomePage() {
             {/* Left Column: Headline, Trust Badge & CTAs */}
             <div className="lg:col-span-7 text-left space-y-4 sm:space-y-5 md:space-y-6">
               
-              {/* Brand Manifesto & Dual-Language Slogan */}
+              {/* Brand Manifesto */}
               <div className="space-y-1 sm:space-y-1.5 animate-fade-in-up">
-                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-gradient-to-r from-sky-50 via-blue-50 to-teal-50 border border-sky-200/90 text-slate-800 shadow-2xs">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-gradient-to-r from-sky-50 via-blue-50 to-teal-50 border border-sky-200/90 text-slate-800 shadow-2xs">
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
                   <span className="font-extrabold text-slate-900 tracking-tight">“知癌，方能治癌；每一次循证，皆因至爱。”</span>
-                </div>
-                <div className="text-[10px] sm:text-[11px] font-mono text-slate-400 pl-2 sm:pl-3 tracking-tight">
-                  Knowing Cancer, Treating Cancer, Caring with Love.
                 </div>
               </div>
 
               {/* Trust Badge */}
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs animate-fade-in-up">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full animate-fade-in-up">
                 <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
                   <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-sky-600" />
                 </span>
@@ -499,16 +496,16 @@ export default function HomePage() {
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-2xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 leading-[1.18] tracking-tight animate-fade-in-up stagger-1">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight animate-fade-in-up stagger-1">
                 知癌维基 · 肿瘤循证平台
                 <br />
-                <span className="text-blue-700 text-xl sm:text-4xl lg:text-[3.25rem]">
+                <span className="text-blue-600">
                   让影像与病理报告 清晰透彻 · 严密可溯
                 </span>
               </h1>
 
               {/* Description */}
-              <p className="text-sm sm:text-lg text-slate-600 leading-relaxed max-w-xl animate-fade-in-up stagger-2">
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal max-w-xl animate-fade-in-up stagger-2">
                 不再面对晦涩冰冷的医学术语盲目焦虑。系统结构化解析 CT 影像、乳腺超声/钼靶、TNM 分期与分子靶点，严密对齐 NEJM、Lancet、JCO 等顶级期刊真实患者队列与现行国际临床指南。
               </p>
 
@@ -1505,8 +1502,8 @@ export default function HomePage() {
 
 
       {/* Act 2: 3-Step Clean Workflow & Core Difference vs General AI */}
-      <section id="workflow" className="py-8 sm:py-16 px-3.5 sm:px-6 lg:px-8 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto">
+      <section id="workflow" className="py-8 sm:py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
           <SectionHeader
             badge="循证工作流"
             title="3 步获取专属临床循证"
@@ -1588,8 +1585,8 @@ export default function HomePage() {
           {/* Core Differentiation vs General LLMs Box */}
           <div id="difference" className="mt-8 sm:mt-12 bg-gradient-to-br from-blue-50/80 via-white to-teal-50/50 rounded-3xl p-4 sm:p-6 md:p-8 border border-blue-200/80 shadow-sm">
             <div className="max-w-3xl mx-auto text-center mb-5 sm:mb-8">
-              <span className="text-[10px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-100/80 px-3 sm:px-3.5 py-1 rounded-full border border-blue-200/60">
-                CDSS VS BLACK-BOX LLM · 循证系统与黑盒生成的本质差异
+              <span className="text-[10px] sm:text-xs font-bold text-blue-700 bg-blue-100/80 px-3 sm:px-3.5 py-1 rounded-full border border-blue-200/60 shadow-2xs">
+                循证决策支持 (CDSS) 与黑盒大模型的本质差异
               </span>
               <h3 className="text-xl sm:text-3xl font-extrabold text-slate-900 mt-2.5 sm:mt-3">
                 循证决策支持与黑盒概率生成的本质差异
@@ -1722,8 +1719,8 @@ export default function HomePage() {
       </section>
 
       {/* Act 3: Peer-Reviewed International Studies Library (Directly bound to active specialty zone) */}
-      <section id="studies" className="py-8 sm:py-16 px-3.5 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
+      <section id="studies" className="py-8 sm:py-16 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
           <SectionHeader
             badge={STUDY_HEADER_DETAILS[cancerType]?.badge || `权威研究库 · ${CancerRegistry.get(cancerType).name}专区`}
             title={STUDY_HEADER_DETAILS[cancerType]?.title || `${CancerRegistry.get(cancerType).name}国际权威临床研究库`}
@@ -1789,8 +1786,8 @@ export default function HomePage() {
       </section>
 
       {/* Act 4: 4D Knowledge Graph Sandbox */}
-      <section id="knowledge" className="py-8 sm:py-16 px-3.5 sm:px-6 lg:px-8 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto">
+      <section id="knowledge" className="py-8 sm:py-16 bg-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
           <SectionHeader
             badge={KNOWLEDGE_HEADER_DETAILS[cancerType]?.badge || `4D 知识图谱 · ${CancerRegistry.get(cancerType).name}专区`}
             title={KNOWLEDGE_HEADER_DETAILS[cancerType]?.title || `4D 临床循证知识图谱 · ${CancerRegistry.get(cancerType).name}`}
@@ -1864,8 +1861,8 @@ export default function HomePage() {
       </section>
 
       {/* Act 4.5: OncoWiki Patient Evidence-Based Visual Encyclopedia Section */}
-      <section id="wiki-showcase" className="py-8 sm:py-16 px-3.5 sm:px-6 lg:px-8 bg-gradient-to-b from-white via-sky-50/25 to-slate-50 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto space-y-5 sm:space-y-8">
+      <section id="wiki-showcase" className="py-8 sm:py-16 bg-gradient-to-b from-white via-sky-50/25 to-slate-50 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
           <SectionHeader
             badge={ONCOWIKI_HEADER_DETAILS[cancerType]?.badge || `循证视觉百科 · ${CancerRegistry.get(cancerType).name}专区`}
             title={ONCOWIKI_HEADER_DETAILS[cancerType]?.title || `${CancerRegistry.get(cancerType).name}临床视觉百科`}
@@ -2017,8 +2014,8 @@ export default function HomePage() {
       </section>
 
       {/* Act 5 (formerly 1.5): Multi-Cancer Evidence Matrix — Cross-Specialty Exploration Hub */}
-      <section className="py-8 sm:py-16 px-3.5 sm:px-6 lg:px-8 bg-slate-50/80 border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto space-y-5 sm:space-y-8">
+      <section className="py-8 sm:py-16 bg-slate-50/80 border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
           <SectionHeader
             badge="探索更多癌种专区"
             title="多癌种临床循证体系"
@@ -2162,8 +2159,8 @@ export default function HomePage() {
       </section>
 
       {/* Act 5 (FAQ): Frequently Asked Questions & Final Conversion CTA */}
-      <section className="py-8 sm:py-16 px-3.5 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-8 sm:py-16 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-3.5 sm:px-6 lg:px-8">
           <SectionHeader
             badge="患者与家属答疑"
             title="常见问题解答 (FAQ)"
@@ -2234,13 +2231,13 @@ function _LogoMark() {
 
 function SectionHeader({ badge, title, subtitle }: { badge: string; title: string; subtitle: string }) {
   return (
-    <div className="text-center max-w-3xl mx-auto px-1">
-      <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-blue-50 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-blue-700 mb-2 sm:mb-3 border border-blue-200">
-        <span className="w-1.5 h-1.5 rounded-full bg-accent-blue" />
-        {badge}
+    <div className="text-center max-w-3xl mx-auto px-1 space-y-2 sm:space-y-3">
+      <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-blue-50 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-blue-700 border border-blue-200 shadow-2xs">
+        <span className="w-1.5 h-1.5 rounded-full bg-accent-blue shrink-0" />
+        <span>{badge}</span>
       </div>
-      <h2 className="text-xl sm:text-4xl font-extrabold text-slate-900 mb-2 sm:mb-3 tracking-tight">{title}</h2>
-      <p className="text-slate-600 text-xs sm:text-base leading-relaxed">{subtitle}</p>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight">{title}</h2>
+      <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">{subtitle}</p>
     </div>
   );
 }

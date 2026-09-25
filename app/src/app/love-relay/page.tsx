@@ -130,14 +130,14 @@ export default function LoveRelayPage() {
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
-                <HeartHandshake className="w-3.5 h-3.5 text-teal-600" />
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-teal-800 bg-white border border-teal-200 shadow-xs max-w-full">
+                <HeartHandshake className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                 <span>病友与家属抗癌温情接力</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
                 生命相托 · 温暖回响
               </h1>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
                 记录病友术后 3 年、5 年大复查平稳通关的胜利战报，以及来自全国战友与家属的真挚祈福。<br className="hidden sm:inline" />
                 每一个名字背后都是一段不屈的抗癌征程，多一份同路人的鼓励，就多一份直面未知的勇气。
               </p>

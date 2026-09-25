@@ -68,11 +68,11 @@ export default function KnowledgePage() {
       {/* Hero Header */}
       <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Unified Top Pill Badge */}
-        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-2xs sm:text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs max-w-full">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full">
           <CancerIcon type={cancerType} className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-600 shrink-0" />
-          <span>4D 动态因果推演引擎</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 hidden xs:inline-block" />
-          <span className="hidden xs:inline-block">100% 专区 1:1 循证图谱</span>
+          <span className="truncate">4D 动态因果推演引擎</span>
+          <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+          <span className="hidden sm:inline shrink-0">100% 专区 1:1 循证图谱</span>
         </div>
 
         {/* Unified H1 */}

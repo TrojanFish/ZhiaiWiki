@@ -69,14 +69,14 @@ export default function TermsPage() {
           
           {/* Header */}
           <div className="space-y-4 border-b border-slate-100 pb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold max-w-full">
-              <Scale className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white border border-sky-200 text-sky-700 text-[11px] sm:text-xs font-bold shadow-xs max-w-full">
+              <Scale className="w-3.5 h-3.5 text-sky-600 shrink-0" />
               <span className="truncate">服务协议 · 医疗学术免责声明 · 法律保护条款</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
               知癌维基 ZhiaiWiki 用户服务协议与全方位医疗免责声明
             </h1>
-            <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
               欢迎访问 <strong>知癌维基 ZhiaiWiki</strong>（官方域名：<code>zhiaiwiki.org</code>，以下简称“本平台”）。本平台涵盖<strong>肺癌、乳腺癌、结直肠癌、胃癌、肝癌、食管癌、甲状腺癌等多癌种</strong>的临床文献导航与循证知识图谱。在您使用本平台提供的任何学术检索、病理结构化梳理、分期推演或便签生成功能前，<strong>请务必审慎、完整地阅读并充分理解本协议的全部条款，尤其是其中限制、免除开发者责任的粗体及高亮条款</strong>。如您不同意本协议的任何内容，请立即停止访问并终止使用本平台。您的任何浏览、录入、查询或导出行为均视为对本协议全部条款的无条件知情与完全同意。
             </p>
           </div>

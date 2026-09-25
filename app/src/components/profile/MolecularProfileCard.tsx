@@ -98,8 +98,8 @@ export function MolecularProfileCard({
             <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
               分子病理与驱动基因分型
             </h3>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-              MOLECULAR BIOMARKERS & PRECISION TARGETING · NGS PANEL
+            <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">
+              NGS 靶向测序与驱动突变精准用药
             </p>
           </div>
         </div>

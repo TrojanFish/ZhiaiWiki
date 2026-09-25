@@ -91,8 +91,8 @@ export default function StatsBanner() {
   }, []);
 
   return (
-    <div ref={ref} className="bg-white/85 backdrop-blur-sm border-y border-slate-200 py-4 sm:py-8 px-3.5 sm:px-6">
-      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-6">
+    <div ref={ref} className="bg-white/85 backdrop-blur-sm border-y border-slate-200 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-6">
         {stats.map((stat) => (
           <AnimatedStat key={stat.label} stat={stat} animate={animated} />
         ))}

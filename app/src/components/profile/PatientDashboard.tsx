@@ -866,27 +866,27 @@ export default function PatientDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
             患者临床数字档案
           </h1>
-          <p className="text-slate-400 font-bold text-xs uppercase tracking-wider mt-1">
+          <p className="text-slate-500 font-medium text-xs sm:text-sm mt-1 leading-relaxed">
             {isEsophageal
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版食管鳞癌分期 · NEOCRTEC5010 新辅助放化疗 · ESCORT-1st / RATIONALE-306 一线免疫'
+              ? '动态决策状态机 · 基于 AJCC 第 8 版食管鳞癌分期 · NEOCRTEC5010 新辅助放化疗 · ESCORT-1st / RATIONALE-306 一线免疫'
               : isLiver
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于国家卫健委 CNLC 2024 · Child-Pugh / ALBI 双肝储备量化 · HAIC/TACE 介入转化 · 终身抗病毒'
+              ? '动态决策状态机 · 基于国家卫健委 CNLC 2024 · Child-Pugh / ALBI 双肝储备量化 · HAIC/TACE 介入转化 · 终身抗病毒'
               : isGastric
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/JGCA 2024 · ESD早癌保留 · D2清扫质控'
+              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/JGCA 2024 · ESD早癌保留 · D2清扫质控'
               : isBreast 
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8/9 版解剖与预后分期 · St. Gallen 分型 · 21基因 Oncotype DX' 
+              ? '动态决策状态机 · 基于 AJCC 第 8/9 版解剖与预后分期 · St. Gallen 分型 · 21基因 Oncotype DX' 
               : isColon
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CME 规范 · IDEA 3个月减毒方案'
+              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CME 规范 · IDEA 3个月减毒方案'
               : isRectal
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · TME/HR-MRI · RAPIDO/PRODIGE 23 全程新辅助 TNT'
+              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · TME/HR-MRI · RAPIDO/PRODIGE 23 全程新辅助 TNT'
               : isPancreatic
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 NCCN / CSCO 2024 胰腺癌指南 · 薄层增强CT/MRI血管侵犯三分类 · mFOLFIRINOX 转化 · Whipple R0切缘'
+              ? '动态决策状态机 · 基于 NCCN / CSCO 2024 胰腺癌指南 · 薄层增强CT/MRI血管侵犯三分类 · mFOLFIRINOX 转化 · Whipple R0切缘'
               : isColorectal
-              ? 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/NCCN 2024 · IDEA 协作组前瞻队列'
-              : 'PATIENT CLINICAL PROFILE · 动态决策状态机 · 基于 IASLC / AJCC 第 9 版 实性成分与前瞻性临床队列'}
+              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/NCCN 2024 · IDEA 协作组前瞻队列'
+              : '动态决策状态机 · 基于 IASLC / AJCC 第 9 版 实性成分与前瞻性临床队列'}
           </p>
         </div>
         {/* Ergonomic Segmented Capsule Dock (校对 -> 用药 -> 导出 -> [隔离线] -> 清空) */}
@@ -1004,8 +1004,8 @@ export default function PatientDashboard() {
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
                     {isBreast ? '乳腺钼靶 / 超声影像原发灶' : isColorectal ? '肠镜 / 盆腔高分辨核磁原发灶' : '薄层 CT 影像原发灶'}
                   </h3>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-                    {isBreast ? 'MAMMOGRAPHY & ULTRASOUND · BI-RADS & T-STAGE' : isColorectal ? 'COLONOSCOPY & PELVIC HR-MRI · CRM & T-STAGE' : 'CT IMAGING & MORPHOLOGY · T-STAGING'}
+                  <p className="text-[10px] font-medium text-slate-500 mt-0.5 truncate">
+                    {isBreast ? 'BI-RADS 分级与解剖 T 分期评估' : isColorectal ? '肠镜病灶特征与盆腔 CRM 浸润评估' : '病灶形态特征与解剖 T 分期评估'}
                   </p>
                 </div>
               </div>
@@ -1336,8 +1336,8 @@ export default function PatientDashboard() {
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
                     {isBreast ? '分子分型与组织病理免疫组化' : '术后组织病理与浸润特征'}
                   </h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-                    {isBreast ? 'MOLECULAR SUBTYPE & 4-CORE IHC · AJCC PROGNOSTIC' : 'PATHOLOGY & IHC · INVASIVE FACTORS'}
+                  <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">
+                    {isBreast ? '核心免疫组化四项与预后病理分型' : '高危浸润因素与脉管神经侵犯评估'}
                   </p>
                 </div>
               </div>
@@ -1817,8 +1817,8 @@ export default function PatientDashboard() {
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
                     全身远处转移排查与良性排雷
                   </h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-                    SYSTEMIC STAGING · M-STAGE EXCLUSION
+                  <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">
+                    全身靶器官评估与 M 分期排查
                   </p>
                 </div>
               </div>
@@ -2038,8 +2038,8 @@ export default function PatientDashboard() {
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
                     循证推演与文献对照引擎
                   </h3>
-                  <p className="text-xs font-bold text-blue-600/80 uppercase tracking-wider mt-0.5 truncate">
-                    EVIDENCE-BASED ENGINE · LITERATURE ALIGNMENT
+                  <p className="text-xs font-medium text-blue-600/80 mt-0.5 truncate">
+                    多维度前瞻队列与前沿文献对齐
                   </p>
                 </div>
               </div>

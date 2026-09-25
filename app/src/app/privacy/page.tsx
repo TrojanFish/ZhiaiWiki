@@ -72,14 +72,14 @@ export default function PrivacyPage() {
           
           {/* Header */}
           <div className="space-y-4 border-b border-slate-100 pb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
-              <span>数据安全与隐私保护 (PIPL / US HIPAA Safe Harbor) 体系</span>
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white border border-teal-200 text-teal-800 text-[11px] sm:text-xs font-bold shadow-xs max-w-full">
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+              <span className="truncate">数据安全与隐私保护 (PIPL / US HIPAA Safe Harbor) 体系</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
               知癌维基 ZhiaiWiki 隐私政策与个人健康信息保护规则
             </h1>
-            <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
               知癌维基 ZhiaiWiki（官方域名：<code>zhiaiwiki.org</code>，以下简称“本平台”）深知个人健康医疗数据对您及家属的极端敏感性与重要性。本平台网络服务与算力节点<strong>物理部署于美利坚合众国（United States）</strong>。我们严格遵循<strong>《中华人民共和国个人信息保护法》(PIPL)</strong>、美国健康保险流通与责任法案去标识化标准（<strong>HIPAA Safe Harbor</strong>）以及国际公认的数据隐私规范，承诺为您的病理指标、影像参数及就诊记录构建<strong>金融级端侧去标识化、本地优先存储（Local-First）与零商业变现</strong>的严密隐私防线。
             </p>
           </div>

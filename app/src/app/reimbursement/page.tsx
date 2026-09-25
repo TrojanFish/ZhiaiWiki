@@ -569,12 +569,12 @@ export default function ReimbursementPage() {
     <div className="min-h-screen flex flex-col overflow-x-hidden bg-slate-50 text-slate-900 selection:bg-blue-500 selection:text-white">
 
       {/* Unified Hero Header (Aligned with /wiki, /studies, /resources, /knowledge) */}
-      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
+      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Top Pill Badge */}
-        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs max-w-full">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full">
           <CancerIcon type={cancerType} className="w-3.5 h-3.5 text-sky-600 shrink-0" />
           <span className="truncate max-w-[240px] sm:max-w-none">{meta.badge}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 hidden sm:inline-block shrink-0" />
+          <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
           <span className="hidden sm:inline shrink-0">2024~2025 现行标准</span>
         </div>
 
@@ -619,7 +619,7 @@ export default function ReimbursementPage() {
       </header>
 
       {/* Main Content Area (Standard max-w-7xl with Responsive Card Rhythm) */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         
         {/* Segmented Navigation Tabs Bar (Scrollable) */}
         <div className="bg-white p-1.5 sm:p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">

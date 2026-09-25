@@ -86,8 +86,8 @@ export function NoduleTimelineChart({
             <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
               结节随访生长时序轨迹
             </h3>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-              LONGITUDINAL CT TIMELINE · VDT DYNAMICS
+            <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">
+              纵向薄层 CT 随访与体积倍增时间 (VDT) 动态分析
             </p>
           </div>
         </div>

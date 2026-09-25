@@ -69,8 +69,8 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
             <h3 className="text-sm font-extrabold text-slate-900 leading-snug">
               相似病例群体预后分析
             </h3>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-              SIMILAR CLINICAL COHORTS · REAL-WORLD EVIDENCE
+            <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">
+              相似病理特征前瞻队列与预后对照
             </p>
           </div>
         </div>

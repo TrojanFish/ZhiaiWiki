@@ -232,10 +232,10 @@ export function TumorMarkersCard({
                 </span>
               )}
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
+            <p className="text-[10px] font-medium text-slate-500 mt-0.5 truncate">
               {isBreast 
-                ? "SERUM BIOMARKERS · CA15-3 / CEA · METABOLIC SAFETY BAND" 
-                : "SERUM TUMOR BIOMARKERS · PANEL SNAPSHOT & TRENDS"}
+                ? "CA15-3 / CEA 核心指标与动态安全区间" 
+                : "核心标志物指标定量与随访动态监测"}
             </p>
           </div>
         </div>

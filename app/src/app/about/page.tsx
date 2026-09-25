@@ -117,20 +117,19 @@ export default function AboutPage() {
           
           {/* Header Banner */}
           <div className="space-y-4 border-b border-slate-100 pb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-              <HeartHandshake className="w-3.5 h-3.5 text-blue-600" />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white border border-sky-200 text-sky-700 text-[11px] sm:text-xs font-bold shadow-xs max-w-full">
+              <HeartHandshake className="w-3.5 h-3.5 text-sky-600 shrink-0" />
               <span>创作者自白 · 致同行者</span>
             </div>
-            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-snug">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
               因为淋过雨，<br className="sm:hidden" />
               所以想为同样迷茫的你撑一把伞
             </h1>
-            <p className="text-sm sm:text-base text-slate-500 font-medium">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
               —— 一个癌症亲历者的心路历程与 知癌维基 (ZhiaiWiki) 平台的诞生始末
             </p>
             <div className="pt-2 text-xs font-bold text-slate-700 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 border-t border-slate-100/80">
               <span className="text-blue-700">“知癌，方能治癌；每一次循证，皆因至爱。”</span>
-              <span className="text-[11px] font-mono text-slate-400">Knowing Cancer, Treating Cancer, Caring with Love.</span>
             </div>
           </div>
 
