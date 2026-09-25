@@ -1246,7 +1246,7 @@ export default function PatientDashboard() {
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs text-slate-600">
-                    <strong>结节部位</strong>: <span className="font-semibold text-slate-900">{profile.noduleLocation || '肺部结节'}</span>
+                    <strong>病灶部位</strong>: <span className="font-semibold text-slate-900">{profile.noduleLocation && profile.noduleLocation !== '肺部结节' ? profile.noduleLocation : '肺实质原发灶'}</span>
                   </span>
                   {profile.lungRads && (
                     <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold shrink-0">
@@ -1663,7 +1663,7 @@ export default function PatientDashboard() {
                     }
                   </span>
                   <span>
-                    <strong>病理分级</strong>: {profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1 (高分化)' : profile.iaslcGrade === '3' || profile.grade === '3' ? 'G3 (低分化)' : profile.iaslcGrade === '2' || profile.grade === '2' ? 'G2 (中分化)' : '未分级 / 待确认'}
+                    <strong>组织亚型</strong>: {profile.histology || '浸润性腺癌'}
                   </span>
                 </div>
 
@@ -1696,7 +1696,7 @@ export default function PatientDashboard() {
                     </span>
                     {profile.tumorSize && (
                       <span className="text-purple-600 font-medium">
-                        (术前CT: 全径 {profile.tumorSize}cm · 实性 {profile.solidSize ?? 0}cm)
+                        (病理浸润测定与术前影像评估相吻合)
                       </span>
                     )}
                   </div>
@@ -1980,10 +1980,10 @@ export default function PatientDashboard() {
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
                       <span className="text-slate-500 text-xs flex items-center gap-1">
                         <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>锁骨上淋巴结</span>
+                        <span>颈部/锁骨上淋巴结</span>
                       </span>
                       <span className={`font-bold mt-1 ${profile.neckLymphNodes === 'negative' ? 'text-emerald-700' : profile.neckLymphNodes === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.neckLymphNodes === 'negative' ? '未见肿大 (N0)' : profile.neckLymphNodes === 'positive' ? '见肿大' : '未检查'}
+                        {profile.neckLymphNodes === 'negative' ? '未见肿大 (阴性)' : profile.neckLymphNodes === 'positive' ? '提示肿大 (需活检)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">

@@ -92,7 +92,7 @@ export default function StatsBanner() {
 
   return (
     <div ref={ref} className="bg-white/85 backdrop-blur-sm border-y border-slate-200 py-4 sm:py-8">
-      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-6">
         {stats.map((stat) => (
           <AnimatedStat key={stat.label} stat={stat} animate={animated} />
         ))}
@@ -136,7 +136,7 @@ function AnimatedStat({
           <IconComp className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
       </div>
-      <div className="text-xl sm:text-3xl font-black text-slate-900 mb-0.5 sm:mb-1 tabular-nums tracking-tight">
+      <div className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 mb-0.5 sm:mb-1 tabular-nums tracking-tight">
         {animate ? displayed.toLocaleString() : 0}
         <span className="text-xs sm:text-base font-semibold text-slate-500 ml-0.5 sm:ml-1">{stat.suffix}</span>
       </div>

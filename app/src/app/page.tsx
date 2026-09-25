@@ -472,7 +472,7 @@ export default function HomePage() {
           {/* Subtle medical grid background (Zero GPU blur overhead, crisp clinical feel) */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-35 pointer-events-none" />
 
-          <div className="relative z-10 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 w-full">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid lg:grid-cols-12 gap-5 lg:gap-8 items-center">
 
             
@@ -481,9 +481,12 @@ export default function HomePage() {
               
               {/* Brand Manifesto */}
               <div className="space-y-1 sm:space-y-1.5 animate-fade-in-up">
-                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-gradient-to-r from-sky-50 via-blue-50 to-teal-50 border border-sky-200/90 text-slate-800 shadow-2xs">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-gradient-to-r from-sky-50 via-blue-50 to-teal-50 border border-sky-200/90 text-slate-800 shadow-2xs max-w-full">
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-                  <span className="font-extrabold text-slate-900 tracking-tight">“知癌，方能治癌；每一次循证，皆因至爱。”</span>
+                  <span className="font-extrabold text-slate-900 tracking-tight truncate sm:whitespace-normal">
+                    <span className="sm:hidden">“知癌方能治癌，每一次循证皆因至爱”</span>
+                    <span className="hidden sm:inline">“知癌，方能治癌；每一次循证，皆因至爱。”</span>
+                  </span>
                 </div>
               </div>
 
@@ -492,7 +495,10 @@ export default function HomePage() {
                 <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
                   <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-sky-600" />
                 </span>
-                <span suppressHydrationWarning className="truncate sm:whitespace-normal">覆盖 11 大实体瘤前瞻循证队列 · 160,000+ 例数据 · 顶刊出处可溯</span>
+                <span suppressHydrationWarning className="truncate sm:whitespace-normal min-w-0">
+                  <span className="sm:hidden">11 大实体瘤前瞻队列 · 160,000+ 例顶刊数据</span>
+                  <span className="hidden sm:inline">覆盖 11 大实体瘤前瞻循证队列 · 160,000+ 例数据 · 顶刊出处可溯</span>
+                </span>
               </div>
 
               {/* Main Headline */}
@@ -535,22 +541,25 @@ export default function HomePage() {
                 </span>
                 <span className="inline-flex items-center gap-1.5 min-w-0">
                   <Camera className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span className="truncate">支持拍摄/上传报告单 · AI 自动结构化提取分期与靶点</span>
+                  <span className="truncate sm:whitespace-normal">
+                    <span className="sm:hidden">支持拍摄/上传报告 · AI 结构化提取分期与靶点</span>
+                    <span className="hidden sm:inline">支持拍摄/上传报告单 · AI 自动结构化提取分期与靶点</span>
+                  </span>
                 </span>
               </div>
 
               {/* Core Trust Pillars: 患者 3 大安心基石 (权威分期金标准 / 顶刊出处全溯源 / 医疗级隐私脱敏) */}
               <div className="pt-4 sm:pt-6 border-t border-slate-200/60 grid grid-cols-3 gap-2 sm:gap-4 max-w-xl animate-fade-in-up stagger-4 w-full">
                 {/* Pillar 1: IASLC 9th & AJCC 8/9th Gold Standard */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none min-w-0">
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0">
                     <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-600" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-[11px] sm:text-sm font-extrabold text-slate-900 tracking-tight leading-tight">
+                  <div className="min-w-0 w-full">
+                    <div className="text-[11px] sm:text-sm font-extrabold text-slate-900 tracking-tight leading-tight truncate">
                       IASLC / AJCC
                     </div>
-                    <div className="text-[9px] text-sky-700 font-bold sm:hidden mt-0.5">国际金标准</div>
+                    <div className="text-[9px] text-sky-700 font-bold sm:hidden mt-0.5 truncate">国际金标准</div>
                     <div className="text-[11px] text-slate-500 leading-snug mt-0.5 hidden sm:block">
                       11大实体肿瘤国际分期矩阵
                     </div>
@@ -558,15 +567,15 @@ export default function HomePage() {
                 </div>
 
                 {/* Pillar 2: 100% DOI Provenance */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none min-w-0">
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center shrink-0">
                     <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-600" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-[11px] sm:text-sm font-extrabold text-slate-900 tracking-tight leading-tight">
+                  <div className="min-w-0 w-full">
+                    <div className="text-[11px] sm:text-sm font-extrabold text-slate-900 tracking-tight leading-tight truncate">
                       100% 顶刊溯源
                     </div>
-                    <div className="text-[9px] text-teal-700 font-bold sm:hidden mt-0.5">DOI 全可查</div>
+                    <div className="text-[9px] text-teal-700 font-bold sm:hidden mt-0.5 truncate">DOI 全可查</div>
                     <div className="text-[11px] text-slate-500 leading-snug mt-0.5 hidden sm:block">
                       NEJM / Lancet / JCO 真实队列
                     </div>
@@ -574,15 +583,15 @@ export default function HomePage() {
                 </div>
 
                 {/* Pillar 3: Medical-Grade Privacy */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 sm:gap-2.5 p-2 sm:p-0 rounded-xl sm:rounded-none bg-white/70 sm:bg-transparent border sm:border-0 border-slate-200/80 shadow-2xs sm:shadow-none min-w-0">
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-[11px] sm:text-sm font-extrabold text-slate-900 tracking-tight leading-tight">
+                  <div className="min-w-0 w-full">
+                    <div className="text-[11px] sm:text-sm font-extrabold text-slate-900 tracking-tight leading-tight truncate">
                       医疗隐私脱敏
                     </div>
-                    <div className="text-[9px] text-emerald-700 font-bold sm:hidden mt-0.5">不可逆擦除</div>
+                    <div className="text-[9px] text-emerald-700 font-bold sm:hidden mt-0.5 truncate">不可逆擦除</div>
                     <div className="text-[11px] text-slate-500 leading-snug mt-0.5 hidden sm:block">
                       身份标识擦除 · 严防过度医疗
                     </div>
@@ -1503,7 +1512,7 @@ export default function HomePage() {
 
       {/* Act 2: 3-Step Clean Workflow & Core Difference vs General AI */}
       <section id="workflow" className="py-8 sm:py-16 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             badge="循证工作流"
             title="3 步获取专属临床循证"
@@ -1720,7 +1729,7 @@ export default function HomePage() {
 
       {/* Act 3: Peer-Reviewed International Studies Library (Directly bound to active specialty zone) */}
       <section id="studies" className="py-8 sm:py-16 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             badge={STUDY_HEADER_DETAILS[cancerType]?.badge || `权威研究库 · ${CancerRegistry.get(cancerType).name}专区`}
             title={STUDY_HEADER_DETAILS[cancerType]?.title || `${CancerRegistry.get(cancerType).name}国际权威临床研究库`}
@@ -1787,7 +1796,7 @@ export default function HomePage() {
 
       {/* Act 4: 4D Knowledge Graph Sandbox */}
       <section id="knowledge" className="py-8 sm:py-16 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             badge={KNOWLEDGE_HEADER_DETAILS[cancerType]?.badge || `4D 知识图谱 · ${CancerRegistry.get(cancerType).name}专区`}
             title={KNOWLEDGE_HEADER_DETAILS[cancerType]?.title || `4D 临床循证知识图谱 · ${CancerRegistry.get(cancerType).name}`}
@@ -1862,7 +1871,7 @@ export default function HomePage() {
 
       {/* Act 4.5: OncoWiki Patient Evidence-Based Visual Encyclopedia Section */}
       <section id="wiki-showcase" className="py-8 sm:py-16 bg-gradient-to-b from-white via-sky-50/25 to-slate-50 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
           <SectionHeader
             badge={ONCOWIKI_HEADER_DETAILS[cancerType]?.badge || `循证视觉百科 · ${CancerRegistry.get(cancerType).name}专区`}
             title={ONCOWIKI_HEADER_DETAILS[cancerType]?.title || `${CancerRegistry.get(cancerType).name}临床视觉百科`}
@@ -2015,7 +2024,7 @@ export default function HomePage() {
 
       {/* Act 5 (formerly 1.5): Multi-Cancer Evidence Matrix — Cross-Specialty Exploration Hub */}
       <section className="py-8 sm:py-16 bg-slate-50/80 border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
           <SectionHeader
             badge="探索更多癌种专区"
             title="多癌种临床循证体系"
@@ -2160,7 +2169,7 @@ export default function HomePage() {
 
       {/* Act 5 (FAQ): Frequently Asked Questions & Final Conversion CTA */}
       <section className="py-8 sm:py-16 bg-slate-50">
-        <div className="max-w-4xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             badge="患者与家属答疑"
             title="常见问题解答 (FAQ)"

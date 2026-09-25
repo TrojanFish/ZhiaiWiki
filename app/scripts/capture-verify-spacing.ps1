@@ -6,6 +6,7 @@ $targets = @(
     @{ Name = "verify_home_1440"; Url = "http://localhost:3000/?consent=1"; W = 1440; H = 1400 },
     @{ Name = "verify_home_mobile"; Url = "http://localhost:3000/?consent=1"; W = 390; H = 844 },
     @{ Name = "verify_profile_1440"; Url = "http://localhost:3000/profile?consent=1&template=ia1"; W = 1440; H = 1400 },
+    @{ Name = "verify_profile_mobile"; Url = "http://localhost:3000/profile?consent=1&template=ia1"; W = 390; H = 844 },
     @{ Name = "verify_love_relay_1440"; Url = "http://localhost:3000/love-relay?consent=1"; W = 1440; H = 900 }
 )
 
