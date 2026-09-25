@@ -151,12 +151,19 @@ description: Comprehensive visual design system, token dictionary, cancer-domain
 
 ---
 
-## 4. 触觉反馈与微交互准则 (Micro-Interactions)
+## 4. 触觉反馈与微交互准则 (Micro-Interactions & Input Ergonomics)
 
-1. **按钮点击触感**：
-   - 必须配置 `active:scale(0.98)` 与平滑物理形变；
-   - 移动端关键操作（如复制、切换癌种、保存档案）绑定轻微触觉振动（`triggerHaptic("light")`）。
-2. **无障碍键盘焦点环 (Accessible Focus Rings)**：
+1. **触觉反馈分级阶梯 (Haptic Feedback Tiers)**：
+   - 必须通过全站统一的 `triggerHaptic(type)` 触发物理微震动；桌面 PC 端静默无感，移动端按严重等级分级响应：
+     - `light`（轻微触控）：导航 Tab 切换、癌种专区切换、折叠卡片展开；
+     - `medium`（操作确认）：档案保存成功、爱心寄语提交、基因突变选中；
+     - `selection`（轮播微触）：分段滚动选择器逐项滑动触感；
+     - `warning` / `heavy`：高危 DDI 严重配伍禁忌拦截、清空全部临床病历。
+2. **移动端触控高亮与物理按压形变 (Touch Feedback)**：
+   - 全局强制配置 `-webkit-tap-highlight-color: transparent;`，消除触控点击时的丑陋半透明闪烁框；
+   - 移动端通过 `active:scale-[0.97]`（或 `active:scale-95`）实现真实的物理按压阻尼感；
+   - 严禁将 `:hover` 样式无防护地挂载在移动端触控元素上（会导致点击后永久滞留悬停变暗状态），必须通过 `@media (hover: hover) and (pointer: fine)` 与桌面端悬停分离。
+3. **无障碍键盘焦点环 (Accessible Focus Rings)**：
    - 必须禁止全局生硬清除 `outline` 而不给回退替代；
    - 对非输入框的交互元素提供柔和的医学蓝辉光环：
      ```css
@@ -165,7 +172,11 @@ description: Comprehensive visual design system, token dictionary, cancer-domain
        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.38);
      }
      ```
-3. **优雅加载状态**：
+4. **抽屉手势防穿透与视口自适应 (Sheet Ergonomics)**：
+   - 模态抽屉滚动区必须配置 `overscroll-behavior: contain;`，彻底防御底层主页面橡皮筋乱跳；
+   - 移动端抽屉高度必须采用 `max-h-[92dvh]`（兼容 `92vh`）动态规避 Safari/Chrome 动态地址栏截断；
+   - 紧凑按钮（如 32px 的关闭圆钮）必须通过 `.touch-target-expand` 伪元素扩张至 $\ge 44\text{px}$ 物理命中区。
+5. **优雅加载状态**：
    - 禁止在关键卡片上使用单一生硬的大号 Spinner 菊花图；
    - 优先采用带有蓝白渐变扫光的骨架屏（Skeleton Shimmer），缓解等待焦躁。
 

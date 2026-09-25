@@ -169,7 +169,102 @@ export default function StandardPageTemplate() {
 
 ---
 
-## 6. 全局绝对 Z-Index 分层阶梯 (Strict Z-Index Hierarchy)
+## 6. PC 桌面端与移动端核心微细节差异化治理规范 (Mobile vs. PC Micro-Detail Disparity Matrix)
+
+手机端与 PC 桌面端并非仅是“宽度断点”的缩放，而是两种截然不同的物理设备输入范式、人机交互工学与视口行为机制。全站必须严格执行以下微细节规范：
+
+### 6.1 动态视口高度与动态地址栏防御 (`dvh` vs `vh`)
+* **移动端物理陷阱**：在 iOS Safari 与 Android Chrome 中，页面滚动时浏览器顶底地址栏会自动收起或展开。传统硬编码 `100vh` 或 `max-h-[92vh]` 会基于未收起的地址栏高度计算，导致底部约 56px~80px 被切断遮挡，按钮脱离可视范围。
+* **微细节硬规范**：
+  - 所有全屏遮罩、模态抽屉必须优先采用现代化视口单位 **`dvh` (Dynamic Viewport Height)**，并以 `vh` 作为渐进增强回退：
+    ```css
+    /* 推荐类名或样式 */
+    .max-h-sheet {
+      max-height: 92vh;
+      max-height: 92dvh;
+    }
+    ```
+  - 严禁在移动端弹窗使用 `h-screen`，必须使用 `min-h-dvh` 或 `h-[100dvh]` 确保精准贴合可视区域。
+
+### 6.2 交互范式解耦：鼠标悬停与移动触控 (Hover vs. Touch Decoupling)
+* **移动端 `:hover` 粘连灾难 (Sticky Hover)**：在触控屏上点击按钮时，移动浏览器会把触摸动作合成拟态为鼠标 `:hover`，手指抬起后该元素**持续保持悬停样式**（如按钮永久变暗），破坏界面整洁。
+* **微细节硬规范**：
+  1. **触控高亮闪烁清除**：全站必须配置 `-webkit-tap-highlight-color: transparent;`，消除 iOS/Android 默认丑陋的半透明触控蓝灰框；
+  2. **悬停动效媒体查询隔离**：仅对真实指针鼠标开启微上浮与阴影激增动效：
+     ```css
+     @media (hover: hover) and (pointer: fine) {
+       .card-hover:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.07);
+       }
+     }
+     ```
+  3. **移动端按压触感 (Active Feedback)**：在触控设备上，通过 `active:scale-[0.97]` 或 `active:scale-95` 提供具有 iOS 物理按压阻尼感的回弹反馈，而非依赖变色。
+
+### 6.3 抽屉手势与滚动链穿透防御 (Scroll Chaining & Overscroll Containment)
+* **橡皮筋穿透陷阱**：在 iOS 移动端打开 Bottom Sheet 抽屉并在其内部滚动列表时，若滑至顶部或底部继续拖拽，会导致底层父页面产生剧烈的“橡皮筋回弹联动”，严重破坏用户掌控感。
+* **微细节硬规范**：
+  - 所有模态框内部滚动区域 (`overflow-y-auto`) 必须添加：
+    ```css
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    ```
+  - 锁定滚动链，保证局部抽屉内的滑动永远局限在抽屉内部，底板页面绝对锁死。
+
+### 6.4 触控人体工学与微命中热区扩张 (Touch Hitbox Ergonomics)
+* **老年肿瘤患者手部震颤与误触**：患者与老年家属在手机端操作时，微小按钮（如关闭图标 `w-7 h-7` 或 `w-8 h-8`）难以准确击中。
+* **微细节硬规范**：
+  - 苹果 HIG 与 WCAG 2.1 AAA 规定可触控热区最小面积为 **44px × 44px**；
+  - 视觉尺寸保持克制精致（如 32px 的 `w-8 h-8 rounded-full`），但必须通过透明伪元素或内边距扩张物理点击命中区：
+    ```css
+    .touch-target-expand {
+      position: relative;
+    }
+    .touch-target-expand::after {
+      content: '';
+      position: absolute;
+      inset: -8px; /* 四周各外扩 8px，触控区域由 32px 升至 48px */
+    }
+    ```
+  - 相邻可交互按钮之间，必须保持至少 8px（`gap-2`）的无交互缓冲区，严禁紧贴引发连带误触。
+
+### 6.5 复杂临床数据表格的响应式降级与重塑 (Adaptive Table Stacking)
+* **移动端表格挤压灾难**：在 PC 桌面端，包含 5~7 列的病理对比、DDI 相互作用或生存率表格可通栏平铺；在手机端如果强制横向排开，会导致单元格每行只容纳 1~2 个汉字，文字破碎难读。
+* **微细节硬规范**：
+  1. **垂直卡片化重构 (Card Stacking)**：当表格列数 $\ge 4$ 时，移动端必须自动降级为 Flex/Grid 垂直键值对信息卡；
+  2. **局部横滑 + 渐变边缘遮罩 (Edge Fade Mask)**：若因循证对比需要必须保持横向滑动的矩阵，滚动容器右侧必须配置渐变透明遮罩，向用户直观暗示“右侧有更多内容可滑”：
+    ```css
+    .scroll-mask-edge {
+      mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
+    }
+    ```
+
+### 6.6 软键盘呼出与表单视口挤压防御 (Virtual Keyboard Governance)
+* **iOS 16px 视口自动放大 Bug**：当 `<input>` 或 `<select>` 的 `font-size` 小于 16px 时，iOS Safari 会在用户点击输入框的一瞬间，强制把全页面镜头放大拉近，导致所有 Header 和浮动元素严重错位。
+* **微细节硬规范**：
+  - 移动端所有可聚焦输入表单，字体大小计算值必须 $\ge 16px$（即 `text-base`，在 PC 端断点才允许降为 `sm:text-sm`）；
+  - 全局 `<head>` 视口标签配置 `interactive-widget=resizes-content`，促使浏览器在软键盘弹起时合理折叠主视口，而非野蛮推挤页面；
+  - 表单提交主按钮严禁写死 `fixed bottom-0`，必须跟随表单内容流自然居底，或置于支持滚动避让的标准模态 Tier 3 底栏中。
+
+### 6.7 桌面端悬停浮窗 (Tooltip) 在移动端的抽屉降级
+* **PC 端**：鼠标悬停在文献 DOI、星级证据或专业术语缩写（如 VDT、CTR、CRM、EGFR 20ins）上时，触发 `group-hover:opacity-100` 即时弹出小浮窗。
+* **移动端**：手机端无 Hover 事件。
+* **微细节硬规范**：
+  - 严禁将关键临床依据、用药红线或剂量说明单独放在纯 CSS `group-hover` 浮窗内；
+  - 移动端必须支持 Tap-to-inspect（点击词条唤起轻量 Bottom Sheet 或带遮罩的居中说明卡片），使用户一键阅读完整释义。
+
+### 6.8 触觉反馈 (Haptics) 硬件分流与防干扰策略
+* **PC 端**：鼠标与键盘为无震动硬件，禁止调用可能会报错或带来性能开销的伪马达指令。
+* **移动端**：
+  - 调用项目统一的 `triggerHaptic(type: "light" | "medium" | "selection")`；
+  - **轻触级 (`light`)**：导航 Tab 切换、癌种专区切换、折叠面板展开；
+  - **确认级 (`medium`)**：保存病历档案、微信赞赏寄语提交成功、基因突变勾选；
+  - **警告级 (`heavy` / 连击)**：触发 DDI 严重红线用药拦截、清空历史档案确认。
+
+---
+
+## 7. 全局绝对 Z-Index 分层阶梯 (Strict Z-Index Hierarchy)
 
 全站严格划分为 5 大物理图层，**严禁跨级设置或同级竞争**：
 
@@ -191,7 +286,7 @@ export default function StandardPageTemplate() {
 
 ---
 
-## 7. 临床报告纸张排版与 PDF 打印导出标准 (Print & A4 Clinical Report Standard)
+## 8. 临床报告纸张排版与 PDF 打印导出标准 (Print & A4 Clinical Report Standard)
 
 针对就诊病历打印、临床报告 PDF 导出（`pdfExporter.ts`）与浏览器 `Ctrl+P` 打印视口，必须遵守以下物理纸张排版规范：
 
@@ -244,7 +339,7 @@ export default function StandardPageTemplate() {
 
 ---
 
-## 8. 反模式黑名单 (Anti-Patterns Prohibited)
+## 9. 反模式黑名单 (Anti-Patterns Prohibited)
 
 开发与代码审查中，若出现以下写法**直接判定不合格并拦截修复**：
 
@@ -255,12 +350,15 @@ export default function StandardPageTemplate() {
 | `mb-16` / `mt-16` (在通用模块间) | 造成页面模块间严重的视觉撕裂感 | `mb-8 sm:mb-12` 或 `space-y-5 sm:space-y-6` |
 | `p-6` / `p-8` (移动端卡片直接使用) | 挤占手机横向 30% 面积，导致核心文本折行断裂 | `p-4 sm:p-5 md:p-8` |
 | 弹窗容器使用 `z-50` | 与桌面导航栏同层竞争，引发遮罩穿模 | 统一提升为 `z-[9999]` |
-| 移动端抽屉未配 `env(safe-area-bottom)` | 底部按钮被 iPhone 底部手势横条遮挡并误触 | `pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]` |
+| 移动端抽屉未配 `env(safe-area-bottom)` | 底部按钮被 iPhone 底部手势横条遮挡并误触 | `pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]` 或 `pb-safe` |
 | 容器外层与内层双重设置 `pb-8 sm:pb-12` | 产生 2 倍叠加空白 | 仅在最内层或最外层单一容器保留，杜绝嵌套叠加 |
+| 移动端抽屉未加 `overscroll-behavior: contain` | 局部滚动到底时引发底层父页面剧烈橡皮筋弹跳 | 滚动容器显式配置 `overscroll-behavior: contain` |
+| 移动端表单输入框设置 `text-xs` / `text-sm` (未到 16px) | 触发 iOS Safari 破坏性的自动放大视口 Bug | 移动端表单输入框基准设为 `text-base` (16px) |
+| 将核心临床依据仅置于 `group-hover` 纯 CSS Tooltip | 移动设备无鼠标悬停，用户彻底丧失阅读关键证据入口 | 移动端提供 Tap 点击触发轻量抽屉或居中卡片 |
 
 ---
 
-## 9. 代码审查与落地验证清单 (Pre-Commit / PR Checklist)
+## 10. 代码审查与落地验证清单 (Pre-Commit / PR Checklist)
 
 任何修改或新建 UI 代码提交前，必须逐项核对：
 
@@ -268,6 +366,10 @@ export default function StandardPageTemplate() {
 - [ ] **触底距离校验**：页面主容器底部是否已统一为 `pb-8 sm:pb-12`，且不存在冗余双重嵌套？
 - [ ] **手机卡片内边距校验**：移动端卡片是否保持在 `p-4` 或 `p-5`，桌面端是否平滑放大至 `sm:p-6 md:p-8`？
 - [ ] **安全区避让校验**：弹窗与抽屉是否配备 `pb-safe` 或动态 `env(safe-area-inset-bottom)`？
+- [ ] **动态视口高度校验**：抽屉与全屏遮罩是否采用 `max-h-[92dvh]` 或 `.max-h-sheet`，防止移动端动态地址栏截断？
+- [ ] **滚动链穿透防御校验**：模态框滚动区域是否已添加 `overscroll-behavior: contain`？
+- [ ] **触控命中热区校验**：移动端紧凑小按钮是否已通过 `.touch-target-min` 或伪元素扩张至 $\ge 44\text{px}$ 物理命中区？
 - [ ] **Z-Index 层级校验**：新出现的弹窗或遮罩层是否严格为 `z-[9999]`，吸顶工具栏是否为 `z-20`？
 - [ ] **超宽屏锁死校验**：大屏主容器是否配置 `max-w-7xl mx-auto`，长文是否配置 `max-w-4xl mx-auto`？
-- [ ] **全量回归测试**：运行 `npm run test:unit`（438 项测试）全部通过，且 `npm run build` 静态页面零水合与零布局告警？
+- [ ] **全量回归测试**：运行 `npm run test:unit` 全部通过，且静态页面零水合与零布局告警？
+

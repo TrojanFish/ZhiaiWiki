@@ -61,6 +61,7 @@
     overflow-x: hidden;
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
     /* Remove global smooth scroll — it conflicts with Next.js App Router's
        instant scroll-to-top on route change, causing vertical bounce flicker */
   }
@@ -74,6 +75,7 @@
     font-variant-numeric: tabular-nums;
     overflow-x: hidden;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -391,6 +393,32 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Touch Hitbox Expansion (Expands interactive clickable area without changing visual footprint) */
+.touch-target-expand {
+  position: relative;
+}
+.touch-target-expand::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+/* iOS Bottom Sheet Scroll Containment & Dynamic Viewport Height */
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+.max-h-sheet {
+  max-height: 92vh;
+  max-height: 92dvh;
+}
+
+/* Horizontal Scroll Container Edge Fade Mask (Visual affordance for scrollable content) */
+.scroll-mask-edge {
+  mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
 }
 
 /* Standard Clinical Layout Top Offset */
