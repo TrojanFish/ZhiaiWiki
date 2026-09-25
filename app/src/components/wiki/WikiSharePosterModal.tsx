@@ -2,11 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 
-import { X, Download, Check, Sparkles, HeartPulse, ShieldCheck, BookOpen, HelpCircle } from "lucide-react";
+import { X, Download, Check, Lightbulb, Scan, Image as ImageIcon, HeartPulse, ShieldCheck, BookOpen, HelpCircle, Info } from "lucide-react";
 import { toPng } from "html-to-image";
 import type { WikiTopic } from "@/lib/wikiData";
 import { RISK_LEVEL_CONFIG, WIKI_CATEGORIES } from "@/lib/wikiData";
-import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
+import { ZHIAIWIKI_LOGO_DATA_URI } from "@/lib/brandLogo";
 import WikiTopicIcon from "./WikiTopicIcon";
 import { WikiVisualRenderer } from "./WikiVisualRenderer";
 import ExportBrandFooter from "@/components/common/ExportBrandFooter";
@@ -124,7 +124,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
     try {
       const link = document.createElement("a");
       link.href = exportedImageUrl;
-      link.download = `OncoPath_${topic.id}_${new Date().toISOString().slice(0, 10)}.png`;
+      link.download = `ZhiaiWiki_${topic.id}_${new Date().toISOString().slice(0, 10)}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -165,10 +165,10 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
           <div className="flex items-center justify-between border-b border-slate-200 pb-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs flex-shrink-0 bg-slate-100 border border-slate-200">
-                <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
+                <img src={ZHIAIWIKI_LOGO_DATA_URI} alt="ZhiaiWiki Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证知识平台</div>
+                <div className="text-xs font-black tracking-wider text-slate-900">知癌维基 ZhiaiWiki · 循证知识百科</div>
                 <div className="text-[10px] text-slate-500">权威医学百科 · 100% 顶刊出处可溯</div>
               </div>
             </div>
@@ -200,7 +200,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
           {/* Section 1: Metaphor */}
           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5 leading-relaxed">
             <div className="text-xs font-bold text-amber-800 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <Lightbulb className="w-3.5 h-3.5 text-amber-600 shrink-0" />
               <span>生活比喻直观破译：</span>
             </div>
             <p className="text-[11px] leading-relaxed text-amber-900">{topic.metaphor}</p>
@@ -211,7 +211,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
             <div className="rounded-2xl border border-slate-200 bg-white p-3.5 overflow-hidden space-y-2 shadow-xs">
               <div className="flex items-center justify-between text-[11px] font-bold text-blue-700">
                 <span className="flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                  <Scan className="w-3.5 h-3.5 text-blue-600" />
                   <span>视觉微观图解与影像征象推演</span>
                 </span>
                 <span className="text-[10px] text-slate-400">权威循证图谱</span>
@@ -308,11 +308,11 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
             <p className="text-[11px] leading-relaxed text-teal-900">{topic.reassurance}</p>
           </div>
 
-          {/* Footer with lung.dpdns.org and QR code */}
+          {/* Footer with zhiaiwiki.org and QR code */}
           <ExportBrandFooter 
             variant="light"
-            title="OncoPath 肺癌循证百科"
-            subtitle="权威同行评审顶刊研究 · 破除信息壁垒"
+            title="知癌维基 ZhiaiWiki · 循证百科"
+            subtitle="“知癌，方能治癌；每一次循证，皆因至爱。”"
             scanHint="扫码查阅完整知识"
           />
         </div>
@@ -332,7 +332,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">
-              <Sparkles className="w-4 h-4" />
+              <ImageIcon className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
@@ -378,8 +378,9 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
                   className="w-full h-auto object-contain block"
                 />
               </div>
-              <p className="text-[11px] text-slate-400 text-center">
-                💡 手机端可长按上方长图直接存入相册；电脑端请点击下方下载按键。
+              <p className="text-[11px] text-slate-400 text-center flex items-center justify-center gap-1.5">
+                <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                <span>手机端可长按上方长图直接存入相册；电脑端请点击下方下载按键。</span>
               </p>
             </div>
           )}

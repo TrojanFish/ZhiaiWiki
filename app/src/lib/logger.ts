@@ -1,5 +1,5 @@
 /**
- * OncoPath Production Telemetry & Structured Logger
+ * ZhiaiWiki Production Telemetry & Structured Logger
  * Outputs structured JSON logs suitable for CloudWatch, Datadog, Loki or standard VPS log files.
  */
 

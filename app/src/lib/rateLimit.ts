@@ -1,5 +1,5 @@
 /**
- * OncoPath In-Memory Sliding Window Rate Limiter
+ * ZhiaiWiki In-Memory Sliding Window Rate Limiter
  * Provides robust abuse prevention for high-cost AI LLM endpoints and brute-force protection.
  */
 

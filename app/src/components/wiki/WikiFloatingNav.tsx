@@ -3,7 +3,9 @@
 import React from "react";
 import { Search } from "lucide-react";
 import type { WikiCategory } from "@/lib/wikiData";
-import { WIKI_CATEGORIES } from "@/lib/wikiData";
+import { getWikiCategories } from "@/lib/wikiData";
+import type { CancerType } from "@/lib/types";
+import { CancerIcon } from "@/components/common/CancerIcons";
 
 interface WikiFloatingNavProps {
   activeCategory: WikiCategory | "all";
@@ -11,6 +13,7 @@ interface WikiFloatingNavProps {
   totalTopics: number;
   categoryCounts: Record<WikiCategory, number>;
   onOpenSearch: () => void;
+  cancerType?: CancerType;
 }
 
 export function WikiFloatingNav({
@@ -19,6 +22,7 @@ export function WikiFloatingNav({
   totalTopics,
   categoryCounts,
   onOpenSearch,
+  cancerType = "lung",
 }: WikiFloatingNavProps) {
   // Smooth scroll helper
   const scrollToSection = (sectionId: string) => {
@@ -31,6 +35,8 @@ export function WikiFloatingNav({
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const catCfg = getWikiCategories(cancerType);
 
   const categories: Array<{
     id: WikiCategory | "all";
@@ -54,20 +60,14 @@ export function WikiFloatingNav({
     },
     {
       id: "nodule",
-      label: WIKI_CATEGORIES.nodule.label,
+      label: catCfg.nodule.label,
       count: categoryCounts.nodule || 0,
       activeTheme: "bg-gradient-to-tr from-emerald-600 to-teal-600 text-white shadow-emerald-500/30 ring-emerald-400/40",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 4v7" />
-          <path d="M12 8c-2.5-2-6-2-8 1-2.5 3.5-1 9.5 2.5 11 3.5 1.5 5.5-2 5.5-5" />
-          <path d="M12 8c2.5-2 6-2 8 1 2.5 3.5 1 9.5-2.5 11-3.5 1.5-5.5-2-5.5-5" />
-        </svg>
-      ),
+      icon: <CancerIcon type={cancerType} className="w-4 h-4" />,
     },
     {
       id: "pathology",
-      label: WIKI_CATEGORIES.pathology.label,
+      label: catCfg.pathology.label,
       count: categoryCounts.pathology || 0,
       activeTheme: "bg-gradient-to-tr from-blue-600 to-cyan-600 text-white shadow-blue-500/30 ring-blue-400/40",
       icon: (
@@ -83,7 +83,7 @@ export function WikiFloatingNav({
     },
     {
       id: "genetics",
-      label: WIKI_CATEGORIES.genetics.label,
+      label: catCfg.genetics.label,
       count: categoryCounts.genetics || 0,
       activeTheme: "bg-gradient-to-tr from-purple-600 to-fuchsia-600 text-white shadow-purple-500/30 ring-purple-400/40",
       icon: (
@@ -99,7 +99,7 @@ export function WikiFloatingNav({
     },
     {
       id: "recovery",
-      label: WIKI_CATEGORIES.recovery.label,
+      label: catCfg.recovery.label,
       count: categoryCounts.recovery || 0,
       activeTheme: "bg-gradient-to-tr from-amber-600 to-orange-600 text-white shadow-amber-500/30 ring-amber-400/40",
       icon: (

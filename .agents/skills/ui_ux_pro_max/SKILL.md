@@ -1,98 +1,168 @@
 ---
 name: UI/UX Pro Max - Healthcare & Evidence Intelligence
-description: Production-grade UI/UX design system and reasoning engine based on GitHub's ui-ux-pro-max-skill, specifically tuned for Clinical Healthcare, Telemedicine, Oncology Patient OS, and Evidence-Based Science interfaces.
+description: Production-grade UI/UX design reasoning engine, Next.js 16 SSR hydration protection, evidence traceability rules, and multi-cancer state governance for ZhiaiWiki / OncoPath.
 ---
 
-# UI/UX Pro Max - Healthcare & Evidence Intelligence
+# UI/UX Pro Max - Healthcare & Evidence Intelligence (设计决策推理引擎与全栈质量保障技能)
 
-Based on GitHub's acclaimed `nextlevelbuilder/ui-ux-pro-max-skill` framework, this skill serves as the procedural design intelligence and design system generator for OncoPath.
+本技能定义了知癌维基（ZhiaiWiki / OncoPath）全系统在**UI/UX 决策推理、抗焦虑心理学引导、证据可溯源性、Next.js 16 SSR 水合安全防护与多癌种状态治理**等方面的核心工程与设计规则。
+
+本技能作为全系统的**「设计推理与工程质量引擎（Reasoning & Quality Engine）」**，任何新增功能或代码修改，必须通过本技能中定义的决策推理与全栈校验规则。
 
 ---
 
-## 1. 核心设计哲学 (Core Philosophy: Trust, Calm, Precision)
+## 1. 核心设计决策推理规则 (Design Reasoning Rules)
 
+### Rule 1: 消除患者视觉恐惧感与去危机化叙事 (De-escalate Anxiety)
+* ❌ **反模式 (Anti-Pattern)**：
+  - 出现大面积刺眼的 `#ff0000` 纯红背景或黑红色剧烈闪烁的警告浮窗；
+  - 出现绝望生硬的表述（如“晚期不可治”、“随时危及生命”）。
+* ✅ **最佳实践 (Best Practice)**：
+  - 将风险指标（如脉管浸润、低分化、淋巴结转移）包裹在带有温和盾牌/微图标的圆角卡片中，使用柔和的 `Rose-600` / `bg-rose-50 border-rose-200`；
+  - 在披露风险的同时，必须**立即在同一视口内展示前沿破局点或同行评审循证对策**（如“虽然存在高危因素，但根据 ADAURA / MonarchE 研究，强化靶向将无病生存率显著提升至 85%+”）。
+
+### Rule 2: 严格的医学证据链与出处可溯源性 (Evidence Traceability)
+* ❌ **反模式 (Anti-Pattern)**：
+  - 生成无来源的孤立数字（如“5年生存率为 30%”）；
+  - 引用未经同行评审的网络流言、贴吧个案或未公开的模糊资料。
+* ✅ **最佳实践 (Best Practice)**：
+  - 关键结论与生存期数字必须具备**「四要素出处凭证」**：`[期刊名 · 年份 · 试验名 · 样本量 n=xxx ⭐⭐⭐⭐⭐]`；
+  - 必须提供可点击的 **「📖 查看原文出处 ↗ (DOI直达)」** 链接，让每一位患者和家属能够查证原始科学文献。
+
+### Rule 3: 4D 动态因果链条而非孤立死指标 (Dynamic Causality)
+* ❌ **反模式 (Anti-Pattern)**：
+  - 把病理指标（如 CTR、Ki-67、CRM、Lauren 分型）当作孤立表格呈现。
+* ✅ **最佳实践 (Best Practice)**：
+  - 必须展示**「上游病理特征 → 中游分期演化 → 下游治疗决策与生存结局」**的完整因果推演脉络；
+  - 使用可视化组件（如 `GgoEvolutionSimulator`、`Her2AdcVisual`、`AdjuvantDecisionTree`）帮助患者秒懂微观机制。
+
+---
+
+## 2. Next.js 16 SSR 水合安全与稳定性保障 (Hydration Protection Architecture)
+
+为了彻底杜绝 React 19 / Next.js 16 App Router 下常见的 `Hydration mismatch` 白屏或抖动警告，全系统必须严格遵守以下水合安全防御铁律：
+
+### 2.1 严禁在服务端初始渲染中裸调客户端特有 API
+* ❌ 严禁在组件根级计算中直接读取 `window`、`localStorage`、`sessionStorage` 或 `navigator.userAgent`。
+* ✅ 必须通过 `useEffect` 挂载后或客户端状态中惰性读取：
+  ```tsx
+  const [profile, setProfile] = useState<PatientProfile | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = localStorage.getItem("oncopath_profile");
+    if (saved) setProfile(JSON.parse(saved));
+  }, []);
+  ```
+
+### 2.2 动态时间戳与随机值隔离
+* ❌ 严禁在 SSR 渲染的 HTML 中直接调用 `Date.now()`、`new Date().toLocaleTimeString()` 或 `Math.random()` 作为文本节点输出。
+* ✅ 必须在包含客户端动态时钟或缓存时间的元素上显式添加 `suppressHydrationWarning`：
+  ```tsx
+  <span suppressHydrationWarning>{hasProfile ? "我的个人临床档案" : "建立个人临床档案"}</span>
+  ```
+
+### 2.3 根布局滚动条抖动免疫 (Anti-Jitter)
+* 全站 `html` 根节点必须配置 `scrollbar-gutter: stable`，杜绝 Windows 平台在路由切换（有/无垂直滚动条）时产生 15px 导航栏横向横跳闪烁；
+* 全局移除可能干扰 Next.js App Router 路由跳转即时滚顶的 `scroll-smooth`。
+
+### 2.4 开箱即用：客户端水合防护标准 Hook 模板 (useHydrated & useMountedProfile)
+
+为了彻底杜绝开发者在组件初次渲染时裸读 `localStorage` 或 `window`，必须统一采用以下标准 Hook 范式：
+
+```tsx
+// app/src/lib/useHydrated.ts
+"use client";
+
+import { useState, useEffect } from "react";
+
+/**
+ * 确保组件仅在客户端完成水合挂载后才渲染动态私有状态
+ * 未完成水合前展示统一的骨架占位，彻底杜绝 React 19 SSR Hydration Mismatch
+ */
+export function useHydrated(): boolean {
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  return hydrated;
+}
+
+/**
+ * 专科档案安全挂载 Hook 示例
+ */
+export function useMountedProfile<T>(loader: () => T | null, fallback: T | null = null): {
+  data: T | null;
+  isHydrated: boolean;
+} {
+  const isHydrated = useHydrated();
+  const [data, setData] = useState<T | null>(fallback);
+
+  useEffect(() => {
+    if (isHydrated) {
+      try {
+        setData(loader());
+      } catch (err) {
+        console.warn("[Hydration Safe] 档案解析失败，安全回退:", err);
+      }
+    }
+  }, [isHydrated]);
+
+  return { data, isHydrated };
+}
 ```
-        ┌───────────────────────────────────────────────────────┐
-        │                 Psychological Foundation              │
-        │  • Anxiety Reduction: Soft contrast, soothing tones   │
-        │  • Clinical Trust: Evidence badges, DOI traceability  │
-        │  • Cognitive Ease: Structured Traffic-Light Matrix    │
-        └───────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-        ┌───────────────────────────────────────────────────────┐
-        │               60 - 30 - 10 Palette Engine             │
-        │  60% Slate Canvas (#f8fafc / #ffffff)                 │
-        │  30% Medical Trust Blue (#0284c7) + Teal (#0d9488)    │
-        │  10% Clinical State Accents (Emerald / Amber / Rose)  │
-        └───────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-        ┌───────────────────────────────────────────────────────┐
-        │              Components & Micro-Interactions          │
-        │  • Cards: rounded-2xl + subtle diffuse borders        │
-        │  • Buttons: Medical Gradient + active:scale(0.98)     │
-        │  • Numbers: font-variant-numeric: tabular-nums        │
-        └───────────────────────────────────────────────────────┘
+
+---
+
+## 3. 多癌种专区切换与状态原子隔离 (Multi-Cancer Domain Governance)
+
+系统全面支持肺癌、乳腺癌、结直肠癌、结肠癌、直肠癌、胃癌、肝癌、食管癌、甲状腺癌、子宫内膜癌、宫颈癌等 **11 大实体瘤专区**。切换癌种时必须执行**原子级状态隔离与清理**，严禁跨癌种串扰：
+
+### 3.1 切换癌种时的清理动作清单 (Reset Protocol)
+当 `cancerType` 发生变化时，相关页面必须执行以下原子级重置：
+```tsx
+useEffect(() => {
+  setActiveCategory("all");       // 重置分类筛选
+  setSearchQuery("");             // 清空上一癌种搜索词
+  setSelectedRisk("all");         // 重置风险过滤器
+  setActiveDrawerTopicId(null);    // 立即关闭侧滑抽屉，防止展示旧癌种内容
+  if (typeof window !== "undefined" && window.location.hash.startsWith("#topic-")) {
+    window.history.replaceState(null, "", window.location.pathname);
+  }
+}, [cancerType]);
 ```
 
----
-
-## 2. 设计规范参数库 (Design Tokens)
-
-### 🎨 色彩体系 (Color Tokens)
-- **Canvas Base (60%)**:
-  - `bg-primary`: `#f8fafc` (Slate-50 护眼柔白底)
-  - `bg-secondary`: `#f1f5f9` (Slate-100 次级灰底)
-  - `bg-card`: `#ffffff` (Card 纯白容器)
-  - `border-color`: `#e2e8f0` (极细冷灰边框)
-  - `border-hover`: `#cbd5e1` (聚焦悬停边框)
-- **Brand & Trust (30%)**:
-  - `accent-blue`: `#0284c7` (Sky-600 临床专业蓝)
-  - `accent-blue-dark`: `#0369a1` (Sky-700 深邃蓝)
-  - `accent-teal`: `#0d9488` (Teal-600 生命治愈青绿)
-  - `accent-teal-light`: `#2dd4bf` (Teal-400 活力微光)
-- **Clinical Traffic Light Accents (10%)**:
-  - `status-safe` (R0/N0/低危): `#059669` (Emerald-600) / `bg-emerald-50` / `border-emerald-200`
-  - `status-warning` (STAS+/VPI+/需随访): `#d97706` (Amber-600) / `bg-amber-50` / `border-amber-200`
-  - `status-alert` (N2/需积极治疗): `#e11d48` (Rose-600) / `bg-rose-50` / `border-rose-200`
-- **Text Contrast**:
-  - `text-primary`: `#0f172a` (Slate-900 极佳对比度)
-  - `text-secondary`: `#334155` (Slate-700 易读正文)
-  - `text-muted`: `#64748b` (Slate-500 辅助注释)
-
-### 📐 字体排印 (Typography)
-- **Font Stack**: `Inter`, `Noto Sans SC`, `-apple-system`, `BlinkMacSystemFont`, `sans-serif`
-- **Tabular Figures**: 所有临床统计量（HR、5yr RFS、n=病例数）必须应用 `font-variant-numeric: tabular-nums`；
-- **字阶层级**:
-  - `display-lg`: `clamp(2rem, 5vw, 3.25rem)` / `font-bold` / `tracking-tight`
-  - `display-md`: `clamp(1.5rem, 3.5vw, 2.25rem)` / `font-bold` / `leading-snug`
-  - `body-base`: `1rem (16px)` / `leading-relaxed` (`1.6`)
-  - `caption`: `0.75rem (12px)` / `font-medium`
+### 3.2 档案数据物理隔离防穿模
+* 在展示患者个性化推荐（如“已为您匹配本癌种词条”）前，**必须校验 `userProfile.cancerType === currentCancerType`**；
+* 严禁将肺癌档案的磨玻璃/STAS 推荐展示在乳腺癌或甲状腺癌专区。
 
 ---
 
-## 3. UI/UX 决策推理规则 (Reasoning Rules)
+## 4. 性能与按需加载规范 (Performance & Dynamic Imports)
 
-### Rule 1: 消除患者视觉恐惧感 (De-escalate Anxiety)
-- ❌ **Anti-Pattern**: 出现大面积刺眼的 `#ff0000` 纯红背景或黑红色警告弹窗。
-- ✅ **Best Practice**: 将风险因素包裹在带有盾牌/图示的圆角小卡片中，使用柔和的 `Rose-600` / `bg-rose-50`，并立即附上同行评审文献或就诊沟通建议。
+1. **次要重量级组件延迟动态加载**：
+   - 包含复杂图表、海报生成器（`html2canvas`）或大型表单步骤器的组件，必须使用 `next/dynamic` 配合骨架屏按需加载：
+     ```tsx
+     const ReportUploader = dynamic(() => import("./ReportUploader"), {
+       ssr: false,
+       loading: () => <div className="p-8 text-center text-slate-400">正在装载临床解析引擎...</div>,
+     });
+     ```
+2. **纯矢量代码绘图优先**：
+   - 全站 20+ 个微观解剖与药理机制模拟器（如 `AdjuvantDecisionTreeVisual`、`BiRadsScaleVisual` 等）统一采用轻量矢量 SVG 实现，零庞大光栅位图加载延迟。
 
-### Rule 2: 严格的证据可溯源标注 (Evidence Traceability)
-- ❌ **Anti-Pattern**: 生成无来源的模糊数字（例如“你的复发率为20%”）。
-- ✅ **Best Practice**: 每个关键数字必须伴随 `[来源: 期刊名 · 年份 · n=例数 ⭐⭐⭐⭐]`，并提供可点击的 **「📖 查看原文出处 ↗」** 按钮。
-
-### Rule 3: 极致触感的微动效 (Tactile Micro-Interactions)
-- **按钮**: `active:scale(0.98)` 与轻微蓝光外发光；
-- **卡片**: 悬停时 `-2px` Y轴平滑位移（`cubic-bezier(0.16, 1, 0.3, 1)`）；
-- **加载状态**: 采用带有渐变 Shimmer 光效的骨架屏（Skeleton），避免单一生硬的 Spinner。
+3. **医疗图表容灾降级架构与骨架屏规范 (Clinical Chart Error Boundary & Fallback)**：
+   - 当患者设备出现 GPU 加速异常、Canvas 崩溃或网络断流时，**严禁向患者直接展示白屏或报错堆栈**；
+   - 必须提供 `ClinicalChartErrorBoundary` 配合无障碍结构化数据表格（`TabularDataFallback`），优雅降级输出 5 年总生存率、HR 危害比与置信区间数值列表，保障临床知情权不中断。
 
 ---
 
-## 4. 全站设计系统落地校验检查清单 (Audit Checklist)
+## 5. 全栈回归验证契约 (Full-Stack Verification Contract)
 
-- [x] 全站页面遵循柔光医疗基底（`bg-slate-50` / `#f8fafc`）；
-- [x] 所有卡片统一采用 `rounded-2xl`，细边框 `border-slate-200`，弥散微投影 `shadow-sm`；
-- [x] 所有医学数据与百分比采用等宽排版（`tabular-nums`）；
-- [x] 国际研究库与管理后台支持一键直达 DOI / PubMed / 期刊原文；
-- [x] 循证报告页面配备四维红绿灯矩阵与一键复制门诊就诊清单。
+任何影响 UI 布局、状态治理或医学展示的代码，在发布前必须满足以下两道自动化防线：
+
+1. **单元与临床测试网** (`npm run test:unit`)：
+   - **438+ 项单元测试全部通过（100% 成功，0 失败）**。
+2. **生产全量编译构建** (`npm run build`)：
+   - Next.js 16 (Turbopack) 必须输出 **30/30 静态页面生成全部通过（Exit Code 0）**，无任何 Hydration 水合不匹配或布局穿模警告。

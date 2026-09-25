@@ -23,6 +23,7 @@ export interface WikiTopic {
     label: string;
     value: string;
     source: string;
+    interpretation?: string;
   };
   
   // 患者高频 Q&A
@@ -68,7 +69,35 @@ export interface WikiTopic {
     | "EbusTbnaVisual"
     | "TcmBoundaryVisual"
     | "DdiCheckerVisual"
-    | "CtWindowingVisual";
+    | "CtWindowingVisual"
+    // 乳腺癌专区专属交互模拟器
+    | "BiRadsScaleVisual"
+    | "MicrocalcificationVisual"
+    | "ReceptorSubtypeVisual"
+    | "LymphedemaArmVisual"
+    | "DcisBasementMembraneVisual"
+    // 结直肠癌 (特别是直肠癌) 专区专属交互模拟器
+    | "RectalAnatomyRulerVisual"
+    | "RectalCrmMriVisual"
+    | "RectalTntWatchWaitVisual"
+    | "StomaCareLarsVisual"
+    // 胃癌专区专属交互模拟器
+    | "GastricAnatomyD2Visual"
+    | "GastricDumpingNutritionVisual"
+    // 原发性肝癌专区专属交互模拟器
+    | "LiverCnlcStagingVisual"
+    | "HccInterventionSystemicVisual"
+    // 食管鳞癌专区专属交互模拟器
+    | "EsophagealAnatomyStagingVisual"
+    | "EsophagealMultiModalVisual"
+    // 甲状腺癌专区专属交互模拟器
+    | "ThyroidTiradsUltrasoundVisual"
+    | "ThyroidLt4TimingIsolationVisual"
+    // 子宫内膜癌与宫颈癌专区专属交互模拟器
+    | "EndometrialMoleculeDecisionVisual"
+    | "CervicalCinProgressionVisual"
+    // 胰腺癌专区专属交互模拟器
+    | "PancreaticResectabilityVisual";
 
 
   
@@ -78,6 +107,14 @@ export interface WikiTopic {
   // 搜索关键词（支持中文、英文缩写、常见别名）
   searchKeywords: string[];
 }
+
+import type { CancerType } from "./types";
+import { BREAST_WIKI_CATEGORIES } from "./breastWikiData";
+import { COLORECTAL_WIKI_CATEGORIES } from "./colorectalWikiData";
+import { COLON_WIKI_CATEGORIES } from "./colonWikiData";
+import { RECTAL_WIKI_CATEGORIES } from "./rectalWikiData";
+import { GASTRIC_WIKI_CATEGORIES } from "./gastricWikiData";
+import { LIVER_WIKI_CATEGORIES } from "./liverWikiData";
 
 export const WIKI_CATEGORIES: Record<WikiCategory, { label: string; icon: string; desc: string; color: string; badgeBg: string }> = {
   nodule: {
@@ -90,25 +127,38 @@ export const WIKI_CATEGORIES: Record<WikiCategory, { label: string; icon: string
   pathology: {
     label: "术后病理密码破译",
     icon: "microscope",
-    desc: "破译病理报告中的高危指标（STAS/VPI/LVI/分级/切缘），用生活比喻讲透真实风险与应对武器",
+    desc: "解读浸润深度、胸膜侵犯、STAS与脉管侵犯等决定复发风险的核心病理密码",
     color: "text-blue-700",
     badgeBg: "bg-blue-50 border-blue-200 text-blue-700",
   },
   genetics: {
     label: "驱动基因与精准靶向",
     icon: "dna",
-    desc: "解码 EGFR、ALK、KRAS 等基因检测报告，了解代系靶向药如何精准阻断复发通道",
+    desc: "透视 EGFR / ALK 等关键驱动基因突变，匹配最佳靶向药物方案及耐药对策",
     color: "text-purple-700",
     badgeBg: "bg-purple-50 border-purple-200 text-purple-700",
   },
   recovery: {
     label: "术后康复与长期随访",
     icon: "recovery",
-    desc: "术后咳喘、胸闷应对、肿瘤标志物波动认知、复查计划制定与身心重塑指南",
+    desc: "呼吸功能锻炼、疼痛管理、营养支持与长期高质量生活重建指引",
     color: "text-amber-700",
     badgeBg: "bg-amber-50 border-amber-200 text-amber-700",
   },
 };
+
+/**
+ * 依据当前癌种动态获取对应的分类元数据（标签、图标、描述与配色）
+ */
+export function getWikiCategories(cancerType?: CancerType | string | null): Record<WikiCategory, { label: string; icon: string; desc: string; color: string; badgeBg: string }> {
+  if (cancerType === "breast") return BREAST_WIKI_CATEGORIES;
+  if (cancerType === "colon") return COLON_WIKI_CATEGORIES;
+  if (cancerType === "rectal") return RECTAL_WIKI_CATEGORIES;
+  if (cancerType === "gastric") return GASTRIC_WIKI_CATEGORIES;
+  if (cancerType === "liver") return LIVER_WIKI_CATEGORIES;
+  if (cancerType === "colorectal") return COLORECTAL_WIKI_CATEGORIES;
+  return WIKI_CATEGORIES;
+}
 
 export const RISK_LEVEL_CONFIG: Record<RiskLevel, { label: string; color: string; bg: string; border: string; desc: string }> = {
   high: {
@@ -412,6 +462,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "R0 切缘代表局部病灶已被彻底切除干净，局部复发概率极低。是否复发还与肿瘤微观生物学特性（如是否有脉管癌栓、淋巴结转移等）有关，结合分期进行规范随访或辅助治疗即可全面把控风险。"
       }
     ],
+    visualComponent: "SurgicalApproachesVisual",
     graphNodeId: "SURGERY",
     searchKeywords: ["R0", "切缘阴性", "qieyuan", "切缘安全", "完全切除", "切缘净", "支气管切缘"],
   },
@@ -835,6 +886,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "对于肺腺癌初诊患者，涵盖 10~50 个肺癌核心指南推荐基因的标准 Panel 已经能够满足 98% 以上的临床用药指导需求。几百个基因的超大套餐多用于罕见耐药机制研究，常规初诊按临床医生建议选择标准套餐即可。"
       }
     ],
+    visualComponent: "EgfrMutationMapVisual",
     searchKeywords: ["ALK", "阿来替尼", "KRAS", "ROS1", "RET", "MET", "HER2", "BRAF", "NTRK", "氟泽雷塞", "德曲妥珠单抗", "基因检测", "钻石靶点"],
   },
   {
@@ -865,6 +917,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "不是。MET 14 跳跃是原发基因结构的剪接突变，属于特异性驱动基因；MET 扩增则是基因拷贝数增多，常作为三代 EGFR 靶向药耐药后的旁路激活机制。两者临床用药策略有所不同。"
       }
     ],
+    visualComponent: "EgfrMutationMapVisual",
     searchKeywords: ["MET", "MET14跳跃", "谷美替尼", "赛沃替尼", "卡马替尼", "特泊替尼", "MET exon 14", "MET基因"],
   },
 
@@ -963,6 +1016,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "绝大多数不是！正常红细胞内含有大量 NSE，抽血时只要有轻微溶血（标本运输震荡或拔针挤压），红细胞破裂释放出的 NSE 就会导致数值升高。若无临床症状且 CT 正常，间隔 2~4 周复查即可恢复正常。"
       }
     ],
+    visualComponent: "FollowupTimelineVisual",
     searchKeywords: ["CEA", "CYFRA21-1", "NSE", "ProGRP", "SCC", "肿瘤标志物", "zhongliubiaozhiwu", "癌胚抗原", "指标偏高", "溶血假阳性", "标志物波动"],
   },
   {
@@ -997,6 +1051,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "完全不是！人体拥有强大的肺代偿储备能力。正常人平时仅动用了约 30% 的肺泡储备。经过 3~6 个月充分代偿复张后，绝大多数患者完全可以正常游泳、慢跑、爬山，与健康人无异！"
       }
     ],
+    visualComponent: "FollowupTimelineVisual",
     searchKeywords: ["术后咳嗽", "胸闷", "伤口疼", "shuhoukesou", "肋间神经痛", "吹气球", "肺功能恢复", "肺代偿"],
   },
   {
@@ -1067,6 +1122,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "完全是由主刀专家亲自实时操控！医生坐在高精度的操控台前，机器人机械臂精确同步复制医生双手的每一个微动作，并实时过滤手部抖动，本质是顶尖专家的'超级机械神手'。"
       }
     ],
+    visualComponent: "SurgicalApproachesVisual",
     graphNodeId: "SURGERY",
     searchKeywords: ["胸腔镜", "单孔胸腔镜", "VATS", "达芬奇机器人", "RATS", "weichuang", "小切口", "标本袋", "加速康复"],
   },
@@ -1175,6 +1231,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "日常平价的鸡蛋、鱼肉、瘦肉和新鲜蔬菜所提供的均衡营养，效果远超任何昂贵保健品。保健品不能替代正餐，且部分成分不明的补品还可能增加肝肾代谢负担。均衡饮食最健康！"
       }
     ],
+    visualComponent: "GastricDumpingNutritionVisual",
     graphNodeId: "RECOVERY",
     searchKeywords: ["术后饮食", "发物误区", "蛋白质补充", "shouhouyinshi", "灵芝孢子粉", "戒烟", "海鲜能不能吃", "营养康复", "运动处方"],
   },
@@ -1210,6 +1267,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "可以！现代高通量 NGS 血液液体活检可测定血浆 bTMB（Blood TMB），与组织 tTMB 具有良好的相关性，适合组织标本不足的患者。"
       }
     ],
+    visualComponent: "PdL1ImmuneMechanismVisual",
     searchKeywords: ["TMB", "MSI", "肿瘤突变负荷", "微卫星不稳定性", "TMB-H", "MSI-H", "dMMR", "免疫治疗标志物", "KEYNOTE-158"],
   },
   {
@@ -1244,6 +1302,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "因为小细胞肺癌极少携带 EGFR 或 ALK 等经典激酶突变，其致病机制主要为 TP53 和 RB1 抑癌基因失活。因此小细胞肺癌的基石武器是强效化疗、免疫治疗与放疗。"
       }
     ],
+    visualComponent: "IaslcSubtypeVisual",
     searchKeywords: ["SCLC", "NSCLC", "小细胞肺癌", "非小细胞肺癌", "xiaoxibao", "feixiaoxibao", "腺癌与鳞癌", "局限期", "广泛期", "神经内分泌癌"],
   },
   {
@@ -1278,6 +1337,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "肺功能检查需要患者配合全力吹气。如果是由于没有掌握吹气技巧导致的测试偏低，医生会指导您重新练习复测；必要时结合楼梯攀爬试验或心肺运动试验（CPET）综合精确评估。"
       }
     ],
+    visualComponent: "FollowupTimelineVisual",
     searchKeywords: ["肺功能", "FEV1", "DLCO", "feigongneng", "术前评估", "吹三色球", "ppoFEV1", "心肺储备", "VO2max", "手术耐受"],
   },
   {
@@ -1312,6 +1372,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "不会！肝囊肿是肝脏内部充满液体的良性囊性水泡，由先天发育或退行性改变引起，内壁衬覆正常上皮细胞，与肺部肿瘤的恶性实质性转移在病理机制和超声回声上有着天壤之别，完全属于良性改变。"
       }
     ],
+    visualComponent: "FollowupTimelineVisual",
     searchKeywords: ["术前检查", "脑核磁", "腹部B超", "骨扫描", "PET-CT", "M0分期", "肝囊肿非转移", "supraclavicular", "全身排查", "shuqianjiancha"],
   },
   {
@@ -1352,8 +1413,8 @@ export const WIKI_TOPICS: WikiTopic[] = [
   {
     id: "her2-adc",
     category: "genetics",
-    subcategory: "前沿新型靶向与ADC",
-    title: "HER2 突变与新型 ADC 药物破局：装载 GPS 导航的微型集束生物导弹",
+    subcategory: "非小细胞肺癌罕见靶点",
+    title: "非小细胞肺癌 HER2 突变与 ADC 生物导弹：装载 GPS 导航的微型集束炸药",
     subtitle: "HER2 Exon 20 Insertions & Next-Gen ADC Breakthroughs (T-DXd)",
     icon: "dna",
     riskLevel: "moderate",
@@ -1733,6 +1794,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "立刻走‘双通道’机制！让主诊医生在医院系统开具外配电子处方，医保平台会自动流转到处方绑定的‘双通道定点药房’。患者直接前往定点药房刷医保码取药，享受与在医院内完全相同的报销比例。"
       }
     ],
+    visualComponent: "AdjuvantDecisionTreeVisual",
     searchKeywords: ["医保", "特药", "门特", "门慢", "双通道", "慈善赠药", "PAP", "报销", "yibao", "baoxiao", "惠民保", "泰瑞沙报销", "安圣莎赠药"],
   },
   {

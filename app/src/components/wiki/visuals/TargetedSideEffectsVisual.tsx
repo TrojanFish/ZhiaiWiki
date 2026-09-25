@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, ShieldCheck, Pill } from "lucide-react";
+import { AlertTriangle, ShieldCheck, Pill } from "lucide-react";
 
 export function TargetedSideEffectsVisual() {
   const [activeTab, setActiveTab] = useState<"rash" | "paronychia" | "diarrhea" | "stomatitis">("paronychia");
@@ -120,7 +120,7 @@ export function TargetedSideEffectsVisual() {
       <div className="bg-slate-800/60 rounded-xl p-3.5 border border-slate-700/70 space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
           <span className="font-extrabold text-amber-300 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
             <span>{current.title}</span>
           </span>
           <div className="flex items-center gap-2">

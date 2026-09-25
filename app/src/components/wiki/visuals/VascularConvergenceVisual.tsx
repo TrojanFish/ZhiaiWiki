@@ -33,8 +33,8 @@ export function VascularConvergenceVisual() {
         </text>
 
         {/* Flow & Convergence annotations */}
-        <text x="50" y="32" fill="#fda4af" fontSize="4.5">肺血管分支向病灶汇聚 →</text>
-        <text x="160" y="70" fill="#fda4af" fontSize="4.5">← 供血通道牵拉聚集</text>
+        <text x="50" y="32" fill="#fda4af" fontSize="4.5">肺血管分支向病灶汇聚</text>
+        <text x="160" y="70" fill="#fda4af" fontSize="4.5">供血通道牵拉聚集</text>
       </svg>
 
       <div className="mt-2 text-[11px] text-slate-300 leading-relaxed bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">

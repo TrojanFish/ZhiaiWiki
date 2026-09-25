@@ -49,38 +49,35 @@ export function GgoEvolutionSimulator() {
   const haloOpacity = Math.max(0.15, 0.55 - ctr * 0.35);
 
   return (
-    <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-7 border border-slate-200/80 shadow-md shadow-slate-900/5">
+    <div className="bg-slate-900 rounded-xl p-2.5 sm:p-3.5 text-white border border-slate-800 shadow-sm">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-100">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 mb-2">
+      <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-800">
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-sky-400">
             <Microscope className="w-3.5 h-3.5" />
-            <span>交互式影像演变实验室</span>
+            <span>磨玻璃结节演变与实性成分比 (CTR) 模拟器</span>
           </div>
-          <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
-            磨玻璃结节演变与实性成分比 (CTR) 模拟器
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            拖动下方滑块调节实性占比，直观观察从“淡薄水雾”到“致密结节”的微观形态演变
+          <p className="text-[10px] text-slate-400 mt-0.5 truncate">
+            调节下方滑块观察微观形态演变
           </p>
         </div>
 
         {/* Current CTR Badge */}
-        <div className="flex items-center gap-3 bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
+        <div className="flex items-center gap-2 bg-slate-800/90 px-2.5 py-1 rounded-lg border border-slate-700/80 shrink-0">
           <div className="text-right">
-            <div className="text-[11px] font-bold text-slate-400">实性成分比 (CTR)</div>
-            <div className="text-2xl font-black text-slate-900 font-mono">{(ctr * 100).toFixed(0)}%</div>
+            <span className="text-[9px] text-slate-400 mr-1">CTR</span>
+            <span className="text-sm font-black text-white font-mono">{(ctr * 100).toFixed(0)}%</span>
           </div>
-          <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: themeColor }} />
+          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: themeColor }} />
         </div>
       </div>
 
       {/* Slider Control */}
-      <div className="py-6 space-y-2">
-        <div className="flex justify-between items-center text-xs font-bold text-slate-600 px-1">
-          <span className="text-emerald-700">纯磨玻璃 (0%)</span>
-          <span className="text-sky-700">混合磨玻璃 (50%)</span>
-          <span className="text-rose-700">纯实性 (100%)</span>
+      <div className="py-2 space-y-1">
+        <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 px-0.5">
+          <span className="text-emerald-400">纯磨玻璃 (0%)</span>
+          <span className="text-sky-400">混合磨玻璃 (50%)</span>
+          <span className="text-rose-400">纯实性 (100%)</span>
         </div>
         <input
           type="range"
@@ -89,17 +86,17 @@ export function GgoEvolutionSimulator() {
           step="0.05"
           value={ctr}
           onChange={(e) => setCtr(parseFloat(e.target.value))}
-          className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none"
+          className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
         />
       </div>
 
       {/* Visual Canvas & Interpretation Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center pt-1">
         {/* SVG Micro CT Cross-Section Canvas */}
-        <div className="md:col-span-5 flex flex-col items-center justify-center p-4 bg-slate-950 rounded-2xl relative overflow-hidden border border-slate-800 shadow-inner">
-          <div className="absolute top-2.5 left-3 text-[10px] font-mono text-slate-400">CT 模拟剖面图 (20mm 结节)</div>
+        <div className="sm:col-span-5 flex flex-col items-center justify-center p-2 bg-slate-950 rounded-xl relative overflow-hidden border border-slate-800/80">
+          <div className="absolute top-1.5 left-2 text-[9px] font-mono text-slate-400">CT模拟剖面</div>
           
-          <svg viewBox="0 0 140 140" className="w-48 h-48 my-2 select-none">
+          <svg viewBox="0 0 140 140" className="w-28 h-28 sm:w-32 sm:h-32 my-1 select-none">
             {/* Background Lung Parenchyma Texture */}
             <defs>
               <radialGradient id="ggo-glow" cx="50%" cy="50%" r="50%">
@@ -138,58 +135,58 @@ export function GgoEvolutionSimulator() {
                 fill="url(#solid-core)"
                 stroke="#ffffff"
                 strokeWidth="0.8"
-                style={{ filter: "drop-shadow(0 0 8px rgba(255,255,255,0.4))", transition: "all 0.15s ease-out" }}
+                style={{ filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", transition: "all 0.15s ease-out" }}
               />
             )}
 
             {/* Labels inside Canvas */}
-            <text x="70" y="132" textAnchor="middle" fontSize="6.5" fill="#94a3b8" fontWeight="bold">
-              {ctr === 0 ? "纯磨玻璃（透亮可见血管）" : ctr <= 0.5 ? "煎蛋征（中心实性核心 ≤ 50%）" : "致密实性浸润灶"}
+            <text x="70" y="133" textAnchor="middle" fontSize="6.5" fill="#94a3b8" fontWeight="bold">
+              {ctr === 0 ? "纯磨玻璃（透亮）" : ctr <= 0.5 ? "煎蛋征（核心 ≤ 50%）" : "致密实性浸润灶"}
             </text>
           </svg>
 
-          <div className="text-[10px] text-slate-400 text-center flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-slate-400/50" />
-            <span>薄雾外圈: 磨玻璃成分</span>
-            <span className="w-2 h-2 rounded-full bg-white ml-2" />
-            <span>白色核心: 实性成分</span>
+          <div className="text-[9px] text-slate-400 text-center flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+            <span>薄雾: 磨玻璃</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-white ml-1" />
+            <span>白心: 实性</span>
           </div>
         </div>
 
         {/* Clinical Meaning Breakdown Cards */}
-        <div className="md:col-span-7 space-y-3.5">
+        <div className="sm:col-span-7 space-y-2">
           {/* Main Category Banner */}
-          <div className="p-4 rounded-2xl border" style={{ backgroundColor: `${themeColor}0d`, borderColor: `${themeColor}40` }}>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold" style={{ color: themeColor }}>当前形态定性</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-white shadow-2xs" style={{ color: themeColor }}>
+          <div className="p-2.5 rounded-xl border" style={{ backgroundColor: `${themeColor}15`, borderColor: `${themeColor}50` }}>
+            <div className="flex items-center justify-between mb-0.5">
+              <span className="text-[10px] font-bold" style={{ color: themeColor }}>当前形态定性</span>
+              <span className="text-[10px] px-2 py-0.2 rounded font-bold bg-slate-900/60" style={{ color: themeColor }}>
                 {ggoType}
               </span>
             </div>
-            <div className="text-base font-black text-slate-900 mt-1">{stageLabel}</div>
-            <div className="text-xs text-slate-600 mt-1">浸润程度：{invasiveness} · 预后预期：{prognosis}</div>
+            <div className="text-xs font-bold text-white mt-0.5">{stageLabel}</div>
+            <div className="text-[10px] text-slate-300 mt-0.5">{invasiveness} · {prognosis}</div>
           </div>
 
           {/* Expert Clinical Action Guide */}
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 mb-1.5">
-              <Stethoscope className="w-3.5 h-3.5 text-sky-600" />
-              <span>权威胸外科临床对策</span>
+          <div className="bg-slate-800/80 p-2 rounded-xl border border-slate-700/80 text-[10.5px] leading-snug">
+            <div className="flex items-center gap-1 text-[10px] font-bold text-sky-300 mb-0.5">
+              <Stethoscope className="w-3 h-3 text-sky-400" />
+              <span>权威临床对策</span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <p className="text-slate-300">
               {followUpAdvice}
             </p>
           </div>
 
           {/* Warm Reassurance Box */}
-          <div className="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 flex items-start gap-2.5">
-            <HeartPulse className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <div className="text-xs text-emerald-900 leading-relaxed">
-              <strong>定心丸寄语：</strong>
+          <div className="bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/60 flex items-start gap-1.5">
+            <HeartPulse className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="text-[10px] text-emerald-200 leading-snug">
+              <strong>定心丸：</strong>
               {ctr <= 0.5 ? (
-                <span> 早期磨玻璃结节生长非常缓慢，完全有充分的时间通过定期复查观察变化，绝不需要过度惊慌或盲目开刀！</span>
+                <span>早期磨玻璃结节生长惰性，倍增期长，定期复查安全可控，无需焦虑盲目手术。</span>
               ) : (
-                <span> 即使实性成分偏高，现代微创胸腔镜手术可在 3~5 天内完成根治出院，早期治愈率依然处于极高水平！</span>
+                <span>实性成分偏高亦可通过现代微创胸腔镜根治，早期治愈率极高。</span>
               )}
             </div>
           </div>

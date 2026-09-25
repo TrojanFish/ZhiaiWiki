@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, AlertCircle, AlertTriangle, Info, Check, X, Sparkles, Activity } from "lucide-react";
+import { ShieldCheck, AlertCircle, AlertTriangle, Info, Check, X, Award, Activity } from "lucide-react";
 
 export type ClinicalStatus = "safe" | "warning" | "danger" | "info" | "neutral" | "highlight";
 
@@ -95,7 +95,7 @@ export default function ClinicalBadge({
         case "info": return <Info className={iconClass} />;
         case "check": return <Check className={iconClass} />;
         case "x": return <X className={iconClass} />;
-        case "sparkles": return <Sparkles className={iconClass} />;
+        case "sparkles": return <Award className={iconClass} />;
         case "activity": return <Activity className={iconClass} />;
       }
     }
@@ -105,7 +105,7 @@ export default function ClinicalBadge({
       case "safe": return <ShieldCheck className={iconClass} />;
       case "warning": return <AlertTriangle className={iconClass} />;
       case "danger": return <AlertCircle className={iconClass} />;
-      case "highlight": return <Sparkles className={iconClass} />;
+      case "highlight": return <Award className={iconClass} />;
       case "info": return <Info className={iconClass} />;
       default: return null;
     }
@@ -113,7 +113,7 @@ export default function ClinicalBadge({
 
   if (variant === "dot") {
     return (
-      <span className={`inline-flex items-center gap-1.5 font-medium ${currentStatus.text} ${sizeStyles[size]} ${className}`}>
+      <span className={`inline-flex items-center gap-1.5 font-medium ${currentStatus.text} ${sizeStyles[size]}${className ? ` ${className}` : ""}`}>
         <span className={`w-1.5 h-1.5 rounded-full ${currentStatus.dot}`} />
         <span>{label}</span>
       </span>
@@ -128,7 +128,7 @@ export default function ClinicalBadge({
 
   return (
     <span
-      className={`inline-flex items-center rounded-full font-medium border shadow-xs transition-colors ${sizeStyles[size]} ${variantClass} ${className}`}
+      className={`inline-flex items-center rounded-full font-medium border shadow-xs transition-colors ${sizeStyles[size]} ${variantClass}${className ? ` ${className}` : ""}`}
     >
       {renderIcon()}
       <span>{label}</span>

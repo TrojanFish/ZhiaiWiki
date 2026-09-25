@@ -60,8 +60,9 @@ export function NodeInfoPanel({ node, onClose }: { node: KnowledgeNode; onClose?
           </p>
           <div className="flex flex-wrap gap-1.5">
             {node.connections.map((c) => (
-              <span key={c} className="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-md font-medium border border-slate-200">
-                ➔ {c}
+              <span key={c} className="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-md font-medium border border-slate-200 inline-flex items-center gap-1">
+                <span className="text-slate-400">→</span>
+                <span>{c}</span>
               </span>
             ))}
           </div>

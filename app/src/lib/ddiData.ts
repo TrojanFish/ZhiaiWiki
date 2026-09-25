@@ -1,5 +1,5 @@
 /**
- * OncoPath Clinical Pharmacovigilance & Drug-Drug Interactions (DDI) Engine
+ * ZhiaiWiki Clinical Pharmacovigilance & Drug-Drug Interactions (DDI) Engine
  * Covers EGFR, ALK, KRAS, ROS1, MET targeted therapies vs common chronic drugs, OTC medicines, and foods.
  */
 
@@ -14,6 +14,8 @@ export interface TargetedDrug {
   phDependent: boolean; // Is absorption reduced by elevated gastric pH (PPI/H2RA)
 }
 
+export type TargetedDrugItem = TargetedDrug;
+
 export interface ChronicDrug {
   id: string;
   name: string;
@@ -24,35 +26,52 @@ export interface ChronicDrug {
 }
 
 export interface DdiRule {
+  id?: string;
   targetDrugIds: string[]; // Or '*' for all
+  targetedDrugId?: string;
   chronicDrugId: string;
-  riskLevel: "severe_contraindication" | "timing_caution" | "compatible_safe";
-  riskLabel: string;
-  title: string;
+  riskLevel: "severe_contraindication" | "timing_caution" | "compatible_safe" | "timing_warning" | "moderate_caution";
+  riskLabel?: string;
+  title?: string;
   mechanism: string;
   clinicalGuidance: string;
-  evidenceLevel: "FDA/NMPA说明书" | "权威前瞻临床研究" | "药代动力学PK证据";
+  clinicalManifestation?: string;
+  management?: string;
+  severityScore?: number;
+  evidenceSource?: string;
+  evidenceLevel?: "FDA/NMPA说明书" | "权威前瞻临床研究" | "药代动力学PK证据" | string;
   timingRecommendation?: string; // Specific time-staggering advice
+  actionAdvice?: string; // High-urgency clinical countermeasure advice
+  severity?: "danger" | "warning" | "caution" | "safe";
+  clinicalEffect?: string;
 }
 
 export interface DdiAnalysisResult {
   targetedDrug: TargetedDrug | null;
   selectedChronicDrugs: ChronicDrug[];
+  chronicDrugs?: ChronicDrug[];
   totalChecked: number;
   severeCount: number;
   cautionCount: number;
   safeCount: number;
-  overallStatus: "danger" | "warning" | "safe";
+  dangerCount?: number;
+  warningCount?: number;
+  overallStatus: "danger" | "warning" | "safe" | "caution";
   summaryText: string;
   interactions: Array<{
     chronicDrug: ChronicDrug;
     rule: DdiRule;
+    targetedDrug?: TargetedDrug | null;
   }>;
   dailySchedulePlan: Array<{
     timeSlot: string;
     drugs: string[];
     note: string;
   }>;
+  severity?: "danger" | "warning" | "caution" | "safe";
+  rules?: DdiRule[];
+  targetDrug?: TargetedDrug | null;
+  summary?: string;
 }
 
 // 1. Target Drugs Directory (17 种临床主流与新一代肺癌靶向药全谱覆盖)
@@ -292,6 +311,7 @@ export const CHRONIC_DRUG_CATEGORIES: ChronicDrugCategory[] = [
       { id: "rosuvastatin", name: "瑞舒伐他汀钙 (可定)", aliases: ["可定", "瑞舒伐他汀"], category: "cardiovascular_lipid" as const, categoryLabel: "他汀类降脂药", typicalUse: "高脂血症、预防心脑血管事件" },
       { id: "simvastatin", name: "辛伐他汀 (舒降之)", aliases: ["舒降之", "辛伐他汀片"], category: "cardiovascular_lipid" as const, categoryLabel: "他汀类降脂药", typicalUse: "高胆固醇血症" },
       { id: "amiodarone", name: "盐酸胺碘酮 (可达龙)", aliases: ["可达龙", "胺碘酮"], category: "cardiovascular_lipid" as const, categoryLabel: "III类抗心律失常药", typicalUse: "房颤、室性心律失常" },
+      { id: "furosemide", name: "呋塞米片/注射液 (速尿)", aliases: ["速尿", "呋塞米"], category: "cardiovascular_lipid" as const, categoryLabel: "强效袢利尿剂", typicalUse: "严重水肿、急性心衰、化疗强制利尿" },
     ]
   },
   {
@@ -331,6 +351,8 @@ export const CHRONIC_DRUG_CATEGORIES: ChronicDrugCategory[] = [
       { id: "phenytoin", name: "苯妥英钠", aliases: ["大仑丁", "苯妥英钠片"], category: "neuro_psychiatric" as const, categoryLabel: "强效 CYP3A4 诱导剂", typicalUse: "抗癫痫强直阵挛发作" },
       { id: "estazolam", name: "艾司唑仑 (舒乐安定)", aliases: ["舒乐安定", "艾司唑仑片"], category: "neuro_psychiatric" as const, categoryLabel: "苯二氮䓬类镇静催眠", typicalUse: "术前/随访期失眠焦虑、镇静" },
       { id: "sertraline", name: "盐酸舍曲林 (左洛复)", aliases: ["左洛复", "舍曲林"], category: "neuro_psychiatric" as const, categoryLabel: "SSRI 抗抑郁药", typicalUse: "肿瘤相关焦虑抑郁障碍" },
+      { id: "paroxetine", name: "盐酸帕罗西汀 (赛乐特)", aliases: ["赛乐特", "帕罗西汀"], category: "neuro_psychiatric" as const, categoryLabel: "强效 CYP2D6 抑制剂 / SSRI", typicalUse: "抑郁症、强迫症、惊恐障碍" },
+      { id: "fluoxetine", name: "盐酸氟西汀 (百优解)", aliases: ["百优解", "氟西汀"], category: "neuro_psychiatric" as const, categoryLabel: "强效 CYP2D6 抑制剂 / SSRI", typicalUse: "抑郁症、暴食症" },
     ]
   },
   {
@@ -340,6 +362,7 @@ export const CHRONIC_DRUG_CATEGORIES: ChronicDrugCategory[] = [
       { id: "rifampin", name: "利福平胶囊 (甲哌利福霉素)", aliases: ["利福平", "利福平注射液"], category: "anti_infective" as const, categoryLabel: "强效 CYP3A4 诱导剂 (抗结核)", typicalUse: "肺结核联合治疗、非结核分枝杆菌感染" },
       { id: "ketoconazole", name: "酮康唑 / 伊曲康唑", aliases: ["酮康唑", "伊曲康唑", "斯皮仁诺"], category: "anti_infective" as const, categoryLabel: "强效 CYP3A4 抑制剂 (抗真菌)", typicalUse: "肺曲霉菌感染、深部真菌感染" },
       { id: "clarithromycin", name: "克拉霉素 (利菌沙)", aliases: ["克拉霉素分散片", "利菌沙"], category: "anti_infective" as const, categoryLabel: "强效 CYP3A4 抑制剂 (大环内酯)", typicalUse: "幽门螺杆菌根除、呼吸道非典型感染" },
+      { id: "gentamicin", name: "硫酸庆大霉素 / 阿米卡星注射液", aliases: ["庆大霉素", "阿米卡星", "氨基糖苷类"], category: "anti_infective" as const, categoryLabel: "氨基糖苷类抗生素 (强耳肾毒性)", typicalUse: "严重革兰阴性杆菌感染、腹腔感染、尿路感染" },
     ]
   },
   {
@@ -350,6 +373,7 @@ export const CHRONIC_DRUG_CATEGORIES: ChronicDrugCategory[] = [
       { id: "st_johns_wort", name: "圣约翰草 (贯叶连翘 / 路优泰)", aliases: ["圣约翰草提取物", "贯叶连翘", "路优泰"], category: "diet_supplements" as const, categoryLabel: "强效 CYP3A4 诱导剂", typicalUse: "植物抗抑郁保健品、神经衰弱" },
       { id: "bicyclol", name: "双环醇片 (百赛诺)", aliases: ["双环醇", "百赛诺"], category: "diet_supplements" as const, categoryLabel: "保肝降酶中成药", typicalUse: "抗肿瘤药物相关转氨酶升高" },
       { id: "silymarin", name: "水飞蓟宾胶囊 (水林佳)", aliases: ["水林佳", "水飞蓟宾", "利加隆"], category: "diet_supplements" as const, categoryLabel: "保肝护肝制剂", typicalUse: "脂肪肝、药物性肝损伤辅助保护" },
+      { id: "calcium_vitd", name: "钙剂与维生素 D3 (钙尔奇/碳酸钙)", aliases: ["钙尔奇", "碳酸钙", "骨化三醇", "维生素D3"], category: "diet_supplements" as const, categoryLabel: "骨矿物质与维生素补充剂", typicalUse: "预防与治疗骨质疏松、内分泌治疗骨保护" },
     ]
   }
 ];
@@ -666,9 +690,10 @@ export const DDI_RULES: DdiRule[] = [
 /**
  * Main Analysis Function: Evaluates user's chosen target drug against a list of chronic drugs
  */
-export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: string[]): DdiAnalysisResult {
+export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: string[] = []): DdiAnalysisResult {
+  const safeChronicIds = Array.isArray(chronicDrugIds) ? chronicDrugIds : [];
   const targeted = TARGETED_DRUGS.find(d => d.id === targetedDrugId) || TARGETED_DRUGS[0];
-  const selectedChronic = ALL_CHRONIC_DRUGS.filter(d => chronicDrugIds.includes(d.id));
+  const selectedChronic = ALL_CHRONIC_DRUGS.filter(d => safeChronicIds.includes(d.id));
 
   const interactions: Array<{ chronicDrug: ChronicDrug; rule: DdiRule }> = [];
   let severeCount = 0;

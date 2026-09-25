@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { computeCancerStage, normalizeCancerType } from '@/lib/stagingRegistry';
 import { computeClinicalTnmStage } from '@/lib/staging';
 import { getAuthenticatedUser } from '@/lib/userAuth';
 import { extractVerifiedGuestId, setGuestCookie, GUEST_COOKIE_NAME } from '@/lib/guestAuth';
@@ -23,13 +24,28 @@ export async function POST(request: Request) {
     // If authenticated, always bind to authenticated user. If guest, bind to verified or signed guest id
     const targetUserId = authenticatedUserId || targetGuestId;
 
-    // 1. Fetch Existing Patient Profile if available (Strictly Isolated by targetUserId)
+    const detectedCancerType = normalizeCancerType(data.cancerType, data.organ);
+
+    // 1. Fetch Existing Patient Profile strictly isolated by { targetUserId, cancerType }
     let existingProfile: any = null;
     try {
       existingProfile = await prisma.patientProfile.findFirst({
-        where: { userId: targetUserId },
+        where: {
+          userId: targetUserId,
+          cancerType: detectedCancerType,
+        },
         orderBy: { createdAt: 'desc' }
       });
+      // If not found and cancer is lung, check legacy records where cancerType might be null
+      if (!existingProfile && detectedCancerType === 'lung') {
+        existingProfile = await prisma.patientProfile.findFirst({
+          where: {
+            userId: targetUserId,
+            OR: [{ cancerType: 'lung' }, { cancerType: null }],
+          },
+          orderBy: { createdAt: 'desc' }
+        });
+      }
     } catch (findErr) {
       console.warn("Notice: Prisma read error during findFirst (running in resilient mode):", findErr);
     }
@@ -50,7 +66,80 @@ export async function POST(request: Request) {
       ? parseFloat(data.ctr)
       : (existingProfile?.ctr ?? null);
 
-    const stagingResult = computeClinicalTnmStage({
+    const existingSpecific = (existingProfile?.cancerSpecificData as any) || {};
+    const inputSpecific = (data.cancerSpecificData as any) || {};
+
+    const cancerSpecificData = detectedCancerType === 'breast' ? {
+      ...existingSpecific,
+      ...inputSpecific,
+      biRads: data.biRads ?? inputSpecific.biRads ?? existingSpecific.biRads ?? null,
+      breastLaterality: data.breastLaterality ?? inputSpecific.breastLaterality ?? existingSpecific.breastLaterality ?? null,
+      calcificationType: data.calcificationType ?? inputSpecific.calcificationType ?? existingSpecific.calcificationType ?? null,
+      erStatus: data.erStatus ?? inputSpecific.erStatus ?? existingSpecific.erStatus ?? null,
+      erPercent: data.erPercent !== undefined && data.erPercent !== null && data.erPercent !== "" ? parseFloat(String(data.erPercent)) : (inputSpecific.erPercent !== undefined ? inputSpecific.erPercent : (existingSpecific.erPercent ?? null)),
+      prStatus: data.prStatus ?? inputSpecific.prStatus ?? existingSpecific.prStatus ?? null,
+      prPercent: data.prPercent !== undefined && data.prPercent !== null && data.prPercent !== "" ? parseFloat(String(data.prPercent)) : (inputSpecific.prPercent !== undefined ? inputSpecific.prPercent : (existingSpecific.prPercent ?? null)),
+      her2Status: data.her2Status ?? inputSpecific.her2Status ?? existingSpecific.her2Status ?? null,
+      her2Fish: data.her2Fish ?? inputSpecific.her2Fish ?? existingSpecific.her2Fish ?? null,
+      her2Low: data.her2Low ?? inputSpecific.her2Low ?? existingSpecific.her2Low ?? null,
+      her2StatusCategory: data.her2StatusCategory ?? inputSpecific.her2StatusCategory ?? existingSpecific.her2StatusCategory ?? null,
+      molecularSubtype: data.molecularSubtype ?? inputSpecific.molecularSubtype ?? existingSpecific.molecularSubtype ?? null,
+      nottinghamGrade: data.nottinghamGrade ?? inputSpecific.nottinghamGrade ?? existingSpecific.nottinghamGrade ?? null,
+      histologyType: data.histologyType ?? inputSpecific.histologyType ?? existingSpecific.histologyType ?? null,
+      menopauseStatus: data.menopauseStatus ?? inputSpecific.menopauseStatus ?? existingSpecific.menopauseStatus ?? null,
+      oncotypeDxScore: data.oncotypeDxScore !== undefined && data.oncotypeDxScore !== null && data.oncotypeDxScore !== "" ? parseFloat(String(data.oncotypeDxScore)) : (inputSpecific.oncotypeDxScore !== undefined ? inputSpecific.oncotypeDxScore : (existingSpecific.oncotypeDxScore ?? null)),
+      sentinelNodesPositive: data.sentinelNodesPositive !== undefined && data.sentinelNodesPositive !== null && data.sentinelNodesPositive !== "" ? parseInt(String(data.sentinelNodesPositive)) : (inputSpecific.sentinelNodesPositive ?? existingSpecific.sentinelNodesPositive ?? null),
+      sentinelNodesTotal: data.sentinelNodesTotal !== undefined && data.sentinelNodesTotal !== null && data.sentinelNodesTotal !== "" ? parseInt(String(data.sentinelNodesTotal)) : (inputSpecific.sentinelNodesTotal ?? existingSpecific.sentinelNodesTotal ?? null),
+      axillaryNodesPositive: data.axillaryNodesPositive !== undefined && data.axillaryNodesPositive !== null && data.axillaryNodesPositive !== "" ? parseInt(String(data.axillaryNodesPositive)) : (inputSpecific.axillaryNodesPositive ?? existingSpecific.axillaryNodesPositive ?? null),
+      axillaryNodesTotal: data.axillaryNodesTotal !== undefined && data.axillaryNodesTotal !== null && data.axillaryNodesTotal !== "" ? parseInt(String(data.axillaryNodesTotal)) : (inputSpecific.axillaryNodesTotal ?? existingSpecific.axillaryNodesTotal ?? null),
+      clinicalAxillaryNodes: data.clinicalAxillaryNodes ?? inputSpecific.clinicalAxillaryNodes ?? existingSpecific.clinicalAxillaryNodes ?? null,
+      prognosticStage: data.prognosticStage ?? inputSpecific.prognosticStage ?? existingSpecific.prognosticStage ?? null,
+      anatomicalStage: data.anatomicalStage ?? inputSpecific.anatomicalStage ?? existingSpecific.anatomicalStage ?? null,
+      brca1: data.brca1 ?? inputSpecific.brca1 ?? existingSpecific.brca1 ?? null,
+      brca2: data.brca2 ?? inputSpecific.brca2 ?? existingSpecific.brca2 ?? null,
+      pik3ca: data.pik3ca ?? inputSpecific.pik3ca ?? existingSpecific.pik3ca ?? null,
+      chestCt: data.chestCt ?? inputSpecific.chestCt ?? existingSpecific.chestCt ?? null,
+      neoadjuvantChemo: data.neoadjuvantChemo ?? inputSpecific.neoadjuvantChemo ?? existingSpecific.neoadjuvantChemo ?? null,
+      pcrStatus: data.pcrStatus ?? inputSpecific.pcrStatus ?? existingSpecific.pcrStatus ?? null,
+      ypTnmNotice: data.ypTnmNotice ?? inputSpecific.ypTnmNotice ?? existingSpecific.ypTnmNotice ?? null,
+      isKi67GrayZone: data.isKi67GrayZone ?? inputSpecific.isKi67GrayZone ?? existingSpecific.isKi67GrayZone ?? null,
+      ki67GrayZoneNotice: data.ki67GrayZoneNotice ?? inputSpecific.ki67GrayZoneNotice ?? existingSpecific.ki67GrayZoneNotice ?? null,
+      pelvicUltrasound: data.pelvicUltrasound ?? inputSpecific.pelvicUltrasound ?? existingSpecific.pelvicUltrasound ?? null,
+      dxaScan: data.dxaScan ?? inputSpecific.dxaScan ?? existingSpecific.dxaScan ?? null,
+    } : (detectedCancerType === 'colorectal' || detectedCancerType === 'colon' || detectedCancerType === 'rectal') ? {
+      ...existingSpecific,
+      ...inputSpecific,
+      primaryLocation: data.primaryLocation ?? inputSpecific.primaryLocation ?? existingSpecific.primaryLocation ?? null,
+      distanceFromAnalVerge: data.distanceFromAnalVerge !== undefined && data.distanceFromAnalVerge !== null && data.distanceFromAnalVerge !== "" ? parseFloat(String(data.distanceFromAnalVerge)) : (inputSpecific.distanceFromAnalVerge ?? existingSpecific.distanceFromAnalVerge ?? null),
+      msiStatus: data.msiStatus ?? inputSpecific.msiStatus ?? existingSpecific.msiStatus ?? null,
+      dmmrStatus: data.dmmrStatus ?? inputSpecific.dmmrStatus ?? existingSpecific.dmmrStatus ?? null,
+      krasMutation: data.krasMutation ?? inputSpecific.krasMutation ?? existingSpecific.krasMutation ?? null,
+      nrasMutation: data.nrasMutation ?? inputSpecific.nrasMutation ?? existingSpecific.nrasMutation ?? null,
+      brafMutation: data.brafMutation ?? inputSpecific.brafMutation ?? existingSpecific.brafMutation ?? null,
+      her2Amplified: data.her2Amplified !== undefined ? Boolean(data.her2Amplified) : (inputSpecific.her2Amplified ?? existingSpecific.her2Amplified ?? null),
+      crmStatus: data.crmStatus ?? inputSpecific.crmStatus ?? existingSpecific.crmStatus ?? null,
+      crmDistance: data.crmDistance !== undefined && data.crmDistance !== null && data.crmDistance !== "" ? parseFloat(String(data.crmDistance)) : (inputSpecific.crmDistance ?? existingSpecific.crmDistance ?? null),
+      emviStatus: data.emviStatus ?? inputSpecific.emviStatus ?? existingSpecific.emviStatus ?? null,
+      tumorDeposits: data.tumorDeposits ?? inputSpecific.tumorDeposits ?? existingSpecific.tumorDeposits ?? null,
+      lymphNodesExamined: data.lymphNodesExamined !== undefined && data.lymphNodesExamined !== null && data.lymphNodesExamined !== "" ? parseInt(String(data.lymphNodesExamined)) : (inputSpecific.lymphNodesExamined ?? existingSpecific.lymphNodesExamined ?? null),
+      lymphNodesPositive: data.lymphNodesPositive !== undefined && data.lymphNodesPositive !== null && data.lymphNodesPositive !== "" ? parseInt(String(data.lymphNodesPositive)) : (inputSpecific.lymphNodesPositive ?? existingSpecific.lymphNodesPositive ?? null),
+      neoadjuvantTherapy: data.neoadjuvantTherapy !== undefined ? Boolean(data.neoadjuvantTherapy) : (inputSpecific.neoadjuvantTherapy ?? existingSpecific.neoadjuvantTherapy ?? null),
+      pcrStatus: data.pcrStatus ?? inputSpecific.pcrStatus ?? existingSpecific.pcrStatus ?? null,
+      ceaBaseline: data.ceaBaseline !== undefined && data.ceaBaseline !== null && data.ceaBaseline !== "" ? parseFloat(String(data.ceaBaseline)) : (inputSpecific.ceaBaseline ?? existingSpecific.ceaBaseline ?? null),
+      ca199Baseline: data.ca199Baseline !== undefined && data.ca199Baseline !== null && data.ca199Baseline !== "" ? parseFloat(String(data.ca199Baseline)) : (inputSpecific.ca199Baseline ?? existingSpecific.ca199Baseline ?? null),
+      histologyType: data.histologyType ?? inputSpecific.histologyType ?? existingSpecific.histologyType ?? null,
+      differentiation: data.differentiation ?? inputSpecific.differentiation ?? existingSpecific.differentiation ?? null,
+      bowelObstruction: data.bowelObstruction !== undefined ? Boolean(data.bowelObstruction) : (inputSpecific.bowelObstruction ?? existingSpecific.bowelObstruction ?? null),
+      bowelPerforation: data.bowelPerforation !== undefined ? Boolean(data.bowelPerforation) : (inputSpecific.bowelPerforation ?? existingSpecific.bowelPerforation ?? null),
+    } : {
+      ...existingSpecific,
+      ...inputSpecific,
+    };
+
+    const stagingResult = computeCancerStage(detectedCancerType, {
+      ...data,
+      ...(cancerSpecificData || {}),
+      cancerType: detectedCancerType,
       noduleType: data.noduleType || data.morphology || "mixed_ggo",
       tumorSize: tumorSizeVal,
       solidSize: data.solidSize ? parseFloat(data.solidSize) : null,
@@ -101,26 +190,28 @@ export async function POST(request: Request) {
 
     const profileData = {
       userId: targetUserId,
+      cancerType: detectedCancerType,
+      cancerSpecificData: cancerSpecificData,
       age: data.age ? parseInt(data.age) : (existingProfile?.age ?? null),
-      sex: data.sex || data.gender || existingProfile?.sex || null,
-      organ: data.organ || existingProfile?.organ || 'lung',
+      sex: data.sex || data.gender || existingProfile?.sex || (detectedCancerType === 'breast' ? 'female' : null),
+      organ: data.organ || (detectedCancerType === 'breast' ? 'breast' : (detectedCancerType === 'colorectal' ? 'colorectal' : (existingProfile?.organ || 'lung'))),
       histology: data.histology || existingProfile?.histology || null,
-      noduleType: stagingResult.noduleType,
-      sizeMm: stagingResult.tumorSize != null ? stagingResult.tumorSize * 10 : null,
-      ctr: stagingResult.ctr != null ? stagingResult.ctr : null,
-      tumorSize: stagingResult.tumorSize != null ? stagingResult.tumorSize : null,
+      noduleType: (stagingResult as any).noduleType || data.noduleType || null,
+      sizeMm: tumorSizeVal != null ? tumorSizeVal * 10 : null,
+      ctr: ctrVal,
+      tumorSize: tumorSizeVal,
       pathologyTumorSize: data.pathologyTumorSize !== undefined && data.pathologyTumorSize !== null && data.pathologyTumorSize !== "" ? parseFloat(String(data.pathologyTumorSize)) : (existingProfile?.pathologyTumorSize ?? null),
       pathologyInvasiveSize: data.pathologyInvasiveSize !== undefined && data.pathologyInvasiveSize !== null && data.pathologyInvasiveSize !== "" ? parseFloat(String(data.pathologyInvasiveSize)) : (existingProfile?.pathologyInvasiveSize ?? null),
       pathologyLepidicPercent: data.pathologyLepidicPercent !== undefined && data.pathologyLepidicPercent !== null && data.pathologyLepidicPercent !== "" ? parseFloat(String(data.pathologyLepidicPercent)) : (existingProfile?.pathologyLepidicPercent ?? null),
       pathologyReportMode: data.pathologyReportMode || existingProfile?.pathologyReportMode || null,
-      grade: data.grade || data.iaslcGrade || existingProfile?.grade || null,
+      grade: data.grade || data.iaslcGrade || data.nottinghamGrade || existingProfile?.grade || null,
       tStage: stagingResult.tStage,
       nStage: stagingResult.nStage,
       mStage: stagingResult.mStage,
       stas: isStas,
       vpi: isVpi,
       lvi: isLvi,
-      surgeryType: data.surgeryType || (data.reportType === 'ct_imaging' ? 'unknown' : (existingProfile?.surgeryType || 'unknown')),
+      surgeryType: data.surgeryType || (data.reportType === 'ct_imaging' || data.reportType === 'ultrasound' || data.reportType === 'mammography' ? 'unknown' : (existingProfile?.surgeryType || 'unknown')),
       marginStatus: marginStatus,
 
       // Systemic Staging & M0 Confirmation (Persisted to Database)
@@ -191,15 +282,15 @@ export async function POST(request: Request) {
           title: data.examName || (existingCT?.title || '胸部薄层高分辨 CT 平扫'),
           summary: nextAction || 'CT 影像已结构化归档',
           keyFindings: {
-            sizeMm: stagingResult.tumorSize != null ? stagingResult.tumorSize * 10 : null,
-            ctr: stagingResult.ctr,
-            noduleType: stagingResult.noduleType,
+            sizeMm: tumorSizeVal != null ? tumorSizeVal * 10 : null,
+            ctr: ctrVal,
+            noduleType: data.noduleType || profile.noduleType || 'mixed_ggo',
             location: data.noduleLocation || '肺部结节',
           },
           tags: JSON.stringify([
             data.noduleLocation || '肺部',
-            stagingResult.tumorSize != null ? `${(stagingResult.tumorSize * 10).toFixed(1)}mm` : '大小待查',
-            stagingResult.noduleType === 'pure_ggo' ? '纯磨玻璃' : stagingResult.noduleType === 'pure_solid' ? '实性结节' : '混合磨玻璃'
+            tumorSizeVal != null ? `${(tumorSizeVal * 10).toFixed(1)}mm` : '大小待查',
+            (data.noduleType || profile.noduleType) === 'pure_ggo' ? '纯磨玻璃' : (data.noduleType || profile.noduleType) === 'pure_solid' ? '实性结节' : '混合磨玻璃'
           ]),
           riskStatus: riskLevel === 'high' ? 'warning' : 'watch',
         };
@@ -238,8 +329,8 @@ export async function POST(request: Request) {
             vpi: isVpi,
             lvi: isLvi,
             marginStatus: marginStatus === 'positive' ? '切缘阳性' : (marginStatus === 'negative' ? 'R0切缘阴性' : '未提及'),
-            sizeMm: stagingResult.tumorSize != null ? stagingResult.tumorSize * 10 : null,
-            location: data.noduleLocation || '肺部病灶',
+            sizeMm: tumorSizeVal != null ? tumorSizeVal * 10 : null,
+            location: data.noduleLocation || (detectedCancerType === 'breast' ? '乳腺病灶' : '肺部病灶'),
           },
           tags: JSON.stringify([
             data.noduleLocation || '肺部病灶',
@@ -570,9 +661,9 @@ export async function POST(request: Request) {
       marginStatus: profile.marginStatus || 'negative',
       noduleType: profile.noduleType || 'mixed_ggo',
       morphology: profile.noduleType || 'mixed_ggo',
-      tumorSize: stagingResult.tumorSize,
-      solidSize: stagingResult.solidSize,
-      ctr: stagingResult.ctr,
+      tumorSize: tumorSizeVal,
+      solidSize: data.solidSize ? parseFloat(data.solidSize) : null,
+      ctr: ctrVal,
       pathologyTumorSize: profile.pathologyTumorSize ?? data.pathologyTumorSize ?? null,
       pathologyInvasiveSize: profile.pathologyInvasiveSize ?? data.pathologyInvasiveSize ?? null,
       pathologyLepidicPercent: profile.pathologyLepidicPercent ?? data.pathologyLepidicPercent ?? null,
@@ -580,6 +671,14 @@ export async function POST(request: Request) {
       stage: stagingResult.stage,
       stageExplanation: stagingResult.explanation,
       iaslcGrade: profile.grade || '2',
+
+      // Multi-cancer specifics & Prognostic Staging
+      cancerType: detectedCancerType,
+      cancerSpecificData: cancerSpecificData,
+      ...(cancerSpecificData || {}),
+      prognosticStage: (stagingResult as any).prognosticStage || cancerSpecificData?.prognosticStage || null,
+      anatomicalStage: (stagingResult as any).anatomicalStage || cancerSpecificData?.anatomicalStage || null,
+      molecularSubtype: (stagingResult as any).molecularSubtype || cancerSpecificData?.molecularSubtype || null,
 
       // Systemic Staging & M0 Confirmation
       brainMri: profile.brainMri || brainMriVal,
@@ -591,7 +690,24 @@ export async function POST(request: Request) {
       systemicStagingConfirmed: isM0Confirmed,
     };
 
-    const response = NextResponse.json({ success: true, profile: enriched });
+    // Query available slots for this user
+    let availableSlots: string[] = [detectedCancerType];
+    try {
+      const allUserProfiles = await prisma.patientProfile.findMany({
+        where: { userId: targetUserId },
+        select: { cancerType: true }
+      });
+      const slotSet = new Set<string>();
+      allUserProfiles.forEach(p => {
+        slotSet.add(p.cancerType || 'lung');
+      });
+      slotSet.add(detectedCancerType);
+      availableSlots = Array.from(slotSet);
+    } catch (slotErr) {
+      console.warn("Notice: Prisma query availableSlots error:", slotErr);
+    }
+
+    const response = NextResponse.json({ success: true, profile: enriched, availableSlots });
     if (!authenticatedUserId && targetUserId.startsWith('guest-')) {
       setGuestCookie(response, targetUserId, request);
     }
@@ -604,7 +720,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { userId, profileId, reportMarkdown } = await request.json();
+    const { userId, profileId, reportMarkdown, cancerType } = await request.json();
     const authenticatedUserId = getAuthenticatedUserId(request);
     const targetUserId = authenticatedUserId || userId;
 
@@ -619,7 +735,10 @@ export async function PUT(request: Request) {
 
     if (!targetProfile && targetUserId) {
       targetProfile = await prisma.patientProfile.findFirst({
-        where: { userId: targetUserId },
+        where: {
+          userId: targetUserId,
+          ...(cancerType ? (cancerType === 'lung' ? { OR: [{ cancerType: 'lung' }, { cancerType: null }] } : { cancerType }) : {})
+        },
         orderBy: { createdAt: 'desc' }
       });
     }
@@ -646,6 +765,7 @@ export async function PUT(request: Request) {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const searchParamsUserId = searchParams.get('userId');
+  const requestedCancerType = searchParams.get('cancerType');
   const authenticatedUserId = getAuthenticatedUserId(request);
   const verifiedGuestId = extractVerifiedGuestId(request);
   
@@ -653,17 +773,17 @@ export async function GET(request: Request) {
   // If user is authenticated: query their authenticatedUserId (or their own guestId if provided)
   // If unauthenticated: allow if verified via signed cookie/header OR valid guest format
   if (!authenticatedUserId && !verifiedGuestId && (!searchParamsUserId || !searchParamsUserId.startsWith('guest-'))) {
-    return NextResponse.json({ profile: null });
+    return NextResponse.json({ profile: null, availableSlots: [] });
   }
 
   const effectiveGuestId = verifiedGuestId || searchParamsUserId;
   // If guest is verified and searchParamsUserId tries to query a different guestId, prevent cross-guest read
   if (!authenticatedUserId && verifiedGuestId && searchParamsUserId && searchParamsUserId !== verifiedGuestId) {
-    return NextResponse.json({ profile: null }, { status: 403 });
+    return NextResponse.json({ profile: null, availableSlots: [] }, { status: 403 });
   }
 
   try {
-    const whereCondition = authenticatedUserId
+    const userFilter = authenticatedUserId
       ? {
           OR: [
             { userId: authenticatedUserId },
@@ -672,18 +792,52 @@ export async function GET(request: Request) {
         }
       : { userId: effectiveGuestId! };
 
-    const profile = await prisma.patientProfile.findFirst({
-      where: whereCondition,
-      orderBy: { createdAt: 'desc' }
-    });
-    
-    if (!profile) {
-      return NextResponse.json({ profile: null });
+    // Query all available cancer slots for this user
+    let availableSlots: string[] = [];
+    try {
+      const allUserProfiles = await prisma.patientProfile.findMany({
+        where: userFilter,
+        select: { cancerType: true },
+        orderBy: { createdAt: 'desc' }
+      });
+      availableSlots = Array.from(new Set(allUserProfiles.map(p => p.cancerType || 'lung')));
+    } catch (slotErr) {
+      console.warn("Notice: Prisma query availableSlots error:", slotErr);
     }
 
-    // Recompute accurate IASLC / AJCC 第 9 版 Stage and normalize all fields for frontend
+    let profile: any = null;
+    if (requestedCancerType) {
+      const normalizedReq = normalizeCancerType(requestedCancerType);
+      const cancerTypeFilter = normalizedReq === 'lung'
+        ? { OR: [{ cancerType: 'lung' }, { cancerType: null }, { organ: 'lung' }] }
+        : { OR: [{ cancerType: normalizedReq }, { organ: normalizedReq }] };
+
+      profile = await prisma.patientProfile.findFirst({
+        where: {
+          AND: [userFilter, cancerTypeFilter]
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+    } else {
+      profile = await prisma.patientProfile.findFirst({
+        where: userFilter,
+        orderBy: { createdAt: 'desc' }
+      });
+    }
+    
+    if (!profile) {
+      return NextResponse.json({ profile: null, availableSlots });
+    }
+
+    const detectedCancerType = normalizeCancerType(profile.cancerType, profile.organ);
+    const cancerSpecific = (profile.cancerSpecificData as any) || {};
+
+    // Recompute accurate Stage based on Cancer Registry and normalize all fields for frontend
     const tumorSize = profile.tumorSize ?? (profile.sizeMm ? profile.sizeMm / 10 : null);
-    const stagingResult = computeClinicalTnmStage({
+    const stagingResult = computeCancerStage(detectedCancerType, {
+      ...profile,
+      ...cancerSpecific,
+      cancerType: detectedCancerType,
       noduleType: profile.noduleType || "mixed_ggo",
       tumorSize: tumorSize,
       solidSize: (profile as any).solidSize ?? null,
@@ -807,8 +961,14 @@ export async function GET(request: Request) {
 
     const enriched = {
       ...profile,
-      reportType: profile.surgeryType === 'unknown' ? 'ct_imaging' : 'pathology',
-      noduleLocation: detectedLocation || latestImagingFindings.location || '肺部病灶',
+      cancerType: detectedCancerType,
+      cancerSpecificData: cancerSpecific,
+      ...cancerSpecific,
+      prognosticStage: (stagingResult as any).prognosticStage || cancerSpecific?.prognosticStage || null,
+      anatomicalStage: (stagingResult as any).anatomicalStage || cancerSpecific?.anatomicalStage || null,
+      molecularSubtype: (stagingResult as any).molecularSubtype || cancerSpecific?.molecularSubtype || null,
+      reportType: profile.surgeryType === 'unknown' ? (detectedCancerType === 'breast' ? 'ultrasound' : (detectedCancerType === 'colorectal' ? 'ct_imaging' : 'ct_imaging')) : 'pathology',
+      noduleLocation: detectedLocation || latestImagingFindings.location || (detectedCancerType === 'breast' ? '乳腺病灶' : (detectedCancerType === 'colorectal' ? '结直肠病灶' : '肺部病灶')),
       imagingFeatures: latestImagingFindings.imagingFeatures || [],
       lungRads: latestImagingFindings.lungRads || null,
       malignancyRisk: profile.riskLevel || 'low',
@@ -839,9 +999,9 @@ export async function GET(request: Request) {
       marginStatus: profile.marginStatus || null,
       noduleType: profile.noduleType || null,
       morphology: profile.noduleType || null,
-      tumorSize: stagingResult.tumorSize,
-      solidSize: stagingResult.solidSize,
-      ctr: stagingResult.ctr,
+      tumorSize: tumorSize,
+      solidSize: (profile as any).solidSize ?? null,
+      ctr: profile.ctr ?? null,
       pathologyTumorSize: profile.pathologyTumorSize ?? null,
       pathologyInvasiveSize: profile.pathologyInvasiveSize ?? null,
       pathologyLepidicPercent: profile.pathologyLepidicPercent ?? null,
@@ -851,10 +1011,10 @@ export async function GET(request: Request) {
       nStage: stagingResult.nStage,
       mStage: stagingResult.mStage,
       stageExplanation: stagingResult.explanation,
-      versionBridgeNotice: stagingResult.versionBridgeNotice,
+      versionBridgeNotice: stagingResult.versionNotice || null,
       adjacentLobeInvasion: Boolean((profile as any).adjacentLobeInvasion),
       iaslcGrade: profile.grade || null,
-      ki67: (profile as any).ki67 || null,
+      ki67: (profile as any).ki67 || cancerSpecific?.ki67 || null,
 
       // Systemic Staging & M0 Confirmation
       brainMri: brainMri,
@@ -873,7 +1033,7 @@ export async function GET(request: Request) {
       ),
     };
 
-    const response = NextResponse.json({ profile: enriched });
+    const response = NextResponse.json({ profile: enriched, availableSlots });
     if (!authenticatedUserId && effectiveGuestId && effectiveGuestId.startsWith('guest-')) {
       setGuestCookie(response, effectiveGuestId, request);
     }
@@ -886,6 +1046,7 @@ export async function GET(request: Request) {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const searchParamsUserId = searchParams.get('userId') || searchParams.get('id');
+  const targetCancerType = searchParams.get('cancerType');
   const authenticatedUserId = getAuthenticatedUserId(request);
   const verifiedGuestId = extractVerifiedGuestId(request);
 
@@ -905,7 +1066,23 @@ export async function DELETE(request: Request) {
   const targetUserId = authenticatedUserId || verifiedGuestId || searchParamsUserId!;
 
   try {
-    // Delete only records strictly owned by targetUserId
+    if (targetCancerType && targetCancerType !== 'all') {
+      await prisma.patientProfile.deleteMany({
+        where: {
+          userId: targetUserId,
+          ...(targetCancerType === 'lung'
+            ? { OR: [{ cancerType: 'lung' }, { cancerType: null }] }
+            : { cancerType: targetCancerType }),
+        }
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `您的${targetCancerType === 'breast' ? '乳腺癌' : targetCancerType === 'colorectal' ? '结直肠癌' : '肺癌'}档案已单项销毁`
+      });
+    }
+
+    // Delete all records strictly owned by targetUserId
     await prisma.patientProfile.deleteMany({
       where: { userId: targetUserId }
     });

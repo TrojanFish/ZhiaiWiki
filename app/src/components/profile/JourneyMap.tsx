@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Compass } from "lucide-react";
+import { Compass, Stethoscope, Heart } from "lucide-react";
 
 interface JourneyMapProps {
   currentStage?: string; // 'discovery' | 'evaluation' | 'post_op' | 'follow_up'
@@ -28,48 +28,40 @@ export default function JourneyMap({
 
   const normalizeMedicalStage = (stage?: string) => {
     if (!stage) return "post_op";
-    const s = String(stage).toLowerCase();
-    if (s === "discovery" || s === "nodule_found") return "discovery";
-    if (s === "evaluation" || s === "ct_imaging" || s === "pre_op" || s === "imaging") return "evaluation";
-    if (s === "post_op" || s === "pathology" || s === "decision" || s === "comprehensive" || s === "treatment" || s === "surgery") return "post_op";
-    if (s === "follow_up" || s === "recovery" || s === "surveillance") return "follow_up";
+    const s = stage.toLowerCase();
+    if (s.includes("disc") || s.includes("screen") || s.includes("found")) return "discovery";
+    if (s.includes("eval") || s.includes("pre") || s.includes("diag")) return "evaluation";
+    if (s.includes("follow") || s.includes("surv") || s.includes("rehab")) return "follow_up";
     return "post_op";
   };
 
-  const normalizePsychStage = (stage?: string) => {
-    if (!stage) return "understanding";
-    const s = String(stage).toLowerCase();
-    if (s === "fear" || s === "anxiety") return "fear";
-    if (s === "understanding" || s === "cognition") return "understanding";
-    if (s === "decision" || s === "action") return "decision";
-    if (s === "confidence" || s === "recovery") return "confidence";
+  const normalizePsychState = (state?: string) => {
+    if (!state) return "understanding";
+    const s = state.toLowerCase();
+    if (s.includes("fear") || s.includes("anx") || s.includes("lost")) return "fear";
+    if (s.includes("dec") || s.includes("plan") || s.includes("action")) return "decision";
+    if (s.includes("conf") || s.includes("hope") || s.includes("peace")) return "confidence";
     return "understanding";
   };
 
-  const getStageIndex = (stages: any[], id: string, isMedical: boolean = false) => {
-    const normalizedId = isMedical ? normalizeMedicalStage(id) : normalizePsychStage(id);
-    const idx = stages.findIndex(s => s.id === normalizedId);
-    return idx >= 0 ? idx : (isMedical ? 2 : 1);
-  };
-
-  const medIndex = getStageIndex(medicalStages, currentStage, true);
-  const psychIndex = getStageIndex(psychStages, psychologicalState, false);
+  const medIndex = Math.max(0, medicalStages.findIndex(s => s.id === normalizeMedicalStage(currentStage)));
+  const psychIndex = Math.max(0, psychStages.findIndex(s => s.id === normalizePsychState(psychologicalState)));
 
   return (
-    <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-7 border border-slate-200 shadow-sm mb-6 sm:mb-8">
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
       
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 font-bold flex items-center justify-center shrink-0">
-            <Compass className="w-4 h-4 shrink-0" />
+      <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
+            <Compass className="w-4 h-4" />
           </div>
-          <div className="min-w-0">
-            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-              双轨康复状态导航
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">
+              诊疗旅程定位 (Dual-Track Journey Map)
             </h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-              CANCER JOURNEY OS · CLINICAL & PSYCHOLOGICAL
+            <p className="text-xs text-slate-500">
+              医学规范干预与心理循证重建协同推进
             </p>
           </div>
         </div>
@@ -84,7 +76,7 @@ export default function JourneyMap({
         {/* Track 1: Medical Intervention Track (医学干预轨迹) */}
         <TrackRow
           title="医学干预轨迹"
-          icon="🏥"
+          icon={<Stethoscope className="w-4 h-4 text-blue-600 shrink-0" />}
           themeColor="blue"
           stages={medicalStages}
           currentIndex={medIndex}
@@ -94,7 +86,7 @@ export default function JourneyMap({
         {/* Track 2: Psychological Reconstruction Track (心理重建轨迹) */}
         <TrackRow
           title="心理重建轨迹"
-          icon="🌱"
+          icon={<Heart className="w-4 h-4 text-teal-600 shrink-0" />}
           themeColor="teal"
           stages={psychStages}
           currentIndex={psychIndex}
@@ -108,7 +100,7 @@ export default function JourneyMap({
 
 interface TrackRowProps {
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   themeColor: "blue" | "teal";
   stages: Array<{ id: string; label: string; desc: string }>;
   currentIndex: number;
@@ -142,7 +134,7 @@ function TrackRow({ title, icon, themeColor, stages, currentIndex, activeTag }: 
     <div>
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <span className="text-sm">{icon}</span>
+          <div className="flex items-center justify-center shrink-0">{icon}</div>
           <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
             {title}
           </span>

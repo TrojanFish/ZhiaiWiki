@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Dna, TrendingDown, Pill, ExternalLink, Check } from "lucide-react";
+import { Dna, TrendingDown, Pill, ExternalLink, Check } from "lucide-react";
 import { STUDY_TYPE_LABELS } from "@/lib/evidence-data";
 import { EvidenceRating } from "@/components/common/EvidenceRating";
+
+import type { CancerType } from "@/lib/types";
 
 export interface StudyItem {
   id: string;
@@ -23,6 +25,7 @@ export interface StudyItem {
   interventionArm?: string;
   riskReduction?: string;
   isIngested?: boolean;
+  cancerType?: CancerType | string;
 }
 
 interface StudyCardProps {
@@ -85,7 +88,7 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
               </span>
               {study.isIngested && (
                 <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-600" />
+                  <Check className="w-3 h-3 text-amber-600" />
                   <span>官方最新录入</span>
                 </span>
               )}

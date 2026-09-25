@@ -22,6 +22,10 @@ services:
       - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-OncoPath2026!}
       - ADMIN_SECRET=${ADMIN_SECRET:-oncopath_evidence_admin_secret_key_2026}
+      - GUEST_SESSION_SECRET=${GUEST_SESSION_SECRET:-oncopath_guest_hmac_secret_2026}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:38030}
+    volumes:
+      - app_data:/app/data
     ports:
       - "38030:3000"
     depends_on:
@@ -30,4 +34,4 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
+  app_data:

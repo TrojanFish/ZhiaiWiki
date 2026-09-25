@@ -47,8 +47,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
         {/* Tier 1: Fixed Sticky Header */}
         <div className="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-white shrink-0">
           <div className="w-10 h-10 rounded-xl overflow-hidden shadow-xs flex items-center justify-center shrink-0 bg-slate-900 border border-slate-800">
-            { }
-            <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
+            <img src={ONCOPATH_LOGO_DATA_URI} alt="知癌维基 Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
@@ -56,7 +55,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
             </h2>
             <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              <span>OncoPath 肺癌循证决策辅助系统 · 临床研究导航</span>
+              <span>知癌维基 ZhiaiWiki · 肿瘤全病程循证与关怀平台 · 临床研究导航</span>
             </p>
           </div>
         </div>
@@ -64,7 +63,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
         {/* Tier 2: Scrollable Body (flex-1) */}
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 custom-scrollbar space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-xs text-blue-950 leading-normal font-medium space-y-1">
-            <strong className="block text-blue-900 font-bold text-xs">欢迎使用 OncoPath。</strong>
+            <strong className="block text-blue-900 font-bold text-xs">欢迎使用 知癌维基 (ZhiaiWiki)。</strong>
             <p className="text-xs text-blue-800 leading-relaxed">
               在您上传检查报告或建立临床数字档案前，请仔细阅读以下核心医学原则与数据隐私保护条款：
             </p>
@@ -80,7 +79,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
                   循证辅助定位 · 非独立医疗诊断
                 </strong>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  本系统基于国际权威同行评审研究（如 JCOG0802、JCOG0804、ADAURA 等）及 AJCC/IASLC 分期指南提供群体统计学预后参考，<strong>不构成任何处方建议或独立临床诊断结论</strong>。
+                  本系统基于国际权威同行评审研究（涵盖 NEJM、Lancet、JCO、JTO、JAMA 等顶刊及 IASLC、AJCC、CSCO、NCCN 等分期指南）提供多癌种群体统计学预后参考，<strong>不构成任何处方建议或独立临床诊断结论</strong>。
                 </p>
               </div>
             </div>
@@ -94,7 +93,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
                   个体异质性 · 诊疗决策必须以主治医生为准
                 </strong>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  肺部结节与肿瘤病理具有高度生物学异质性，任何复查周期调整、手术切除范围或靶向/化疗方案决策，均应在专科医生指导下结合全身实际情况综合制定。
+                  各实体肿瘤病理分型、分子靶点与患者体质具有高度异质性，任何复查周期调整、手术切除范围或靶向/化疗/免疫方案决策，均应在专科主治医生或多学科会诊 (MDT) 指导下结合全身实际情况综合制定。
                 </p>
               </div>
             </div>
@@ -127,7 +126,7 @@ export default function ConsentModal({ onConsentAccepted }: ConsentModalProps) {
             <span className="text-xs text-slate-700 leading-snug">
               我已完整阅读并知晓
               <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold underline hover:text-blue-800 mx-1">
-                《用户服务协议与医疗免责声明》
+                《免责声明》
               </a>
               及
               <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold underline hover:text-blue-800 mx-1">

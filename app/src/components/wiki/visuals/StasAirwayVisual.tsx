@@ -5,17 +5,17 @@ import { Microscope, Info } from "lucide-react";
 
 export function StasAirwayVisual() {
   return (
-    <div className="bg-slate-900 rounded-2xl p-2.5 sm:p-4 text-white select-none border border-slate-800">
-      <div className="flex items-center justify-between mb-2">
+    <div className="bg-slate-900 rounded-xl p-2.5 sm:p-3 text-white select-none border border-slate-800">
+      <div className="flex items-center justify-between mb-1.5">
         <span className="text-[11px] font-bold text-sky-400 flex items-center gap-1">
           <Microscope className="w-3.5 h-3.5 text-sky-400" />
           <span>气道播散 (STAS) 显微切片概念图解</span>
         </span>
-        <span className="text-[10px] text-slate-400">病理学微观形态</span>
+        <span className="text-[10px] text-slate-400 font-mono">病理微观形态</span>
       </div>
 
-      <svg viewBox="0 0 200 110" className="w-full h-auto">
-        <rect width="200" height="110" fill="#0b1120" rx="8" />
+      <svg viewBox="0 0 200 110" className="w-full max-h-36 sm:max-h-40 max-w-[330px] mx-auto h-auto block my-1">
+        <rect width="200" height="110" fill="#0b1120" rx="6" />
 
         {/* Normal Alveoli Grid (Background) */}
         <g stroke="#1e293b" strokeWidth="0.8" fill="none">
@@ -87,12 +87,12 @@ export function StasAirwayVisual() {
         </text>
       </svg>
 
-      <div className="mt-2 text-[11px] text-slate-300 leading-relaxed bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+      <div className="mt-1.5 text-[10.5px] text-slate-300 leading-snug bg-slate-800/80 p-2 rounded-lg border border-slate-700">
         <span className="inline-flex items-center gap-1 font-bold text-sky-300 mr-1">
-          <Info className="w-3.5 h-3.5" />
+          <Info className="w-3 h-3" />
           <span>图解要点：</span>
         </span>
-        STAS 细胞仅飘散在主肿瘤周边的微小气腔内。只要手术达到绿色虚线所示的<strong>安全切除边界（如标准肺叶切除）</strong>，连同散在细胞在内的整个肺叶被整体移出，复发风险即被彻底切除阻断。
+        STAS 细胞仅飘散在主肿瘤周边微小气腔内。只要达到绿色虚线<strong>安全切除边界（如标准肺叶切除）</strong>，散在细胞随肺叶被整体移出，复发风险即被彻底切断。
       </div>
     </div>
   );

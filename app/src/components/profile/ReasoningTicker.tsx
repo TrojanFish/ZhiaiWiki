@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { 
-  BrainCircuit, 
+  Activity, 
   CheckCircle2, 
-  Sparkles, 
   FileSearch, 
   Database, 
   ShieldAlert, 
@@ -87,32 +86,32 @@ export default function ReasoningTicker({ isGenerating }: ReasoningTickerProps) 
   }, [isGenerating]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto my-8 p-5 sm:p-7 rounded-3xl bg-slate-900 text-white shadow-2xl border border-slate-800 space-y-6 animate-fade-in">
+    <div className="w-full max-w-2xl mx-auto my-8 p-5 sm:p-6 rounded-3xl bg-white text-slate-900 shadow-sm border border-slate-200/90 space-y-5 animate-fade-in">
       {/* Top Banner */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-2xl bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center">
-            <BrainCircuit className="w-5 h-5 animate-pulse" />
+          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+            <Activity className="w-4.5 h-4.5 animate-pulse" />
           </div>
           <div>
-            <h4 className="text-sm font-extrabold tracking-wide text-slate-100 flex items-center gap-2">
-              <span>OncoPath 循证指南与文献对照引擎</span>
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <h4 className="text-sm font-extrabold tracking-wide text-slate-900 flex items-center gap-2">
+              <span>知癌维基 临床路径与顶刊文献对照演算</span>
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
             </h4>
-            <p className="text-[11px] text-slate-400">
-              严格遵照国际临床指南与顶刊队列构建专属分析矩阵
+            <p className="text-xs text-slate-500 mt-0.5">
+              严格遵照国际临床指南与前瞻队列构建专属分析矩阵
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/90 border border-slate-700 text-slate-300 text-xs font-mono">
-          <Clock className="w-3 h-3 text-blue-400" />
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-xs font-mono shrink-0">
+          <Clock className="w-3 h-3 text-blue-600" />
           <span>{elapsedSeconds.toFixed(1)}s</span>
         </div>
       </div>
 
       {/* Progress Steps List */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {REASONING_STEPS.map((stepInfo, idx) => {
           const isDone = idx < currentStepIndex;
           const isCurrent = idx === currentStepIndex;
@@ -124,24 +123,24 @@ export default function ReasoningTicker({ isGenerating }: ReasoningTickerProps) 
               key={stepInfo.step}
               className={`p-3.5 rounded-2xl border transition-all flex items-start gap-3.5 ${
                 isCurrent
-                  ? "bg-slate-800/90 border-blue-500/60 shadow-md shadow-blue-500/10"
+                  ? "bg-blue-50/70 border-blue-200 text-slate-900 shadow-2xs"
                   : isDone
-                  ? "bg-slate-800/40 border-emerald-500/30 text-slate-300"
-                  : "bg-slate-900/40 border-slate-800/80 text-slate-500 opacity-50"
+                  ? "bg-slate-50/80 border-slate-200 text-slate-700"
+                  : "bg-white border-slate-100 text-slate-400 opacity-60"
               }`}
             >
               {/* Step indicator */}
               <div className="mt-0.5 shrink-0">
                 {isDone ? (
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4" />
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
                   </div>
                 ) : isCurrent ? (
-                  <div className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold animate-pulse">
+                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                     {stepInfo.step}
                   </div>
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-slate-800 text-slate-500 border border-slate-700 flex items-center justify-center text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center text-xs font-bold">
                     {stepInfo.step}
                   </div>
                 )}
@@ -151,29 +150,29 @@ export default function ReasoningTicker({ isGenerating }: ReasoningTickerProps) 
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <h5 className={`text-xs font-bold flex items-center gap-1.5 ${
-                    isCurrent ? "text-blue-300" : isDone ? "text-emerald-300" : "text-slate-400"
+                    isCurrent ? "text-blue-900" : isDone ? "text-emerald-900" : "text-slate-500"
                   }`}>
                     <IconComponent className="w-3.5 h-3.5" />
                     <span>{stepInfo.title}</span>
                   </h5>
                   {isCurrent && (
-                    <span className="text-[10px] font-bold text-blue-400 bg-blue-500/20 px-2 py-0.5 rounded-full border border-blue-400/30 animate-pulse shrink-0">
-                      推演中...
+                    <span className="text-[10px] font-bold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
+                      对照演算中...
                     </span>
                   )}
                   {isDone && (
-                    <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full shrink-0">
+                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
                       已对齐
                     </span>
                   )}
                 </div>
 
-                <p className="text-[11px] text-slate-400 leading-tight">
+                <p className={`text-xs leading-tight ${isCurrent ? "text-slate-600" : isDone ? "text-slate-500" : "text-slate-400"}`}>
                   {stepInfo.subtitle}
                 </p>
 
                 {isCurrent && (
-                  <div className="text-[10px] text-slate-400 font-mono pt-1 text-blue-200/80 animate-fade-in">
+                  <div className="text-[11px] font-mono pt-1 text-blue-700 animate-fade-in">
                     ↳ {stepInfo.details}
                   </div>
                 )}
@@ -184,9 +183,9 @@ export default function ReasoningTicker({ isGenerating }: ReasoningTickerProps) 
       </div>
 
       {/* Footer hint */}
-      <div className="pt-2 text-center text-[11px] text-slate-400 flex items-center justify-center gap-1.5">
-        <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-        <span>大模型正在为您撰写兼具学术深度与就诊温度的专属报告，请稍候...</span>
+      <div className="pt-2 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
+        <div className="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin shrink-0" />
+        <span>系统正在严密对齐现行国际临床分期与真实队列证据，稍候即呈现结构化报告...</span>
       </div>
     </div>
   );

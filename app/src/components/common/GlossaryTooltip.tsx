@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { BookOpen, ShieldCheck } from "lucide-react";
+import { BookOpen, ShieldCheck, Lightbulb, Microscope } from "lucide-react";
 import { findGlossaryTerm, type GlossaryTerm } from "@/lib/glossaryData";
 
 interface GlossaryTooltipProps {
@@ -98,14 +98,20 @@ export function GlossaryTooltip({ term, children, className = "", showBadge = fa
           {/* Body */}
           <div className="space-y-2 text-xs">
             <div>
-              <div className="text-[11px] font-bold text-slate-700 mb-0.5">💡 大白话定义：</div>
+              <div className="text-[11px] font-bold text-slate-700 mb-0.5 flex items-center gap-1">
+                <Lightbulb className="w-3 h-3 text-amber-500 shrink-0" />
+                <span>大白话定义：</span>
+              </div>
               <p className="text-slate-600 leading-relaxed bg-slate-50 p-2 rounded-xl border border-slate-100">
                 {termData.summary}
               </p>
             </div>
 
             <div>
-              <div className="text-[11px] font-bold text-slate-700 mb-0.5">🔬 临床医学机制：</div>
+              <div className="text-[11px] font-bold text-slate-700 mb-0.5 flex items-center gap-1">
+                <Microscope className="w-3 h-3 text-purple-600 shrink-0" />
+                <span>临床医学机制：</span>
+              </div>
               <p className="text-slate-500 text-[11px] leading-relaxed">
                 {termData.clinicalMeaning}
               </p>

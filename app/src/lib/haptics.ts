@@ -1,5 +1,5 @@
 /**
- * OncoPath Taptic Web Haptics Engine
+ * ZhiaiWiki Taptic Web Haptics Engine
  * Provides Apple Taptic-grade physical feedback using the Web Vibration API with graceful fallback.
  */
 

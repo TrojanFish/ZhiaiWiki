@@ -1,6 +1,17 @@
-// OncoPath Core Evidence Data Library
+// ZhiaiWiki Core Evidence Data Library
 // This is the curated knowledge base of evidence for lung cancer
 // All data points are traceable to published research
+import { BREAST_STUDIES } from "./breastStudiesData";
+import { COLORECTAL_STUDIES } from "./colorectalStudiesData";
+import { GASTRIC_STUDIES } from "./gastricStudiesData";
+import { LIVER_STUDIES } from "./liverStudiesData";
+import { ESOPHAGEAL_STUDIES } from "./esophagealStudiesData";
+import { THYROID_STUDIES } from "./thyroidStudiesData";
+import { ENDOMETRIAL_STUDIES } from "./endometrialStudiesData";
+import { CERVICAL_STUDIES } from "./cervicalStudiesData";
+import { PANCREATIC_STUDIES } from "./pancreaticStudiesData";
+import type { StudyItem } from "@/components/StudyCard";
+import type { CancerType } from "@/lib/types";
 
 export interface Study {
   id: string;
@@ -15,6 +26,11 @@ export interface Study {
   keyConclusions: string[];
   relevantFactors: string[];
   applicableStages: string[];
+  cancerType?: CancerType;
+  biomarkerDetails?: string;
+  interventionArm?: string;
+  riskReduction?: string;
+  isIngested?: boolean;
 }
 
 export interface EvidenceFinding {
@@ -1492,3 +1508,141 @@ export const EVIDENCE_LEVEL_LABELS: Record<number, string> = {
   2: "低级别证据",
   1: "专家意见",
 };
+
+/**
+ * 首页多癌种精选核心研究列表 (全专区权威顶刊队列)
+ * 每条显式标注 cancerType，供首页 Tab 即时筛选与跨专区联动展示
+ */
+export const FEATURED_STUDIES_MIXED: StudyItem[] = [
+  // 1. 肺癌精选 3 项
+  {
+    ...FEATURED_STUDIES.find((s) => s.id === "ADAURA_2023")!,
+    cancerType: "lung",
+  },
+  {
+    ...FEATURED_STUDIES.find((s) => s.id === "JCOG0802_2022")!,
+    cancerType: "lung",
+  },
+  {
+    ...FEATURED_STUDIES.find((s) => s.id === "Eguchi_JCO_2019")!,
+    cancerType: "lung",
+  },
+  // 2. 乳腺癌精选 3 项
+  {
+    ...BREAST_STUDIES.find((s) => s.id === "tailorx_2018")!,
+    cancerType: "breast",
+  },
+  {
+    ...BREAST_STUDIES.find((s) => s.id === "monarche_2023")!,
+    cancerType: "breast",
+  },
+  {
+    ...BREAST_STUDIES.find((s) => s.id === "keynote_522_2022")!,
+    cancerType: "breast",
+  },
+  // 3. 结直肠癌精选 3 项
+  {
+    ...COLORECTAL_STUDIES.find((s) => s.id === "idea_collaboration_2018")!,
+    cancerType: "colorectal",
+  },
+  {
+    ...COLORECTAL_STUDIES.find((s) => s.id === "keynote177_2020")!,
+    cancerType: "colorectal",
+  },
+  {
+    ...COLORECTAL_STUDIES.find((s) => s.id === "beacon_crc_2019")!,
+    cancerType: "colorectal",
+  },
+  // 4. 胃癌精选 3 项
+  {
+    ...GASTRIC_STUDIES.find((s) => s.id === "toga_2010")!,
+    cancerType: "gastric",
+  },
+  {
+    ...GASTRIC_STUDIES.find((s) => s.id === "spotlight_2023")!,
+    cancerType: "gastric",
+  },
+  {
+    ...GASTRIC_STUDIES.find((s) => s.id === "checkmate_649_2021")!,
+    cancerType: "gastric",
+  },
+  // 5. 原发性肝癌精选 3 项
+  {
+    ...LIVER_STUDIES.find((s) => s.id === "orient_32_2021")!,
+    cancerType: "liver",
+  },
+  {
+    ...LIVER_STUDIES.find((s) => s.id === "imbrave150_2020")!,
+    cancerType: "liver",
+  },
+  {
+    ...LIVER_STUDIES.find((s) => s.id === "reflect_2018")!,
+    cancerType: "liver",
+  },
+  // 6. 食管癌精选 3 项
+  {
+    ...ESOPHAGEAL_STUDIES.find((s) => s.id === "neocrtec5010_2018")!,
+    cancerType: "esophageal",
+  },
+  {
+    ...ESOPHAGEAL_STUDIES.find((s) => s.id === "cross_2012")!,
+    cancerType: "esophageal",
+  },
+  {
+    ...ESOPHAGEAL_STUDIES.find((s) => s.id === "escort_1st_2021")!,
+    cancerType: "esophageal",
+  },
+  // 7. 甲状腺癌精选 3 项
+  {
+    ...THYROID_STUDIES.find((s) => s.id === "kuma_active_surveillance_2014")!,
+    cancerType: "thyroid",
+  },
+  {
+    ...THYROID_STUDIES.find((s) => s.id === "select_lenvatinib_2015")!,
+    cancerType: "thyroid",
+  },
+  {
+    ...THYROID_STUDIES.find((s) => s.id === "arrow_pralsetinib_2021")!,
+    cancerType: "thyroid",
+  },
+  // 8. 子宫内膜癌精选 3 项
+  {
+    ...ENDOMETRIAL_STUDIES.find((s) => s.id === "ruby_part1_dostarlimab_2023")!,
+    cancerType: "endometrial",
+  },
+  {
+    ...ENDOMETRIAL_STUDIES.find((s) => s.id === "portec4a_molecular_deescalation_2023")!,
+    cancerType: "endometrial",
+  },
+  {
+    ...ENDOMETRIAL_STUDIES.find((s) => s.id === "portec3_adjuvant_chemort_2019")!,
+    cancerType: "endometrial",
+  },
+  // 9. 宫颈癌精选 3 项
+  {
+    ...CERVICAL_STUDIES.find((s) => s.id === "keynote826_pembrolizumab_2021")!,
+    cancerType: "cervical",
+  },
+  {
+    ...CERVICAL_STUDIES.find((s) => s.id === "embrace1_igabt_ccrt_2021")!,
+    cancerType: "cervical",
+  },
+  {
+    ...CERVICAL_STUDIES.find((s) => s.id === "lacc_trial_open_vs_laparoscopic_2018")!,
+    cancerType: "cervical",
+  },
+  // 10. 胰腺癌精选 3 项
+  {
+    ...PANCREATIC_STUDIES.find((s) => s.id === "prodige_24_2018")!,
+    cancerType: "pancreatic",
+  },
+  {
+    ...PANCREATIC_STUDIES.find((s) => s.id === "mpact_trial_2013")!,
+    cancerType: "pancreatic",
+  },
+  {
+    ...PANCREATIC_STUDIES.find((s) => s.id === "polo_trial_2019")!,
+    cancerType: "pancreatic",
+  },
+];
+

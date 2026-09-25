@@ -11,7 +11,7 @@ import {
   ArrowRight, 
   X, 
   Command, 
-  Sparkles
+  Network
 } from "lucide-react";
 import { triggerHaptic } from "@/lib/haptics";
 
@@ -91,13 +91,13 @@ export default function CommandPalette() {
     },
     {
       id: "tool_timeline",
-      title: "三轨合一全景随访生命线 (Clinical Synopsis)",
-      subtitle: "血清学-CT影像-靶向维持用药多轴联动全景看板",
+      title: "临床随访动态与指标趋势 (Clinical Trends)",
+      subtitle: "血清学-CT影像-靶向维持用药多轴联动趋势与随访记录",
       category: "clinical_tool",
       categoryLabel: "核心工具",
       icon: Activity,
-      keywords: ["生命线", "时间轴", "随访", "全景", "三轨", "synopsis"],
-      action: () => router.push("/timeline"),
+      keywords: ["随访", "动态", "趋势", "指标", "时序", "生化"],
+      action: () => router.push("/profile"),
     },
     {
       id: "tool_report",
@@ -125,7 +125,7 @@ export default function CommandPalette() {
       subtitle: "交互式探索肺腺癌驱动基因突变路径与耐药演进图谱",
       category: "clinical_tool",
       categoryLabel: "核心工具",
-      icon: Sparkles,
+      icon: Network,
       keywords: ["图谱", "沙盘", "推演", "因果", "知识库", "4D"],
       action: () => router.push("/knowledge"),
     },
@@ -223,7 +223,7 @@ export default function CommandPalette() {
       categoryLabel: "肿瘤标志物",
       icon: Activity,
       keywords: ["CEA", "癌胚抗原", "标志物", "抽血", "生化", "5.0"],
-      action: () => router.push("/timeline"),
+      action: () => router.push("/profile"),
     },
     {
       id: "marker_cyfra",
@@ -233,7 +233,7 @@ export default function CommandPalette() {
       categoryLabel: "肿瘤标志物",
       icon: Activity,
       keywords: ["CYFRA", "CYFRA21-1", "角蛋白", "鳞癌", "腺癌"],
-      action: () => router.push("/timeline"),
+      action: () => router.push("/profile"),
     },
   ], [router]);
 
@@ -270,7 +270,7 @@ export default function CommandPalette() {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-3 sm:px-4 bg-slate-900/40 backdrop-blur-md animate-fade-in print:hidden"
+      className="fixed inset-0 z-[9999] flex items-start justify-center pt-[calc(4.5rem+env(safe-area-inset-top,0px))] sm:pt-24 px-3 sm:px-4 bg-slate-900/50 backdrop-blur-md animate-fade-in print:hidden"
       onClick={() => setIsOpen(false)}
       role="dialog"
       aria-modal="true"
@@ -384,7 +384,7 @@ export default function CommandPalette() {
               <span>打开</span>
             </span>
           </div>
-          <span className="text-slate-400">OncoPath 全局医学指挥台</span>
+          <span className="text-slate-400">知癌维基 全局医学指挥台</span>
         </div>
       </div>
     </div>

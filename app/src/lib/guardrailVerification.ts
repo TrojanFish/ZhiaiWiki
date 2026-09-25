@@ -1,5 +1,5 @@
 /**
- * OncoPath Clinical Guardrails & Safety Verification Engine
+ * ZhiaiWiki Clinical Guardrails & Safety Verification Engine
  * Automated verification suite for clinical rules, ethical red lines, and data privacy.
  */
 

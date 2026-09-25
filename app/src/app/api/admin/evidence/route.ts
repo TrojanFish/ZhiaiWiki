@@ -10,11 +10,21 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const q = searchParams.get('q')?.toLowerCase() || '';
+    const cancerType = searchParams.get('cancerType');
 
-    // Fetch all ingested studies
-    const allStudies = await prisma.ingestedStudy.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
+    let allStudies: any[] = [];
+    let dbConnected = true;
+
+    try {
+      // Fetch all ingested studies (optionally filtered by cancerType)
+      allStudies = await prisma.ingestedStudy.findMany({
+        where: cancerType ? { cancerType } : undefined,
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (dbErr: any) {
+      console.warn('Prisma DB unavailable in GET /api/admin/evidence:', dbErr?.message || dbErr);
+      dbConnected = false;
+    }
 
     const filtered = q
       ? allStudies.filter(
@@ -35,6 +45,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
+      dbConnected,
+      warning: dbConnected ? undefined : "本地 PostgreSQL 尚未启动或未连接，无法读取持久化文献库。",
       studies: filtered,
       metrics: {
         totalStudies,
@@ -58,6 +70,7 @@ export async function POST(request: Request) {
 
     const {
       title,
+      cancerType,
       journal,
       year,
       authors,
@@ -129,6 +142,7 @@ export async function POST(request: Request) {
         where: { id: existingStudy.id },
         data: {
           title: cleanTitle,
+          cancerType: cancerType || existingStudy.cancerType || "lung",
           journal: journal || existingStudy.journal,
           year: year ? parseInt(year) : existingStudy.year,
           authors: authors || existingStudy.authors,
@@ -158,6 +172,7 @@ export async function POST(request: Request) {
       savedStudy = await prisma.ingestedStudy.create({
         data: {
           title: cleanTitle,
+          cancerType: cancerType || "lung",
           journal: journal || null,
           year: year ? parseInt(year) : null,
           authors: authors || null,

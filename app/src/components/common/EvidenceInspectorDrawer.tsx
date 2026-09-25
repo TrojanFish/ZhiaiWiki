@@ -131,7 +131,7 @@ export default function EvidenceInspectorDrawer({
         <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
           <div className="text-2xs text-slate-500 flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-            <span>OncoPath 100% 同行评审文献直溯体系</span>
+            <span>知癌维基 100% 同行评审文献直溯体系</span>
           </div>
           <div className="flex items-center gap-2">
             {study.doi && (

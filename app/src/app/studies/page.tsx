@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { 
   BookOpen, 
   Search, 
-  Sparkles, 
+  Target, 
   Layers, 
   ShieldCheck,
   Microscope,
@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import StudyCard, { StudyItem } from "@/components/StudyCard";
 import Footer from "@/components/Footer";
+import { useCancerType } from "@/components/common/CancerSwitch";
 
 export type StudyTopic = "all" | "surgery" | "targeted" | "immunotherapy" | "pathology" | "imaging";
 
 export default function StudiesPage() {
+  const { cancerType } = useCancerType();
   const [studies, setStudies] = useState<StudyItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -43,7 +45,7 @@ export default function StudiesPage() {
     setIsSearching(true);
 
     try {
-      const res = await fetch(`/api/studies?q=${encodeURIComponent(query)}&level=${level}`);
+      const res = await fetch(`/api/studies?q=${encodeURIComponent(query)}&level=${level}&cancerType=${cancerType}`);
       const data = await res.json();
       // Drop response if a newer request was dispatched in the meantime (Race-condition protection)
       if (requestId !== activeRequestIdRef.current) return;
@@ -64,7 +66,7 @@ export default function StudiesPage() {
 
   useEffect(() => {
     loadStudies(debouncedQuery, selectedLevel, initialLoading);
-  }, [debouncedQuery, selectedLevel]);
+  }, [debouncedQuery, selectedLevel, cancerType]);
 
   // Client-side topic segment filter
   const filteredStudies = useMemo(() => {
@@ -75,6 +77,142 @@ export default function StudiesPage() {
       const titleUpper = (study.title || "").toUpperCase();
       const concUpper = (study.keyConclusions || []).join(" ").toUpperCase();
       const fullText = `${titleUpper} ${concUpper}`;
+
+      if (cancerType === "breast") {
+        switch (selectedTopic) {
+          case "surgery":
+            return (
+              factors.includes("SLNB") ||
+              factors.includes("ACOSOG") ||
+              factors.includes("SURGERY") ||
+              fullText.includes("SLNB") ||
+              fullText.includes("Z0011") ||
+              fullText.includes("AXILLARY") ||
+              fullText.includes("MASTECTOMY") ||
+              fullText.includes("CONSERVATION")
+            );
+          case "targeted":
+            return (
+              factors.includes("HER2") ||
+              factors.includes("ADC") ||
+              fullText.includes("DESTINY") ||
+              fullText.includes("TRASTUZUMAB") ||
+              fullText.includes("PERTUZUMAB") ||
+              fullText.includes("APHINITY") ||
+              fullText.includes("T-DXD")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("IMMUNOTHERAPY") ||
+              factors.includes("TNBC") ||
+              fullText.includes("KEYNOTE") ||
+              fullText.includes("PEMBROLIZUMAB") ||
+              fullText.includes("IMPASSION")
+            );
+          case "pathology":
+            return (
+              factors.includes("GENE21") ||
+              factors.includes("ONCOTYPE") ||
+              factors.includes("TAILORX") ||
+              factors.includes("RXPONDER") ||
+              factors.includes("MONARCHE") ||
+              factors.includes("CDK4/6") ||
+              fullText.includes("TAILORX") ||
+              fullText.includes("RXPONDER") ||
+              fullText.includes("ONCOTYPE") ||
+              fullText.includes("MONARCHE") ||
+              fullText.includes("ABEMACICLIB")
+            );
+          case "imaging":
+            return (
+              factors.includes("BI-RADS") ||
+              factors.includes("MRI") ||
+              factors.includes("CALCIFICATION") ||
+              fullText.includes("MAMMOGRAPHY") ||
+              fullText.includes("ULTRASOUND") ||
+              fullText.includes("CALCIFICATION") ||
+              fullText.includes("BI-RADS")
+            );
+          default:
+            return true;
+        }
+      }
+
+      if (cancerType === "colorectal") {
+        switch (selectedTopic) {
+          case "surgery":
+            return (
+              factors.includes("RAPIDO") ||
+              factors.includes("PROSPECT") ||
+              factors.includes("TNT") ||
+              factors.includes("SURGERY") ||
+              factors.includes("TME") ||
+              fullText.includes("RAPIDO") ||
+              fullText.includes("PROSPECT") ||
+              fullText.includes("NEOADJUVANT") ||
+              fullText.includes("SURGERY") ||
+              fullText.includes("RECTAL") ||
+              fullText.includes("TME")
+            );
+          case "targeted":
+            return (
+              factors.includes("CETUXIMAB") ||
+              factors.includes("BEVACIZUMAB") ||
+              factors.includes("BEACON") ||
+              factors.includes("FRUQUINTINIB") ||
+              factors.includes("TAS-102") ||
+              factors.includes("HER2") ||
+              fullText.includes("CALGB") ||
+              fullText.includes("FIRE-3") ||
+              fullText.includes("BEACON") ||
+              fullText.includes("FRESCO") ||
+              fullText.includes("RECOURSE") ||
+              fullText.includes("DESTINY") ||
+              fullText.includes("CETUXIMAB") ||
+              fullText.includes("BEVACIZUMAB") ||
+              fullText.includes("ENCORAFENIB") ||
+              fullText.includes("FRUQUINTINIB")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("KEYNOTE-177") ||
+              factors.includes("NICHE-2") ||
+              factors.includes("PEMBROLIZUMAB") ||
+              factors.includes("DMMR") ||
+              factors.includes("MSI-H") ||
+              fullText.includes("KEYNOTE-177") ||
+              fullText.includes("NICHE") ||
+              fullText.includes("PEMBROLIZUMAB") ||
+              fullText.includes("NIVOLUMAB") ||
+              fullText.includes("DMMR") ||
+              fullText.includes("MSI-H")
+            );
+          case "pathology":
+            return (
+              factors.includes("IDEA") ||
+              factors.includes("MOSAIC") ||
+              factors.includes("CHEMOTHERAPY_DURATION") ||
+              fullText.includes("IDEA") ||
+              fullText.includes("MOSAIC") ||
+              fullText.includes("CAPOX") ||
+              fullText.includes("FOLFOX") ||
+              fullText.includes("OXALIPLATIN") ||
+              fullText.includes("NEUROTOXICITY")
+            );
+          case "imaging":
+            return (
+              factors.includes("MRI") ||
+              factors.includes("CRM") ||
+              factors.includes("EMVI") ||
+              fullText.includes("MRI") ||
+              fullText.includes("CRM") ||
+              fullText.includes("EMVI") ||
+              fullText.includes("HIGH-RESOLUTION")
+            );
+          default:
+            return true;
+        }
+      }
 
       switch (selectedTopic) {
         case "surgery":
@@ -107,42 +245,63 @@ export default function StudiesPage() {
             fullText.includes("IMPOWER010") ||
             fullText.includes("KEYNOTE") ||
             fullText.includes("ATEZOLIZUMAB") ||
-            fullText.includes("PEMBROLIZUMAB") ||
-            fullText.includes("IMMUNOTHERAPY")
+            fullText.includes("PEMBROLIZUMAB")
           );
         case "pathology":
           return (
             factors.includes("STAS") ||
             factors.includes("VPI") ||
-            factors.includes("IASLC_GRADE") ||
             factors.includes("LVI") ||
-            factors.includes("MARGIN") ||
+            factors.includes("GRADE3") ||
             fullText.includes("STAS") ||
-            fullText.includes("PLEURAL INVASION") ||
-            fullText.includes("MICROPAPILLARY") ||
-            fullText.includes("SOLID SUBTYPE")
+            fullText.includes("PLEURAL") ||
+            fullText.includes("VASCULAR") ||
+            fullText.includes("HISTOLOGIC")
           );
         case "imaging":
           return (
             factors.includes("CTR") ||
-            factors.includes("VDT") ||
-            factors.includes("GGO") ||
+            factors.includes("PURE_GGO") ||
+            factors.includes("SOLID_COMPONENT") ||
             fullText.includes("GGO") ||
-            fullText.includes("CTR") ||
             fullText.includes("CONSOLIDATION") ||
-            fullText.includes("GROUND-GLASS")
+            fullText.includes("GROUND-GLASS") ||
+            fullText.includes("FLEISCHNER")
           );
         default:
           return true;
       }
     });
-  }, [studies, selectedTopic]);
+  }, [studies, selectedTopic, cancerType]);
+
+  const topicTabs = cancerType === "breast" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "surgery", label: "手术与前哨免清扫 (Z0011/B-06)", icon: Layers },
+    { id: "targeted", label: "HER2 双靶与新型 ADC (DESTINY/APHINITY)", icon: Target },
+    { id: "pathology", label: "21-基因与免化疗 (TAILORx/RxPONDER)", icon: Microscope },
+    { id: "immunotherapy", label: "三阴性免疫突破 (KEYNOTE-522)", icon: ShieldCheck },
+    { id: "imaging", label: "钼靶微钙化与致密腺体 (BI-RADS)", icon: Activity },
+  ] : cancerType === "colorectal" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "surgery", label: "直肠新辅助与全程TNT (RAPIDO/PROSPECT)", icon: Layers },
+    { id: "targeted", label: "左右半与RAS/BRAF靶向 (CALGB/BEACON/FRESCO)", icon: Target },
+    { id: "pathology", label: "化疗时长减毒与分期 (IDEA/MOSAIC)", icon: Microscope },
+    { id: "immunotherapy", label: "dMMR/MSI-H免疫单药 (KEYNOTE-177/NICHE)", icon: ShieldCheck },
+    { id: "imaging", label: "直肠高分MRI与CRM/EMVI评价", icon: Activity },
+  ] : [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "surgery", label: "手术与保肺切除 (JCOG/CALGB)", icon: Layers },
+    { id: "targeted", label: "靶向辅助阻断 (ADAURA/ALINA)", icon: Target },
+    { id: "immunotherapy", label: "免疫长效巡逻 (IMpower/KEYNOTE)", icon: ShieldCheck },
+    { id: "pathology", label: "高危病理与预后 (STAS/VPI)", icon: Microscope },
+    { id: "imaging", label: "影像实性比与CTR (GGO)", icon: Activity },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-500 selection:text-white">
 
       {/* Hero Header */}
-      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-32 pb-8 px-2.5 sm:px-6 max-w-4xl mx-auto text-center space-y-4">
+      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Unified Top Pill Badge */}
         <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs">
           <BookOpen className="w-3.5 h-3.5 text-sky-600" />
@@ -158,23 +317,22 @@ export default function StudiesPage() {
 
         {/* Unified Subtitle */}
         <p className="max-w-3xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-          严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。
+          {cancerType === "breast" ? (
+            <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的里程碑多中心 RCT（TAILORx、RxPONDER、MonarchE、DESTINY-Breast 等）。为乳腺癌精准分型、免除过度化疗与强化靶向提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "colorectal" ? (
+            <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的结直肠癌里程碑试验（IDEA、MOSAIC、KEYNOTE-177、CALGB 80405、RAPIDO 等）。为辅助化疗减毒、免疫免化疗与保肛策略提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : (
+            <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          )}
         </p>
       </header>
 
       {/* Studies Main Area */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 pb-16 space-y-6">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-8 sm:pb-12 space-y-5 sm:space-y-6">
         
         {/* 1. Sticky Segmented Topic Navigation Bar (Capsule Stepper) */}
         <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
-          {[
-            { id: "all", label: "全部核心文献", icon: BookOpen },
-            { id: "surgery", label: "手术与保肺切除 (JCOG/CALGB)", icon: Layers },
-            { id: "targeted", label: "靶向辅助阻断 (ADAURA/ALINA)", icon: Sparkles },
-            { id: "immunotherapy", label: "免疫长效巡逻 (IMpower/KEYNOTE)", icon: ShieldCheck },
-            { id: "pathology", label: "高危病理与预后 (STAS/VPI)", icon: Microscope },
-            { id: "imaging", label: "影像实性比与CTR (GGO)", icon: Activity },
-          ].map((tab) => {
+          {topicTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = selectedTopic === tab.id;
             return (
@@ -216,7 +374,7 @@ export default function StudiesPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="搜索标题、期刊、因子 (如 STAS, ADAURA)..."
+                placeholder={cancerType === "breast" ? "搜索标题、期刊、因子 (如 TAILORx, HER2, 21-基因)..." : "搜索标题、期刊、因子 (如 STAS, ADAURA)..."}
                 className="w-full pl-3.5 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all"
               />
               {isSearching && (

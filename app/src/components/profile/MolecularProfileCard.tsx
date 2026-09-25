@@ -249,10 +249,9 @@ export function MolecularProfileCard({
                 </div>
                 <Link
                   href="/reimbursement"
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-2xs flex items-center gap-1 shrink-0 transition-all cursor-pointer"
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-2xs flex items-center justify-center shrink-0 transition-all cursor-pointer"
                 >
                   <span>查看门特报销指引</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             ) : null}

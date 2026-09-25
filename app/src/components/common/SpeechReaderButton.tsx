@@ -91,7 +91,7 @@ export default function SpeechReaderButton({
   };
 
   return (
-    <div className={`inline-flex items-center gap-1.5 ${className}`}>
+    <div className={`inline-flex items-center gap-1.5${className ? ` ${className}` : ""}`}>
       <button
         type="button"
         onClick={handleToggle}

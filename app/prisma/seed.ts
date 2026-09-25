@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { DEFAULT_GRAPH_NODES, DEFAULT_EDGE_EVIDENCES } from '../src/lib/defaultGraphData';
 import { FEATURED_STUDIES } from '../src/lib/evidence-data';
+import { BREAST_STUDIES } from '../src/lib/breastStudiesData';
 
 const prisma = new PrismaClient();
 
@@ -139,7 +140,62 @@ async function main() {
       }
     });
   }
-  console.log(`✅ All ${FEATURED_STUDIES.length} landmark studies seeded successfully.`);
+  console.log(`✅ All ${FEATURED_STUDIES.length} lung cancer landmark studies seeded successfully.`);
+
+  // 4. Seed Ingested Breast Cancer Landmark Studies
+  console.log(`Seeding ${BREAST_STUDIES.length} landmark breast cancer studies into IngestedStudy table...`);
+  for (const study of BREAST_STUDIES) {
+    const conclusionsStr = study.keyConclusions.join('；');
+    const applicableStagesStr = JSON.stringify(study.applicableStages);
+    const relevantFactorsStr = JSON.stringify(study.relevantFactors);
+    const url = study.doi 
+      ? `https://doi.org/${study.doi}` 
+      : (study.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${study.pubmedId}/` : undefined);
+
+    await prisma.ingestedStudy.upsert({
+      where: { id: study.id },
+      update: {
+        cancerType: 'breast',
+        title: study.title,
+        journal: study.journal,
+        year: study.year,
+        patientN: study.patientN,
+        studyType: study.studyType,
+        evidenceLevel: study.evidenceLevel,
+        doi: study.doi || null,
+        pubmedId: study.pubmedId || null,
+        applicableStages: applicableStagesStr,
+        relevantFactors: relevantFactorsStr,
+        conclusion: conclusionsStr,
+        summary: study.keyConclusions[0] || '',
+        biomarkerDetails: study.biomarkerDetails || null,
+        interventionArm: study.interventionArm || null,
+        riskReduction: study.riskReduction || null,
+        url: url || null,
+      },
+      create: {
+        id: study.id,
+        cancerType: 'breast',
+        title: study.title,
+        journal: study.journal,
+        year: study.year,
+        patientN: study.patientN,
+        studyType: study.studyType,
+        evidenceLevel: study.evidenceLevel,
+        doi: study.doi || null,
+        pubmedId: study.pubmedId || null,
+        applicableStages: applicableStagesStr,
+        relevantFactors: relevantFactorsStr,
+        conclusion: conclusionsStr,
+        summary: study.keyConclusions[0] || '',
+        biomarkerDetails: study.biomarkerDetails || null,
+        interventionArm: study.interventionArm || null,
+        riskReduction: study.riskReduction || null,
+        url: url || null,
+      }
+    });
+  }
+  console.log(`✅ All ${BREAST_STUDIES.length} breast cancer landmark studies seeded successfully.`);
 }
 
 main()

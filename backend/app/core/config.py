@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "OncoPath"
+    PROJECT_NAME: str = "ZhiaiWiki"
     DATABASE_URL: str = "sqlite+aiosqlite:///./oncopath.db"
     REDIS_URL: str = "redis://localhost:6379/0"
     SECRET_KEY: str = "super_secret_key_for_jwt_which_should_be_changed_in_prod"
@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Security
-    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
+    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,https://zhiaiwiki.org"
     
     # LLM Configuration
     OPENAI_API_KEY: str = "sk-mock-key-for-development"

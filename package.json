@@ -1,0 +1,13 @@
+{
+  "name": "zhiaiwiki-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ZhiaiWiki (知癌维基) Platform Workspace Root Proxy",
+  "scripts": {
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "start": "npm --prefix app run start",
+    "test": "npm --prefix app test",
+    "lint": "npm --prefix app run lint"
+  }
+}

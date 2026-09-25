@@ -1,18 +1,20 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/TrojanFish/OncoPath/main/app/public/logo.png" width="100" alt="OncoPath Logo">
-  <h1>OncoPath</h1>
-  <p><strong>Evidence-Based Oncology Knowledge Platform & Clinical Navigation OS</strong></p>
-  <p><em>An evidence-based lung oncology knowledge and clinical consultation support platform grounded in peer-reviewed literature, AJCC/IASLC guidelines, and real-world multi-center prospective cohorts.</em></p>
+  <img src="https://raw.githubusercontent.com/TrojanFish/OncoPath/main/app/public/logo.png" width="90" alt="ZhiaiWiki Logo">
+  <h1>ZhiaiWiki (OncoPath)</h1>
+  <p><strong>Multi-Cancer Evidence-Based Oncology Knowledge Platform & Clinical Navigation OS</strong></p>
+  <p><em>Covering 8 major solid tumors, grounded in peer-reviewed clinical literature, AJCC/IASLC guidelines, and multi-center real-world prospective cohorts.</em></p>
 
   <p>
-    <a href="README.md"><strong>English</strong></a> |
-    <a href="README.zh-CN.md"><strong>中文说明</strong></a>
+    <a href="README.md"><strong>English Documentation</strong></a> |
+    <a href="README.zh-CN.md"><strong>中文技术文档</strong></a>
   </p>
 
   <p>
     <img src="https://img.shields.io/badge/Next.js-16.2.12-blue?style=flat-square&logo=next.js" alt="Next.js" />
-    <img src="https://img.shields.io/badge/Vitest-71_Unit_Tests_Passed-success?style=flat-square&logo=vitest" alt="Vitest" />
-    <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Vitest-30_Suites_446_Passed-success?style=flat-square&logo=vitest" alt="Vitest" />
+    <img src="https://img.shields.io/badge/Cancer_Types-8_Major_Tumors-rose?style=flat-square" alt="8 Cancers" />
+    <img src="https://img.shields.io/badge/PubMed-Europe_PMC_API-blueviolet?style=flat-square" alt="PubMed API" />
+    <img src="https://img.shields.io/badge/PostgreSQL-16_pgvector-336791?style=flat-square&logo=postgresql" alt="PostgreSQL" />
     <img src="https://img.shields.io/badge/Nginx-SSE_Streaming-009639?style=flat-square&logo=nginx" alt="Nginx" />
     <img src="https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square&logo=tailwindcss" alt="TailwindCSS" />
     <img src="https://img.shields.io/badge/PIPL-Privacy_Compliant-10b981?style=flat-square" alt="PIPL" />
@@ -25,206 +27,162 @@
 
 ## 🌟 Core Vision & Medical Principles
 
-OncoPath bridges the communication gap between complex oncology literature and patients by strictly adhering to the **"Evidence-First, AI-Second"** standard:
-1. **Zero Hallucinations & Deterministic Rules**: Core staging, hazard ratios, and clinical paths are hard-coded. Large Language Models (LLMs) are strictly restricted from making arbitrary prognostic guesses or writing prescriptions.
-2. **100% Peer-Reviewed Traceability**: Every Hazard Ratio (HR) and 5-year Recurrence-Free Survival (RFS) rate is directly linked to seminal studies (e.g., JTO, Lancet Oncology, JCO, Chest, JCOG0804, ADAURA) with active DOI and PubMed hyperlinks.
-3. **Informed Consent & Clinical Collaboration**: Generates structured consultation pocket cards and A4 printable consultation checklists empowering patients and families to communicate effectively with their attending oncologists.
+ZhiaiWiki (OncoPath) bridges the communication gap between complex oncology literature and patients by strictly adhering to the **"Evidence-First, AI-Second"** standard:
+
+1. **Zero Hallucinations & Deterministic Clinical Rules**: Core staging, hazard ratios, and clinical paths are hardcoded. Large Language Models (LLMs) are strictly restricted from making arbitrary prognostic guesses or writing prescriptions.
+2. **100% Peer-Reviewed Traceability**: Direct integration with official Europe PMC / MEDLINE / PubMed databases. Every Hazard Ratio (HR) and 5-year Recurrence-Free Survival (RFS) rate is directly linked to landmark clinical trials (Lancet, JCO, JTO, NEJM, Chest) with active DOI and PubMed hyperlinks.
+3. **Comprehensive Coverage across 8 Solid Tumors**: Seamlessly handles lung, breast, colorectal, gastric, liver, esophageal, thyroid, and prostate cancers.
+4. **Informed Consent & Clinical Collaboration**: Generates structured consultation pocket cards and A4 printable checklists empowering patients and families to communicate effectively with their attending oncologists.
 
 ---
 
 ## ✨ Key Features & Architecture
 
-### 1. 🏥 Clinical Workstation & Multimodal AI
-- 🩺 **Clinical Communication & Evidence Workstation**: Modern healthcare interface with interactive simulation sandboxes and real-time data boards.
-- 🔬 **Multimodal AI Pathology Parser**: Extracts TNM staging, Spread Through Air Spaces (STAS), Visceral Pleural Invasion (VPI), Lymphovascular Invasion (LVI), IASLC grades, and driver mutations via photo or text.
-- 🗺️ **4D Dynamic Oncology Knowledge Graph**: Interactive visual canvas linking pathological risk factors to recurrence pathways and targeted therapy nodes.
-- ⚡ **AI Evidence Reasoning Ticker (`ReasoningTicker`)**: Progressive 4-step streaming literature alignment engine with sub-second elapsed timers.
+### 1. 🧬 Multi-Cancer Staging & Reasoning Engines
+- **Covered Solid Tumors**: 🫁 Lung · 🎀 Breast · 🎗️ Colorectal · 🥣 Gastric · 🩺 Liver · 🥤 Esophageal · 🦋 Thyroid · 🛡️ Prostate.
+- **Deterministic Guideline Engine**: Integrates AJCC 8th/9th edition TNM, CSCO, and NCCN clinical guidelines (e.g., mGGO solid component calculation, STAS/VPI risk factors, TNBC/HER2 molecular subtypes, CRM status, and ATA risk stratification).
+- **Multimodal AI Pathology Parser**: Extracts TNM staging, histological grades, depth of invasion, and driver mutations via photo or text.
 
-### 2. 🛡️ Clinical Reassurance & Longitudinal Tracking
-- 🟢 **Tumor Marker Physiological Safety Band**: Semi-transparent 0~5.0 ng/mL green safe floating bands for CEA & CYFRA21-1 with reassuring golden principle banners.
-- ⏱️ **VDT Speedometer & Dual-Phase CT Comparison Lens (`VdtGauge` & `CtComparisonLens`)**: Driven by the Schwartz volume doubling formula with clear indolent/active growth categorization and absolute delta tracking (Δ mm & Δ %).
-- 🚦 **Post-Op Tri-Color Home Recovery Assistant (`PostOpSymptomTriage`)**: Covers post-operative cough, intercostal numbness/pain, exertional dyspnea, and benign hemoptysis with 24-hour home recovery guidance.
+### 2. 🔬 Admin Evidence Studio & Official Database Integration
+- **Admin Studio Access**: `/admin`, equipped with brute-force defense (sliding-window rate limiting) and dual-channel HMAC-SHA256 session authentication.
+- **PubMed / Europe PMC Integration**: Connects to the European Bioinformatics Institute (EMBL-EBI) open scientific REST API to retrieve MEDLINE/PubMed articles by PMID or DOI without requiring API keys.
+- **Multimodal PDF Article Parser**: Directly upload PDF papers from Lancet or JCO; Gemini 2.5 Flash automatically extracts 17 structured endpoints ($n$, HR, 95% CI, 5-yr RFS, biomarker targets, and control arms).
+- **Human-in-the-Loop Verification**: Enables clinical specialists to review and fine-tune extracted evidence before committing it to the PostgreSQL database.
+- **Graceful Offline Fallback**: Operates smoothly in demonstration mode if the database is temporarily offline during local frontend testing.
 
-### 3. 📚 Evidence Visual Encyclopedia (Wiki) & Social Sharing
-- 📖 **38 Deeply Structured Clinical Topics**: Comprehensive coverage from GGN evolution to pathology risk factors, targeted immunotherapy, and long-term recovery.
-- 🧬 **4 Advanced Frontier Topics**: Post-op ctDNA/MRD dynamic surveillance, HER2/ADC breakthroughs (T-DXd), 3rd-Gen EGFR resistance overcoming roadmaps, and nodule microwave ablation/SBRT.
-- 📝 **Clinic Questions Cheat-sheet Sync**: One-click bookmarking of Wiki questions that seamlessly populate the Doctor Consultation Card and printable checklists.
-- 🖼️ **2x Retina WeChat Poster Generator (`WikiSharePosterModal`)**: Standalone unconstrained offscreen rasterization engine producing full-length, unclipped shareable infographics.
+### 3. 💊 Oncology Drug-Drug Interaction (DDI) Checker
+- Evaluates over 100 oncology targeted therapies, ADCs, and immune checkpoint inhibitors (e.g., Osimertinib, Aumolitinib, Trastuzumab, Pembrolizumab).
+- Prevents adverse drug reactions with proton-pump inhibitors (PPIs), CYP3A4 inducers/inhibitors, anticoagulants, and herbal remedies.
 
-### 4. 🌐 Internationalization & Chinese Script Conversion
-- 🔀 **Global Simplified/Traditional Chinese Auto-Conversion (`LangSwitch`)**: Designed for international and overseas Chinese communities, powered by a lightweight client-side OpenCC engine with a permanent toggle button on the right side of the navigation bar for both desktop and mobile; full DOM, AI streaming reports, and knowledge graphs adapt seamlessly.
+### 4. 📚 Visual Encyclopedia (Wiki) & Social Infographics
+- **Deep Clinical Visual Guides**: Interactive SVG/Canvas diagrams explaining nodule evolution, adverse effects, post-op lymphedema, and stoma rehabilitation.
+- **Consultation Cheat-sheet Sync**: One-click bookmarking of Wiki questions directly into the Doctor Consultation Card.
+- **2x Retina WeChat Poster Generator**: Client-side offscreen rasterization engine producing full-length, unclipped shareable infographics.
 
-### 5. 🔒 Production Security & Compliance
-- 🛡️ **Global Data Privacy (PIPL / HIPAA Compliant) & Right-to-be-Forgotten**: Built-in PII sanitizer automatically masking ID numbers, phone numbers, and hospital IDs; one-click permanent profile destruction.
-- 🔐 **PBKDF2 210,000 Rounds Hashing & Anti-Tampering HMAC Session Cookies**: Secure authentication guarding against credential forgery.
-- ⚡ **Production-Tuned Nginx SSE Streaming & Cloudflare Proxy**: Restores client IP with `CF-Connecting-IP`, zero-buffering reverse proxy for smooth typewriter report streaming, 1-year immutable caching for static assets, and IP rate limiting.
+### 5. ❤️ Public Welfare & Standardized Subpages
+- Standardized cross-site subpages: `About Us` (`/about`), `Love Relay` (`/love-relay`), `Terms & Disclaimer` (`/terms`), `Privacy Policy` (`/privacy`).
+- **WeChat Donation Blessing Wall**: Supports manual receipt verification using the last 4 digits of WeChat transaction IDs, lighting up verified supporter badges. Persisted via offline JSON storage (`data/love_relay.json`).
+
+### 6. 🌐 Internationalization & Privacy Compliance
+- **Simplified / Traditional Chinese Conversion (`LangSwitch`)**: Client-side OpenCC engine seamlessly adapting the entire DOM, AI streams, and knowledge graphs for international Chinese communities.
+- **Data Privacy (PIPL / HIPAA Compliant) & Right-to-be-Forgotten**: Automatically masks ID numbers, phone numbers, and hospital IDs; supports one-click permanent profile destruction.
+- **Production-Tuned Nginx SSE Streaming**: Restores client IP with `CF-Connecting-IP`, disables buffering for smooth typewriter SSE streaming, and sets 1-year immutable caching for static assets.
 
 ---
 
 ## 🧪 Automated Testing & Quality Assurance
 
-Run the comprehensive unit test and clinical safety suite with `npm test`:
+Run the comprehensive unit test suite covering clinical algorithms, DDI safety, and security:
 
 ```bash
-cd app && npm test
+cd app
+npm run test:unit
 ```
 
 ```text
- ✓ src/__tests__/staging.test.ts        (18 tests) - AJCC/IASLC 9th TNM & mGGO Solid Core Staging
- ✓ src/__tests__/vdtCalculator.test.ts  (6 tests)  - Schwartz Volume Doubling Time & Growth Trajectory
- ✓ src/__tests__/userAuth.test.ts       (5 tests)  - PBKDF2 Password Hashing & HMAC Session Anti-Tampering
- ✓ src/__tests__/tumorMarkers.test.ts   (5 tests)  - CEA / CYFRA21-1 Physiological Metabolic Safety Bands
+ ✓ src/__tests__/staging.test.ts                        (38 tests) - AJCC/IASLC 9th TNM Lung Staging
+ ✓ src/__tests__/breastStaging.test.ts                  (43 tests) - Breast Cancer Molecular Subtypes
+ ✓ src/__tests__/colorectalStaging.test.ts              (30 tests) - Colorectal Cancer TNM & Pathology
+ ✓ src/__tests__/gastricStaging.test.ts                 (28 tests) - Gastric Depth of Invasion & Staging
+ ✓ src/__tests__/liverStaging.test.ts                   (32 tests) - Primary Liver Cancer CNLC Staging
+ ✓ src/__tests__/esophagealStaging.test.ts              (28 tests) - Esophageal Anatomical Staging
+ ✓ src/__tests__/thyroidStaging.test.ts                 (20 tests) - Thyroid ATA Risk Stratification
+ ✓ src/__tests__/gynecologicDdi.test.ts                 (17 tests) - Gynecologic Oncology DDI
+ ✓ src/__tests__/colorectalDdi.test.ts                  (15 tests) - Colorectal Target & Chemo DDI
+ ✓ src/__tests__/breastDdi.test.ts                      (11 tests) - Breast Endocrine & Targeted DDI
+ ✓ src/__tests__/adminAuth.test.ts                      (8 tests)  - Admin Studio HMAC Auth & Token Security
+ ✓ src/__tests__/userAuth.test.ts                       (6 tests)  - PBKDF2 Password Hashing & Cookie Security
+ ✓ src/__tests__/securityAccessControl.test.ts          (6 tests)  - IDOR Prevention & PII Masking
+ ... (Total of 30 test suites)
 
-=== OncoPath Production Readiness & Guardrails Test ===
-✅ [PASS] [PII Privacy Sanitization] - Mask ID, Phone, Name & Inpatient ID
-✅ [PASS] [Security & Anti-Abuse Rate Limiter] - Sliding Window Enforcement
-✅ [PASS] [IA1 Low-Risk Overtreatment Prevention] - Early Low-Risk Protection
-✅ [PASS] [Stage IIIA / N2 & STAS+ Precision Targeting] - High-Risk ADAURA Targeting
-✅ [PASS] [Auth & Session Security (P1)] - HMAC Signatures & Cookie Extraction
-✅ [PASS] [Deterministic Staging Engine (P0)] - mGGO Solid Staging & VPI Upstaging
-
-🎉 ALL 40 UNIT & GUARDRAIL TESTS PASSED! System is ready for production.
+ Test Files  30 passed (30)
+      Tests  446 passed (446)
+   Duration  45.51s
 ```
 
 ---
 
 ## 🐳 VPS Production Deployment Runbook
 
-### 1. One-Click Production Deployment
-
-#### 1.1 Prerequisites & Server Setup (Ubuntu / Debian)
-SSH into your Linux VPS and install Docker & Git:
+### 1. Server Setup (Ubuntu / Debian / CentOS)
+SSH into your Linux VPS and install Docker & Docker Compose:
 
 ```bash
-# Update system packages
-sudo apt update && sudo apt upgrade -y
-
-# Install Docker engine, Compose v2, and Git
-sudo apt install -y git curl wget docker.io docker-compose-v2
-
-# Start and enable Docker daemon
+sudo apt update && sudo apt install -y git curl docker.io docker-compose-v2
 sudo systemctl enable --now docker
 ```
 
-#### 1.2 Firewall & Security Group Ports
-Ensure the following port is open in your cloud provider's firewall:
-* **`38000`** (TCP) - **OncoPath Production Nginx Gateway Port** (Required)
+### 2. Firewall & Port Rules
+Ensure the following ports are open in your cloud firewall:
+* **`80`** (HTTP) & **`443`** (HTTPS) - Production Nginx Reverse Proxy Gateway
 
-#### 1.3 Clone Repository
+### 3. Clone Repository
 ```bash
 git clone https://github.com/TrojanFish/OncoPath.git
 cd OncoPath
 ```
 
-#### 1.4 Configure Environment Variables (`.env`)
+### 4. Configure Production Environment Variables (`.env`)
 ```bash
 cp .env.example .env
 nano .env
 ```
-
-Set your configuration parameters (Press `Ctrl + O` to save, `Ctrl + X` to exit):
+Fill in the parameters:
 ```env
-# Required: Google Gemini API Key for multimodal parsing and AI report generation
-GEMINI_API_KEY=AIzaSyYourActualGeminiApiKeyHere
+# Required: Google Gemini API Key for multimodal parsing and report generation
+GEMINI_API_KEY="AIzaSyYourActualApiKeyHere"
 
-# Optional: Admin Studio credentials
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=YourStrongAdminPassword2026!
-ADMIN_SECRET=your_production_secret_key_2026
+# Required: Production admin password (must be strong)
+ADMIN_PASSWORD="YourStrongAdminPassword2026!"
 
-# Optional: Production HTTP Port (Default: 38000)
-PROD_HTTP_PORT=38000
+# Required: Production database password
+POSTGRES_PASSWORD="YourStrongDbPassword2026!"
+
+# Canonical Public URL
+NEXT_PUBLIC_APP_URL="https://zhiaiwiki.org"
 ```
 
-#### 1.5 Start Production Cluster
+### 5. Launch Production Cluster
 ```bash
 docker compose -f docker-compose.prod.yml up -d --build
 ```
-> 💡 **Architecture Note**: This starts three isolated services: **PostgreSQL 16 Database**, **Next.js 16 Web Application**, and **Nginx Reverse Proxy**, and automatically initializes Prisma database schema.
+> 💡 **Architecture Note**: This command provisions **PostgreSQL 16 Database**, **Next.js 16 Web Application**, and **Nginx Reverse Proxy**, with persistent volumes for data storage and automatic Prisma schema initialization.
 
-#### 1.6 Verify Health Status & Probes
+### 6. Verify Health Status
 ```bash
-# Check container status (should show 'Up healthy')
+# Check container statuses (should show 'Up healthy')
 docker compose -f docker-compose.prod.yml ps
 
 # Test production health probe endpoint
-curl http://localhost:38000/api/health
+curl http://localhost/api/health
 ```
-
-Access **`http://<YOUR_VPS_PUBLIC_IP>:38000`** in your browser to experience OncoPath!
- 
-#### 7. Domain Binding & Cloudflare Origin Rules Setup (Port 38000 Proxying)
-
-If your domain is hosted on Cloudflare with the Orange Cloud (Proxy) enabled, you can route standard `https://yourdomain.com` directly to internal port 38000 without exposing `:38000` in the browser URL:
-
-1. Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/) and select your domain;
-2. Navigate to **Rules** ➡️ **Origin Rules** ➡️ Click **Create Rule**;
-3. Configure the rule parameters:
-   * **Rule name**: `OncoPath Port 38000`
-   * **Field**: Select `Hostname`
-   * **Operator**: Select `equals`
-   * **Value**: Enter your domain (e.g., `yourdomain.com` or `oncopath.yourdomain.com`)
-   * **Destination Port**: Select **Rewrite to...** ➡️ Enter **`38000`**
-4. Click **Deploy**;
-5. Wait 1~2 minutes for the rule to propagate, then open 👉 **`https://yourdomain.com`** in any browser!
-
----
-
-### 2. Routine Updates & Maintenance
-
-When new updates are pushed to GitHub, run the following standard commands on your VPS:
-
-```bash
-# 1. Enter project root
-cd /opt/OncoPath
-
-# 2. Pull latest commits from GitHub
-git pull origin main
-
-# 3. Rebuild and gracefully restart production containers (preserves DB data)
-docker compose -f docker-compose.prod.yml up -d --build
-
-# 4. (Optional) Prune dangling images
-docker image prune -f
-```
-
----
-
-### 3. Operations & Disaster Recovery CheatSheet
-
-| Scenario | Command | Description |
-| :--- | :--- | :--- |
-| **View full production logs** | `docker compose -f docker-compose.prod.yml logs -f` | Real-time monitoring across Nginx, App, and DB |
-| **View app telemetry logs** | `docker compose -f docker-compose.prod.yml logs -f app` | Inspect JSON telemetry, latencies, and errors |
-| **Run automated DB backup** | `bash scripts/backup-db.sh` | Exports compressed gzip snapshot, 30-day rotation |
-| **Run test & guardrail suite**| `cd app && npm test` | Executes 62 unit tests & 6 clinical guardrails |
-| **Restart cluster** | `docker compose -f docker-compose.prod.yml restart` | Quick container restart without rebuilding |
-| **Stop cluster** | `docker compose -f docker-compose.prod.yml down` | Stops services (preserves `pgdata_prod` volume) |
+Access **`http://<YOUR_VPS_PUBLIC_IP>`** to start using ZhiaiWiki!
 
 ---
 
 ## 💻 Local Development
 
 ```bash
-# 1. Enter web app directory
+# 1. Enter the app directory
 cd app
 
-# 2. Install dependencies & start dev server
+# 2. Install dependencies & start the dev server
 npm install
 npm run dev
 
 # 3. Run automated tests
-npm test
+npm run test:unit
 ```
-Visit `http://localhost:3000` to start developing.
+* Patient Portal: [http://localhost:3000](http://localhost:3000)
+* Admin Evidence Studio: [http://localhost:3000/admin](http://localhost:3000/admin) (Default testing credentials available with one-click autofill: `admin` / `OncoPath2026!`)
 
 ---
 
 ## 🛡️ Clinical Disclaimer
 
-1. OncoPath strictly adheres to **AJCC 8th/9th Edition** TNM lung cancer staging and **IASLC / CSCO / NCCN** guidelines.
-2. This platform is designed as an **evidence-based scientific knowledge retrieval and communication aid**; it **does NOT provide clinical medical diagnoses or prescription directives**.
-3. All therapeutic decisions must be made in consultation with qualified attending physicians.
+1. ZhiaiWiki (OncoPath) strictly adheres to **AJCC 8th/9th Edition** TNM staging criteria and **CSCO / NCCN / ESMO** clinical guidelines.
+2. This platform is designed as an **evidence-based scientific retrieval and patient-physician communication aid**; it **does NOT provide individualized medical diagnoses or prescription directives**.
+3. All therapeutic choices, surgical selections, adjuvant chemotherapy protocols, and follow-up intervals must be made in consultation with qualified attending physicians.
 
 ---
 

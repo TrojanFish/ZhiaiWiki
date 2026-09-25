@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import {
   User,
-  BrainCircuit,
+  FileText,
   AlertTriangle,
   BookOpen,
   BarChart2,
@@ -189,9 +189,9 @@ export default function EvidenceReport({
               onClick={() => {
                 const url = window.location.href;
                 if (navigator.share) {
-                  navigator.share({ title: "OncoPath 循证分析报告", url });
+                  navigator.share({ title: "知癌维基 循证分析报告", url });
                 } else {
-                  navigator.clipboard.writeText(url).then(() => showToast("✓ 报告链接已复制，可分享给家属或医生", "success"));
+                  navigator.clipboard.writeText(url).then(() => showToast("报告链接已复制，可分享给家属或医生", "success"));
                 }
               }}
               className="btn-secondary px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer flex items-center gap-1"
@@ -232,8 +232,8 @@ export default function EvidenceReport({
               <div className="bg-slate-50/90 rounded-r-2xl rounded-l-xs p-5 border border-slate-200/90 border-l-4 border-l-sky-600 relative space-y-2.5 shadow-2xs">
                 <div className="flex items-center justify-between gap-2 text-sky-800 font-bold text-sm flex-wrap">
                   <div className="flex items-center gap-2">
-                    <BrainCircuit className="w-4 h-4 text-sky-600" />
-                    <span>智能循证临床综合解读</span>
+                    <FileText className="w-4 h-4 text-sky-600" />
+                    <span>多维循证临床综合解读</span>
                   </div>
                   <span className="text-[10px] font-mono font-bold text-sky-800 bg-sky-100/70 px-2 py-0.5 rounded border border-sky-200">
                     IASLC / NCCN 临床对照
@@ -575,9 +575,10 @@ function StudiesTab({ result, onInspectStudy }: { result: PatientMatchResult; on
                   ...study,
                   sampleSize: study.patientN,
                 })}
-                className="absolute top-4 right-4 sm:right-6 px-2.5 py-1 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 transition-all shadow-2xs active:scale(0.96)"
+                className="absolute top-4 right-4 sm:right-6 px-2.5 py-1 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 transition-all shadow-2xs active:scale(0.96) inline-flex items-center gap-1"
               >
-                🔬 证据检视
+                <Microscope className="w-3.5 h-3.5 shrink-0" />
+                <span>证据检视</span>
               </button>
             )}
           </div>

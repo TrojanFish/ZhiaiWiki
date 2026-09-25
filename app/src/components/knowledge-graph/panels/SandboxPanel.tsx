@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sliders, AlertTriangle, X } from 'lucide-react';
 import { SANDBOX_NODES } from '@/lib/knowledgeGraphData';
 
 export function SandboxPanel({ sandboxActive, onToggle, onExit }: { sandboxActive: Set<string>, onToggle: (id: string) => void, onExit: () => void }) {
@@ -7,13 +8,17 @@ export function SandboxPanel({ sandboxActive, onToggle, onExit }: { sandboxActiv
   return (
     <div className="bg-amber-50/60 rounded-2xl shadow-sm p-6 border border-amber-300/60 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-amber-600 flex items-center gap-2">
-          ⚗️ 沙盘推演控制面板
+        <h3 className="font-semibold text-amber-600 flex items-center gap-2 text-sm">
+          <Sliders className="w-4 h-4 text-amber-600 shrink-0" />
+          <span>沙盘推演控制面板</span>
         </h3>
         <button 
           onClick={onExit} 
-          className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-7 h-7 rounded-full flex items-center justify-center text-lg leading-none transition-colors cursor-pointer"
-        >×</button>
+          className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-7 h-7 rounded-full flex items-center justify-center transition-colors cursor-pointer"
+          aria-label="关闭"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
       
       <p className="text-slate-600 text-xs leading-relaxed mb-6">
@@ -64,9 +69,10 @@ export function SandboxPanel({ sandboxActive, onToggle, onExit }: { sandboxActiv
         </div>
       )}
       
-      <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+      <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2">
+        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
         <p className="text-slate-500 text-[11px] leading-relaxed">
-          <strong>⚠️ 免责声明：</strong> 沙盘推演仅用于展示大规模临床试验（如 {Object.values(SANDBOX_NODES).map(n => n.trialName).join('、')}）的统计学结论，展示的风险降低比例不代表对您个人的疗效承诺。请务必与主治医生共同讨论制定最终治疗方案。
+          <strong>免责声明：</strong> 沙盘推演仅用于展示大规模临床试验（如 {Object.values(SANDBOX_NODES).map(n => n.trialName).join('、')}）的统计学结论，展示的风险降低比例不代表对您个人的疗效承诺。请务必与主治医生共同讨论制定最终治疗方案。
         </p>
       </div>
     </div>

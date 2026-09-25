@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Network, Sparkles, FileText, BookOpen } from "lucide-react";
+import { Network, TrendingDown, FileText, BookOpen } from "lucide-react";
 
 type StageOption = "IA" | "IB" | "IIA_IIB" | "IIIA";
 type MutationOption = "EGFR" | "ALK" | "WILDTYPE";
@@ -193,7 +193,7 @@ export function AdjuvantDecisionTreeVisual() {
             {decision.badge}
           </span>
           <span className="text-[10px] text-emerald-400 font-medium inline-flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <TrendingDown className="w-3.5 h-3.5 text-emerald-400" />
             <span>{decision.riskReduction}</span>
           </span>
         </div>

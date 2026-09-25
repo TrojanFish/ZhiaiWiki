@@ -12,7 +12,7 @@ export const ADMIN_COOKIE_NAME = 'oncopath_admin_token';
 export const ADMIN_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
 if (process.env.NODE_ENV === 'production' && ADMIN_SECRET === DEFAULT_ADMIN_SECRET) {
-  console.warn('⚠️ [SECURITY WARNING] OncoPath is running in production with default ADMIN_SECRET! Please configure ADMIN_SECRET in your production .env file.');
+  console.warn('⚠️ [SECURITY WARNING] ZhiaiWiki is running in production with default ADMIN_SECRET! Please configure ADMIN_SECRET in your production .env file.');
 }
 
 export function isUsingDefaultAdminPassword(): boolean {

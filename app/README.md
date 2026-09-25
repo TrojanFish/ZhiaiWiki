@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 知癌维基 ZhiaiWiki (OncoPath) · Web Application
 
-## Getting Started
+本目录包含知癌维基全栈 Web 应用程序代码（基于 Next.js 16 App Router、TypeScript 与 TailwindCSS v4）。
 
-First, run the development server:
+## 快速上手 (Quick Start)
 
+### 1. 安装依赖
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. 启动本地开发服务
+```bash
+npm run dev
+```
+打开浏览器访问 [http://localhost:3000](http://localhost:3000)。
+管理中台入口：[http://localhost:3000/admin](http://localhost:3000/admin)。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. 执行自动化测试套件
+```bash
+# 执行单元测试套件 (30 Suites, 446 Tests)
+npm run test:unit
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 执行全量生产与红线仿真测试
+npm test
+```
 
-## Learn More
+### 4. 生产环境编译打包
+```bash
+npm run build
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 核心技术栈
+- **Framework**: Next.js 16.2.12 (Turbopack, SSR, Standalone)
+- **Language**: TypeScript 5
+- **Database / ORM**: PostgreSQL 16 (pgvector) + Prisma ORM 5.22
+- **Styling**: TailwindCSS v4 + Lucide Icons + Healthicons
+- **Testing**: Vitest 1.6
+- **Multimodal AI**: Google Gemini 2.5 Flash SDK (`@google/genai`)
+- **Official Medical API**: Europe PMC / PubMed MEDLINE REST API
+- **Internationalization**: OpenCC 纯前端简繁转换引擎
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 详细技术文档与部署指南
+请参阅根目录技术文档：
+- 中文文档：[README.zh-CN.md](../README.zh-CN.md)
+- 英文文档：[README.md](../README.md)
+- 环境变量规范：[.env.example](../.env.example)

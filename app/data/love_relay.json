@@ -1,0 +1,30 @@
+[
+  {
+    "id": "relay-test-01",
+    "donorName": "系统演示 · 测试病友 (示范)",
+    "cancerTag": "肺结节与肺癌 (测试)",
+    "cancerColor": "bg-sky-50 text-sky-700 border-sky-200",
+    "amount": "¥0.01",
+    "message": "【系统测试示范】这是一条系统初始化格式测试与示范数据。真实病友扫码赞赏后，可在此留下抗癌寄语与复查喜讯。管理员可在管理后台一键删除本条数据。",
+    "city": "系统节点",
+    "date": "2026-09",
+    "verified": true,
+    "status": "approved",
+    "isTest": true,
+    "createdAt": "2026-09-22T11:30:00.000Z"
+  },
+  {
+    "id": "relay-test-02",
+    "donorName": "格式示范 · 康复家属 (示范)",
+    "cancerTag": "乳腺专区 (测试)",
+    "cancerColor": "bg-pink-50 text-pink-700 border-pink-200",
+    "amount": "¥1.0",
+    "message": "【系统测试示范】欢迎病友与家属在此分享康复心得与正能量。本条数据用于展示祈福墙排版与微章效果，管理员可在管理后台直接删除。",
+    "city": "演示节点",
+    "date": "2026-09",
+    "verified": true,
+    "status": "approved",
+    "isTest": true,
+    "createdAt": "2026-09-22T11:30:00.000Z"
+  }
+]

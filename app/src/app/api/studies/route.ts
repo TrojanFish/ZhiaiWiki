@@ -1,17 +1,26 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { FEATURED_STUDIES } from '@/lib/evidence-data';
+import { BREAST_STUDIES } from '@/lib/breastStudiesData';
+import { COLORECTAL_STUDIES } from '@/lib/colorectalStudiesData';
+import { GASTRIC_STUDIES } from '@/lib/gastricStudiesData';
+import { LIVER_STUDIES } from '@/lib/liverStudiesData';
+import { ESOPHAGEAL_STUDIES } from '@/lib/esophagealStudiesData';
+import { THYROID_STUDIES } from '@/lib/thyroidStudiesData';
+import { CancerRegistry } from '@/lib/cancerRegistry';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get('q')?.toLowerCase() || '';
     const level = searchParams.get('level') || 'all';
+    const cancerType = searchParams.get('cancerType') || 'lung';
 
     // 1. Fetch Ingested Studies from Database
     let dbStudies: any[] = [];
     try {
       dbStudies = await prisma.ingestedStudy.findMany({
+        where: cancerType === 'all' ? undefined : { cancerType },
         orderBy: { createdAt: 'desc' }
       });
     } catch (e) {
@@ -51,8 +60,8 @@ export async function GET(request: Request) {
         pubmedId: s.pubmedId || undefined,
         url: s.url || (s.doi ? `https://doi.org/${s.doi}` : (s.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${s.pubmedId}/` : undefined)),
         keyConclusions: conclusions.length > 0 ? conclusions : ['见完整研究文献'],
-        relevantFactors: Array.isArray(relevantFactors) ? relevantFactors : ['肺癌预后'],
-        applicableStages: Array.isArray(applicableStages) ? applicableStages : ['IA', 'IB', 'IIIA'],
+        relevantFactors: Array.isArray(relevantFactors) ? relevantFactors : [cancerType === 'breast' ? '乳腺癌预后' : cancerType === 'colorectal' ? '结直肠癌预后' : cancerType === 'gastric' ? '胃癌预后' : cancerType === 'liver' ? '肝癌预后' : cancerType === 'esophageal' ? '食管癌预后' : cancerType === 'thyroid' ? '甲状腺癌预后' : '全癌种循证预后'],
+        applicableStages: Array.isArray(applicableStages) ? applicableStages : ['I', 'II', 'III'],
         biomarkerDetails: s.biomarkerDetails || undefined,
         interventionArm: s.interventionArm || undefined,
         riskReduction: s.riskReduction || undefined,
@@ -60,9 +69,41 @@ export async function GET(request: Request) {
       };
     });
 
-    // 3. Merge with predefined FEATURED_STUDIES (deduplicate by DOI or title)
+    // 3. Merge with predefined studies (deduplicate by DOI or title)
+    let baseStudies: any[] = [];
+    if (cancerType === 'all') {
+      const allPlugins = CancerRegistry.getAll();
+      const seenIds = new Set<string>();
+      for (const plugin of allPlugins) {
+        if (plugin?.content?.featuredStudies && Array.isArray(plugin.content.featuredStudies)) {
+          for (const s of plugin.content.featuredStudies) {
+            if (!seenIds.has(s.id)) {
+              seenIds.add(s.id);
+              baseStudies.push({
+                ...s,
+                cancerType: s.cancerType || plugin.id,
+              });
+            }
+          }
+        }
+      }
+      if (baseStudies.length === 0) {
+        baseStudies = FEATURED_STUDIES;
+      }
+    } else {
+      try {
+        const plugin = CancerRegistry.get(cancerType);
+        if (plugin?.content?.featuredStudies && plugin.content.featuredStudies.length > 0) {
+          baseStudies = plugin.content.featuredStudies;
+        } else {
+          baseStudies = FEATURED_STUDIES;
+        }
+      } catch {
+        baseStudies = FEATURED_STUDIES;
+      }
+    }
     const existingDois = new Set(formattedDbStudies.map(s => s.doi).filter(Boolean));
-    const staticStudies = FEATURED_STUDIES.filter(s => !s.doi || !existingDois.has(s.doi)).map(s => ({
+    const staticStudies = baseStudies.filter(s => !s.doi || !existingDois.has(s.doi)).map(s => ({
       ...s,
       url: s.doi ? `https://doi.org/${s.doi}` : (s.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${s.pubmedId}/` : undefined)
     }));
@@ -77,11 +118,11 @@ export async function GET(request: Request) {
     }
 
     if (q) {
-      filtered = filtered.filter(s => 
-        s.title.toLowerCase().includes(q) ||
-        s.journal.toLowerCase().includes(q) ||
-        s.relevantFactors.some(f => f.toLowerCase().includes(q)) ||
-        s.keyConclusions.some(c => c.toLowerCase().includes(q))
+      filtered = filtered.filter((s: any) => 
+        (s.title || '').toLowerCase().includes(q) ||
+        (s.journal || '').toLowerCase().includes(q) ||
+        (s.relevantFactors || []).some((f: string) => typeof f === 'string' && f.toLowerCase().includes(q)) ||
+        (s.keyConclusions || []).some((c: string) => typeof c === 'string' && c.toLowerCase().includes(q))
       );
     }
 

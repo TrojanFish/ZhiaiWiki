@@ -53,7 +53,7 @@ export default function PrivacyPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <main className="flex-1 max-w-7xl mx-auto w-full space-y-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 px-3.5 sm:px-6 lg:px-8">
         
         {/* Navigation Back */}
         <div className="flex items-center justify-between">
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             <ChevronLeft className="w-4 h-4 text-slate-500" />
             <span>返回首页</span>
           </Link>
-          <span className="text-xs text-slate-400 font-mono">生效日期：2026年9月 · 版本：2026-V2.0</span>
+          <span className="text-xs text-slate-400 font-mono">知癌维基 ZhiaiWiki · 隐私政策</span>
         </div>
 
         {/* Main Content Card */}
@@ -77,10 +77,10 @@ export default function PrivacyPage() {
               <span>数据安全与隐私保护 (PIPL / US HIPAA Safe Harbor) 体系</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-              OncoPath 隐私政策与个人健康信息保护规则
+              知癌维基 ZhiaiWiki 隐私政策与个人健康信息保护规则
             </h1>
             <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
-              OncoPath（官方域名：<code>lung.dpdns.org</code>，以下简称“本平台”）深知个人健康医疗数据对您及家属的极端敏感性与重要性。本平台网络服务与算力节点<strong>物理部署于美利坚合众国（United States）</strong>。我们严格遵循<strong>《中华人民共和国个人信息保护法》(PIPL)</strong>、美国健康保险流通与责任法案去标识化标准（<strong>HIPAA Safe Harbor</strong>）以及国际公认的数据隐私规范，承诺为您的病理指标、影像参数及就诊记录构建<strong>金融级端侧去标识化、本地优先存储（Local-First）与零商业变现</strong>的严密隐私防线。
+              知癌维基 ZhiaiWiki（官方域名：<code>zhiaiwiki.org</code>，以下简称“本平台”）深知个人健康医疗数据对您及家属的极端敏感性与重要性。本平台网络服务与算力节点<strong>物理部署于美利坚合众国（United States）</strong>。我们严格遵循<strong>《中华人民共和国个人信息保护法》(PIPL)</strong>、美国健康保险流通与责任法案去标识化标准（<strong>HIPAA Safe Harbor</strong>）以及国际公认的数据隐私规范，承诺为您的病理指标、影像参数及就诊记录构建<strong>金融级端侧去标识化、本地优先存储（Local-First）与零商业变现</strong>的严密隐私防线。
             </p>
           </div>
 
@@ -350,11 +350,13 @@ export default function PrivacyPage() {
 
           {/* Quick Sub-Links */}
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-            <div>© 2026 OncoPath 隐私安全保护体系 · 官方网址：lung.dpdns.org</div>
+            <div>© 2026 知癌维基 ZhiaiWiki · 隐私政策</div>
             <div className="flex items-center gap-3">
-              <Link href="/about" className="text-blue-600 hover:underline font-medium">关于系统初衷</Link>
+              <Link href="/about" className="text-blue-600 hover:underline font-medium">关于我们</Link>
               <span>·</span>
-              <Link href="/terms" className="text-blue-600 hover:underline font-medium">查看《服务协议与免责声明》</Link>
+              <Link href="/love-relay" className="text-teal-700 hover:underline font-medium">抗癌爱心接力</Link>
+              <span>·</span>
+              <Link href="/terms" className="text-blue-600 hover:underline font-medium">免责声明</Link>
             </div>
           </div>
 

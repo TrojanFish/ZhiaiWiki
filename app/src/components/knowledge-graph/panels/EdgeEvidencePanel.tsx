@@ -1,4 +1,5 @@
 import React from 'react';
+import { Zap, BookOpen, X } from 'lucide-react';
 import type { EdgeEvidence } from '@/lib/knowledgeGraphData';
 import { MiniForestPlot } from '../MiniForestPlot';
 
@@ -9,17 +10,19 @@ export function EdgeEvidencePanel({ edgeKey: _edgeKey, evidence, onClose }: { ed
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-blue-700 bg-blue-50 font-semibold px-2.5 py-0.5 rounded-full border border-blue-200">
-              ⚡ 循证因果关联
+            <span className="text-xs text-blue-700 bg-blue-50 font-semibold px-2.5 py-0.5 rounded-full border border-blue-200 inline-flex items-center gap-1">
+              <Zap className="w-3 h-3 text-blue-600 shrink-0" />
+              <span>循证因果关联</span>
             </span>
           </div>
           <h3 className="font-bold text-slate-900 text-sm">{evidence.title}</h3>
         </div>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-6 h-6 rounded-full flex items-center justify-center transition-colors text-lg leading-none cursor-pointer ml-2 flex-shrink-0"
+          className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-6 h-6 rounded-full flex items-center justify-center transition-colors cursor-pointer ml-2 flex-shrink-0"
+          aria-label="关闭"
         >
-          ×
+          <X className="w-4 h-4" />
         </button>
       </div>
 
@@ -49,7 +52,8 @@ export function EdgeEvidencePanel({ edgeKey: _edgeKey, evidence, onClose }: { ed
       {evidence.studies && evidence.studies.length > 0 && (
         <div>
           <p className="text-slate-700 text-xs font-bold mb-2 flex items-center gap-1.5">
-            <span>📚</span> 核心文献依据与同行评审出处
+            <BookOpen className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span>核心文献依据与同行评审出处</span>
           </p>
           <div className="space-y-3">
             {evidence.studies.map((study, i) => (

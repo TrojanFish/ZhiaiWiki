@@ -11,19 +11,29 @@ import {
   LogOut,
   FileText,
   Upload,
-  Sparkles,
+  FileCheck,
+  FileSearch,
   Search,
   ShieldCheck,
   Dna,
-  Pill,
   ExternalLink,
   Trash2,
   AlertTriangle,
+  Heart,
+  Check,
+  CheckCircle2,
+  MessageSquareHeart,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  Pill,
 } from "lucide-react";
 import { EvidenceRating } from "@/components/common/EvidenceRating";
+import type { LoveRelayRecord } from "@/lib/loveRelayStorage";
 
 interface IngestedStudy {
   id: string;
+  cancerType?: string;
   title: string;
   journal?: string;
   year?: number;
@@ -78,11 +88,17 @@ export default function AdminPage() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Studio tabs and data states
-  const [activeTab, setActiveTab] = useState<"pdf" | "pubmed">("pdf");
+  const [activeTab, setActiveTab] = useState<"pdf" | "pubmed" | "relay">("pdf");
   const [studies, setStudies] = useState<IngestedStudy[]>([]);
   const [metrics, setMetrics] = useState<EvidenceMetrics>({ totalStudies: 0, totalPatients: 0, rctMetaCount: 0 });
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCancerFilter, setSelectedCancerFilter] = useState<string>("all");
+  const [dbConnected, setDbConnected] = useState<boolean>(true);
+
+  // Love Relay records state
+  const [relayRecords, setRelayRecords] = useState<LoveRelayRecord[]>([]);
+  const [loadingRelay, setLoadingRelay] = useState(false);
   
   // PDF Upload & Parsing States
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -122,6 +138,85 @@ export default function AdminPage() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 3500);
+  };
+
+  const fetchRelayRecords = async () => {
+    setLoadingRelay(true);
+    try {
+      const res = await fetch("/api/admin/love-relay", {
+        headers: getAuthHeaders(),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRelayRecords(data.items);
+      }
+    } catch (err: any) {
+      console.error("Failed to fetch admin love relay:", err);
+    } finally {
+      setLoadingRelay(false);
+    }
+  };
+
+  const handleToggleVerify = async (id: string) => {
+    try {
+      const res = await fetch("/api/admin/love-relay", {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ id, action: "toggleVerify" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRelayRecords((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, verified: !r.verified } : r))
+        );
+        showToast(data.message || "更新认证状态成功");
+      } else {
+        showToast(data.error || "更新失败");
+      }
+    } catch (err: any) {
+      showToast("操作失败: " + err.message);
+    }
+  };
+
+  const handleToggleStatus = async (id: string, currentStatus?: string) => {
+    const nextStatus = currentStatus === "hidden" ? "approved" : "hidden";
+    try {
+      const res = await fetch("/api/admin/love-relay", {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ id, action: "updateStatus", status: nextStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRelayRecords((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: nextStatus } : r))
+        );
+        showToast(data.message || "更新状态成功");
+      } else {
+        showToast(data.error || "更新失败");
+      }
+    } catch (err: any) {
+      showToast("操作失败: " + err.message);
+    }
+  };
+
+  const handleDeleteRelay = async (id: string) => {
+    if (!confirm("确定要彻底删除这条留言吗？此操作无法撤销。")) return;
+    try {
+      const res = await fetch(`/api/admin/love-relay?id=${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRelayRecords((prev) => prev.filter((r) => r.id !== id));
+        showToast("留言已成功删除");
+      } else {
+        showToast(data.error || "删除失败");
+      }
+    } catch (err: any) {
+      showToast("删除失败: " + err.message);
+    }
   };
 
   // Check auth on mount
@@ -196,13 +291,17 @@ export default function AdminPage() {
     if (!isAuthenticated) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/evidence?q=${encodeURIComponent(searchQuery)}`, {
+      const cancerParam = selectedCancerFilter !== "all" ? `&cancerType=${selectedCancerFilter}` : "";
+      const res = await fetch(`/api/admin/evidence?q=${encodeURIComponent(searchQuery)}${cancerParam}`, {
         headers: getAuthHeaders()
       });
       const data = await res.json();
       if (data.success) {
-        setStudies(data.studies);
-        setMetrics(data.metrics);
+        setStudies(data.studies || []);
+        setMetrics(data.metrics || { totalStudies: 0, totalPatients: 0, rctMetaCount: 0 });
+        if (typeof data.dbConnected === 'boolean') {
+          setDbConnected(data.dbConnected);
+        }
       } else if (res.status === 401) {
         handleLogout();
       }
@@ -216,8 +315,9 @@ export default function AdminPage() {
   useEffect(() => {
     if (isAuthenticated) {
       loadStudies();
+      fetchRelayRecords();
     }
-  }, [isAuthenticated, searchQuery]);
+  }, [isAuthenticated, searchQuery, selectedCancerFilter]);
 
   // Handle PDF File selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -409,14 +509,14 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-between text-text-primary">
 
-        <div className="flex-1 flex items-center justify-center px-4 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-12">
+        <div className="flex-1 flex items-center justify-center px-4 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12">
           <div className="max-w-md w-full bg-white border border-gray-200 rounded-3xl p-8 sm:p-10 shadow-lg relative animate-fade-in">
             {/* Header */}
             <div className="text-center mb-8">
               <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 text-accent-blue flex items-center justify-center mx-auto mb-4 shadow-xs">
                 <ShieldCheck className="w-7 h-7 text-accent-blue" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">OncoPath 证据中台</h1>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">知癌维基 证据中台</h1>
               <p className="text-xs text-text-muted mt-1.5">管理员安全访问受控系统 · Medical Evidence CMS</p>
             </div>
 
@@ -452,6 +552,29 @@ export default function AdminPage() {
                 </div>
               )}
 
+              {/* Development & Testing Credentials Helper */}
+              <div className="p-3 bg-blue-50/80 border border-blue-200/80 rounded-xl text-xs text-blue-900 flex items-start gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-accent-blue shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-1">
+                  <div className="font-semibold flex items-center justify-between">
+                    <span>系统默认管理员凭据</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUsername("admin");
+                        setPassword("OncoPath2026!");
+                      }}
+                      className="text-[11px] text-accent-blue font-bold hover:underline cursor-pointer"
+                    >
+                      一键填入
+                    </button>
+                  </div>
+                  <div className="text-[11px] text-blue-700 font-mono">
+                    账号: <span className="font-bold">admin</span> · 密码: <span className="font-bold">OncoPath2026!</span>
+                  </div>
+                </div>
+              </div>
+
               <button
                 type="submit"
                 disabled={isLoggingIn}
@@ -473,14 +596,14 @@ export default function AdminPage() {
 
             <div className="mt-8 pt-6 border-t border-gray-100 text-center">
               <Link href="/" className="text-xs text-text-muted hover:text-accent-blue transition-colors">
-                返回 OncoPath 患者主页
+                返回 知癌维基 患者主页
               </Link>
             </div>
           </div>
         </div>
 
         <div className="text-center pb-8 text-xs text-text-muted">
-          © 2026 OncoPath · 严格受控医学数据治理平台
+          © 2026 知癌维基 ZhiaiWiki · 严格受控医学数据治理平台
         </div>
       </div>
     );
@@ -488,7 +611,7 @@ export default function AdminPage() {
 
   // Authenticated Admin Dashboard View (Unified Light Medical Theme)
   return (
-    <div className="min-h-screen bg-gray-50 text-text-primary pb-24">
+    <div className="min-h-screen bg-gray-50 text-text-primary pb-12 sm:pb-16">
 
       {/* Toast Notification */}
       {toastMessage && (
@@ -498,12 +621,12 @@ export default function AdminPage() {
       )}
 
       {/* Header */}
-      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-32 pb-8 sm:pb-10 px-2.5 sm:px-6 max-w-7xl mx-auto">
+      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-accent-blue bg-blue-50 border border-blue-200 mb-2.5">
               <Sliders className="w-3.5 h-3.5 text-accent-blue" />
-              <span>OncoPath 证据中台</span>
+              <span>知癌维基 证据中台</span>
               <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-pulse"></span>
               <span>Admin Evidence Studio (已鉴权)</span>
             </div>
@@ -563,14 +686,32 @@ export default function AdminPage() {
       </header>
 
       {/* Main Studio Body */}
-      <main className="max-w-7xl mx-auto px-2.5 sm:px-6 space-y-6 sm:space-y-10">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
         
+        {/* DB Connection Notice if offline */}
+        {!dbConnected && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-3 shadow-xs animate-fade-in">
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <div className="font-bold text-sm text-amber-950 flex items-center gap-2">
+                <span>本地 PostgreSQL 数据库未连接 (演示模式)</span>
+                <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">
+                  可正常测试抓取与AI解析
+                </span>
+              </div>
+              <p className="text-amber-800 leading-relaxed">
+                当前处于本地无数据库预览模式。PubMed 在线实时检索、Gemini 2.5 Flash 文献要素提取、爱心接力微信审核等功能均可正常测试；若需测试文献正式持久化入库，请启动本地 PostgreSQL 数据库。
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Ingestion Studio Card */}
         <section className="bg-white rounded-3xl border border-slate-200 p-3.5 sm:p-6 md:p-8 shadow-sm">
           
           {/* Dual Ingestion Mode Tabs */}
           {!extractedData && (
-            <div className="flex items-center gap-2 p-1.5 bg-gray-100/80 rounded-xl max-w-md mb-6">
+            <div className="flex items-center gap-2 p-1.5 bg-gray-100/80 rounded-xl max-w-xl mb-6">
               <button
                 onClick={() => setActiveTab("pdf")}
                 className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
@@ -591,7 +732,24 @@ export default function AdminPage() {
                 }`}
               >
                 <Globe className="w-3.5 h-3.5" />
-                <span>在线检索 PubMed / Europe PMC</span>
+                <span>在线检索 PubMed</span>
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab("relay");
+                  fetchRelayRecords();
+                }}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "relay"
+                    ? "bg-white text-rose-600 shadow-sm font-extrabold"
+                    : "text-text-muted hover:text-text-primary"
+                }`}
+              >
+                <Heart className="w-3.5 h-3.5 text-rose-500" />
+                <span>爱心接力审核</span>
+                {relayRecords.filter((r) => !r.verified).length > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                )}
               </button>
             </div>
           )}
@@ -673,12 +831,12 @@ export default function AdminPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>{parsingStep || "AI 正在提取医学指标..."}</span>
+                        <span>{parsingStep || "文献临床要素解析中..."}</span>
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-4 h-4" />
-                        <span>开始 AI 智能结构化抽取</span>
+                        <FileSearch className="w-4 h-4" />
+                        <span>开始文献要素结构化解析</span>
                       </>
                     )}
                   </button>
@@ -762,11 +920,11 @@ export default function AdminPage() {
                             {extractingId === item.id ? (
                               <>
                                 <span className="w-3.5 h-3.5 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" />
-                                <span>AI 提取中...</span>
+                                <span>文献要素提取中...</span>
                               </>
                             ) : (
                               <>
-                                <Sparkles className="w-3.5 h-3.5" />
+                                <FileCheck className="w-3.5 h-3.5" />
                                 <span>一键提取并核验</span>
                               </>
                             )}
@@ -780,7 +938,200 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Section: Human-in-the-Loop Verification Card (Common to both PDF & PubMed) */}
+          {/* Mode C: Love Relay Donation & Blessing Wall Moderation */}
+          {!extractedData && activeTab === "relay" && (
+            <div className="space-y-5 animate-fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Heart className="w-5 h-5 text-rose-500 fill-rose-500" />
+                    <h2 className="text-base font-bold text-gray-900">抗癌爱心接力与寄语审核</h2>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold border border-rose-200">
+                      微信赞赏码核验中心
+                    </span>
+                  </div>
+                  <p className="text-xs text-text-muted mt-1">
+                    用户扫码微信赞赏码后填写的抗癌寄语。对照微信支付商户或个人账单详情核验【单号后4位】后，一键点亮“已验证爱心支持”专属徽章。
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={fetchRelayRecords}
+                    disabled={loadingRelay}
+                    className="p-2 text-text-muted hover:text-text-primary rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                    title="刷新爱心列表"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loadingRelay ? "animate-spin text-rose-500" : ""}`} />
+                    <span>刷新</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Status summary pills */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200/80">
+                  <div className="text-[11px] text-text-muted font-medium">总留言条数</div>
+                  <div className="text-lg font-bold text-gray-900 mt-0.5">
+                    {relayRecords.length} <span className="text-xs font-normal text-text-muted">条</span>
+                  </div>
+                </div>
+                <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80">
+                  <div className="text-[11px] text-amber-700 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    待核对单号
+                  </div>
+                  <div className="text-lg font-bold text-amber-900 mt-0.5">
+                    {relayRecords.filter((r) => !r.verified).length} <span className="text-xs font-normal text-amber-700">条</span>
+                  </div>
+                </div>
+                <div className="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
+                  <div className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    已点亮认证
+                  </div>
+                  <div className="text-lg font-bold text-emerald-900 mt-0.5">
+                    {relayRecords.filter((r) => r.verified).length} <span className="text-xs font-normal text-emerald-700">条</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Records List */}
+              {loadingRelay ? (
+                <div className="p-12 text-center text-text-muted text-xs flex flex-col items-center justify-center gap-3">
+                  <RefreshCw className="w-6 h-6 animate-spin text-rose-500" />
+                  <span>正在拉取最新爱心接力记录...</span>
+                </div>
+              ) : relayRecords.length === 0 ? (
+                <div className="p-12 text-center border-2 border-dashed border-gray-200 rounded-2xl">
+                  <Heart className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                  <p className="text-xs text-text-muted">暂无爱心接力记录</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {relayRecords.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`p-4 rounded-xl border transition-all ${
+                        !item.verified
+                          ? "bg-amber-50/30 border-amber-200/70 hover:border-amber-300 shadow-xs"
+                          : item.status === "hidden"
+                          ? "bg-gray-50 border-gray-200 opacity-60"
+                          : "bg-white border-gray-200 hover:border-gray-300 shadow-xs"
+                      }`}
+                    >
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        {/* Left: Donor Info & Message */}
+                        <div className="space-y-2 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-bold text-sm text-gray-900">{item.donorName}</span>
+                            {item.isTest && (
+                              <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
+                                示范测试数据
+                              </span>
+                            )}
+                            {item.city && (
+                              <span className="text-[11px] px-2 py-0.5 rounded bg-gray-100 text-gray-600">
+                                {item.city}
+                              </span>
+                            )}
+                            {item.cancerTag && (
+                              <span className={`text-[11px] px-2 py-0.5 rounded font-medium border ${item.cancerColor || "bg-rose-50 text-rose-600 border-rose-100"}`}>
+                                {item.cancerTag}
+                              </span>
+                            )}
+                            <span className="text-xs text-rose-600 font-bold bg-rose-50/80 px-2 py-0.5 rounded border border-rose-100">
+                              {item.amount ? (item.amount.startsWith("¥") ? item.amount : `¥${item.amount}`) : "爱心支持"}
+                            </span>
+                            <span className="text-[11px] text-text-muted">
+                              {item.date || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "")}
+                            </span>
+
+                            {/* Verification Tag */}
+                            {item.verified ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-200">
+                                <Check className="w-3 h-3 text-emerald-600" /> 已点亮认证
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold border border-amber-200 animate-pulse">
+                                待核对单号
+                              </span>
+                            )}
+
+                            {/* Visibility Tag */}
+                            {item.status === "hidden" && (
+                              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 font-medium">
+                                <EyeOff className="w-3 h-3 text-gray-500" /> 已隐藏
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Message Body */}
+                          <div className="text-xs text-text-secondary leading-relaxed bg-white/70 p-3 rounded-lg border border-gray-100 italic">
+                            “{item.message}”
+                          </div>
+
+                          {/* Verification Helper: Transaction ID last 4 */}
+                          <div className="flex flex-wrap items-center gap-2 pt-1">
+                            <span className="text-[11px] font-semibold text-text-muted">微信核验凭证:</span>
+                            {item.txLast4 ? (
+                              <span className="font-mono text-xs font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded border border-amber-300">
+                                微信单号末4位: {item.txLast4}
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-gray-400 italic">用户未填写单号末位</span>
+                            )}
+                            <span className="text-[11px] text-text-muted">
+                              (可在微信【我-服务-钱包-账单】中比对金额与单号末4位)
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Right: Actions */}
+                        <div className="flex md:flex-col items-center md:items-end gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
+                          <button
+                            onClick={() => handleToggleVerify(item.id)}
+                            className={`w-full text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                              item.verified
+                                ? "bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200"
+                                : "bg-emerald-600 hover:bg-emerald-700 text-white border-transparent shadow-xs"
+                            }`}
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>{item.verified ? "取消点亮" : "核验并点亮徽章"}</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleToggleStatus(item.id, item.status)}
+                            className="w-full text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-text-secondary flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            {item.status === "hidden" ? (
+                              <>
+                                <Eye className="w-3.5 h-3.5 text-blue-600" />
+                                <span>恢复公开展示</span>
+                              </>
+                            ) : (
+                              <>
+                                <EyeOff className="w-3.5 h-3.5 text-gray-500" />
+                                <span>设为隐藏</span>
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteRelay(item.id)}
+                            className="w-full text-xs font-medium px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>删除记录</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {extractedData && (
             <div className="space-y-6 animate-fade-in">
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between">
@@ -803,14 +1154,33 @@ export default function AdminPage() {
                 <div className="space-y-4">
                   <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">文献基本信息</h3>
                   
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1">论文标题 (Title)</label>
-                    <input 
-                      type="text" 
-                      value={extractedData.title || ""} 
-                      onChange={e => setExtractedData({...extractedData, title: e.target.value})}
-                      className="w-full p-2.5 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-900"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-text-secondary mb-1">论文标题 (Title)</label>
+                      <input 
+                        type="text" 
+                        value={extractedData.title || ""} 
+                        onChange={e => setExtractedData({...extractedData, title: e.target.value})}
+                        className="w-full p-2.5 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-text-secondary mb-1">所属癌种 (Cancer Type)</label>
+                      <select
+                        value={extractedData.cancerType || "lung"}
+                        onChange={e => setExtractedData({...extractedData, cancerType: e.target.value})}
+                        className="w-full p-2.5 bg-white border border-gray-300 rounded-xl text-xs font-bold text-slate-800"
+                      >
+                        <option value="lung">🫁 肺癌 (NSCLC/SCLC)</option>
+                        <option value="breast">🎀 乳腺癌 (Breast)</option>
+                        <option value="colorectal">🎗️ 结直肠癌 (Colorectal)</option>
+                        <option value="gastric">🥣 胃癌 (Gastric)</option>
+                        <option value="liver">🩺 肝癌 (Liver)</option>
+                        <option value="esophageal">🥤 食管癌 (Esophageal)</option>
+                        <option value="thyroid">🦋 甲状腺癌 (Thyroid)</option>
+                        <option value="prostate">🛡️ 前列腺癌 (Prostate)</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -1120,6 +1490,33 @@ export default function AdminPage() {
             </div>
           </div>
 
+          {/* Cancer Filter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 mb-5 pb-4 border-b border-gray-100">
+            {[
+              { id: "all", label: "全部癌种" },
+              { id: "lung", label: "🫁 肺癌" },
+              { id: "breast", label: "🎀 乳腺癌" },
+              { id: "colorectal", label: "🎗️ 结直肠癌" },
+              { id: "gastric", label: "🥣 胃癌" },
+              { id: "liver", label: "🩺 肝癌" },
+              { id: "esophageal", label: "🥤 食管癌" },
+              { id: "thyroid", label: "🦋 甲状腺癌" },
+              { id: "prostate", label: "🛡️ 前列腺癌" },
+            ].map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setSelectedCancerFilter(c.id)}
+                className={`text-xs px-3 py-1.5 rounded-xl font-medium transition-all cursor-pointer ${
+                  selectedCancerFilter === c.id
+                    ? "bg-slate-900 text-white font-bold shadow-xs"
+                    : "bg-gray-100 hover:bg-gray-200 text-slate-600"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
           {loading ? (
             <div className="text-center py-12 text-text-muted text-sm">正在加载文献数据...</div>
           ) : studies.length === 0 ? (
@@ -1146,7 +1543,12 @@ export default function AdminPage() {
                         <div className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
                           {s.title}
                         </div>
-                        <div className="text-xs text-text-muted mt-1 flex items-center gap-2">
+                        <div className="text-xs text-text-muted mt-1 flex flex-wrap items-center gap-2">
+                          {s.cancerType && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                              {s.cancerType === 'breast' ? '乳腺癌' : s.cancerType === 'colorectal' ? '结直肠癌' : s.cancerType === 'gastric' ? '胃癌' : s.cancerType === 'liver' ? '肝癌' : s.cancerType === 'esophageal' ? '食管癌' : s.cancerType === 'thyroid' ? '甲状腺癌' : s.cancerType === 'prostate' ? '前列腺癌' : '肺癌'}
+                            </span>
+                          )}
                           <span className="text-accent-blue font-medium">{s.journal || "Unknown"}</span>
                           <span>·</span>
                           <span>{s.year || "2023"}</span>

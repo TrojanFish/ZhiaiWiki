@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 interface BottomSheetProps {
@@ -22,10 +23,15 @@ export default function BottomSheet({
   maxWidth = "max-w-2xl",
   className = "",
 }: BottomSheetProps) {
+  const [mounted, setMounted] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
   const touchStartTime = useRef<number>(0);
   const touchStartY = useRef<number>(0);
   const touchCurrentY = useRef<number>(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Esc key to dismiss
   useEffect(() => {
@@ -49,7 +55,7 @@ export default function BottomSheet({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   // Velocity-based Spring Physics Drag & Flick Dismiss
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -106,8 +112,8 @@ export default function BottomSheet({
     touchStartTime.current = 0;
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 print:hidden">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 print:hidden pointer-events-auto">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-fade-in"
@@ -157,6 +163,7 @@ export default function BottomSheet({
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -86,7 +86,8 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
       {/* 3-Tier Modal Card (iOS Bottom Sheet on Mobile, Centered Card on Desktop) */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl relative z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col overflow-hidden pb-safe sm:pb-0"
+        style={{ maxWidth: "448px", width: "100%" }}
+        className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl relative z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col overflow-hidden pb-safe sm:pb-0 mx-auto"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
@@ -101,7 +102,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
-                {isLogin ? "登录 OncoPath 患者账号" : "免费创建个人循证档案库"}
+                {isLogin ? "登录 知癌维基 患者账号" : "免费创建个人循证档案库"}
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
                 {isLogin ? "安全同步您的临床数字档案与随访生命线" : "支持多设备云端安全同步与隐私加密"}

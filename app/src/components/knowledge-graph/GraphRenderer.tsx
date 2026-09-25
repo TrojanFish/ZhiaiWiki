@@ -12,6 +12,7 @@ interface GraphRendererProps {
   hoveredEdge: string | null;
   personalMode: boolean;
   profile: PatientProfile | null;
+  cancerType?: string;
   timeYears: number;
   edgeEvidences: Record<string, EdgeEvidence>;
   onNodeClick: (node: KnowledgeNode) => void;
@@ -29,6 +30,7 @@ export function GraphRenderer({
   hoveredEdge,
   personalMode,
   profile,
+  cancerType,
   timeYears,
   edgeEvidences,
   onNodeClick,
@@ -37,10 +39,17 @@ export function GraphRenderer({
   onEdgeHover,
   onBackgroundClick
 }: GraphRendererProps) {
+  // Dynamically calculate SVG viewBox height based on node positions to avoid clipping or dead space
+  const dynamicViewBox = React.useMemo(() => {
+    if (!currentNodes || currentNodes.length === 0) return "0 0 100 120";
+    const maxY = Math.max(...currentNodes.map(n => (n.y != null ? n.y : 100)));
+    const height = Math.max(105, maxY + 14);
+    return `0 0 100 ${height}`;
+  }, [currentNodes]);
 
   return (
     <svg
-      viewBox="0 0 100 120"
+      viewBox={dynamicViewBox}
       preserveAspectRatio="xMidYMid meet"
       className="w-full h-full relative z-10 select-none"
     >
@@ -135,8 +144,8 @@ export function GraphRenderer({
           const isAiEdge = node.id === "ctDNA" || targetId === "ctDNA";
 
           // Personal mode edge logic with multi-tiered hierarchy
-          const srcActivation = personalMode && profile ? getNodeActivation(node.id, profile) : "normal";
-          const tgtActivation = personalMode && profile ? getNodeActivation(targetId, profile) : "normal";
+          const srcActivation = personalMode && profile ? getNodeActivation(node.id, profile, cancerType) : "normal";
+          const tgtActivation = personalMode && profile ? getNodeActivation(targetId, profile, cancerType) : "normal";
           
           const isPersonalPrimary = personalMode && (srcActivation === "primary" || tgtActivation === "primary");
           const isPersonalWarning = personalMode && (tgtActivation === "warning" || (srcActivation === "warning" && tgtActivation === "active"));
@@ -363,7 +372,7 @@ export function GraphRenderer({
         const isHovered = hoveredNode?.id === node.id;
 
         // Personal mode visual state
-        const activation = personalMode && profile ? getNodeActivation(node.id, profile) : "normal";
+        const activation = personalMode && profile ? getNodeActivation(node.id, profile, cancerType) : "normal";
         
         // Time attenuation
         let timeOpacityAdjust = 1;

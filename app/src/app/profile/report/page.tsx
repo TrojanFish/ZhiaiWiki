@@ -11,10 +11,22 @@ import {
   FileText, 
   Share2, 
   ClipboardList, 
-  Sparkles, 
-  Check
+  GitBranch, 
+  Check,
+  AlertTriangle,
+  RotateCcw,
+  Copy,
+  Scan,
+  Activity,
+  Ruler,
+  Microscope,
+  FileEdit,
+  Info,
+  X,
+  Zap,
+  ShieldCheck
 } from "lucide-react";
-import type { PatientProfile } from "@/lib/types";
+import type { PatientProfile, CancerType } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
 import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 import ReasoningTicker from "@/components/profile/ReasoningTicker";
@@ -23,6 +35,11 @@ import { exportElementToA4Pdf } from "@/lib/pdfExporter";
 import { showToast } from "@/components/common/Toast";
 import LangSwitch from "@/components/LangSwitch";
 import ExportBrandFooter from "@/components/common/ExportBrandFooter";
+import { 
+  getActiveCancerSlot, 
+  getProfileBySlot, 
+  EVENT_SLOT_CHANGED 
+} from "@/lib/profileStorage";
 
 
 export default function EvidenceReportPage() {
@@ -49,8 +66,16 @@ export default function EvidenceReportPage() {
 
 
   // Helper: Extract structured questions from Section 3 for the Consultation Card
-  const extractChecklistItems = (markdown: string) => {
+  const extractChecklistItems = (markdown: string, prof?: PatientProfile | null) => {
     if (!markdown) return [];
+    const isEsoph = prof?.cancerType === 'esophageal' || (prof as any)?.organ === 'esophageal' || (prof as any)?.organ === 'esophagus' || (prof as any)?.organ === 'escc';
+    const isLiv = prof?.cancerType === 'liver' || (prof as any)?.organ === 'liver' || (prof as any)?.organ === 'hcc';
+    const isGas = prof?.cancerType === 'gastric' || (prof as any)?.organ === 'gastric' || (prof as any)?.organ === 'stomach';
+    const isBr = prof?.cancerType === 'breast' || (prof as any)?.organ === 'breast';
+    const isCol = prof?.cancerType === 'colon' || (prof as any)?.organ === 'colon';
+    const isRec = prof?.cancerType === 'rectal' || (prof as any)?.organ === 'rectal';
+    const isCrc = prof?.cancerType === 'colorectal' || (prof as any)?.organ === 'colorectal' || isCol || isRec;
+    const isThy = prof?.cancerType === 'thyroid' || (prof as any)?.organ === 'thyroid';
     const section3Match = 
       markdown.match(/##?\s*(?:3[\.\s、]|三[\.\s、]|【向[^】]*问诊清单[^】]*】)[\s\S]*?(?=##?\s*(?:4[\.\s、]|四[\.\s、]|$))/i) ||
       markdown.match(/##?\s*3[\s\S]*?(?=##?\s*4|$)/) ||
@@ -106,6 +131,70 @@ export default function EvidenceReportPage() {
     }
 
     if (items.length === 0) {
+      if (isThy) {
+        return [
+          { title: "TSH 抑制目标设定", content: "请教主治医生根据我的术后病理分期及复发危险度分层（高/中/低危），TSH 应控制在何种抑制范围（如 <0.1 mU/L 或 0.1~0.5 mU/L）？" },
+          { title: "左甲状腺素 (L-T4) 服药与吸收质控", content: "请教清晨空腹服药后是否需要严格间隔至少 4 小时再进食钙剂、铁剂、复合维生素或豆浆咖啡？如漏服次日如何补服？" },
+          { title: "甲状旁腺保护与钙磷监测", content: "术后若出现口周及指尖麻木发紧，如何紧急排查血清离子钙与 PTH？门诊复查骨密度与血钙周期如何规划？" },
+          { title: "Tg 与 TgAb 肿瘤标志物动态随访", content: "全切术后是否需要定期联合检测血清甲状腺球蛋白 (Tg) 与抗体 (TgAb)？颈部淋巴结高分辨率超声初次复查时间节点推荐？" }
+        ];
+      }
+      if (isEsoph) {
+        return [
+          { title: "解剖分段与新辅助放化疗评估", content: "请教主治医生肿瘤位于哪个解剖段（颈段/胸上/中/下段）？是否推荐按照 NEOCRTEC5010 方案行术前长春瑞滨+顺铂+40Gy 同步放化疗再行微创手术？" },
+          { title: "二野/三野清扫与 ≥15 枚淋巴结质控", content: "术后病理检出区域淋巴结总数是否达到 CSCO/AJCC 规定的 ≥15 枚质控红线？双侧喉返神经链淋巴结是否充分清扫？" },
+          { title: "气管食管瘘 (TEF) 风险与气道保护", content: "增强 CT 或内镜下肿瘤是否浸润气管软骨或邻近降主动脉？治疗期间出现饮水呛咳如何排查穿孔瘘管？是否需要放置覆膜食管支架？" },
+          { title: "空肠造瘘肠内营养与半卧位防反流", content: "术中预置的空肠造瘘管日常泵注加温如何规范维护？管状胃术后如何通过 30°~45° 半卧位睡眠防范胃酸反流呛咳误吸？" }
+        ];
+      }
+      if (isLiv) {
+        return [
+          { title: "CNLC 分期与转化切除指征", content: "请教主治医生肿瘤按国家卫健委 CNLC 2024 标准属于哪一期？如果合并门脉分支癌栓或多发病灶，是否可以通过 HAIC-FO 持续灌注化疗或靶免联合降期逆转为根治手术？" },
+          { title: "Child-Pugh / ALBI 肝功能储备", content: "术前评估的 Child-Pugh 评分（A/B级）与 ALBI 分级如何？大范围切除或介入栓塞后发生术后急性肝衰竭 (PHLF) 的安全余量是否充足？" },
+          { title: "乙肝高敏 HBV DNA 与终身抗病毒", content: "我的高敏乙肝病毒量控制情况如何？抗肿瘤治疗期间是否需要严格保持恩替卡韦或 TAF 终身不间断服药以防致死性爆发性肝炎？" },
+          { title: "胃镜排查静脉曲张与靶免用药安全", content: "在使用贝伐珠单抗等抗血管生成药前，是否已完成胃镜筛查重度食管胃底静脉曲张？如何防范突发性消化道大出血风险？" }
+        ];
+      }
+      if (isGas) {
+        return [
+          { title: "ESD 保胃指征与切缘评估", content: "请教主治医生病灶浸润深度与分化类型是否符合内镜黏膜下剥离术 (ESD) 治愈性切除指征？术后是否需要追加外科开刀？" },
+          { title: "D2 淋巴结清扫质控核对", content: "术后大病理检出区域淋巴结总数是否达到 ≥ 16 枚质控标准？是否存在假性分期低估需强化辅助化疗？" },
+          { title: "Claudin 18.2 / HER2 靶向配型", content: "组织免疫组化报告是否已完成 HER2 (IHC/FISH) 与 Claudin 18.2 靶标检测？能否匹配佐妥昔单抗或曲妥珠单抗靶向治疗？" },
+          { title: "倾倒综合征防范与营养支持", content: "消化道重建术后（毕I/毕II/Roux-en-Y）出现心慌出汗（早期倾倒）或进食后低血糖（晚期倾倒）如何调适？维生素 B12 贫血如何预防？" }
+        ];
+      }
+      if (isBr) {
+        return [
+          { title: "术后/系统治疗规划", content: "请教主治医生是否需要辅助内分泌/靶向/化疗治疗，具体方案与周期如何安排？" },
+          { title: "随访影像规划", content: "请教医生乳腺及区域淋巴结超声、钼靶与胸部CT复查时间节点？" },
+          { title: "功能康复与淋巴水肿预防", content: "结合当前手术与腋窝处理方式，患侧上肢功能锻炼与水肿预防有哪些注意事项？" },
+          { title: "不良反应与警示体征", content: "后续用药期间若出现骨痛、潮热或切口异常，应如何监测与及时回院复诊？" }
+        ];
+      }
+      if (isRec) {
+        return [
+          { title: "TNT全程新辅助与保肛评估", content: "请教主治医生根据骨盆薄层 HR-MRI 评估结果，是否推荐 RAPIDO 或 PRODIGE 23 全程新辅助放化疗？保肛 (ISR/Dixon) 成功率多高？" },
+          { title: "cCR 与 Watch & Wait 器官保留", content: "新辅助结束后若达到临床完全缓解 (cCR)，是否适合采取观察等待 (Watch & Wait) 策略免除根治切除手术？" },
+          { title: "保护性造口防漏与还纳时机", content: "若需行临时保护性回肠造口，防漏护理核心要领是什么？一般术后几个月评估造口还纳？" },
+          { title: "LARS 控便排便功能康复", content: "保肛术后出现便频、急迫等低位前切除综合征 (LARS) 时，易蒙停用药和 Kegel 提肛训练如何科学展开？" }
+        ];
+      }
+      if (isCol) {
+        return [
+          { title: "IDEA 协作组 3 个月减毒方案", content: "请教主治医生根据我的病理分期（如 IDEA 协作组低危/高危标准），推荐采用 3 个月 CAPOX 减毒方案还是 6 个月方案？手脚麻木如何监测预防？" },
+          { title: "左右半结肠与靶向药物选择", content: "请教医生原发部位（左半 vs 右半）结合全 RAS/BRAF/MSI 基因状态，若需靶向是首选西妥昔单抗还是贝伐珠单抗？" },
+          { title: "CME 手术质控与淋巴结清扫", content: "病理报告检出淋巴结总数是否达到 ≥ 12 枚质控红线？若不足 12 枚辅助化疗如何加码？" },
+          { title: "肝转移监测与 MDT 协同", content: "术后血清 CEA 标志物与腹盆增强 CT 复查时间表如何规划？如何早期预防肝转移？" }
+        ];
+      }
+      if (isCrc) {
+        return [
+          { title: "辅助化疗周期与减毒评估", content: "请教主治医生根据我的病理分期（如 IDEA 协作组标准），推荐采用 3 个月 CAPOX 方案还是 6 个月方案？神经毒性如何监测预防？" },
+          { title: "分子分型与靶向选择", content: "请教医生我的 MSI/MMR 状态以及 KRAS/NRAS/BRAF 基因检测结果，是否适合免疫治疗或靶向药物？" },
+          { title: "造口护理与肠道功能康复", content: "（若为直肠癌或造口）请教造口护理规范，以及术后饮食过渡、排便功能恢复的具体指导？" },
+          { title: "随访影像与肿瘤标志物规划", content: "请教医生术后 CEA、CA19-9 血液标志物以及胸腹盆增强 CT、肠镜的复查时间表？" }
+        ];
+      }
       return [
         { title: "随访影像规划", content: "请教主治医生第一次胸部薄层 CT 推荐在术后第几个月复查？" },
         { title: "术后治疗评估", content: "请教医生是否确认属于早期规范根治，无需过度吃药与盲目基因检测？" },
@@ -117,7 +206,7 @@ export default function EvidenceReportPage() {
     return items;
   };
 
-  const checklistItems = extractChecklistItems(reportMarkdown);
+  const checklistItems = extractChecklistItems(reportMarkdown, profile);
 
 
   // Detect whether the user has scrolled up to read earlier content during streaming
@@ -216,13 +305,25 @@ export default function EvidenceReportPage() {
       setCachedTime(nowFormatted);
       setIsLoadedFromCache(true);
 
-      // 1. Save to localStorage (Guest & Instant Cache)
+      // 1. Save to localStorage (Guest & Instant Cache strictly scoped by cancer slot)
+      const cancerType = currentProfile.cancerType || (currentProfile as any).organ || getActiveCancerSlot();
+      const reportCacheKey = currentProfile.id
+        ? `oncopath_report_${currentProfile.id}`
+        : `oncopath_report_${cancerType}_${getGuestId()}`;
+      const timeCacheKey = currentProfile.id
+        ? `oncopath_report_time_${currentProfile.id}`
+        : `oncopath_report_time_${cancerType}_${getGuestId()}`;
+
       if (typeof window !== "undefined") {
-        localStorage.setItem(`oncopath_report_${currentProfile.id || getGuestId()}`, accumulatedText);
-        localStorage.setItem(`oncopath_report_time_${currentProfile.id || getGuestId()}`, nowFormatted);
+        localStorage.setItem(reportCacheKey, accumulatedText);
+        localStorage.setItem(timeCacheKey, nowFormatted);
+        if (cancerType === "lung") {
+          localStorage.setItem(`oncopath_report_${currentProfile.id || getGuestId()}`, accumulatedText);
+          localStorage.setItem(`oncopath_report_time_${currentProfile.id || getGuestId()}`, nowFormatted);
+        }
       }
 
-      // 2. Persist to Cloud Database (PostgreSQL)
+      // 2. Persist to Cloud Database (PostgreSQL) with cancerType
       try {
         await fetch('/api/profile', {
           method: 'PUT',
@@ -233,6 +334,7 @@ export default function EvidenceReportPage() {
           body: JSON.stringify({
             profileId: currentProfile.id,
             userId: getGuestId(),
+            cancerType: cancerType,
             reportMarkdown: accumulatedText,
           })
         });
@@ -252,18 +354,40 @@ export default function EvidenceReportPage() {
     async function loadData() {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        // 1. Fetch Profile from API/DB (supports both logged-in account and guest)
-        const res = await fetch('/api/profile?userId=' + getGuestId(), {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        const data = await res.json();
+        const queryCancer = typeof window !== "undefined" 
+          ? (new URLSearchParams(window.location.search).get("cancerType") as CancerType | null) 
+          : null;
+        const activeSlot = (queryCancer && ["lung", "breast", "colon", "rectal", "colorectal", "gastric", "liver"].includes(queryCancer)) 
+          ? queryCancer 
+          : getActiveCancerSlot();
+
+        // 1. Fetch Profile from API/DB strictly scoped by activeSlot
+        let fetchedProfile: PatientProfile | null = null;
+        try {
+          const res = await fetch(`/api/profile?userId=${getGuestId()}&cancerType=${activeSlot}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          const data = await res.json();
+          if (data && data.profile) {
+            fetchedProfile = data.profile;
+          }
+        } catch (fetchErr) {
+          console.warn("Notice: Fetching cloud profile failed, trying local storage:", fetchErr);
+        }
+
+        // Fallback to local storage slot profile if API did not return or offline
+        if (!fetchedProfile) {
+          const localSlot = getProfileBySlot(activeSlot);
+          if (localSlot && (localSlot.stage || (localSlot as any).tStage || localSlot.noduleType || localSlot.tumorSize || localSlot.organ || (localSlot as any).biRads)) {
+            fetchedProfile = localSlot;
+          }
+        }
         
-        if (!data.profile) {
-          setError("未找到患者档案，请先在档案页录入或上传病理/CT报告。");
+        if (!fetchedProfile) {
+          setError("未找到当前癌种病历档案，请先在档案页录入或上传报告。");
           return;
         }
         
-        const fetchedProfile = data.profile;
         setProfile(fetchedProfile);
         setError("");
 
@@ -280,13 +404,22 @@ export default function EvidenceReportPage() {
           return;
         }
 
-        // 3. Check localStorage for guest offline cache
-        const localCached = typeof window !== "undefined" 
-          ? localStorage.getItem(`oncopath_report_${fetchedProfile.id || getGuestId()}`)
-          : null;
-        const localTime = typeof window !== "undefined"
-          ? localStorage.getItem(`oncopath_report_time_${fetchedProfile.id || getGuestId()}`)
-          : null;
+        // 3. Check localStorage for slot-scoped offline cache
+        const cancerType = fetchedProfile.cancerType || (fetchedProfile as any).organ || activeSlot;
+        const reportCacheKey = fetchedProfile.id
+          ? `oncopath_report_${fetchedProfile.id}`
+          : `oncopath_report_${cancerType}_${getGuestId()}`;
+        const timeCacheKey = fetchedProfile.id
+          ? `oncopath_report_time_${fetchedProfile.id}`
+          : `oncopath_report_time_${cancerType}_${getGuestId()}`;
+
+        let localCached = typeof window !== "undefined" ? localStorage.getItem(reportCacheKey) : null;
+        let localTime = typeof window !== "undefined" ? localStorage.getItem(timeCacheKey) : null;
+
+        if (!localCached && cancerType === "lung" && typeof window !== "undefined") {
+          localCached = localStorage.getItem(`oncopath_report_${fetchedProfile.id || getGuestId()}`);
+          localTime = localStorage.getItem(`oncopath_report_time_${fetchedProfile.id || getGuestId()}`);
+        }
 
         if (localCached) {
           setReportMarkdown(localCached);
@@ -312,9 +445,11 @@ export default function EvidenceReportPage() {
 
     window.addEventListener("auth-change", handleAuthChange);
     window.addEventListener("storage", handleAuthChange);
+    window.addEventListener(EVENT_SLOT_CHANGED, handleAuthChange);
     return () => {
       window.removeEventListener("auth-change", handleAuthChange);
       window.removeEventListener("storage", handleAuthChange);
+      window.removeEventListener(EVENT_SLOT_CHANGED, handleAuthChange);
     };
   }, []);
 
@@ -326,10 +461,18 @@ export default function EvidenceReportPage() {
     if (!reportContainerRef.current || isExportingDirectPdf) return;
     try {
       setIsExportingDirectPdf(true);
+      const isEsoph = profile?.cancerType === 'esophageal' || (profile as any)?.organ === 'esophageal' || (profile as any)?.organ === 'esophagus' || (profile as any)?.organ === 'escc';
+      const isLiver = profile?.cancerType === 'liver' || (profile as any)?.organ === 'liver' || (profile as any)?.organ === 'hcc';
+      const isGastric = profile?.cancerType === 'gastric' || (profile as any)?.organ === 'gastric' || (profile as any)?.organ === 'stomach';
+      const isBreast = profile?.cancerType === 'breast' || (profile as any)?.organ === 'breast';
+      const isColon = profile?.cancerType === 'colon' || (profile as any)?.organ === 'colon';
+      const isRectal = profile?.cancerType === 'rectal' || (profile as any)?.organ === 'rectal';
+      const isCrc = profile?.cancerType === 'colorectal' || (profile as any)?.organ === 'colorectal' || isColon || isRectal;
+      const cancerName = isEsoph ? "食管鳞癌" : isLiver ? "原发性肝癌" : isGastric ? "胃癌" : isBreast ? "乳腺癌" : isColon ? "结肠癌" : isRectal ? "直肠癌" : isCrc ? "结直肠癌" : "肺结节与肺腺癌";
       const dateStr = new Date().toISOString().split("T")[0];
       const success = await exportElementToA4Pdf(reportContainerRef.current, {
-        fileName: `OncoPath-临床专属循证解读报告-${profile?.stage || "临床"}-${dateStr}.pdf`,
-        headerTitle: "OncoPath 肺结节与肺腺癌临床数字档案 · 专属循证解读报告",
+        fileName: `ZhiaiWiki-${cancerName}临床专属循证解读报告-${profile?.stage || "临床"}-${dateStr}.pdf`,
+        headerTitle: `知癌维基 ZhiaiWiki · ${cancerName}临床数字档案 · 专属循证解读报告`,
         reportDate: dateStr,
       });
       if (!success) {
@@ -426,7 +569,7 @@ export default function EvidenceReportPage() {
       const link = document.createElement("a");
       link.href = exportedImageUrl;
       const dateStr = new Date().toISOString().slice(0, 10);
-      link.download = `OncoPath_门诊就医问诊便签卡_${dateStr}.png`;
+      link.download = `ZhiaiWiki_门诊就医问诊便签卡_${dateStr}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -491,7 +634,7 @@ export default function EvidenceReportPage() {
     const success = await copyTextSafe(textToCopy);
     if (success) {
       setCopied(true);
-      showToast("✓ 门诊问诊清单已成功复制到剪贴板", "success");
+      showToast("门诊问诊清单已成功复制到剪贴板", "success");
       setTimeout(() => setCopied(false), 3000);
     } else {
       showToast("复制遇到浏览器限制，请长按文本手动选择复制", "warning");
@@ -499,27 +642,70 @@ export default function EvidenceReportPage() {
   };
 
   // Safe Clinical Helpers for Consultation Pocket Card Export
+  const isLiver = profile?.cancerType === 'liver' || (profile as any)?.organ === 'liver' || (profile as any)?.organ === 'hcc';
+  const isGastric = profile?.cancerType === 'gastric' || (profile as any)?.organ === 'gastric' || (profile as any)?.organ === 'stomach';
+  const isBreast = profile?.cancerType === 'breast' || (profile as any)?.organ === 'breast';
+  const isColon = profile?.cancerType === 'colon' || (profile as any)?.organ === 'colon';
+  const isRectal = profile?.cancerType === 'rectal' || (profile as any)?.organ === 'rectal';
+  const isCrc = profile?.cancerType === 'colorectal' || (profile as any)?.organ === 'colorectal' || isColon || isRectal;
   const isFemale = (profile?.gender as string) === 'female' || (profile?.sex as string) === 'female' || (profile?.gender as string) === '女' || (profile?.sex as string) === '女';
   const genderText = isFemale ? '女性' : '男性';
 
   const surgeryText = 
     profile?.currentStage === 'evaluation' || profile?.currentStage === 'discovery' || profile?.surgeryType === 'unknown' ? '尚未手术 / 动态随访' :
-    profile?.surgeryType === 'segmentectomy' ? '解剖性肺段切除' :
-    profile?.surgeryType === 'lobectomy' ? '标准肺叶切除' :
-    profile?.surgeryType === 'wedge' ? '肺楔形切除' :
-    profile?.surgeryType || '根治性切除';
+    isLiver ? (
+      profile?.surgeryType === 'resection' ? '解剖性肝切除术 (R0)' :
+      profile?.surgeryType === 'ablation' ? '微波/射频消融术 (MWA/RFA)' :
+      profile?.surgeryType === 'transplant' ? '原位肝移植术 (米兰标准)' :
+      profile?.surgeryType === 'tace' ? '经导管动脉化疗栓塞 (TACE)' :
+      profile?.surgeryType === 'haic' ? '肝动脉灌注化疗 (HAIC-FO)' :
+      profile?.surgeryType || '肝切除 / 介入转化治疗'
+    ) :
+    isGastric ? (
+      profile?.surgeryType === 'esd' ? '内镜黏膜下剥离术 (ESD)' :
+      profile?.surgeryType === 'distal_gastrectomy' ? '远端胃大部切除术 (D2)' :
+      profile?.surgeryType === 'total_gastrectomy' ? '全胃切除术 (D2+Roux-en-Y)' :
+      profile?.surgeryType === 'proximal_gastrectomy' ? '近端胃大部切除术' :
+      profile?.surgeryType || '胃癌根治术 (D2)'
+    ) :
+    isBreast ? (
+      profile?.surgeryType === 'lumpectomy' || profile?.surgeryType === 'bcs' ? '保乳手术 (BCS)' :
+      profile?.surgeryType === 'mastectomy' ? '全乳切除术' :
+      profile?.surgeryType === 'reconstruction' ? '乳腺切除+即刻重建' :
+      profile?.surgeryType || '乳腺原发灶根治切除'
+    ) : isCrc ? (
+      profile?.surgeryType === 'right_hemicolectomy' ? '腹腔镜右半结肠切除术' :
+      profile?.surgeryType === 'left_hemicolectomy' ? '腹腔镜左半结肠切除术' :
+      profile?.surgeryType === 'sigmoidectomy' ? '乙状结肠切除术' :
+      profile?.surgeryType === 'lar' ? '直肠低位前切除术 (LAR)' :
+      profile?.surgeryType === 'miles' ? '腹会阴联合切除术 (Miles)' :
+      profile?.surgeryType || '结直肠根治性切除术'
+    ) : (
+      profile?.surgeryType === 'segmentectomy' ? '解剖性肺段切除' :
+      profile?.surgeryType === 'lobectomy' ? '标准肺叶切除' :
+      profile?.surgeryType === 'wedge' ? '肺楔形切除' :
+      profile?.surgeryType || '根治性切除'
+    );
 
-  const isStasSafe = profile?.stas === 'negative' || (profile?.stas as any) === false;
-  const isLviSafe = profile?.lvi === 'negative' || (profile?.lvi as any) === false;
-  const isVpiSafe = profile?.vpi === 'negative' || (profile?.vpi as any) === false;
-  const isMarginSafe = profile?.margin === 'negative' || profile?.marginStatus === 'negative' || (profile?.margin as any) === false;
-  const isN0Safe = profile?.nStage === 'N0' || !profile?.nStage || profile?.nStage === 'N?' || profile?.lymphNodes === 'N0';
-  const isGrade3 = profile?.iaslcGrade === '3' || profile?.grade === '3';
-  const isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
+  const isStasSafe = profile?.stas === 'negative' || (profile?.stas as any) === false || !profile?.stas;
+  const isLviSafe = profile?.lvi === 'negative' || (profile?.lvi as any) === false || !profile?.lvi;
+  const isVpiSafe = (profile as any)?.pleuralInvasion === 'PL0' || (profile as any)?.pleuralInvasion === 'none' || (profile as any)?.pleuralInvasion === false || !(profile as any)?.pleuralInvasion;
+  const isN0Safe = profile?.nStage === 'N0' || !profile?.nStage;
+  const isMarginSafe = profile?.margin === 'negative' || (profile as any)?.marginStatus === 'negative' || (profile?.margin as any) === false || !profile?.margin;
+  const isGrade3 = profile?.grade === 'grade3' || (profile as any)?.differentiation === 'poorly';
+  const isAllSafe = isLiver
+    ? (isMarginSafe && isN0Safe && ((profile?.cancerSpecificData as any)?.childPughClass === 'A' || !(profile?.cancerSpecificData as any)?.vascularInvasion || (profile?.cancerSpecificData as any)?.vascularInvasion === 'none'))
+    : isGastric
+    ? (isMarginSafe && isN0Safe && ((profile?.cancerSpecificData as any)?.lymphNodesExamined == null || (profile?.cancerSpecificData as any)?.lymphNodesExamined >= 16))
+    : isBreast
+    ? (isMarginSafe && isN0Safe && isLviSafe && !isGrade3)
+    : isCrc
+    ? (isMarginSafe && isN0Safe && isLviSafe && (profile?.cancerSpecificData as any)?.tumorDeposits !== 'present')
+    : (isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3);
 
   const riskLabel = profile?.currentStage === 'evaluation' || profile?.currentStage === 'discovery'
-    ? (profile?.riskLevel === 'high' ? '⚡ 建议胸外科微创评估' : '🌱 建议随访观察 (低危)')
-    : (isAllSafe ? '🌱 早期低复发风险组' : '⚡ 需积极辅助治疗');
+    ? (profile?.riskLevel === 'high' ? (isLiver ? '建议肝脏专科MDT/介入评估' : isGastric ? '建议精细胃镜/ESD评估' : isBreast ? '建议穿刺活检' : isCrc ? '建议结肠镜/多学科评估' : '建议胸外科微创评估') : '建议随访观察 (低危)')
+    : (isAllSafe ? '早期低复发风险组' : (isLiver ? '建议介入/靶免多学科转化' : isBreast ? '建议多学科综合治疗' : isCrc ? '需多学科/辅助评估' : '需积极辅助治疗'));
 
   const tumorVal = profile?.tumorSize != null ? profile.tumorSize : null;
   const solidVal = profile?.solidSize != null ? profile.solidSize : null;
@@ -528,27 +714,47 @@ export default function EvidenceReportPage() {
   const isPureSolid = profile?.noduleType === 'pure_solid' || (calculatedCtr !== null && calculatedCtr >= 1.0) || (profile?.solidSize != null && profile?.tumorSize != null && profile.solidSize >= profile.tumorSize);
   const isPureGgo = profile?.noduleType === 'pure_ggo' || (calculatedCtr !== null && calculatedCtr === 0) || profile?.solidSize === 0;
 
-  const histologyText = 
+  const histologyText = isLiver ? (
+    profile?.histology === 'hcc' || (profile as any)?.histologyType === 'hcc' ? '肝细胞癌 (HCC)' :
+    profile?.histology === 'icc' || (profile as any)?.histologyType === 'icc' ? '肝内胆管癌 (ICC)' :
+    profile?.histology === 'combined' ? '混合型肝癌 (HCC-ICC)' :
+    profile?.histology ? `原发性${profile.histology}` : '原发性肝细胞恶性肿瘤'
+  ) : isGastric ? (
+    profile?.histology === 'adenocarcinoma' || (profile as any)?.histologyType === 'adenocarcinoma' ? '胃腺癌' :
+    profile?.histology === 'signet_ring' || (profile as any)?.histologyType === 'signet_ring' ? '印戒细胞癌' :
+    profile?.histology ? `胃${profile.histology}` : '胃原发恶性肿瘤'
+  ) : isBreast ? (
+    profile?.histology === 'idc' || (profile as any)?.histologyType === 'idc' ? '浸润性导管癌 (IDC)' :
+    profile?.histology === 'ilc' || (profile as any)?.histologyType === 'ilc' ? '浸润性小叶癌 (ILC)' :
+    profile?.histology === 'dcis' || (profile as any)?.histologyType === 'dcis' ? '导管原位癌 (DCIS)' :
+    profile?.histology ? `乳腺${profile.histology}` : '乳腺原发恶性肿瘤'
+  ) : isCrc ? (
+    profile?.histology === 'adenocarcinoma' || (profile as any)?.histologyType === 'adenocarcinoma' ? '结直肠腺癌' :
+    profile?.histology === 'mucinous' || (profile as any)?.histologyType === 'mucinous' ? '黏液腺癌' :
+    profile?.histology === 'signet_ring' || (profile as any)?.histologyType === 'signet_ring' ? '印戒细胞癌' :
+    profile?.histology ? `结直肠${profile.histology}` : '结直肠原发恶性肿瘤'
+  ) : (
     profile?.histology === 'squamous' ? '原发性肺鳞癌' :
     profile?.histology === 'sclc' ? '原发性小细胞肺癌' :
     profile?.histology === 'large_cell' ? '原发性大细胞肺癌' :
     profile?.histology === 'adenocarcinoma' ? '原发性肺腺癌' :
-    (profile?.histology ? `原发性${profile.histology}` : '待病理组织学定性');
+    (profile?.histology ? `原发性${profile.histology}` : '待病理组织学定性')
+  );
 
   return (
-    <div className="min-h-screen bg-slate-50/70 pb-8 sm:pb-12 print:bg-white print:pb-0 text-slate-900">
+    <div className="min-h-screen bg-slate-50/70 print:bg-white print:pb-0 text-slate-900">
       
       {/* Centered Floating Toast Notification for Copied */}
       {copied && (
         <div className="fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-[999] bg-slate-900/95 backdrop-blur-md text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 border border-slate-700/80 text-xs sm:text-sm max-w-[90vw] sm:max-w-md text-center pointer-events-none transition-all">
-          <span className="text-emerald-400 font-bold text-base flex-shrink-0">✓</span>
+          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
           <span className="leading-snug">门诊问诊清单已成功复制到剪贴板！可直接粘贴至微信或备忘录。</span>
         </div>
       )}
 
       {/* Immersive Pass-Through Navigation Header: Full-width Edge-to-Edge with Safe Area on Mobile, Floating Island on Desktop */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none print:hidden md:top-3.5 md:px-6">
-        <nav className="w-full max-w-7xl mx-auto flex items-center justify-between px-3.5 sm:px-6 pt-[calc(0.6rem+env(safe-area-inset-top,0px))] pb-2.5 md:py-2.5 md:rounded-full bg-white/85 md:bg-white/95 backdrop-blur-xl md:backdrop-blur-md border-b md:border border-slate-200/80 md:border-slate-200/90 shadow-xs md:shadow-lg shadow-slate-900/5 transition-all pointer-events-auto gap-2">
+        <nav className="w-full max-w-7xl mx-auto flex items-center justify-between px-3.5 sm:px-6 pt-[calc(0.625rem+env(safe-area-inset-top,0px))] pb-2.5 md:py-2.5 md:rounded-full bg-white/85 md:bg-white/95 backdrop-blur-xl md:backdrop-blur-md border-b md:border border-slate-200/80 md:border-slate-200/90 shadow-xs md:shadow-lg shadow-slate-900/5 transition-all pointer-events-auto gap-2">
           <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0 min-w-0">
             <Link 
               href="/profile" 
@@ -558,10 +764,13 @@ export default function EvidenceReportPage() {
               <span className="hidden sm:inline">返回档案</span>
             </Link>
             <div className="w-px h-3.5 sm:h-4 bg-slate-200 flex-shrink-0"></div>
-            <div className="font-extrabold text-slate-900 text-xs sm:text-sm flex items-center gap-1 sm:gap-1.5 whitespace-nowrap flex-shrink-0">
+            <div className="font-extrabold text-slate-900 text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
               <span className={`w-2 h-2 rounded-full flex-shrink-0 ${isGenerating ? 'bg-amber-500 animate-pulse' : 'bg-accent-teal'}`} />
-              <span className="sm:hidden">循证报告</span>
-              <span className="hidden sm:inline">专属深度循证解读报告</span>
+              <span className="sm:hidden">{isLiver ? "肝癌报告" : isGastric ? "胃癌报告" : isBreast ? "乳腺报告" : isCrc ? "结直肠报告" : "肺癌报告"}</span>
+              <span className="hidden sm:inline">{isLiver ? "原发性肝癌" : isGastric ? "胃癌" : isBreast ? "乳腺癌" : isCrc ? "结直肠癌" : "肺腺癌"}专属深度循证解读报告</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${isLiver ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : isGastric ? 'bg-amber-50 text-amber-700 border-amber-200' : isBreast ? 'bg-pink-50 text-pink-700 border-pink-200' : isCrc ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                {isLiver ? '肝癌专案' : isGastric ? '胃癌专案' : isBreast ? '乳腺专案' : isCrc ? '结直肠专案' : '肺癌专案'}
+              </span>
             </div>
           </div>
 
@@ -632,7 +841,7 @@ export default function EvidenceReportPage() {
       </div>
 
       {/* Main Page Layout Wrapper */}
-      <div className="max-w-5xl xl:max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-12 print:pt-0 print:px-0">
+      <div className="max-w-5xl xl:max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 print:pt-0 print:px-0">
 
         {/* Pure printable & long-image exportable container (No trailing blank space) */}
         <div id="report-printable-area" ref={reportContainerRef} className="space-y-4 sm:space-y-5 bg-slate-50/90 p-3.5 sm:p-6 md:p-7 rounded-3xl border border-slate-200/90 shadow-sm print:bg-white print:border-none print:shadow-none print:p-0">
@@ -641,9 +850,11 @@ export default function EvidenceReportPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3.5 border-b border-slate-200/90 text-xs text-slate-500">
             <div className="flex items-center gap-2 flex-wrap">
               <div className="flex items-center gap-2">
-                <span className="font-black text-blue-700 text-sm sm:text-base tracking-tight">OncoPath Navigator</span>
+                <span className="font-black text-blue-700 text-sm sm:text-base tracking-tight">知癌维基 ZhiaiWiki</span>
                 <span className="text-slate-300">|</span>
-                <span className="font-bold text-slate-800 text-xs sm:text-sm">临床专属循证解读报告</span>
+                <span className="font-bold text-slate-800 text-xs sm:text-sm">
+                  {isBreast ? "乳腺肿瘤与乳腺癌" : isCrc ? "结直肠恶性肿瘤" : "肺结节与肺腺癌"}临床专属循证解读报告
+                </span>
               </div>
               {isLoadedFromCache && !isGenerating && cachedTime && (
                 <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200/80 print:hidden">
@@ -659,7 +870,7 @@ export default function EvidenceReportPage() {
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700 hover:text-blue-700 bg-white hover:bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs hover:border-blue-200 transition-all cursor-pointer print:hidden group"
                 title="若指标有更新，点击前往个人档案修改"
               >
-                <span className="text-slate-400 group-hover:text-blue-600 transition-colors">✏️</span>
+                <FileEdit className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors shrink-0" />
                 <span>校对病理指标</span>
               </Link>
               <div className="text-[11px] text-slate-400 font-medium font-mono whitespace-nowrap">
@@ -678,13 +889,17 @@ export default function EvidenceReportPage() {
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h2 className="text-base sm:text-lg md:text-xl font-black text-slate-900">
-                    {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging'
-                      ? (profile.stage ? `c${profile.stage} 期肺结节 (CT 影像初估)` : '早期肺结节 (待病理确诊)')
+                    {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging' || profile.reportType === 'ultrasound'
+                      ? (isBreast
+                          ? (profile.stage ? `c${profile.stage} 期乳腺病灶 (影像评估)` : '早期乳腺肿物 (待病理确诊)')
+                          : isCrc
+                          ? (profile.stage ? `c${profile.stage} 期结直肠病灶 (影像/内镜评估)` : '早期结直肠肿物 (待病理确诊)')
+                          : (profile.stage ? `c${profile.stage} 期肺结节 (CT 影像初估)` : '早期肺结节 (待病理确诊)'))
                       : (profile.stage ? `${profile.stage} 期${histologyText}` : `早期${histologyText}`)
                     }
                   </h2>
-                  <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black">
-                    IASLC 第9版 · {profile.tStage || "T1a"}{profile.nStage || "N0"}{profile.mStage || "M0"}
+                  <span className={`px-2 py-0.5 rounded-full border text-xs font-black ${isBreast ? 'bg-pink-50 text-pink-700 border-pink-200' : isCrc ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                    {isBreast ? 'AJCC 第8版' : isCrc ? 'AJCC 第8版' : 'IASLC 第9版'} · {profile.tStage || (isBreast ? "T1c" : isCrc ? "T1" : "T1a")}{profile.nStage || "N0"}{profile.mStage || "M0"}
                   </span>
                 </div>
 
@@ -693,25 +908,54 @@ export default function EvidenceReportPage() {
                     {profile.age ? `${profile.age} 岁 · ` : ''}{profile.sex === 'female' ? '女性' : profile.sex === 'male' ? '男性' : '性别未录入'}
                   </span>
                   <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">
-                    {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging'
-                      ? `结节部位: ${profile.noduleLocation || '肺部结节'} (动态随访中)`
-                      : (profile.surgeryType === 'lobectomy' ? '标准肺叶切除' : profile.surgeryType === 'segmentectomy' ? '解剖性肺段切除' : profile.surgeryType === 'wedge' ? '肺楔形切除' : profile.surgeryType || '根治性手术切除')
+                    {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging' || profile.reportType === 'ultrasound'
+                      ? (isBreast
+                          ? (profile.noduleLocation || (profile as any).breastLaterality ? `方位: ${(profile as any).breastLaterality === 'left' ? '左乳' : (profile as any).breastLaterality === 'right' ? '右乳' : '双乳'} ${(profile as any).quadrant || ''}` : '乳腺原发灶 (随访中)')
+                          : isCrc
+                          ? `病灶部位: ${profile.noduleLocation || ((profile as any).primaryLocation === 'rectum' ? '直肠' : (profile as any).primaryLocation === 'right_colon' ? '右半结肠' : '结直肠')} (随访中)`
+                          : `结节部位: ${profile.noduleLocation || '肺部结节'} (动态随访中)`)
+                      : surgeryText
                     }
                   </span>
                 </div>
                 {profile.tumorSize != null ? (
                   <div className="text-[11px] sm:text-[12px] text-slate-500 mt-1">
-                    {isPureSolid ? (
-                      <span>📏 <strong>病灶最大径</strong>: {profile.tumorSize} cm · 性质: <strong className="text-blue-700">纯实性软组织结节</strong> (CTR: 1.0)</span>
-                    ) : isPureGgo ? (
-                      <span>📏 <strong>结节最大径</strong>: {profile.tumorSize} cm · 性质: <strong className="text-emerald-700">纯磨玻璃密度/无实性成分</strong> (CTR: 0)</span>
+                    {isBreast ? (
+                      <span>
+                        <Ruler className="w-3.5 h-3.5 text-blue-600 inline mr-1 -mt-0.5" />
+                        <strong>肿瘤最大径</strong>: {profile.tumorSize} cm
+                        {(profile as any).molecularSubtype && (
+                          <span> · <strong>分子分型</strong>: <strong className="text-purple-700">{(profile as any).molecularSubtype}</strong></span>
+                        )}
+                        {(profile as any).biRads && (
+                          <span> · <strong>BI-RADS</strong>: <strong className="text-pink-700">{(profile as any).biRads}类</strong></span>
+                        )}
+                      </span>
+                    ) : isCrc ? (
+                      <span>
+                        <Ruler className="w-3.5 h-3.5 text-blue-600 inline mr-1 -mt-0.5" />
+                        <strong>病灶最大浸润径</strong>: {profile.tumorSize} cm
+                        {(profile as any).primaryLocation && (
+                          <span> · <strong>原发解剖部位</strong>: <strong className="text-emerald-700">{(profile as any).primaryLocation === 'rectum' ? '直肠' : (profile as any).primaryLocation === 'right_colon' ? '右半结肠' : '左半结肠'}</strong></span>
+                        )}
+                        {(profile as any).distanceFromAnalVerge != null && (
+                          <span> · <strong>距肛门缘</strong>: <strong className="text-teal-700">{(profile as any).distanceFromAnalVerge} cm</strong></span>
+                        )}
+                      </span>
                     ) : (
-                      <span>📏 <strong>结节总全径</strong>: {profile.tumorSize} cm · CT 实性成分: <strong className="text-teal-700">{profile.solidSize != null ? `${profile.solidSize} cm` : '微量'}</strong> (CTR: {profile.ctr ?? (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : '待核算')})</span>
+                      isPureSolid ? (
+                        <span><Ruler className="w-3.5 h-3.5 text-blue-600 inline mr-1 -mt-0.5" /><strong>病灶最大径</strong>: {profile.tumorSize} cm · 性质: <strong className="text-blue-700">纯实性软组织结节</strong> (CTR: 1.0)</span>
+                      ) : isPureGgo ? (
+                        <span><Ruler className="w-3.5 h-3.5 text-emerald-600 inline mr-1 -mt-0.5" /><strong>结节最大径</strong>: {profile.tumorSize} cm · 性质: <strong className="text-emerald-700">纯磨玻璃密度/无实性成分</strong> (CTR: 0)</span>
+                      ) : (
+                        <span><Ruler className="w-3.5 h-3.5 text-teal-600 inline mr-1 -mt-0.5" /><strong>结节总全径</strong>: {profile.tumorSize} cm · CT 实性成分: <strong className="text-teal-700">{profile.solidSize != null ? `${profile.solidSize} cm` : '微量'}</strong> (CTR: {profile.ctr ?? (profile.solidSize && profile.tumorSize ? Math.round((profile.solidSize / profile.tumorSize) * 100) / 100 : '待核算')})</span>
+                      )
                     )}
                   </div>
                 ) : (
                   <div className="text-[11px] sm:text-[12px] text-slate-400 mt-1 flex items-center gap-1.5">
-                    <span>📏 未提供薄层胸部 CT 报告 · 结节大小待查</span>
+                    <Ruler className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{isBreast ? '未提供病理肿瘤浸润径' : isCrc ? '未提供原发灶大体浸润数据' : '未提供薄层胸部 CT 报告 · 结节大小待查'}</span>
                   </div>
                 )}
               </div>
@@ -720,7 +964,7 @@ export default function EvidenceReportPage() {
                 <span className="text-xs text-slate-500 font-medium hidden md:inline">
                   {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging' ? '恶性风险:' : '风险评级:'}
                 </span>
-                <span className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold ${
+                <span className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${
                   profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging'
                     ? (profile.riskLevel === 'high' ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200')
                     : (profile.nStage === 'N2' || profile.nStage === 'N2b' || profile.stas === 'positive' || (profile.stas as any) === true
@@ -728,8 +972,28 @@ export default function EvidenceReportPage() {
                         : 'bg-emerald-50 text-emerald-800 border border-emerald-200')
                 }`}>
                   {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging'
-                    ? (profile.riskLevel === 'high' ? '⚡ 需胸外科微创评估' : '🌱 早期随访观察')
-                    : (profile.nStage === 'N2' || profile.nStage === 'N2b' || profile.stas === 'positive' || (profile.stas as any) === true ? '⚡ 需积极辅助治疗' : '🌱 早期低风险随访')
+                    ? (profile.riskLevel === 'high' ? (
+                        <>
+                          <Zap className="w-3 h-3 text-amber-600 shrink-0" />
+                          <span>{isBreast ? '建议穿刺活检' : isCrc ? '建议多学科/内镜评估' : '需胸外科微创评估'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>早期随访观察</span>
+                        </>
+                      ))
+                    : (profile.nStage === 'N2' || profile.nStage === 'N2b' || profile.stas === 'positive' || (profile.stas as any) === true ? (
+                        <>
+                          <Zap className="w-3 h-3 text-amber-600 shrink-0" />
+                          <span>需积极辅助治疗</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>早期低风险随访</span>
+                        </>
+                      ))
                   }
                 </span>
               </div>
@@ -737,9 +1001,9 @@ export default function EvidenceReportPage() {
 
             {profile.versionBridgeNotice && (
               <div className="mt-3.5 p-3 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-950 flex items-start gap-2 print:hidden">
-                <Sparkles className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                <GitBranch className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
-                  <span className="font-bold">IASLC 第 9 版国际分期演变释疑：</span>
+                  <span className="font-bold">{isBreast ? 'AJCC 第 8 版预后病理分期演变：' : isCrc ? 'AJCC 第 8 版结直肠分期演变释疑：' : 'IASLC 第 9 版国际分期演变释疑：'}</span>
                   <span className="text-teal-900 leading-relaxed font-medium">{profile.versionBridgeNotice}</span>
                 </div>
               </div>
@@ -749,7 +1013,8 @@ export default function EvidenceReportPage() {
             {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging' ? (
               <div className="mt-3 sm:mt-4 pt-1">
                 <div className="text-xs font-semibold text-slate-500 mb-2 flex items-center gap-1.5">
-                  <span>🩻 关键影像学评估矩阵</span>
+                  <Scan className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span>关键影像学评估矩阵</span>
                   <span className="text-slate-400 font-normal text-[10px] sm:text-[11px]">(基于薄层 CT 恶性征象与实性占比)</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -783,110 +1048,279 @@ export default function EvidenceReportPage() {
               <div className="mt-4 pt-1">
                 <div className="text-xs font-semibold text-slate-500 mb-2.5 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <span>🚦 关键病理红绿灯矩阵</span>
+                    <Activity className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>关键病理红绿灯矩阵</span>
                     <span className="text-slate-400 font-normal text-[11px]">(决定预后与辅助治疗的核心指标)</span>
                   </div>
                   <span className="text-[10px] text-slate-400 font-normal">6项标准化病理特征</span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-                  <MatrixBadge 
-                    label="切缘状态" 
-                    value={
-                      (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
-                        ? '阳性(有残留)'
-                        : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
-                            ? '阴性(R0安全)'
-                            : '未提及 / 待查')
-                    } 
-                    type={
-                      (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
-                        ? 'danger'
-                        : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
-                            ? 'safe'
-                            : 'neutral')
-                    }
-                  />
-                  <MatrixBadge 
-                    label="淋巴结状态" 
-                    value={
-                      profile.nStage === 'N0' ? 'N0 (无转移)' :
-                      profile.nStage === 'N1' ? 'N1 (肺门累及)' :
-                      profile.nStage === 'N2' ? 'N2 (纵隔转移)' :
-                      (profile.nStage || '待分期')
-                    } 
-                    type={profile.nStage === 'N0' ? 'safe' : (profile.nStage === 'N1' || profile.nStage === 'N2' ? 'danger' : 'neutral')}
-                  />
-                  <MatrixBadge 
-                    label="胸膜侵犯 (VPI)" 
-                    value={
-                      (profile.vpi === 'positive' || (profile.vpi as any) === true)
-                        ? 'PL1/PL2 (阳性高危)'
-                        : ((profile.vpi === 'negative' || (profile.vpi as any) === false)
-                            ? 'PL0 (未侵犯)'
-                            : '未提及 / 待查')
-                    } 
-                    type={
-                      (profile.vpi === 'positive' || (profile.vpi as any) === true)
-                        ? 'warning'
-                        : ((profile.vpi === 'negative' || (profile.vpi as any) === false)
-                            ? 'safe'
-                            : 'neutral')
-                    }
-                  />
-                  <MatrixBadge 
-                    label="气道播散 (STAS)" 
-                    value={
-                      (profile.stas === 'positive' || (profile.stas as any) === true)
-                        ? '阳性 (高危)'
-                        : ((profile.stas === 'negative' || (profile.stas as any) === false)
-                            ? '阴性 (安全)'
-                            : '未提及 / 待查')
-                    } 
-                    type={
-                      (profile.stas === 'positive' || (profile.stas as any) === true)
-                        ? 'warning'
-                        : ((profile.stas === 'negative' || (profile.stas as any) === false)
-                            ? 'safe'
-                            : 'neutral')
-                    }
-                  />
-                  <MatrixBadge 
-                    label="脉管癌栓 (LVI)" 
-                    value={
-                      (profile.lvi === 'positive' || (profile.lvi as any) === true)
-                        ? '阳性 (高危)'
-                        : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
-                            ? '阴性 (安全)'
-                            : '未提及 / 待查')
-                    } 
-                    type={
-                      (profile.lvi === 'positive' || (profile.lvi as any) === true)
-                        ? 'warning'
-                        : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
-                            ? 'safe'
-                            : 'neutral')
-                    }
-                  />
-                  <MatrixBadge 
-                    label="IASLC 病理分级" 
-                    value={
-                      (profile.iaslcGrade === '3' || profile.grade === '3')
-                        ? 'Grade 3 (低分化高危)'
-                        : ((profile.iaslcGrade === '1' || profile.grade === '1')
-                            ? 'Grade 1 (高分化)'
-                            : ((profile.iaslcGrade === '2' || profile.grade === '2')
-                                ? 'Grade 2 (中分化)'
-                                : '未分级 / 待查'))
-                    } 
-                    type={
-                      (profile.iaslcGrade === '3' || profile.grade === '3')
-                        ? 'warning'
-                        : ((profile.iaslcGrade === '1' || profile.grade === '1' || profile.iaslcGrade === '2' || profile.grade === '2')
-                            ? 'safe'
-                            : 'neutral')
-                    }
-                  />
-                </div>
+                {isBreast ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                    <MatrixBadge 
+                      label="切缘状态" 
+                      value={
+                        (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
+                          ? '阳性 (残留)'
+                          : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
+                              ? '阴性 (R0安全)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
+                          ? 'danger'
+                          : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="淋巴结状态" 
+                      value={
+                        profile.nStage === 'N0' ? 'N0 (无转移)' :
+                        profile.nStage === 'N1' ? 'N1 (1-3枚转移)' :
+                        profile.nStage === 'N2' ? 'N2 (4-9枚转移)' :
+                        (profile.nStage || '待分期')
+                      } 
+                      type={profile.nStage === 'N0' ? 'safe' : (profile.nStage ? 'danger' : 'neutral')}
+                    />
+                    <MatrixBadge 
+                      label="ER / PR 状态" 
+                      value={
+                        `${(profile as any).erStatus === 'positive' ? 'ER+' : (profile as any).erStatus === 'negative' ? 'ER-' : 'ER待查'} / ${(profile as any).prStatus === 'positive' ? 'PR+' : (profile as any).prStatus === 'negative' ? 'PR-' : 'PR待查'}`
+                      } 
+                      type={(profile as any).erStatus === 'positive' ? 'safe' : 'neutral'}
+                    />
+                    <MatrixBadge 
+                      label="HER2 状态" 
+                      value={
+                        (profile as any).her2StatusCategory === 'positive' ? '3+ (阳性)' :
+                        (profile as any).her2StatusCategory === 'low' ? '低表达(1+/2+FISH-)' :
+                        (profile as any).her2StatusCategory === 'zero' ? '0 (阴性)' :
+                        ((profile as any).her2Status || '待查')
+                      } 
+                      type={(profile as any).her2StatusCategory === 'positive' ? 'warning' : 'safe'}
+                    />
+                    <MatrixBadge 
+                      label="脉管癌栓 (LVI)" 
+                      value={
+                        (profile.lvi === 'positive' || (profile.lvi as any) === true)
+                          ? '阳性 (高危)'
+                          : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
+                              ? '阴性 (安全)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.lvi === 'positive' || (profile.lvi as any) === true)
+                          ? 'warning'
+                          : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="Nottingham 分级" 
+                      value={
+                        (profile as any).nottinghamGrade === '3' || profile.grade === '3'
+                          ? 'Grade 3 (低分化高危)'
+                          : ((profile as any).nottinghamGrade === '1' || profile.grade === '1')
+                              ? 'Grade 1 (高分化)'
+                              : (((profile as any).nottinghamGrade === '2' || profile.grade === '2')
+                                  ? 'Grade 2 (中分化)'
+                                  : '未分级 / 待查')
+                      } 
+                      type={
+                        (profile as any).nottinghamGrade === '3' || profile.grade === '3'
+                          ? 'warning'
+                          : 'safe'
+                      }
+                    />
+                  </div>
+                ) : isCrc ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                    <MatrixBadge 
+                      label="切缘状态 (CRM)" 
+                      value={
+                        (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.cancerSpecificData as any)?.crmStatus === 'positive')
+                          ? '阳性 (残留/高危)'
+                          : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.cancerSpecificData as any)?.crmStatus === 'negative')
+                              ? '阴性 (R0安全)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.cancerSpecificData as any)?.crmStatus === 'positive')
+                          ? 'danger'
+                          : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.cancerSpecificData as any)?.crmStatus === 'negative')
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="淋巴结 / TD" 
+                      value={
+                        profile.nStage === 'N0' ? 'N0 (无转移)' :
+                        profile.nStage === 'N1c' ? 'N1c (见肿瘤沉积TD)' :
+                        profile.nStage === 'N1' || profile.nStage === 'N1a' || profile.nStage === 'N1b' ? `${profile.nStage} (1-3枚)` :
+                        profile.nStage === 'N2' || profile.nStage === 'N2a' || profile.nStage === 'N2b' ? `${profile.nStage} (≥4枚)` :
+                        (profile.nStage || '待分期')
+                      } 
+                      type={profile.nStage === 'N0' ? 'safe' : (profile.nStage === 'N1c' ? 'warning' : profile.nStage ? 'danger' : 'neutral')}
+                    />
+                    <MatrixBadge 
+                      label="MSI / MMR" 
+                      value={
+                        (profile.cancerSpecificData as any)?.dmmrStatus === 'dMMR' || (profile.cancerSpecificData as any)?.msiStatus === 'MSI-H' ? 'dMMR / MSI-H' :
+                        (profile.cancerSpecificData as any)?.dmmrStatus === 'pMMR' || (profile.cancerSpecificData as any)?.msiStatus === 'MSS' ? 'pMMR / MSS' :
+                        '待查'
+                      } 
+                      type={
+                        (profile.cancerSpecificData as any)?.dmmrStatus === 'dMMR' || (profile.cancerSpecificData as any)?.msiStatus === 'MSI-H' ? 'safe' : 'neutral'
+                      }
+                    />
+                    <MatrixBadge 
+                      label="RAS / BRAF" 
+                      value={
+                        (profile.cancerSpecificData as any)?.krasMutation === 'wildtype' && (profile.cancerSpecificData as any)?.nrasMutation === 'wildtype' && (profile.cancerSpecificData as any)?.brafMutation === 'wildtype'
+                          ? '全野生型 (WT)'
+                          : (profile.cancerSpecificData as any)?.brafMutation === 'V600E'
+                          ? 'BRAF V600E'
+                          : (profile.cancerSpecificData as any)?.krasMutation && (profile.cancerSpecificData as any)?.krasMutation !== 'wildtype'
+                          ? `KRAS ${(profile.cancerSpecificData as any)?.krasMutation}`
+                          : '待检测'
+                      } 
+                      type={
+                        (profile.cancerSpecificData as any)?.krasMutation === 'wildtype' ? 'safe' : 'warning'
+                      }
+                    />
+                    <MatrixBadge 
+                      label="脉管癌栓 (EMVI)" 
+                      value={
+                        (profile.cancerSpecificData as any)?.emviStatus === 'positive' || profile.lvi === 'positive'
+                          ? '阳性 (高危)'
+                          : ((profile.cancerSpecificData as any)?.emviStatus === 'negative' || profile.lvi === 'negative')
+                          ? '阴性 (安全)'
+                          : '未提及 / 待查'
+                      } 
+                      type={
+                        (profile.cancerSpecificData as any)?.emviStatus === 'positive' || profile.lvi === 'positive'
+                          ? 'warning'
+                          : 'safe'
+                      }
+                    />
+                    <MatrixBadge 
+                      label="检出淋巴结质控" 
+                      value={
+                        (profile.cancerSpecificData as any)?.lymphNodesExamined != null
+                          ? `${(profile.cancerSpecificData as any)?.lymphNodesExamined} 枚 ${(profile.cancerSpecificData as any)?.lymphNodesExamined >= 12 ? '(≥12枚达标)' : '(<12枚偏少)'}`
+                          : '未统计 / 待查'
+                      } 
+                      type={
+                        (profile.cancerSpecificData as any)?.lymphNodesExamined != null && (profile.cancerSpecificData as any)?.lymphNodesExamined >= 12
+                          ? 'safe'
+                          : 'warning'
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                    <MatrixBadge 
+                      label="切缘状态" 
+                      value={
+                        (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
+                          ? '阳性(有残留)'
+                          : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
+                              ? '阴性(R0安全)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.margin === 'positive' || profile.marginStatus === 'positive' || (profile.margin as any) === true)
+                          ? 'danger'
+                          : ((profile.margin === 'negative' || profile.marginStatus === 'negative' || (profile.margin as any) === false)
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="淋巴结状态" 
+                      value={
+                        profile.nStage === 'N0' ? 'N0 (无转移)' :
+                        profile.nStage === 'N1' ? 'N1 (肺门累及)' :
+                        profile.nStage === 'N2' ? 'N2 (纵隔转移)' :
+                        (profile.nStage || '待分期')
+                      } 
+                      type={profile.nStage === 'N0' ? 'safe' : (profile.nStage === 'N1' || profile.nStage === 'N2' ? 'danger' : 'neutral')}
+                    />
+                    <MatrixBadge 
+                      label="胸膜侵犯 (VPI)" 
+                      value={
+                        (profile.vpi === 'positive' || (profile.vpi as any) === true)
+                          ? 'PL1/PL2 (阳性高危)'
+                          : ((profile.vpi === 'negative' || (profile.vpi as any) === false)
+                              ? 'PL0 (未侵犯)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.vpi === 'positive' || (profile.vpi as any) === true)
+                          ? 'warning'
+                          : ((profile.vpi === 'negative' || (profile.vpi as any) === false)
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="气道播散 (STAS)" 
+                      value={
+                        (profile.stas === 'positive' || (profile.stas as any) === true)
+                          ? '阳性 (高危)'
+                          : ((profile.stas === 'negative' || (profile.stas as any) === false)
+                              ? '阴性 (安全)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.stas === 'positive' || (profile.stas as any) === true)
+                          ? 'warning'
+                          : ((profile.stas === 'negative' || (profile.stas as any) === false)
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="脉管癌栓 (LVI)" 
+                      value={
+                        (profile.lvi === 'positive' || (profile.lvi as any) === true)
+                          ? '阳性 (高危)'
+                          : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
+                              ? '阴性 (安全)'
+                              : '未提及 / 待查')
+                      } 
+                      type={
+                        (profile.lvi === 'positive' || (profile.lvi as any) === true)
+                          ? 'warning'
+                          : ((profile.lvi === 'negative' || (profile.lvi as any) === false)
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                    <MatrixBadge 
+                      label="IASLC 病理分级" 
+                      value={
+                        (profile.iaslcGrade === '3' || profile.grade === '3')
+                          ? 'Grade 3 (低分化高危)'
+                          : ((profile.iaslcGrade === '1' || profile.grade === '1')
+                              ? 'Grade 1 (高分化)'
+                              : ((profile.iaslcGrade === '2' || profile.grade === '2')
+                                  ? 'Grade 2 (中分化)'
+                                  : '未分级 / 待查'))
+                      } 
+                      type={
+                        (profile.iaslcGrade === '3' || profile.grade === '3')
+                          ? 'warning'
+                          : ((profile.iaslcGrade === '1' || profile.grade === '1' || profile.iaslcGrade === '2' || profile.grade === '2')
+                              ? 'safe'
+                              : 'neutral')
+                      }
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -895,7 +1329,8 @@ export default function EvidenceReportPage() {
         {error && (
           <div className="bg-rose-50 text-rose-800 p-6 rounded-3xl border border-rose-200 mb-6 print:hidden shadow-xs space-y-3">
             <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-2 text-rose-900">
-              <span>⚠️</span> 提示信息
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>提示信息</span>
             </h3>
             <p className="text-xs sm:text-sm leading-relaxed">{error}</p>
             <div className="pt-1 flex items-center gap-3 flex-wrap">
@@ -903,14 +1338,16 @@ export default function EvidenceReportPage() {
                 href="/profile"
                 className="btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
               >
-                <span>📋 前往患者临床档案页 ➔</span>
+                <ClipboardList className="w-3.5 h-3.5 shrink-0" />
+                <span>前往患者临床档案页</span>
               </Link>
               {profile && (
                 <button
                   onClick={() => startGeneratingReport(profile)}
-                  className="px-4 py-2 rounded-xl bg-white hover:bg-rose-100/60 text-rose-700 font-bold border border-rose-300 transition-colors text-xs cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-white hover:bg-rose-100/60 text-rose-700 font-bold border border-rose-300 transition-colors text-xs cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  🔄 重新尝试生成报告
+                  <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+                  <span>重新尝试生成报告</span>
                 </button>
               )}
             </div>
@@ -956,7 +1393,8 @@ export default function EvidenceReportPage() {
                               onClick={handleCopyChecklist}
                               className="self-start sm:self-center flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer print:hidden"
                             >
-                              <span>📋 一键复制此问诊清单</span>
+                              <Copy className="w-3.5 h-3.5 shrink-0" />
+                              <span>一键复制此问诊清单</span>
                             </button>
                           )}
                         </div>
@@ -977,7 +1415,7 @@ export default function EvidenceReportPage() {
                         <div className="my-6 p-5 md:p-6 rounded-xl bg-slate-50/90 border border-slate-200/90 border-l-4 border-l-teal-600 shadow-xs text-slate-900">
                           <div className="flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-teal-900 mb-2.5 flex-wrap">
                             <div className="flex items-center gap-2">
-                              <span className="text-base">📋</span>
+                              <ClipboardList className="w-4 h-4 text-teal-600 shrink-0" />
                               <span>临床特征与文献对照 · 循证速览</span>
                             </div>
                             <span className="text-[10px] font-mono font-bold text-teal-800 bg-teal-100/70 px-2 py-0.5 rounded border border-teal-200">
@@ -995,7 +1433,7 @@ export default function EvidenceReportPage() {
                       return (
                         <div className="my-6 p-4 md:p-5 rounded-2xl bg-rose-50 border border-rose-200 shadow-xs text-rose-950">
                           <div className="flex items-center gap-2 text-xs font-bold text-rose-800 uppercase tracking-wider mb-1.5">
-                            <span>🚨</span>
+                            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
                             <span>需提前返院检查的警示信号</span>
                           </div>
                           <div className="text-sm leading-relaxed text-rose-900 font-medium">
@@ -1089,8 +1527,8 @@ export default function EvidenceReportPage() {
 
           {/* Medical Disclaimer Stamp Footer inside report */}
           <div className="border-t border-slate-200/90 pt-3 text-[10px] text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-1">
-            <span>免责声明：本报告由 OncoPath 临床循证推理引擎根据患者个体病理/影像与国际医学指南生成，仅供就医沟通参考。</span>
-            <span className="font-mono font-bold text-slate-400">ONCOPATH-EVIDENCE-REPORT</span>
+            <span>免责声明：本报告由 知癌维基 (ZhiaiWiki) 临床循证推理引擎根据患者个体病理/影像与国际医学指南生成，仅供就医沟通参考。</span>
+            <span className="font-mono font-bold text-slate-400">ZHIAIWIKI-EVIDENCE-REPORT</span>
           </div>
         </div>
 
@@ -1203,10 +1641,10 @@ export default function EvidenceReportPage() {
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 relative z-10">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs flex-shrink-0 bg-slate-100 border border-slate-200">
-                <img src={ONCOPATH_LOGO_DATA_URI} alt="OncoPath Logo" className="w-full h-full object-cover" />
+                <img src={ONCOPATH_LOGO_DATA_URI} alt="知癌维基 Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wider text-slate-900">OncoPath · 肺癌循证知识平台</div>
+                <div className="text-xs font-black tracking-wider text-slate-900">知癌维基 ZhiaiWiki · {isBreast ? "乳腺癌" : isCrc ? "结直肠癌" : "肺癌"}循证知识平台</div>
                 <div className="text-[10px] text-slate-500">门诊就医问诊便签卡 · 医患高效协同</div>
               </div>
             </div>
@@ -1228,12 +1666,16 @@ export default function EvidenceReportPage() {
                       {profile.age ? `${profile.age}岁 · ` : ''}{genderText}
                     </span>
                     <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-black font-mono">
-                      {profile.tStage || "T1a"}{profile.nStage || "N0"}{profile.mStage || "M0"}
+                      {profile.tStage || (isBreast ? "T1c" : isCrc ? "T1" : "T1a")}{profile.nStage || "N0"}{profile.mStage || "M0"}
                     </span>
                   </div>
                   <div className="text-xs font-bold text-blue-700">
-                    {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging'
-                      ? (profile.stage ? `c${profile.stage} 期肺结节` : '早期肺结节')
+                    {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || profile.reportType === 'ct_imaging' || profile.reportType === 'ultrasound'
+                      ? (isBreast
+                          ? (profile.stage ? `c${profile.stage} 期乳腺病灶` : '早期乳腺肿物')
+                          : isCrc
+                            ? (profile.stage ? `c${profile.stage} 期结直肠病灶` : '早期结直肠肿物')
+                            : (profile.stage ? `c${profile.stage} 期肺结节` : '早期肺结节'))
                       : (profile.stage ? `${profile.stage} 期${histologyText}` : `早期${histologyText}`)
                     }
                   </div>
@@ -1258,67 +1700,184 @@ export default function EvidenceReportPage() {
                 </span>
               </div>
 
-              {/* Row 3: CT Tumor Size & CTR Calculation */}
+              {/* Row 3: Tumor Size & Details */}
               <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between flex-wrap gap-2 text-slate-700">
                 <span className="flex items-center gap-1.5">
-                  <span>📏</span>
-                  {isPureSolid ? (
-                    <span><strong>病灶最大径</strong>: {tumorVal} cm · <strong>性质</strong>: 纯实性软组织病变</span>
-                  ) : isPureGgo ? (
-                    <span><strong>结节最大径</strong>: {tumorVal} cm · <strong>性质</strong>: 纯磨玻璃密度 (无实性)</span>
+                  <Ruler className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  {isBreast ? (
+                    <span>
+                      <strong>病灶最大径</strong>: {tumorVal != null ? `${tumorVal} cm` : '待病理确诊'}
+                      {(profile as any).breastLaterality && (
+                        <span> · <strong>方位</strong>: {(profile as any).breastLaterality === 'left' ? '左乳' : (profile as any).breastLaterality === 'right' ? '右乳' : '双乳'}</span>
+                      )}
+                      {(profile as any).molecularSubtype && (
+                        <span> · <strong>亚型</strong>: {(profile as any).molecularSubtype}</span>
+                      )}
+                    </span>
+                  ) : isCrc ? (
+                    <span>
+                      <strong>病灶最大浸润径</strong>: {tumorVal != null ? `${tumorVal} cm` : '待病理确诊'}
+                      {(profile as any).primaryLocation && (
+                        <span> · <strong>部位</strong>: {(profile as any).primaryLocation === 'rectum' ? '直肠' : (profile as any).primaryLocation === 'right_colon' ? '右半结肠' : '左半结肠'}</span>
+                      )}
+                      {(profile as any).distanceFromAnalVerge != null && (
+                        <span> · <strong>距肛缘</strong>: {(profile as any).distanceFromAnalVerge} cm</span>
+                      )}
+                    </span>
                   ) : (
-                    <span><strong>结节总全径</strong>: {tumorVal} cm · <strong>CT 实性成分</strong>: {solidVal} cm</span>
+                    isPureSolid ? (
+                      <span><strong>病灶最大径</strong>: {tumorVal} cm · <strong>性质</strong>: 纯实性软组织病变</span>
+                    ) : isPureGgo ? (
+                      <span><strong>结节最大径</strong>: {tumorVal} cm · <strong>性质</strong>: 纯磨玻璃密度 (无实性)</span>
+                    ) : (
+                      <span><strong>结节总全径</strong>: {tumorVal} cm · <strong>CT 实性成分</strong>: {solidVal} cm</span>
+                    )
                   )}
                 </span>
-                <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-mono font-bold text-[11px] shrink-0">
-                  CTR: {calculatedCtr}
-                </span>
+                {!isBreast && !isCrc && (
+                  <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200 font-mono font-bold text-[11px] shrink-0">
+                    CTR: {calculatedCtr}
+                  </span>
+                )}
+                {isCrc && (profile as any).distanceFromAnalVerge != null && (
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono font-bold text-[11px] shrink-0">
+                    距肛: {(profile as any).distanceFromAnalVerge}cm
+                  </span>
+                )}
+                {isBreast && (profile as any).biRads && (
+                  <span className="px-2 py-0.5 rounded-md bg-pink-50 text-pink-700 border border-pink-200 font-mono font-bold text-[11px] shrink-0">
+                    BI-RADS: {(profile as any).biRads}类
+                  </span>
+                )}
               </div>
 
-              {/* Row 4: 6 Core Pathology Indicators Pills */}
-              <div className="grid grid-cols-3 gap-1.5 text-[11px]">
-                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-[10px]">切缘状态</span>
-                  <span className={`font-bold ${!isMarginSafe ? 'text-rose-600' : 'text-emerald-700'}`}>
-                    {!isMarginSafe ? '阳性(残留)' : '阴性(R0)'}
-                  </span>
+              {/* Row 4: Core Pathology Indicators Pills */}
+              {isBreast ? (
+                <div className="grid grid-cols-3 gap-1.5 text-[11px]">
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">切缘状态</span>
+                    <span className={`font-bold ${!isMarginSafe ? 'text-rose-600' : 'text-emerald-700'}`}>
+                      {!isMarginSafe ? '阳性(残留)' : '阴性(R0)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">淋巴结分期</span>
+                    <span className={`font-bold ${isN0Safe ? 'text-emerald-700' : 'text-rose-600'}`}>
+                      {profile.nStage || 'N0'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">ER / PR</span>
+                    <span className="font-bold text-slate-800">
+                      {(profile as any).erStatus === 'positive' ? 'ER+' : (profile as any).erStatus === 'negative' ? 'ER-' : 'ER未查'} / {(profile as any).prStatus === 'positive' ? 'PR+' : (profile as any).prStatus === 'negative' ? 'PR-' : 'PR未查'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">HER2状态</span>
+                    <span className="font-bold text-purple-700">
+                      {(profile as any).her2StatusCategory === 'positive' ? '阳性(3+)' : (profile as any).her2StatusCategory === 'low' ? '低表达' : (profile as any).her2StatusCategory === 'zero' ? '0(阴性)' : (profile as any).her2Status || '未查'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">脉管瘤栓</span>
+                    <span className={`font-bold ${!isLviSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {!isLviSafe ? '阳性(高危)' : '阴性(-)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">Nottingham</span>
+                    <span className={`font-bold ${(profile as any).nottinghamGrade === '3' ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {(profile as any).nottinghamGrade ? `G${(profile as any).nottinghamGrade}` : '未分级'}
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-[10px]">淋巴结分期</span>
-                  <span className={`font-bold ${isN0Safe ? 'text-emerald-700' : profile.nStage === 'N1' ? 'text-amber-700' : 'text-rose-600'}`}>
-                    {profile.nStage === 'N0' || !profile.nStage ? 'N0 (无)' : profile.nStage === 'N1' ? 'N1 (肺门)' : profile.nStage === 'N2a' ? 'N2a (单站)' : profile.nStage === 'N2b' ? 'N2b (多站)' : profile.nStage}
-                  </span>
+              ) : isCrc ? (
+                <div className="grid grid-cols-3 gap-1.5 text-[11px]">
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">切缘 (CRM)</span>
+                    <span className={`font-bold ${!isMarginSafe ? 'text-rose-600' : 'text-emerald-700'}`}>
+                      {!isMarginSafe ? '阳性' : '阴性(R0)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">淋巴结 / TD</span>
+                    <span className={`font-bold ${isN0Safe ? 'text-emerald-700' : profile.nStage === 'N1c' ? 'text-amber-700' : 'text-rose-600'}`}>
+                      {profile.nStage === 'N1c' ? 'N1c (TD+)' : (profile.nStage || 'N0')}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">MSI / MMR</span>
+                    <span className="font-bold text-slate-800">
+                      {(profile.cancerSpecificData as any)?.dmmrStatus === 'dMMR' || (profile.cancerSpecificData as any)?.msiStatus === 'MSI-H' ? 'dMMR' : 'pMMR'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">RAS基因</span>
+                    <span className="font-bold text-purple-700">
+                      {(profile.cancerSpecificData as any)?.krasMutation === 'wildtype' ? '野生型' : ((profile.cancerSpecificData as any)?.krasMutation || '待查')}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">脉管瘤栓</span>
+                    <span className={`font-bold ${!isLviSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {!isLviSafe ? '阳性(高危)' : '阴性(-)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">检出淋巴结</span>
+                    <span className={`font-bold ${(profile.cancerSpecificData as any)?.lymphNodesExamined != null && (profile.cancerSpecificData as any)?.lymphNodesExamined >= 12 ? 'text-emerald-700' : 'text-amber-700'}`}>
+                      {(profile.cancerSpecificData as any)?.lymphNodesExamined != null ? `${(profile.cancerSpecificData as any)?.lymphNodesExamined}枚` : '待查'}
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-[10px]">胸膜侵犯</span>
-                  <span className={`font-bold ${!isVpiSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
-                    {!isVpiSafe ? 'PL1/2 (阳性)' : 'PL0 (阴性)'}
-                  </span>
+              ) : (
+                <div className="grid grid-cols-3 gap-1.5 text-[11px]">
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">切缘状态</span>
+                    <span className={`font-bold ${!isMarginSafe ? 'text-rose-600' : 'text-emerald-700'}`}>
+                      {!isMarginSafe ? '阳性(残留)' : '阴性(R0)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">淋巴结分期</span>
+                    <span className={`font-bold ${isN0Safe ? 'text-emerald-700' : profile.nStage === 'N1' ? 'text-amber-700' : 'text-rose-600'}`}>
+                      {profile.nStage === 'N0' || !profile.nStage ? 'N0 (无)' : profile.nStage === 'N1' ? 'N1 (肺门)' : profile.nStage === 'N2a' ? 'N2a (单站)' : profile.nStage === 'N2b' ? 'N2b (多站)' : profile.nStage}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">胸膜侵犯</span>
+                    <span className={`font-bold ${!isVpiSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {!isVpiSafe ? 'PL1/2 (阳性)' : 'PL0 (阴性)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">气道播散</span>
+                    <span className={`font-bold ${!isStasSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {!isStasSafe ? '阳性(高危)' : '阴性(-)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">脉管瘤栓</span>
+                    <span className={`font-bold ${!isLviSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {!isLviSafe ? '阳性(高危)' : '阴性(-)'}
+                    </span>
+                  </div>
+                  <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                    <span className="text-slate-500 text-[10px]">病理分级</span>
+                    <span className={`font-bold ${isGrade3 ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      {isGrade3 ? 'G3(低分化)' : profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1(高分化)' : 'G2(中分化)'}
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-[10px]">气道播散</span>
-                  <span className={`font-bold ${!isStasSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
-                    {!isStasSafe ? '阳性(高危)' : '阴性(-)'}
-                  </span>
-                </div>
-                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-[10px]">脉管瘤栓</span>
-                  <span className={`font-bold ${!isLviSafe ? 'text-amber-700' : 'text-emerald-700'}`}>
-                    {!isLviSafe ? '阳性(高危)' : '阴性(-)'}
-                  </span>
-                </div>
-                <div className="bg-white px-2 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-[10px]">病理分级</span>
-                  <span className={`font-bold ${isGrade3 ? 'text-amber-700' : 'text-emerald-700'}`}>
-                    {isGrade3 ? 'G3(低分化)' : profile.iaslcGrade === '1' || profile.grade === '1' ? 'G1(高分化)' : 'G2(中分化)'}
-                  </span>
-                </div>
-              </div>
+              )}
 
               {/* Row 5: Ki-67 Strip if available */}
               {profile.ki67 != null && profile.ki67 !== "" && (
                 <div className="bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200 flex items-center justify-between text-[11px]">
-                  <span className="text-purple-800 text-[10px]">🔬 Ki-67 细胞增殖指数</span>
+                  <span className="text-purple-800 text-[10px] flex items-center gap-1">
+                    <Microscope className="w-3 h-3 text-purple-600 shrink-0" />
+                    <span>Ki-67 细胞增殖指数</span>
+                  </span>
                   <span className="font-bold text-purple-900">
                     {profile.ki67}%
                   </span>
@@ -1330,7 +1889,8 @@ export default function EvidenceReportPage() {
           {/* Section 3 Consultation Checklist Items */}
           <div className="space-y-2.5 mb-4 relative z-10">
             <div className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-              <span>📋 向主管医生门诊咨询清单 (建议按序请教)</span>
+              <ClipboardList className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span>向主管医生门诊咨询清单 (建议按序请教)</span>
             </div>
 
             {checklistItems.map((item, idx) => (
@@ -1353,13 +1913,16 @@ export default function EvidenceReportPage() {
           {/* Doctor's Notes Area for Clinical Consultations */}
           <div className="mb-4 p-3 rounded-xl border border-dashed border-slate-300 bg-slate-50/70 text-xs relative z-10">
             <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 mb-1.5">
-              <span>✍️ 主管医生门诊面诊指导 / 笔录备忘（支持打印后现场手写）：</span>
+              <span className="flex items-center gap-1.5">
+                <FileEdit className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span>主管医生门诊面诊指导 / 笔录备忘（支持打印后现场手写）：</span>
+              </span>
               <span className="font-normal text-[10px] text-slate-400">医师签名：__________ 日期：____/__/__</span>
             </div>
             <div className="h-8 border-b border-dashed border-slate-200" />
           </div>
 
-          {/* Footer with lung.dpdns.org brand and QR code */}
+          {/* Footer with zhiaiwiki.org brand and QR code */}
           <ExportBrandFooter variant="light" compact />
         </div>
       </div>
@@ -1401,13 +1964,13 @@ export default function EvidenceReportPage() {
                 aria-label="关闭窗口 (Esc)"
                 title="关闭窗口 (Esc)"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Tip banner for mobile users */}
             <div className="bg-amber-50 px-4 py-2 border-b border-amber-200/60 text-xs text-amber-900 flex items-center gap-2 shrink-0">
-              <span className="text-sm flex-shrink-0">💡</span>
+              <Info className="w-3.5 h-3.5 text-amber-600 shrink-0" />
               <span className="text-[11px] leading-tight">
                 <strong>移动端提示</strong>：在手机端可<strong>【长按图片】</strong>保存至相册或直接发送给主管医生与家属。
               </span>
@@ -1418,7 +1981,7 @@ export default function EvidenceReportPage() {
               { }
               <img
                 src={exportedImageUrl}
-                alt="OncoPath 门诊就医问诊便签卡"
+                alt="知癌维基 门诊就医问诊便签卡"
                 className="w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 object-contain"
               />
             </div>

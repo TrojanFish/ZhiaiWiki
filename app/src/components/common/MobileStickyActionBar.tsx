@@ -28,9 +28,9 @@ export default function MobileStickyActionBar({
     } else if (typeof window !== "undefined") {
       const url = window.location.href;
       if (navigator.share) {
-        navigator.share({ title: "OncoPath 循证分析报告", url });
+        navigator.share({ title: "知癌维基 循证分析报告", url });
       } else {
-        navigator.clipboard.writeText(url).then(() => showToast("✓ 页面链接已复制，可分享给家属或医生", "success"));
+        navigator.clipboard.writeText(url).then(() => showToast("页面链接已复制，可分享给家属或医生", "success"));
       }
     }
   };

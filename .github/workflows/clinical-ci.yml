@@ -1,0 +1,71 @@
+name: OncoPath Clinical CI & Evidence Safety Pipeline
+
+on:
+  push:
+    branches: [main, master, 'release/*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clinical-quality-gate:
+    name: Clinical Safety, Superpowers TDD & Production Gate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+
+    env:
+      CI: true
+      NODE_ENV: test
+      DATABASE_URL: "postgresql://postgres:ci_password@localhost:5432/oncopath?schema=public"
+      ADMIN_SECRET: ${{ secrets.ADMIN_SECRET || 'clinical_ci_safety_secret_production_ready_2026' }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || 'ci_deterministic_fallback_key' }}
+      NEXT_TELEMETRY_DISABLED: 1
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: 1. Strict TypeScript Type Check (Zero Error Gate)
+        run: npx tsc --noEmit
+
+      - name: 2. Production Security & PIPL Compliance Audit
+        run: npx tsx scripts/check-production-security.ts
+
+      - name: 3. Vitest Unit & Integration Test Suite (26 Suites, 399+ Tests)
+        run: npx vitest run
+
+      - name: 4. Clinical Guardrails & Multi-Cancer Prompt Decoupling Simulation
+        run: npx tsx scripts/test-guardrails.ts
+
+      - name: 5. Comprehensive Clinical Evidence & DDI Simulation
+        run: npx tsx scripts/comprehensive-simulation.ts
+
+      - name: 6. Exhaustive 7-Dimension Clinical Engine Simulation (44 Scenarios)
+        run: npx tsx scripts/exhaustive-local-simulation.ts
+
+      - name: 7. Production Full Simulation & Cross-Device UI/UX Audit (28 Scenarios)
+        run: npx tsx scripts/production-full-simulation.ts
+
+      - name: 8. Next.js 16 Production Build & Asset Optimization
+        env:
+          NODE_ENV: production
+        run: npm run build

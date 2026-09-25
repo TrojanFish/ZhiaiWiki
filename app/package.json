@@ -10,13 +10,21 @@
     "test:unit": "vitest run",
     "test:guardrails": "tsx scripts/test-guardrails.ts",
     "test:simulation": "tsx scripts/comprehensive-simulation.ts",
+    "test:exhaustive": "tsx scripts/exhaustive-local-simulation.ts",
     "check:security": "tsx scripts/check-production-security.ts",
-    "test": "vitest run && tsx scripts/test-guardrails.ts && tsx scripts/comprehensive-simulation.ts"
+    "test:full": "tsx scripts/production-full-simulation.ts",
+    "review:code": "tsx scripts/review-clinical-diff.ts",
+    "bench:clinical": "tsx scripts/run-clinical-evals.ts",
+    "sim:gynecology": "tsx scripts/simulate-gynecologic-cancers.ts",
+    "test:fullstack": "tsx scripts/comprehensive-fullstack-simulation.ts",
+    "scaffold:cancer": "tsx scripts/scaffold-cancer.ts",
+    "test": "vitest run && tsx scripts/test-guardrails.ts && tsx scripts/comprehensive-simulation.ts && tsx scripts/exhaustive-local-simulation.ts && tsx scripts/production-full-simulation.ts && tsx scripts/simulate-gynecologic-cancers.ts && tsx scripts/comprehensive-fullstack-simulation.ts"
   },
   "dependencies": {
     "@google/genai": "^2.16.0",
     "@prisma/client": "^5.22.0",
     "@tailwindcss/typography": "^0.5.20",
+    "healthicons": "^2.0.0",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",

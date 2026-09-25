@@ -196,7 +196,7 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
           lang === "tw"
             ? "bg-blue-50/90 text-blue-700 border-blue-200 hover:bg-blue-100"
             : "bg-slate-50/90 text-slate-700 border-slate-200/90 hover:bg-slate-100 hover:text-slate-900"
-        } ${className}`}
+        }${className ? ` ${className}` : ""}`}
         title={lang === "cn" ? "點擊切換為繁體中文" : "点击切换为简体中文"}
         aria-label="简繁语言转换 / 簡繁語言轉換"
       >
@@ -217,7 +217,7 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
         lang === "tw"
           ? "bg-blue-50/90 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300"
           : "bg-slate-100/90 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900"
-      } ${className}`}
+      }${className ? ` ${className}` : ""}`}
       title={lang === "cn" ? "點擊切換為繁體中文" : "点击切换为简体中文"}
       aria-label="简繁语言转换 / 簡繁語言轉換"
     >
@@ -227,4 +227,52 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
       </span>
     </button>
   );
+}
+
+export function setGlobalLanguage(targetScript: LangScript) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, targetScript);
+  void convertDocument(targetScript);
+  window.dispatchEvent(
+    new CustomEvent("oncopath-lang-change", { detail: { lang: targetScript } })
+  );
+}
+
+export function getGlobalLanguage(): LangScript {
+  if (typeof window === "undefined") return "cn";
+  return (localStorage.getItem(STORAGE_KEY) as LangScript) || "cn";
+}
+
+export function useLanguage(): {
+  lang: LangScript;
+  setLang: (lang: LangScript) => void;
+  toggleLang: () => void;
+} {
+  const [lang, setLangState] = useState<LangScript>("cn");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setLangState(getGlobalLanguage());
+
+    const handleSync = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.lang) {
+        setLangState(detail.lang);
+      }
+    };
+    window.addEventListener("oncopath-lang-change", handleSync);
+    return () => window.removeEventListener("oncopath-lang-change", handleSync);
+  }, []);
+
+  const setLang = useCallback((target: LangScript) => {
+    setLangState(target);
+    setGlobalLanguage(target);
+  }, []);
+
+  const toggleLang = useCallback(() => {
+    const next: LangScript = lang === "cn" ? "tw" : "cn";
+    setLang(next);
+  }, [lang, setLang]);
+
+  return { lang, setLang, toggleLang };
 }

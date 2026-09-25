@@ -2,6 +2,8 @@
 
 import { Search, X, ShieldCheck } from "lucide-react";
 import type { RiskLevel } from "@/lib/wikiData";
+import type { CancerType } from "@/lib/types";
+import { useCancerType } from "@/components/common/CancerSwitch";
 
 interface WikiSearchBarProps {
   searchQuery: string;
@@ -10,6 +12,7 @@ interface WikiSearchBarProps {
   onRiskChange: (r: RiskLevel | "all") => void;
   totalCount: number;
   filteredCount: number;
+  cancerType?: CancerType;
 }
 
 export function WikiSearchBar({
@@ -19,7 +22,16 @@ export function WikiSearchBar({
   onRiskChange,
   totalCount,
   filteredCount,
+  cancerType: propCancerType,
 }: WikiSearchBarProps) {
+  const { cancerType: contextCancerType } = useCancerType();
+  const cancerType = propCancerType || contextCancerType || "lung";
+  const isBreast = cancerType === "breast";
+
+  const placeholder = isBreast
+    ? "搜索词条：如 'BI-RADS'、'微钙化'、'HER2'、'21基因'、'他莫昔芬'、'阿贝西利'、'CA15-3'..."
+    : "搜索词条：如 '气道播散'、'STAS'、'磨玻璃'、'胸膜'、'奥希替尼'、'切缘'、'CEA'...";
+
   return (
     <div className="bg-white rounded-3xl p-3.5 sm:p-5 border border-slate-200 shadow-sm space-y-3.5">
       {/* Main Search Input */}
@@ -31,7 +43,7 @@ export function WikiSearchBar({
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="搜索词条：如 '气道播散'、'STAS'、'磨玻璃'、'胸膜'、'奥希替尼'、'切缘'、'CEA'..."
+          placeholder={placeholder}
           className="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
         />
         {searchQuery && (

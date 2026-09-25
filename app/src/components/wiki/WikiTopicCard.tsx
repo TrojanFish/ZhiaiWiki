@@ -13,7 +13,7 @@ import {
   HeartPulse,
   Crosshair,
   ArrowRight,
-  Sparkles,
+  Lightbulb,
   PlusCircle,
   Image as ImageIcon,
   BookmarkCheck,
@@ -137,7 +137,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
   const handleCopyReassurance = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const textToCopy = `【${topic.title} · 临床指引与定心丸】\n[生活比喻] ${topic.metaphor}\n[循证定心丸] ${topic.reassurance}\n— 来源：OncoPath 肺结节与肺癌循证视觉百科`;
+    const textToCopy = `【${topic.title} · 临床指引与定心丸】\n[生活比喻] ${topic.metaphor}\n[循证定心丸] ${topic.reassurance}\n— 来源：知癌维基 (ZhiaiWiki) 肺结节与肺癌循证视觉百科`;
     const ok = await copyTextSafe(textToCopy);
     if (ok) {
       setCopied(true);
@@ -168,7 +168,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
       }
 
       setSavedQuestions((prev) => ({ ...prev, [questionText]: true }));
-      triggerToast("✓ 已成功加入门诊就医提问小抄！可在就医便签卡与打印清单中查看。");
+      triggerToast("已成功加入门诊就医提问小抄！可在就医便签卡与打印清单中查看。");
     } catch (e) {
       console.error("Failed to save clinic question", e);
     }
@@ -256,7 +256,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
           {/* Section 1: Life Metaphor (大白话生活比喻) */}
           <div className="bg-gradient-to-r from-amber-50/80 via-orange-50/60 to-amber-50/80 p-4 rounded-2xl border border-amber-200/80 mb-4">
             <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <Lightbulb className="w-3.5 h-3.5 text-amber-700 shrink-0" />
               <span>生活比喻直观破译：</span>
             </div>
             <p className="text-xs sm:text-sm text-amber-950 font-medium leading-relaxed">
@@ -459,10 +459,9 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
             {topic.graphNodeId ? (
               <Link
                 href={`/knowledge?node=${encodeURIComponent(topic.graphNodeId)}`}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+                className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
               >
                 <span>代入知识图谱推演因果链</span>
-                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             ) : (
               <button
@@ -477,10 +476,9 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
 
             <Link
               href="/profile"
-              className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-1"
+              className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
             >
               <span>对比我的档案参数</span>
-              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
@@ -493,6 +491,14 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
           visualDomHtml={capturedVisualHtml || undefined}
           onClose={() => setShowPosterModal(false)}
         />
+      )}
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
       )}
     </>
   );

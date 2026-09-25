@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   HelpCircle,
   HeartPulse,
-  Sparkles,
+  Lightbulb,
   PlusCircle,
   Image as ImageIcon,
   BookmarkCheck,
@@ -22,9 +22,12 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import type { WikiTopic } from "@/lib/wikiData";
-import { RISK_LEVEL_CONFIG, WIKI_CATEGORIES } from "@/lib/wikiData";
+import { RISK_LEVEL_CONFIG, getWikiCategories } from "@/lib/wikiData";
+import { cn } from "@/lib/cn";
+import type { CancerType } from "@/lib/types";
 import WikiTopicIcon from "./WikiTopicIcon";
 import { WikiVisualRenderer } from "./WikiVisualRenderer";
+import PublicWelfareBanner from "../common/PublicWelfareBanner";
 
 // 海报模态框：仅在用户点击"生成海报"时才加载
 const WikiSharePosterModal = dynamic(() => import("./WikiSharePosterModal"), {
@@ -65,6 +68,7 @@ interface WikiDetailDrawerProps {
   isMatchedProfile?: boolean;
   onClose: () => void;
   onNavigate: (topicId: string) => void; // 翻页回调
+  cancerType?: CancerType;
 }
 
 // ── 主组件 ─────────────────────────────────────────────────────────────────
@@ -74,6 +78,7 @@ export function WikiDetailDrawer({
   isMatchedProfile: _isMatchedProfile,
   onClose,
   onNavigate,
+  cancerType = "lung",
 }: WikiDetailDrawerProps) {
   const [expandedFaq, setExpandedFaq]       = useState<number | null>(null);
   const [copied, setCopied]                  = useState(false);
@@ -81,6 +86,7 @@ export function WikiDetailDrawer({
   const [toastMessage, setToastMessage]      = useState<string | null>(null);
   const [savedQuestions, setSavedQuestions]  = useState<Record<string, boolean>>({});
   const [isVisible, setIsVisible]            = useState(false);  // 控制入场动效
+  const [showVisual, setShowVisual]          = useState(true);   // 控制微观模拟器折叠展开
   const drawerRef                            = useRef<HTMLDivElement>(null);
 
   // 当 topic 变化时重置展开状态、触发入场动效
@@ -89,6 +95,7 @@ export function WikiDetailDrawer({
       setExpandedFaq(null);
       setCopied(false);
       setSavedQuestions({});
+      setShowVisual(true);
       // 次一帧触发动效（确保 CSS transition 生效）
       requestAnimationFrame(() => setIsVisible(true));
       // 聚焦抽屉（键盘可访问性）
@@ -129,7 +136,7 @@ export function WikiDetailDrawer({
 
   const handleCopyReassurance = async () => {
     if (!topic) return;
-    const text = `【${topic.title} · 临床指引与定心丸】\n[生活比喻] ${topic.metaphor}\n[循证定心丸] ${topic.reassurance}\n— 来源：OncoPath 肺结节与肺癌循证视觉百科`;
+    const text = `【${topic.title} · 临床指引与定心丸】\n[生活比喻] ${topic.metaphor}\n[循证定心丸] ${topic.reassurance}\n— 来源：知癌维基 (ZhiaiWiki) ${cancerType === "breast" ? "乳腺癌" : cancerType === "colorectal" ? "结直肠癌" : "肺结节与肺癌"}循证视觉百科`;
     const ok = await copyTextSafe(text);
     if (ok) {
       setCopied(true);
@@ -155,7 +162,7 @@ export function WikiDetailDrawer({
         localStorage.setItem("oncopath_clinic_questions", JSON.stringify(list));
       }
       setSavedQuestions((prev) => ({ ...prev, [questionText]: true }));
-      triggerToast("✓ 已成功加入门诊就医提问小抄！可在就医便签卡与打印清单中查看。");
+      triggerToast("已成功加入门诊就医提问小抄！可在就医便签卡与打印清单中查看。");
     } catch (e) {
       console.error("Failed to save clinic question", e);
     }
@@ -165,7 +172,7 @@ export function WikiDetailDrawer({
   if (!topic && !isVisible) return null;
 
   const riskCfg = topic ? RISK_LEVEL_CONFIG[topic.riskLevel] : null;
-  const catCfg  = topic ? WIKI_CATEGORIES[topic.category]    : null;
+  const catCfg  = topic ? getWikiCategories(cancerType)[topic.category] : null;
 
   return (
     <>
@@ -185,15 +192,15 @@ export function WikiDetailDrawer({
         role="dialog"
         aria-modal="true"
         aria-label={topic ? `${topic.title} 详细解读` : "词条详情"}
-        className={`
-          fixed top-0 right-0 bottom-0 z-50
-          w-full sm:w-[600px] lg:w-[680px]
-          bg-white shadow-2xl shadow-slate-900/20
-          flex flex-col overflow-hidden
-          transition-transform duration-300 ease-out
-          focus:outline-none
-          ${isVisible && topic ? "translate-x-0" : "translate-x-full"}
-        `}
+        className={cn(
+          "fixed top-0 right-0 bottom-0 z-50",
+          "w-full sm:w-[600px] lg:w-[680px]",
+          "bg-white shadow-2xl shadow-slate-900/20",
+          "flex flex-col overflow-hidden",
+          "transition-transform duration-300 ease-out",
+          "focus:outline-none",
+          isVisible && topic ? "translate-x-0" : "translate-x-full"
+        )}
       >
         {/* Toast 通知 */}
         {toastMessage && (
@@ -270,31 +277,41 @@ export function WikiDetailDrawer({
           {topic ? (
             <div className="px-5 sm:px-6 py-5 space-y-5">
 
-              {/* 【C 位】专属交互模拟器 ─ 仅下载此 1 个 chunk */}
-              {topic.visualComponent && (
-                <div className="rounded-2xl overflow-hidden border border-slate-200/80 bg-slate-950/[0.02]">
-                  <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse inline-block" />
-                      视觉微观图解与交互模拟
-                    </span>
-                  </div>
-                  <div className="p-1">
-                    <WikiVisualRenderer visualComponent={topic.visualComponent} />
-                  </div>
-                </div>
-              )}
-
-              {/* Section 1: 生活比喻 */}
+              {/* Section 1: 生活比喻 (首要通俗认知与情绪定心) */}
               <div className="bg-gradient-to-r from-amber-50/80 via-orange-50/60 to-amber-50/80 p-4 rounded-2xl border border-amber-200/80">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 mb-2">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                   <span>生活比喻直观破译：</span>
                 </div>
                 <p className="text-sm text-amber-950 font-medium leading-relaxed">
                   {topic.metaphor}
                 </p>
               </div>
+
+              {/* Section 2: 专属交互微观模拟器 (结构紧凑，支持一键折叠展开) */}
+              {topic.visualComponent && (
+                <div className="rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-950/[0.02]">
+                  <div className="px-4 py-2.5 bg-slate-50/90 border-b border-slate-200/80 flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 inline-block" />
+                      视觉微观图解与交互模拟
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowVisual((prev) => !prev)}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-0.5 cursor-pointer select-none active:scale-95 transition-all"
+                    >
+                      <span>{showVisual ? "收起图解" : "展开图解"}</span>
+                      {showVisual ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                  {showVisual && (
+                    <div className="p-1 sm:p-2 max-h-[320px] sm:max-h-[360px] overflow-y-auto overscroll-contain">
+                      <WikiVisualRenderer visualComponent={topic.visualComponent} />
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Section 2: 临床真相 */}
               <div className="space-y-2">
@@ -439,10 +456,9 @@ export function WikiDetailDrawer({
                 {topic.graphNodeId ? (
                   <Link
                     href={`/knowledge?node=${encodeURIComponent(topic.graphNodeId)}`}
-                    className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
                   >
                     <span>代入知识图谱推演因果链</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 ) : (
                   <button
@@ -461,11 +477,15 @@ export function WikiDetailDrawer({
                 )}
                 <Link
                   href="/profile"
-                  className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-1"
+                  className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
                 >
                   <span>对比我的档案参数</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
+              </div>
+
+              {/* 公益同行与爱心接力卡片 */}
+              <div className="pt-2">
+                <PublicWelfareBanner sourceContext="wiki" />
               </div>
 
               {/* 底部占位，避免翻页栏遮挡内容 */}
@@ -482,7 +502,7 @@ export function WikiDetailDrawer({
         </div>
 
         {/* ── 底部翻页导航栏 ─────────────────────────────────────────────── */}
-        <div className="flex-shrink-0 border-t border-slate-100 bg-white/95 backdrop-blur-sm px-5 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div className="flex-shrink-0 border-t border-slate-100 bg-white/95 backdrop-blur-sm px-5 sm:px-6 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:py-3 flex items-center justify-between gap-3">
           {/* 上一词条 */}
           <button
             type="button"
@@ -533,6 +553,14 @@ export function WikiDetailDrawer({
           visualDomHtml={undefined}
           onClose={() => setShowPosterModal(false)}
         />
+      )}
+
+      {/* 浮动提示条 */}
+      {toastMessage && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
       )}
     </>
   );

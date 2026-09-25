@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { hashPassword, generateUserToken, setAuthCookie } from '@/lib/userAuth';
+import { hashPasswordAsync, generateUserToken, setAuthCookie } from '@/lib/userAuth';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, detail: "该账号/邮箱已被注册，请直接登录" }, { status: 409 });
     }
 
-    const { hash, salt } = hashPassword(password);
+    const { hash, salt } = await hashPasswordAsync(password);
 
     const newUser = await prisma.user.create({
       data: {

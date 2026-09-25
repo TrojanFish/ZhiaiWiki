@@ -1,4 +1,5 @@
 import React from 'react';
+import { BarChart3 } from 'lucide-react';
 import type { EdgeEvidence } from '@/lib/knowledgeGraphData';
 
 export function MiniForestPlot({ data }: { data: NonNullable<EdgeEvidence["forestData"]> }) {
@@ -10,8 +11,9 @@ export function MiniForestPlot({ data }: { data: NonNullable<EdgeEvidence["fores
 
   return (
     <div className="mb-4">
-      <p className="text-slate-700 text-xs mb-2 font-bold flex items-center gap-1">
-        <span>📊</span> 森林图（风险比 Hazard Ratio）
+      <p className="text-slate-700 text-xs mb-2 font-bold flex items-center gap-1.5">
+        <BarChart3 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+        <span>森林图（风险比 Hazard Ratio）</span>
       </p>
       <div className="bg-slate-50/90 rounded-xl border border-slate-200 p-2.5">
         <svg viewBox="0 0 100 40" className="w-full select-none" style={{ height: Math.max(data.length * 28 + 15, 60) }}>

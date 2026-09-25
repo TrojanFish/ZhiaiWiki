@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { 
   ShieldCheck, 
   FileText, 
@@ -11,7 +11,6 @@ import {
   Building2, 
   Copy, 
   Check,
-  Sparkles,
   HeartHandshake,
   MapPin,
   FileCheck,
@@ -22,324 +21,448 @@ import {
   Lightbulb
 } from "lucide-react";
 import Footer from "@/components/Footer";
+import { BREAST_DRUG_POLICIES } from "@/lib/breastReimbursementData";
+import { COLORECTAL_DRUG_POLICIES } from "@/lib/colorectalReimbursementData";
+import { GASTRIC_DRUG_POLICIES } from "@/lib/gastricReimbursementData";
+import { LIVER_DRUG_POLICIES } from "@/lib/liverReimbursementData";
+import { ESOPHAGEAL_DRUG_POLICIES } from "@/lib/esophagealReimbursementData";
+import { THYROID_DRUG_POLICIES } from "@/lib/thyroidReimbursementData";
+import { ENDOMETRIAL_DRUG_POLICIES } from "@/lib/endometrialReimbursementData";
+import { CERVICAL_DRUG_POLICIES } from "@/lib/cervicalReimbursementData";
+import { PANCREATIC_DRUG_POLICIES } from "@/lib/pancreaticReimbursementData";
+import { DRUG_POLICIES, type DrugPolicy } from "@/lib/reimbursementData";
+import { useCancerType } from "@/components/common/CancerSwitch";
+import { CancerIcon } from "@/components/common/CancerIcons";
+import { CancerRegistry } from "@/lib/cancerRegistry";
+import type { CancerType } from "@/lib/types";
 
-interface DrugPolicy {
-  id: string;
-  name: string;
-  genericName: string;
-  manufacturer: string;
-  target: string;
-  categoryTag: "egfr" | "alk_ros1" | "rare_targets" | "immunotherapy";
-  originalPrice: number;    // 国谈前月自费(元)
-  negotiatedPrice: number;  // 现行国谈医保基准价月费用(元)
-  insuranceCategory: "甲类 (全额统筹)" | "乙类 (先行自付5%~15%)" | "未进基本医保 (惠民保/PAP覆盖)";
-  inInsurance: boolean;
-  officialIndication: string;  // 官方说明书适应证
-  reimbursementLimits: string; // 医保限定支付范围（报销红线）
-  offLabelNotice?: string;     // 超医保范围自费提醒
-  papProgram: string;          // 官方慈善赠药项目名称
-  papFoundation: string;       // 主办基金会
-  papRule: string;             // 具体买赠/援助规则
+interface CancerReimbursementMeta {
+  badge: string;
+  title: string;
+  subtitle: string;
+  calcTitle: string;
+  tableTitle: string;
+  appDiseaseName: string;
+  sampleDrugName: string;
+  categories: Array<{ id: string; label: string; activeColor?: string }>;
+  materials: {
+    pathologyReq: string;
+    pathologyTip: string;
+    geneticsTitle: string;
+    geneticsReq: string;
+    geneticsTip: string;
+  };
+  checklistText: string;
 }
 
-const DRUG_POLICIES: DrugPolicy[] = [
-  // --- EGFR 靶向体系 ---
-  {
-    id: "osimertinib",
-    name: "泰瑞沙",
-    genericName: "甲磺酸奥希替尼片 (80mg)",
-    manufacturer: "阿斯利康 (AstraZeneca)",
-    target: "EGFR 19del / L858R / T790M",
-    categoryTag: "egfr",
-    originalPrice: 51000,
-    negotiatedPrice: 5580,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① EGFR 敏感突变局部晚期或转移性 NSCLC 一线治疗；② 经既往 EGFR-TKI 治疗后进展且 T790M 突变阳性；③ IB-IIIA 期 (AJCC第7版) EGFR 敏感突变术后辅助治疗。",
-    reimbursementLimits: "限 EGFR 外显子 19 缺失或 L858R 置换突变的局部晚期或转移性 NSCLC 一线，或既往进展经检验 T790M 突变阳性；术后辅助治疗（IB-IIIA期）已纳保。",
-    offLabelNotice: "未行基因检测盲吃、或非小细胞肺癌以外癌种不予医保支付，需完全自费。",
-    papProgram: "泰瑞沙慈善援助项目",
-    papFoundation: "中华慈善总会 (CCF)",
-    papRule: "符合医学条件的低保患者全额免费援助；非低保患者自付达到一定周期后提供后续免费药品援助。"
+const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
+  lung: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (肺癌专区)",
+    title: "破除用药负担 · 肺癌特药医保与慈善赠药",
+    subtitle: "系统梳理 16 大肺腺癌主流靶向与免疫药物官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "肺腺癌 16 大特药自负费用在线测算模拟器",
+    tableTitle: "16 大主流肺腺癌特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "肺恶性肿瘤 / 肺癌",
+    sampleDrugName: "奥希替尼 (泰瑞沙)",
+    categories: [
+      { id: "all", label: "全部 16 种特药", activeColor: "bg-slate-900" },
+      { id: "egfr", label: "EGFR 靶向 (泰瑞沙/艾弗沙/阿美乐等)", activeColor: "bg-blue-600" },
+      { id: "alk_ros1", label: "ALK / ROS1 (安圣莎/博瑞纳/罗圣全)", activeColor: "bg-purple-600" },
+      { id: "rare_targets", label: "罕见靶点 MET/RET/KRAS/HER2", activeColor: "bg-teal-600" },
+      { id: "immunotherapy", label: "免疫治疗 PD-1/PD-L1 (国产/进口)", activeColor: "bg-indigo-600" },
+    ],
+    materials: {
+      pathologyReq: "明确诊断为原发性非小细胞肺癌/肺腺癌的病理切片报告单原件及复印件（注明病理组织学亚型）。",
+      pathologyTip: "注明病理组织学亚型（如浸润性腺癌/鳞癌/微浸润）及关键免疫组化结果。",
+      geneticsTitle: "4. 分子基因分型 / PD-L1 表达报告",
+      geneticsReq: "具备资质的三甲医院或正规第三方实验室出具的 NGS / PCR 基因检测报告单。",
+      geneticsTip: "注明 EGFR 19del/L858R、ALK 融合或 KRAS/RET/MET 等靶点突变丰度及 PD-L1 TPS 评分。",
+    },
+    checklistText: `【肺癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 病历依据：近半年经治三甲医院住院病历、出院小结或门诊病历（须加盖医院病案室鲜章）；
+3. 病理报告：明确诊断为原发性非小细胞肺癌/肺腺癌的病理切片报告单（加盖公章）；
+4. 分子基因分型：正规基因检测报告（注明 EGFR / ALK / ROS1 / MET / RET / KRAS 等突变或 PD-L1 表达单）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "fumetinib",
-    name: "艾弗沙",
-    genericName: "甲磺酸伏美替尼片 (80mg)",
-    manufacturer: "江苏艾力斯 (Allist)",
-    target: "EGFR 敏感突变 / 20外显子插入",
-    categoryTag: "egfr",
-    originalPrice: 28000,
-    negotiatedPrice: 5200,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① EGFR 19del/L858R 局部晚期或转移性 NSCLC 一线治疗；② 既往 EGFR-TKI 治疗进展后 T790M 突变二线；③ 20外显子插入突变（获批突破性疗法）。",
-    reimbursementLimits: "限 EGFR 敏感突变局部晚期/转移性一线及 T790M 突变二线治疗。",
-    offLabelNotice: "20 外显子插入突变在部分省份医保报销需个案审核或走惠民保特药通道。",
-    papProgram: "生命之光·艾弗沙患者援助项目",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "自费购药达指定周期并经医学评估持续获益且耐受良好者，可申请后续周期药品援助。"
+  breast: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (乳腺癌专区)",
+    title: "破除用药负担 · 乳腺癌特药医保与慈善赠药",
+    subtitle: "系统梳理乳腺癌主流靶向、CDK4/6、ADC 与内分泌特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "乳腺癌重大特药自负费用在线测算模拟器",
+    tableTitle: "乳腺癌重大特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "乳腺恶性肿瘤 / 乳腺癌",
+    sampleDrugName: "曲妥珠单抗 (赫赛汀)",
+    categories: [
+      { id: "all", label: "全部特药", activeColor: "bg-slate-900" },
+      { id: "her2", label: "HER2 靶向 (赫赛汀/帕捷特)", activeColor: "bg-blue-600" },
+      { id: "cdk46", label: "CDK4/6 抑制剂 (唯择/爱谱沙)", activeColor: "bg-purple-600" },
+      { id: "endocrine", label: "内分泌/SERD (芙仕得)", activeColor: "bg-teal-600" },
+      { id: "adc", label: "新型 ADC (优赫得 T-DXd)", activeColor: "bg-indigo-600" },
+      { id: "parp_immuno", label: "PARP 抑制剂 (利普卓)", activeColor: "bg-rose-600" },
+    ],
+    materials: {
+      pathologyReq: "明确诊断为原发性浸润性乳腺癌的病理切片报告单原件及复印件（注明浸润组织学分级）。",
+      pathologyTip: "注明组织学浸润分级（Nottingham Grade）及脉管/神经侵犯情况。",
+      geneticsTitle: "4. 免疫组化与分子分型报告",
+      geneticsReq: "三甲医院出具的 ER、PR、HER2 (IHC/FISH)、Ki-67 或 21-基因 RS / BRCA1/2 报告单。",
+      geneticsTip: "注明 HER2 状态 (IHC 3+ 或 FISH 阳性，或 IHC 1+/2+ 低表达) 及 ER/PR 阳性百分比。",
+    },
+    checklistText: `【乳腺癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 病历依据：近半年经治三甲医院住院病历、出院小结或门诊病历（须加盖医院病案室鲜章）；
+3. 病理报告：明确诊断为原发性浸润性乳腺癌的病理切片报告单（加盖公章，注明浸润分级）；
+4. 免疫组化与基因：ER/PR、HER2 (IHC/FISH)、Ki-67 报告单，或 21-基因 RS / BRCA1/2 报告；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "aumolertinib",
-    name: "阿美乐",
-    genericName: "甲磺酸阿美替尼片 (55mg/110mg)",
-    manufacturer: "江苏豪森 (Hansoh)",
-    target: "EGFR 19del / L858R / T790M",
-    categoryTag: "egfr",
-    originalPrice: 29000,
-    negotiatedPrice: 3504,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① EGFR 敏感突变晚期一线治疗；② 既往治疗进展后 T790M 突变晚期治疗。",
-    reimbursementLimits: "限 EGFR 外显子 19 缺失或 L858R 突变晚期一线，以及 T790M 突变二线。",
-    offLabelNotice: "早期术后辅助尚未完全纳入统筹，多以门诊自费或双通道自付结算。",
-    papProgram: "阿美乐患者援助项目",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "针对非医保覆盖或自付压力较大的患者提供买赠周期援助。"
+  colorectal: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (结直肠癌专区)",
+    title: "破除用药负担 · 结直肠癌特药医保与慈善赠药",
+    subtitle: "系统梳理结直肠癌抗 EGFR、抗 VEGF、小分子抗血管、口服化疗与免疫特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "结直肠癌核心特药自负费用在线测算模拟器",
+    tableTitle: "结直肠癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "结直肠恶性肿瘤 / 结肠癌 / 直肠癌",
+    sampleDrugName: "西妥昔单抗 (爱必妥)",
+    categories: [
+      { id: "all", label: "全部 7 种肠癌特药", activeColor: "bg-slate-900" },
+      { id: "egfr", label: "抗 EGFR 单抗 (爱必妥/西妥昔)", activeColor: "bg-blue-600" },
+      { id: "vegf", label: "抗 VEGF 血管生成 (安维汀/贝伐珠)", activeColor: "bg-emerald-600" },
+      { id: "anti_angiogenesis", label: "小分子抗血管 (爱优特/呋喹替尼)", activeColor: "bg-amber-600" },
+      { id: "multitarget", label: "多靶点激酶 (拜万戈/瑞戈非尼)", activeColor: "bg-purple-600" },
+      { id: "chemo_oral", label: "口服抗代谢 (朗斯弗/TAS-102)", activeColor: "bg-teal-600" },
+      { id: "pd1", label: "dMMR/MSI-H 免疫 (K药/帕博利珠)", activeColor: "bg-rose-600" },
+    ],
+    materials: {
+      pathologyReq: "明确诊断为原发性结直肠腺癌的病理组织报告单原件及肠镜检查出院小结。",
+      pathologyTip: "注明左右半发生部位、组织分化程度、浸润深度及脉管癌栓/神经侵犯。",
+      geneticsTitle: "4. RAS/BRAF 基因与 MMR/MSI 筛查报告",
+      geneticsReq: "正规分子检测报告单（明确 KRAS/NRAS/BRAF 全外显子突变状态及 MMR/MSI 表达）。",
+      geneticsTip: "西妥昔单抗报销必须提供全 RAS/BRAF 野生型报告；免疫单药报销须具备 dMMR 或 MSI-H 凭证。",
+    },
+    checklistText: `【结直肠癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 病历依据：近半年经治三甲医院住院病历、肠镜活检或手术出院小结（须加盖医院病案室鲜章）；
+3. 病理报告：明确诊断为原发性结直肠腺癌的病理组织报告单（注明浸润分期及脉管浸润）；
+4. 分子基因分型：正规基因检测报告（明确 RAS、BRAF 及 MSI/dMMR 状态，西妥昔单抗须提供左半野生型凭证）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "dacomitinib",
-    name: "多泽润",
-    genericName: "达可替尼片 (45mg)",
-    manufacturer: "辉瑞 (Pfizer)",
-    target: "二代 EGFR (强效脑转移控制)",
-    categoryTag: "egfr",
-    originalPrice: 18000,
-    negotiatedPrice: 3880,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "EGFR 敏感突变（19del / L858R）局部晚期或转移性 NSCLC 一线单药治疗。",
-    reimbursementLimits: "限 EGFR 外显子 19 缺失或 L858R 突变的局部晚期或转移性 NSCLC 一线治疗。",
-    offLabelNotice: "二线进展后或无基因证据者不可报销。",
-    papProgram: "多泽润患者关爱项目",
-    papFoundation: "中国癌症基金会",
-    papRule: "阶梯式用药援助，具体依年度项目公告方案执行。"
+  colon: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (结肠癌专区)",
+    title: "破除用药负担 · 结肠癌特药医保与慈善赠药",
+    subtitle: "系统梳理结肠癌左半/右半靶向分流、抗 EGFR、抗 VEGF、口服化疗与免疫特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "结肠癌核心特药自负费用在线测算模拟器",
+    tableTitle: "结肠癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "结肠恶性肿瘤",
+    sampleDrugName: "西妥昔单抗 (爱必妥)",
+    categories: [
+      { id: "all", label: "全部 7 种肠癌特药", activeColor: "bg-slate-900" },
+      { id: "egfr", label: "抗 EGFR 单抗 (爱必妥/西妥昔)", activeColor: "bg-blue-600" },
+      { id: "vegf", label: "抗 VEGF 血管生成 (安维汀/贝伐珠)", activeColor: "bg-emerald-600" },
+      { id: "anti_angiogenesis", label: "小分子抗血管 (爱优特/呋喹替尼)", activeColor: "bg-amber-600" },
+      { id: "multitarget", label: "多靶点激酶 (拜万戈/瑞戈非尼)", activeColor: "bg-purple-600" },
+      { id: "chemo_oral", label: "口服抗代谢 (朗斯弗/TAS-102)", activeColor: "bg-teal-600" },
+      { id: "pd1", label: "dMMR/MSI-H 免疫 (K药/帕博利珠)", activeColor: "bg-rose-600" },
+    ],
+    materials: {
+      pathologyReq: "明确诊断为原发性结肠腺癌的病理切片报告单原件及结肠镜出院小结。",
+      pathologyTip: "注明回盲部/升结肠/横结肠/降结肠/乙状结肠原发部位、浸润深度及脉管神经侵犯。",
+      geneticsTitle: "4. RAS/BRAF 基因与 MMR/MSI 报告",
+      geneticsReq: "正规分子检测报告单（明确 KRAS/NRAS/BRAF 全外显子及 MMR/MSI 状态）。",
+      geneticsTip: "西妥昔单抗报销必须提供全 RAS/BRAF 野生型且原发于左半结肠凭证。",
+    },
+    checklistText: `【结肠癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 病历依据：近半年经治三甲医院住院病历、结肠镜活检或手术出院小结（须加盖医院病案室鲜章）；
+3. 病理报告：明确诊断为原发性结肠腺癌的病理组织报告单（注明浸润分期及脉管浸润）；
+4. 分子基因分型：正规基因检测报告（明确 RAS、BRAF 及 MSI/dMMR 状态，西妥昔单抗须提供左半野生型凭证）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "gefitinib",
-    name: "易瑞沙 / 吉非替尼",
-    genericName: "吉非替尼片 (集采中选)",
-    manufacturer: "阿斯利康 / 齐鲁制药等",
-    target: "一代 EGFR 敏感突变",
-    categoryTag: "egfr",
-    originalPrice: 5000,
-    negotiatedPrice: 260,
-    insuranceCategory: "甲类 (全额统筹)",
-    inInsurance: true,
-    officialIndication: "EGFR 敏感突变局部晚期或转移性 NSCLC 一线治疗。",
-    reimbursementLimits: "国家集中带量采购 (VBP) 药品，纳入门慢门特直接全额统筹报销，个人自付极低（月均仅几十元）。",
-    papProgram: "已全额集采医保覆盖（无需 PAP）",
-    papFoundation: "国家集中采购保障",
-    papRule: "已降至极低基准价，基本医保直接统筹 85%~90%，无需申请慈善赠药。"
+  rectal: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (直肠癌专区)",
+    title: "破除用药负担 · 直肠癌特药医保与慈善赠药",
+    subtitle: "系统梳理直肠癌新辅助同步放化疗增敏、抗 EGFR、抗 VEGF、小分子抗血管与免疫特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "直肠癌核心特药自负费用在线测算模拟器",
+    tableTitle: "直肠癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "直肠恶性肿瘤",
+    sampleDrugName: "西妥昔单抗 / 贝伐珠单抗",
+    categories: [
+      { id: "all", label: "全部 7 种肠癌特药", activeColor: "bg-slate-900" },
+      { id: "egfr", label: "抗 EGFR 单抗 (爱必妥/西妥昔)", activeColor: "bg-blue-600" },
+      { id: "vegf", label: "抗 VEGF 血管生成 (安维汀/贝伐珠)", activeColor: "bg-emerald-600" },
+      { id: "anti_angiogenesis", label: "小分子抗血管 (爱优特/呋喹替尼)", activeColor: "bg-amber-600" },
+      { id: "multitarget", label: "多靶点激酶 (拜万戈/瑞戈非尼)", activeColor: "bg-purple-600" },
+      { id: "chemo_oral", label: "口服抗代谢 (朗斯弗/TAS-102)", activeColor: "bg-teal-600" },
+      { id: "pd1", label: "dMMR/MSI-H 免疫 (K药/帕博利珠)", activeColor: "bg-rose-600" },
+    ],
+    materials: {
+      pathologyReq: "明确诊断为原发性直肠腺癌的病理切片报告单原件及直肠薄层 MRI 分期报告。",
+      pathologyTip: "注明距齿状线距离、环周切缘 (CRM) 状态、EMVI 壁外血管侵犯及浸润深度。",
+      geneticsTitle: "4. RAS/BRAF 基因与 MMR/MSI 报告",
+      geneticsReq: "正规分子检测报告单（明确 KRAS/NRAS/BRAF 全外显子及 MMR/MSI 状态）。",
+      geneticsTip: "全程新辅助 (TNT) 及转化治疗报销需结合直肠高分辨 MRI 阳性风险特征与基因报告。",
+    },
+    checklistText: `【直肠癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 病历依据：近半年经治三甲医院住院病历、直肠镜活检或手术出院小结（须加盖医院病案室鲜章）；
+3. 病理报告：明确诊断为原发性直肠腺癌的病理组织报告单（注明浸润分期及 CRM/EMVI 状态）；
+4. 分子基因分型：正规基因检测报告（明确 RAS、BRAF 及 MSI/dMMR 状态，西妥昔单抗须提供野生型凭证）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-
-  // --- ALK & ROS1 体系 ---
-  {
-    id: "alectinib",
-    name: "安圣莎",
-    genericName: "盐酸阿来替尼胶囊 (150mg)",
-    manufacturer: "罗氏 (Roche)",
-    target: "ALK 融合阳性 (钻石突变)",
-    categoryTag: "alk_ros1",
-    originalPrice: 49980,
-    negotiatedPrice: 8500,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① ALK 阳性局部晚期或转移性 NSCLC 一线治疗；② ALINA 试验 ALK 阳性 IB-IIIA 期术后辅助治疗。",
-    reimbursementLimits: "限 ALK 阳性的局部晚期或转移性 NSCLC 患者；术后辅助适应证在各省市医保逐步落实挂网中。",
-    offLabelNotice: "术后辅助治疗用药若当地尚未完成系统编码更新，可凭处方走双通道或惠民保二次报销。",
-    papProgram: "安圣莎患者援助项目",
-    papFoundation: "中国癌症基金会 (CFC)",
-    papRule: "自费购药满指定周期（如 4~6 个月）后，经评估无进展提供后续周期的免费药品援助。"
+  gastric: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (胃癌专区)",
+    title: "破除用药负担 · 胃癌特药医保与慈善赠药",
+    subtitle: "系统梳理胃癌 HER2 / Claudin 18.2 靶向、PD-1 免疫、抗血管与口服化疗特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "胃癌核心特药自负费用在线测算模拟器",
+    tableTitle: "胃癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "胃恶性肿瘤 / 胃腺癌",
+    sampleDrugName: "曲妥珠单抗 (赫赛汀) / 纳武利尤单抗",
+    categories: [
+      { id: "all", label: "全部胃癌特药", activeColor: "bg-slate-900" },
+      { id: "targeted", label: "分子靶向 (赫赛汀/佐妥昔/阿帕替尼)", activeColor: "bg-blue-600" },
+      { id: "immuno", label: "PD-1 免疫 (欧狄沃/纳武利尤)", activeColor: "bg-purple-600" },
+      { id: "chemo", label: "口服化疗 (希罗达/替吉奥 S-1)", activeColor: "bg-teal-600" },
+    ],
+    materials: {
+      pathologyReq: "明确诊断为原发性胃腺癌（含胃食管结合部腺癌）的胃镜活检或手术病理报告单。",
+      pathologyTip: "注明 Lauren 组织学分型（肠型/弥漫型/混合型）、印戒细胞占比及分化级别。",
+      geneticsTitle: "4. HER2 / Claudin 18.2 / PD-L1 (CPS) 报告",
+      geneticsReq: "病理科出具的 HER2 (IHC/FISH)、Claudin 18.2 免疫组化单及 PD-L1 CPS 评分报告。",
+      geneticsTip: "赫赛汀报销需具备 HER2 IHC 3+ 或 FISH 扩增凭证；欧狄沃一线报销限定 PD-L1 CPS ≥ 5。",
+    },
+    checklistText: `【胃癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 病历依据：近半年经治三甲医院胃镜检查报告、住院病历或出院小结（须加盖医院病案室鲜章）；
+3. 病理报告：明确诊断为原发性胃腺癌（含胃食管结合部）病理切片报告单（注明 Lauren 分型与印戒细胞占比）；
+4. 分子靶标与免疫：HER2 (IHC/FISH) 报告单、Claudin 18.2 表达单、PD-L1 (CPS评分) 及 MMR/MSI 筛查报告；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "lorlatinib",
-    name: "博瑞纳",
-    genericName: "劳拉替尼片 / 洛拉替尼 (100mg)",
-    manufacturer: "辉瑞 (Pfizer)",
-    target: "三代 ALK / ROS1 难治脑转移",
-    categoryTag: "alk_ros1",
-    originalPrice: 42000,
-    negotiatedPrice: 11800,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① ALK 阳性晚期 NSCLC 一线治疗；② 经阿来替尼/塞瑞替尼耐药进展后的后线治疗。",
-    reimbursementLimits: "限 ALK 阳性晚期非小细胞肺癌患者的一线或后线治疗。",
-    offLabelNotice: "ROS1 突变后线在部分省份属于超说明书用药，建议走惠民保特药通道申报。",
-    papProgram: "博瑞纳患者援助项目",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "针对自付负担较重且持续获益的患者提供阶梯式赠药援助。"
+  liver: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (原发性肝癌专区)",
+    title: "破除用药负担 · 原发性肝癌特药医保与慈善赠药",
+    subtitle: "系统梳理原发性肝细胞癌 T+A 双达方案、小分子多靶点 TKI 与 HAIC 特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "原发性肝癌核心特药自负费用在线测算模拟器",
+    tableTitle: "原发性肝癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "原发性肝恶性肿瘤 / 肝细胞癌",
+    sampleDrugName: "信迪利单抗 (达伯舒) / 仑伐替尼",
+    categories: [
+      { id: "all", label: "全部肝癌特药", activeColor: "bg-slate-900" },
+      { id: "immuno", label: "免疫治疗 (达伯舒信迪利/泰圣奇阿替利珠)", activeColor: "bg-purple-600" },
+      { id: "targeted", label: "抗血管与靶向 TKI (乐卫玛仑伐替尼/泽普生)", activeColor: "bg-blue-600" },
+    ],
+    materials: {
+      pathologyReq: "肝穿刺活检组织病理学报告单，或三甲医院增强 CT/MRI + AFP 确立的 CNLC 诊断报告。",
+      pathologyTip: "注明 CNLC 临床分期、门静脉主干及分支癌栓侵犯程度（Vp1~Vp4）与转移情况。",
+      geneticsTitle: "4. 肝储备功能 (Child-Pugh/ALBI) 与乙肝定量",
+      geneticsReq: "近一个月内肝功能生物化学全套（胆红素、白蛋白、INR）与 HBV-DNA / HCV 报告。",
+      geneticsTip: "小分子 TKI 与免疫一线报销均限定肝功能储备良好（Child-Pugh A 级或较好的 B 级）。",
+    },
+    checklistText: `【原发性肝癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 影像病历依据：近半年增强 CT/MRI 动态造影报告、出院小结及门静脉系统超声造影（盖病案室鲜章）；
+3. 临床/病理诊断：原发性肝细胞癌组织活检报告或三级甲等医院确立的 CNLC 临床诊断依据书；
+4. 肝功能与病原学：Child-Pugh/ALBI 肝储备评级检验单、AFP 甲胎蛋白定量单、HBV-DNA / HCV 病毒载量报告；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "entrectinib",
-    name: "罗圣全",
-    genericName: "恩曲替尼胶囊 (200mg)",
-    manufacturer: "罗氏 (Roche)",
-    target: "ROS1 融合 / NTRK 广谱突变",
-    categoryTag: "alk_ros1",
-    originalPrice: 37000,
-    negotiatedPrice: 8900,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① ROS1 阳性局部晚期或转移性 NSCLC；② NTRK 融合阳性泛癌种晚期实体瘤。",
-    reimbursementLimits: "限 ROS1 阳性晚期非小细胞肺癌，或 NTRK 阳性实体瘤。",
-    papProgram: "罗圣全患者援助项目",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "符合入组标准的 ROS1 突变肺癌患者可申请买赠周期支持。"
+  esophageal: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (食管癌专区)",
+    title: "破除用药负担 · 食管癌特药医保与慈善赠药",
+    subtitle: "系统梳理食管鳞癌一线 PD-1 免疫联合化疗、术后辅助免疫维持与放化疗特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "食管癌核心特药自负费用在线测算模拟器",
+    tableTitle: "食管癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "食管恶性肿瘤 / 食管鳞癌",
+    sampleDrugName: "卡瑞利珠单抗 (艾瑞卡) / 替雷利珠",
+    categories: [
+      { id: "all", label: "全部食管癌特药", activeColor: "bg-slate-900" },
+      { id: "immuno", label: "PD-1 免疫一线与辅助 (艾瑞卡/百泽安/汉斯状)", activeColor: "bg-purple-600" },
+      { id: "chemo", label: "系统化疗与新辅助 (白蛋白紫杉醇)", activeColor: "bg-teal-600" },
+    ],
+    materials: {
+      pathologyReq: "胃镜咬检或手术切除食管鳞癌组织病理学报告单原件及复印件。",
+      pathologyTip: "注明组织学类型（通常为鳞状细胞癌 ESCC）、分化程度及喉返神经链等淋巴结转移状态。",
+      geneticsTitle: "4. PD-L1 表达 (CPS) 与手术残存病理评估",
+      geneticsReq: "免疫组化 PD-L1 表达报告单（注明抗体克隆号及 CPS 评分）或术后残存病灶凭证。",
+      geneticsTip: "CheckMate-577 术后辅助免疫报销须提供新辅助放化疗后手术切除标本有残存病灶 (non-pCR) 凭证。",
+    },
+    checklistText: `【食管癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 内镜病历依据：消化内镜咬检记录、胸部增强 CT/PET-CT 分期报告及出院小结（加盖病案室鲜章）；
+3. 病理组织报告：明确诊断为食管鳞状细胞癌 (ESCC) 或腺癌的病理组织报告单（注明浸润深度）；
+4. 免疫表达/手术残存：PD-L1 表达单（CPS 评分）或术后病理残存病灶凭证（CheckMate-577 non-pCR 依据）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-
-  // --- 罕见靶点 & ADC 体系 ---
-  {
-    id: "savolitinib",
-    name: "沃瑞沙",
-    genericName: "赛沃替尼片 (200mg)",
-    manufacturer: "和黄医药 / 阿斯利康",
-    target: "MET 14号外显子跳跃突变 / MET 扩增",
-    categoryTag: "rare_targets",
-    originalPrice: 19800,
-    negotiatedPrice: 4800,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "含铂化疗后进展或不耐受标准含铂化疗的 MET 外显子 14 跳跃突变局部晚期或转移性 NSCLC。",
-    reimbursementLimits: "限 MET 外显子 14 跳跃突变的局部晚期或转移性 NSCLC。",
-    offLabelNotice: "EGFR-TKI 耐药后的 MET 扩增双靶联合在部分地区属于超医保限定，需自费或走特药理赔。",
-    papProgram: "沃瑞沙患者援助项目",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "按买赠周期援助，大幅减轻罕见突变家庭负担。"
+  thyroid: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (甲状腺癌专区)",
+    title: "破除用药负担 · 甲状腺癌特药医保与慈善赠药",
+    subtitle: "系统梳理甲状腺癌术后终身 TSH 抑制优甲乐、放射性碘难治小分子靶向与副甲状腺保护特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "甲状腺癌核心特药自负费用在线测算模拟器",
+    tableTitle: "甲状腺癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "甲状腺恶性肿瘤 / 甲状腺乳头状癌",
+    sampleDrugName: "左甲状腺素钠片 (优甲乐) / 仑伐替尼",
+    categories: [
+      { id: "all", label: "全部甲状腺特药", activeColor: "bg-slate-900" },
+      { id: "endocrine", label: "TSH 抑制与终身替代 (优甲乐/雷替斯)", activeColor: "bg-blue-600" },
+      { id: "targeted", label: "小分子靶向与 RET 抑制剂 (乐卫玛/普吉华)", activeColor: "bg-purple-600" },
+      { id: "supportive", label: "术后钙磷代谢支持 (骨化三醇/碳酸钙)", activeColor: "bg-teal-600" },
+    ],
+    materials: {
+      pathologyReq: "甲状腺细针穿刺 (FNA) 细胞学报告或手术切除标本组织病理切片报告单。",
+      pathologyTip: "注明 Bethesda 细胞学分级、乳头状癌/滤泡状癌/髓样癌亚型、被膜侵犯及淋巴结清扫转移枚数。",
+      geneticsTitle: "4. 分子基因突变 (BRAF/RET) 与甲功五项报告",
+      geneticsReq: "三甲医院或检验所出具的 BRAF V600E / RET 突变检测报告单及术后甲状腺功能（TSH/FT3/FT4/Tg）。",
+      geneticsTip: "碘难治性靶向药（仑伐替尼）报销必须具备核医学科出具的放射性碘131摄取阴性或治疗进展评估。",
+    },
+    checklistText: `【甲状腺癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 术后病历依据：甲状腺手术记录、出院小结或细针穿刺 (FNA) 门诊病历（加盖病案室鲜章）；
+3. 病理组织报告：明确诊断为甲状腺乳头状癌/滤泡状癌/髓样癌病理切片报告单（注明被膜侵犯与淋巴结转移）；
+4. 分子基因与甲功：BRAF V600E / RET 突变检测报告单，近 1 个月甲状腺功能五项（TSH/FT3/FT4/Tg/TgAb）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "selpercatinib",
-    name: "睿妥",
-    genericName: "塞普替尼胶囊 (80mg)",
-    manufacturer: "礼来 (Eli Lilly)",
-    target: "RET 融合阳性 (强效高选择性)",
-    categoryTag: "rare_targets",
-    originalPrice: 32000,
-    negotiatedPrice: 9500,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "RET 融合阳性局部晚期或转移性 NSCLC 成人患者。",
-    reimbursementLimits: "限 RET 融合阳性的局部晚期或转移性非小细胞肺癌。",
-    papProgram: "睿妥患者关爱援助项目",
-    papFoundation: "中国癌症基金会",
-    papRule: "经医学评估证实持续获益的 RET 突变患者享受赠药支持。"
+  endometrial: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (子宫内膜癌专区)",
+    title: "破除用药负担 · 子宫内膜癌特药医保与慈善赠药",
+    subtitle: "系统梳理子宫内膜癌大剂量孕激素逆转保生育、TC 方案一线辅助化疗、MSI-H 免疫单药与靶免联合官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "子宫内膜癌核心特药自负费用在线测算模拟器",
+    tableTitle: "子宫内膜癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "子宫内膜恶性肿瘤 / 子宫体癌",
+    sampleDrugName: "醋酸甲地孕酮 (美适亚) / 仑伐替尼",
+    categories: [
+      { id: "all", label: "全部内膜癌特药", activeColor: "bg-slate-900" },
+      { id: "endocrine", label: "高效孕激素 (美适亚/醋酸甲地孕酮)", activeColor: "bg-teal-600" },
+      { id: "chemo", label: "术后辅助化疗 (紫杉醇+卡铂 TC方案)", activeColor: "bg-blue-600" },
+      { id: "immune", label: "MSI-H/dMMR 免疫 (可瑞达 K 药)", activeColor: "bg-purple-600" },
+      { id: "targeted", label: "晚期靶免联合 (乐卫玛仑伐替尼)", activeColor: "bg-indigo-600" },
+    ],
+    materials: {
+      pathologyReq: "诊断性刮宫、宫腔镜活检或子宫切除术后组织病理切片报告单。",
+      pathologyTip: "注明内膜样腺癌组织学分级（G1/G2/G3）、肌层浸润深度（<1/2 或 ≥1/2）及脉管癌栓 (LVSI)。",
+      geneticsTitle: "4. FIGO 2023 四大分子分型 (POLE/MMR/p53) 报告",
+      geneticsReq: "具备资质的病理分子实验室出具的 POLE 突变测序、MMR 免疫组化四项及 p53 表达报告。",
+      geneticsTip: "免疫治疗（帕博利珠单抗）报销需具备 dMMR 或 MSI-H 凭证；保留生育功能需提供年轻与 PR 阳性依据。",
+    },
+    checklistText: `【子宫内膜癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 诊刮病历依据：诊断性刮宫、宫腔镜检查报告或子宫全切手术出院小结（加盖病案室鲜章）；
+3. 病理组织报告：明确诊断为子宫内膜样腺癌的病理切片报告单（注明分化级别 G1~G3、肌层浸润深度及脉管癌栓）；
+4. 分子分型报告：FIGO 2023 四分子分型报告（POLE 测序、MMR 免疫组化四项、p53 表达及 ER/PR 受体状态）；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "fulzerasib",
-    name: "达伯特",
-    genericName: "氟泽雷塞片 (KRAS G12C抑制剂)",
-    manufacturer: "信达生物 / 劲方医药",
-    target: "KRAS G12C 突变突破",
-    categoryTag: "rare_targets",
-    originalPrice: 22000,
-    negotiatedPrice: 12000,
-    insuranceCategory: "未进基本医保 (惠民保/PAP覆盖)",
-    inInsurance: false,
-    officialIndication: "既往经至少一种系统治疗进展的 KRAS G12C 突变局部晚期或转移性 NSCLC。",
-    reimbursementLimits: "2024 年全新获批，暂未进入国家基本医保目录，已被全国多地城市惠民保纳入门诊特药 0 免赔报销 70%+！",
-    papProgram: "达伯特患者援助项目 (筹备启动中)",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "购药达指定疗程可申请阶段性免费赠药，结合城市惠民保二次报销自负低至 2000 元/月左右。"
+  cervical: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (宫颈癌专区)",
+    title: "破除用药负担 · 宫颈癌特药医保与慈善赠药",
+    subtitle: "系统梳理局部进展期宫颈癌根治性同步放化疗顺铂增敏、抗血管贝伐珠单抗、双抗卡度尼利与 KEYNOTE-826 靶免四联特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "宫颈癌核心特药自负费用在线测算模拟器",
+    tableTitle: "宫颈癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "子宫颈恶性肿瘤 / 宫颈鳞癌",
+    sampleDrugName: "顺铂注射液 / 贝伐珠单抗",
+    categories: [
+      { id: "all", label: "全部宫颈癌特药", activeColor: "bg-slate-900" },
+      { id: "chemo", label: "同步放化疗放射增敏 (顺铂注射液)", activeColor: "bg-blue-600" },
+      { id: "targeted", label: "抗血管生成靶向 (安维汀/贝伐珠)", activeColor: "bg-emerald-600" },
+      { id: "immune", label: "双特异性抗体与免疫联合 (开坦尼/可瑞达)", activeColor: "bg-purple-600" },
+    ],
+    materials: {
+      pathologyReq: "宫颈活检、阴道镜咬检或冷刀锥切 (CKC) 组织病理切片报告单。",
+      pathologyTip: "注明鳞癌/腺癌组织学分型、浸润深度（水平扩展与间质浸润深度）、切缘性质及盆腔增强 MRI 影像分期。",
+      geneticsTitle: "4. 高危 HPV 亚型定量与 PD-L1 (CPS) 报告",
+      geneticsReq: "高危型 HPV DNA 定量检测报告（重点排查 HPV 16/18）及 PD-L1 免疫组化 CPS 评分单。",
+      geneticsTip: "晚期一线 KEYNOTE-826 方案（K药+化疗±贝伐珠）报销建议提供 PD-L1 CPS ≥ 1 表达证明。",
+    },
+    checklistText: `【宫颈癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 阴道镜病历依据：阴道镜活检记录、盆腔高分辨增强 MRI 分期报告或出院小结（加盖病案室鲜章）；
+3. 病理组织报告：明确诊断为原发性宫颈鳞癌/腺癌组织病理切片报告单（注明组织学分级与浸润深度）；
+4. 病毒与分子表达：高危型 HPV DNA 定量检测报告单、PD-L1 (CPS评分) 表达单或微卫星状态报告；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-  {
-    id: "enhertu",
-    name: "优赫得",
-    genericName: "注射用德曲妥珠单抗 (DS-8201 / HER2 ADC)",
-    manufacturer: "第一三共 / 阿斯利康",
-    target: "HER2 (ERBB2) 突变晚期肺癌",
-    categoryTag: "rare_targets",
-    originalPrice: 36000,
-    negotiatedPrice: 18000,
-    insuranceCategory: "未进基本医保 (惠民保/PAP覆盖)",
-    inInsurance: false,
-    officialIndication: "既往接受过系统治疗的 HER2 (ERBB2) 突变不可切除或转移性 NSCLC。",
-    reimbursementLimits: "尚未纳入国家基本医保目录。已 100% 纳入上海沪惠保、北京普惠保、穗岁康等全国绝大部分城市商业补充险（惠民保）特药责任。",
-    papProgram: "优赫得患者援助项目",
-    papFoundation: "中国癌症基金会",
-    papRule: "惠民保报销 60%~80% 叠加慈善赠药，年自负降幅超 75%。"
+  pancreatic: {
+    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (胰腺癌专区)",
+    title: "破除用药负担 · 胰腺癌特药医保与慈善赠药",
+    subtitle: "系统梳理胰腺癌胚系 BRCA 突变维持奥拉帕利、白蛋白紫杉醇集采、二线伊立替康脂质体及外分泌消化酶 (PERT) 官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
+    calcTitle: "胰腺癌核心特药自负费用在线测算模拟器",
+    tableTitle: "胰腺癌核心特药国谈医保限定支付与红线全览表",
+    appDiseaseName: "胰腺恶性肿瘤 / 胰腺癌",
+    sampleDrugName: "奥拉帕利 (利普卓) / 白蛋白紫杉醇",
+    categories: [
+      { id: "all", label: "全部胰腺癌特药", activeColor: "bg-slate-900" },
+      { id: "targeted", label: "PARP 靶向与维持 (利普卓/奥拉帕利)", activeColor: "bg-purple-600" },
+      { id: "chemo", label: "系统化疗与集采基石 (白蛋白紫杉醇/吉西他滨/伊立替康脂质体)", activeColor: "bg-blue-600" },
+      { id: "supportive", label: "外分泌消化酶支持 (得每通/胰酶胶囊)", activeColor: "bg-amber-600" },
+    ],
+    materials: {
+      pathologyReq: "三甲医院出具的胰腺占位细针穿刺 (EUS-FNA) 细胞学或手术切除病理切片报告单原件及薄层胰腺增强 CT/MRI 分期报告。",
+      pathologyTip: "注明导管腺癌组织分型、分化级别、腹膜后与脉管神经浸润情况及 R0/R1/R2 切缘性质。",
+      geneticsTitle: "4. 胚系 BRCA 基因检测报告",
+      geneticsReq: "国家认可的正规第三方或院内分子实验室出具的 gBRCA1/2 胚系致病突变检测报告单。",
+      geneticsTip: "奥拉帕利医保报销严格限定胚系有害或疑似有害突变 (gBRCAm)，且需提供一线含铂化疗至少 16 周未进展依据。",
+    },
+    checklistText: `【胰腺癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
+1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
+2. 影像病历依据：薄层增强胰腺 CT / 磁共振 MRCP 影像报告、出院小结或内镜超声 EUS 记录（加盖病案室鲜章）；
+3. 病理组织报告：明确诊断为原发性胰腺导管腺癌组织病理或 EUS-FNA 穿刺切片报告单（注明切缘与淋巴结转移）；
+4. 基因检测报告：胚系 BRCA1/2 突变检测报告单（指导奥拉帕利维持）及 CA19-9 / 肝肾功能检验单；
+5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
+6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
-
-  // --- 免疫治疗体系 (PD-1 / PD-L1) ---
-  {
-    id: "tislelizumab",
-    name: "百泽安",
-    genericName: "替雷利珠单抗注射液 (200mg)",
-    manufacturer: "百济神州 (BeiGene)",
-    target: "PD-1 免疫检查点 (国产四小龙)",
-    categoryTag: "immunotherapy",
-    originalPrice: 10688,
-    negotiatedPrice: 1250,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "① 联合化疗一线治疗晚期鳞状/非鳞状 NSCLC；② 经治晚期 NSCLC 单药二线；③ II-IIIA 期术后辅助免疫治疗。",
-    reimbursementLimits: "晚期非鳞状/鳞状 NSCLC 一线联合化疗全部纳保；单药治疗纳保。统筹后每 3 周个人自负仅约 200~300 元！",
-    papProgram: "已全额医保乙类高比例统筹（自负极低）",
-    papFoundation: "国家医保统筹直接覆盖",
-    papRule: "每次输注经门慢门特报销后仅需自负数百元，无需繁琐申办 PAP。"
-  },
-  {
-    id: "sintilimab",
-    name: "达伯舒",
-    genericName: "信迪利单抗注射液 (100mg)",
-    manufacturer: "信达生物 (Innovent) / 礼来",
-    target: "PD-1 免疫检查点",
-    categoryTag: "immunotherapy",
-    originalPrice: 9800,
-    negotiatedPrice: 1080,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "联合培美曲塞和铂类一线治疗 EGFR/ALK 阴性不可手术的局部晚期或转移性非鳞状 NSCLC。",
-    reimbursementLimits: "非鳞状及鳞状 NSCLC 一线治疗全适应证纳入国家医保乙类。",
-    papProgram: "国家医保统筹直接报销",
-    papFoundation: "国家医保统筹保障",
-    papRule: "门特统筹报销 80% 左右，每周期自负 200 余元。"
-  },
-  {
-    id: "durvalumab",
-    name: "英飞凡",
-    genericName: "度伐利尤单抗注射液 (500mg)",
-    manufacturer: "阿斯利康 (AstraZeneca)",
-    target: "PD-L1 (PACIFIC 模式巩固治疗)",
-    categoryTag: "immunotherapy",
-    originalPrice: 36000,
-    negotiatedPrice: 13500,
-    insuranceCategory: "乙类 (先行自付5%~15%)",
-    inInsurance: true,
-    officialIndication: "同步放化疗后未出现疾病进展的不可切除、局部晚期 (III期) NSCLC 巩固治疗；广泛期小细胞肺癌一线。",
-    reimbursementLimits: "限同步放化疗后未进展的不可切除 III 期 NSCLC 维持巩固治疗（严格符合 PACIFIC 研究模式）。",
-    offLabelNotice: "IV 期初治联合双免疫若超医保限定，需走自费或惠民保特药。",
-    papProgram: "因飞凡患者援助项目",
-    papFoundation: "中国初级卫生保健基金会",
-    papRule: "买几赠几阶段性援助方案，有效降低 III 期维持 1 年全疗程总费用。"
-  },
-  {
-    id: "pembrolizumab",
-    name: "可瑞达 (K药)",
-    genericName: "帕博利珠单抗注射液 (100mg)",
-    manufacturer: "默沙东 (MSD)",
-    target: "PD-1 免疫检查点 (进口金标准)",
-    categoryTag: "immunotherapy",
-    originalPrice: 35836,
-    negotiatedPrice: 17918,
-    insuranceCategory: "未进基本医保 (惠民保/PAP覆盖)",
-    inInsurance: false,
-    officialIndication: "① PD-L1 TPS ≥1% EGFR/ALK 阴性晚期一线单药；② 联合培美曲塞和铂类晚期一线；③ 早期术后辅助治疗。",
-    reimbursementLimits: "目前未进国家基本医保目录。已被全国绝大多数城市“惠民保”纳入特药报销 60%~80%！",
-    papProgram: "生命之钥·肿瘤免疫治疗患者援助项目",
-    papFoundation: "中国初级卫生保健基金会 (CPBPCF)",
-    papRule: "执行【2+2 ➔ 2+N】年度方案：自费购买 2 周期赠 2 周期，之后再自费购买 2 周期赠药至疾病进展（最多 2 年封顶），年自负降幅超 75%。"
-  }
-];
+};
 
 export default function ReimbursementPage() {
-  const [selectedDrugId, setSelectedDrugId] = useState<string>("osimertinib");
+  const { cancerType, setCancerType } = useCancerType();
+  const meta = CANCER_REIMBURSEMENT_META[cancerType] || CANCER_REIMBURSEMENT_META.lung;
+
+  const currentPolicies = useMemo(() => {
+    if (cancerType === "breast") return BREAST_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "colorectal" || cancerType === "colon" || cancerType === "rectal") return COLORECTAL_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "gastric") return GASTRIC_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "liver") return LIVER_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "esophageal") return ESOPHAGEAL_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "thyroid") return THYROID_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "endometrial") return ENDOMETRIAL_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "cervical") return CERVICAL_DRUG_POLICIES as DrugPolicy[];
+    if (cancerType === "pancreatic") return PANCREATIC_DRUG_POLICIES as DrugPolicy[];
+    return DRUG_POLICIES;
+  }, [cancerType]);
+
+  const defaultDrugForCancer = (type: string) => {
+    switch (type) {
+      case "breast": return "trastuzumab";
+      case "colorectal":
+      case "colon":
+      case "rectal": return "cetuximab";
+      case "gastric": return "trastuzumab_gastric";
+      case "liver": return "sintilimab_liver";
+      case "esophageal": return "camrelizumab_esophageal";
+      case "thyroid": return "levothyroxine_thyroid";
+      case "endometrial": return "megestrol_acetate_endometrial";
+      case "cervical": return "cisplatin_cervical";
+      case "pancreatic": return "olaparib";
+      default: return "osimertinib";
+    }
+  };
+
+  const [selectedDrugId, setSelectedDrugId] = useState<string>(defaultDrugForCancer(cancerType));
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [insuranceType, setInsuranceType] = useState<"urban_employee" | "urban_resident">("urban_employee");
   const [hasHuiminbao, setHasHuiminbao] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"reimbursement_table" | "calculator" | "materials" | "dual_channel" | "cross_province" | "pap_guide" | "faq">("reimbursement_table");
   const [checkedMaterials, setCheckedMaterials] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSelectedDrugId(defaultDrugForCancer(cancerType));
+    setSelectedCategory("all");
+  }, [cancerType]);
 
   const toggleMaterial = (id: string) => {
     setCheckedMaterials(prev => 
@@ -348,10 +471,10 @@ export default function ReimbursementPage() {
   };
 
   const filteredDrugs = selectedCategory === "all" 
-    ? DRUG_POLICIES 
-    : DRUG_POLICIES.filter(d => d.categoryTag === selectedCategory);
+    ? currentPolicies 
+    : currentPolicies.filter(d => d.categoryTag === selectedCategory);
 
-  const currentDrug = DRUG_POLICIES.find(d => d.id === selectedDrugId) || DRUG_POLICIES[0];
+  const currentDrug = currentPolicies.find(d => d.id === selectedDrugId) || currentPolicies[0];
 
   // Precise Copay Calculation Engine based on NHSA Rules
   const calcReimbursement = () => {
@@ -359,7 +482,7 @@ export default function ReimbursementPage() {
     
     // Case 1: Drug Not in Basic Insurance (e.g., Enhertu DS-8201 or Keytruda K-drug)
     if (!currentDrug.inInsurance) {
-      const papAnnualCap = currentDrug.id === "pembrolizumab" ? 70000 : 80000;
+      const papAnnualCap = (currentDrug.id === "pembrolizumab" || currentDrug.id === "trastuzumab_deruxtecan") ? 70000 : 80000;
       const huiminbaoCoverageRatio = hasHuiminbao ? 0.75 : 0;
       const effectiveAnnual = papAnnualCap * (1 - huiminbaoCoverageRatio);
       const effectiveMonthly = Math.round(effectiveAnnual / 12);
@@ -434,13 +557,7 @@ export default function ReimbursementPage() {
   }
 
   const handleCopyChecklist = async () => {
-    const checklistText = `【肺癌门慢门特与特药报销申办官方材料清单 (医保办核验标准)】
-1. 身份凭证：身份证、社保卡原件及复印件（或激活医保电子凭证二维码）；
-2. 病历依据：近半年经治三甲医院住院病历、出院小结或门诊病历（须加盖医院病案室鲜章）；
-3. 病理报告：明确诊断为原发性非小细胞肺癌/肺腺癌的病理切片报告单（加盖公章）；
-4. 分子基因分型：正规基因检测报告（注明 EGFR / ALK / ROS1 / MET / RET / KRAS 等突变或 PD-L1 表达单）；
-5. 申请审批表：主诊主任/副主任医师填写的《基本医疗保险门诊慢特病待遇认定申请表》（医院医保办盖章）；
-6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`;
+    const checklistText = meta.checklistText;
     const ok = await copyTextSafe(checklistText);
     if (ok) {
       setCopied(true);
@@ -452,24 +569,32 @@ export default function ReimbursementPage() {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-500 selection:text-white">
 
       {/* Unified Hero Header (Aligned with /wiki, /studies, /resources, /knowledge) */}
-      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-32 pb-8 px-2.5 sm:px-6 max-w-4xl mx-auto text-center space-y-4">
+      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Top Pill Badge */}
         <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs">
-          <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-          <span>国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南</span>
+          <CancerIcon type={cancerType} className="w-3.5 h-3.5 text-sky-600" />
+          <span>{meta.badge}</span>
           <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
           <span>2024~2025 现行标准</span>
         </div>
 
         {/* Unified H1 */}
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          破除用药负担 · <span className="text-blue-600">特药医保与慈善赠药</span>
+          破除用药负担 · <span className="text-blue-600">{CancerRegistry.get(cancerType)?.name || "特药"}医保与慈善赠药</span>
         </h1>
 
         {/* Unified Subtitle */}
         <p className="max-w-3xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-          系统梳理 <strong>16 大肺腺癌主流靶向与免疫药物</strong> 官方医保限定支付标准。为您提供<strong>门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药</strong>的权威实操路径。
+          {meta.subtitle}
         </p>
+
+        {/* Active Specialty Zone Indicator */}
+        <div className="inline-flex items-center gap-2 text-xs text-slate-500 bg-white/80 px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>当前专区：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType)?.name || "特药"}</strong></span>
+          <span className="text-slate-300">·</span>
+          <span className="text-slate-400">切换其他专区请点击顶栏导航</span>
+        </div>
 
         {/* Informational Guidance Banner */}
         <div className="max-w-3xl mx-auto bg-gradient-to-r from-blue-50 via-sky-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs text-left">
@@ -491,7 +616,7 @@ export default function ReimbursementPage() {
       </header>
 
       {/* Main Content Area (Standard max-w-7xl) */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 pb-16 space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-8 sm:pb-12 space-y-5 sm:space-y-6">
         
         {/* Segmented Navigation Tabs Bar (Scrollable) */}
         <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
@@ -625,7 +750,7 @@ export default function ReimbursementPage() {
                 <div>
                   <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
                     <Calculator className="w-5 h-5 text-blue-600" />
-                    <span>肺腺癌 16 大特药自负费用在线测算模拟器</span>
+                    <span>{meta.calcTitle}</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">
                     按国家医保局统一标准算法，模拟计算门特统筹支付、个人自负及惠民保/PAP 减负后真实月支出
@@ -640,49 +765,26 @@ export default function ReimbursementPage() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
                   <Filter className="w-3.5 h-3.5 text-blue-600" />
-                  <span>按靶点大类筛选：</span>
+                  <span>按靶点/药物大类筛选：</span>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs">
-                  <button
-                    onClick={() => setSelectedCategory("all")}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                      selectedCategory === "all" ? "bg-slate-900 text-white shadow-xs" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    全部 16 种特药
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("egfr")}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                      selectedCategory === "egfr" ? "bg-blue-600 text-white shadow-xs" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    EGFR 靶向 (泰瑞沙/艾弗沙/阿美乐等)
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("alk_ros1")}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                      selectedCategory === "alk_ros1" ? "bg-purple-600 text-white shadow-xs" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    ALK / ROS1 (安圣莎/博瑞纳/罗圣全)
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("rare_targets")}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                      selectedCategory === "rare_targets" ? "bg-teal-600 text-white shadow-xs" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    罕见靶点 MET/RET/KRAS/HER2 ADC
-                  </button>
-                  <button
-                    onClick={() => setSelectedCategory("immunotherapy")}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                      selectedCategory === "immunotherapy" ? "bg-indigo-600 text-white shadow-xs" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    免疫治疗 PD-1/PD-L1 (国产/进口)
-                  </button>
+                  {meta.categories.map((cat) => {
+                    const isActive = selectedCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                          isActive
+                            ? `${cat.activeColor || "bg-blue-600"} text-white shadow-xs`
+                            : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -859,7 +961,7 @@ export default function ReimbursementPage() {
                       <Building2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                       <div className="leading-relaxed">
                         <span className="font-bold text-blue-800">浙一医院实操示范：</span>
-                        <span>在浙大一院各院区一楼<strong>便民服务中心 / 医保咨询窗口</strong>拿取门特申请表 ➔ 请主治医生填写临床诊断与签名 ➔ 回到拿表处（便民服务中心）<strong>加盖公章</strong> ➔ 手机拍照留存（用于浙里办线上上传）。</span>
+                        <span>在浙大一院各院区一楼<strong>便民服务中心 / 医保咨询窗口</strong>拿取门特申请表 → 请主治医生填写临床诊断与签名 → 回到拿表处（便民服务中心）<strong>加盖公章</strong> → 手机拍照留存（用于浙里办线上上传）。</span>
                       </div>
                     </div>
                   </div>
@@ -885,7 +987,7 @@ export default function ReimbursementPage() {
                     {/* 标杆省份实操示例：浙江“浙里办”与浙一医院门特落地流程 */}
                     <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-sky-50/60 to-blue-50/50 border border-indigo-200/80 space-y-2.5">
                       <div className="flex items-center gap-2 text-indigo-950 font-bold">
-                        <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                        <Building2 className="w-4 h-4 text-indigo-600 shrink-0" />
                         <span className="text-xs sm:text-sm font-extrabold text-indigo-900">
                           标杆实操示范 · 浙江“浙里办”APP 线上极速申报与浙大一院（浙一）就医直报
                         </span>
@@ -898,7 +1000,7 @@ export default function ReimbursementPage() {
                             <span>第一步：浙里办 APP 线上便捷申办</span>
                           </div>
                           <p className="text-slate-600 leading-relaxed">
-                            打开<strong>「浙里办」APP</strong> ➔ 搜索<strong>「浙里医保」</strong> ➔ 点击<strong>「门诊慢特病待遇备案」</strong> ➔ 申请病种精准选择<strong>「肺肿瘤」</strong> ➔ 按提示拍照上传盖好公章的申请表、出院小结与病理报告 ➔ 提交后通常 1 个工作日内即可完成认定生效。
+                            打开<strong>「浙里办」APP</strong> → 搜索<strong>「浙里医保」</strong> → 点击<strong>「门诊慢特病待遇备案」</strong> → 申请病种精准选择<strong>「{meta.appDiseaseName}」</strong> → 按提示拍照上传盖好公章的申请表、出院小结与病理报告 → 提交后通常 1 个工作日内即可完成认定生效。
                           </p>
                         </div>
 
@@ -908,7 +1010,7 @@ export default function ReimbursementPage() {
                             <span>第二步：浙一医院挂号直接享受门特</span>
                           </div>
                           <p className="text-slate-600 leading-relaxed">
-                            门特备案生效后，在<strong>浙大一院（浙一医院）官方微信公众号 / 支付宝小程序</strong>预约挂号，到院后在<strong>门诊自助机取号时，取号类型直接选择「特殊门诊」</strong>。医生开具靶向药（如奥希替尼等）或复查项目时，系统<strong>自动按门特标准统筹抵扣（报销约 80%~90%）</strong>，仅需支付自负差额！
+                            门特备案生效后，在<strong>浙大一院（浙一医院）官方微信公众号 / 支付宝小程序</strong>预约挂号，到院后在<strong>门诊自助机取号时，取号类型直接选择「特殊门诊」</strong>。医生开具靶向药（如{meta.sampleDrugName}等）或复查项目时，系统<strong>自动按门特标准统筹抵扣（报销约 80%~90%）</strong>，仅需支付自负差额！
                           </p>
                         </div>
                       </div>
@@ -942,8 +1044,8 @@ export default function ReimbursementPage() {
           <div className="bg-white rounded-2xl p-3.5 sm:p-6 md:p-7 border border-slate-200 shadow-sm space-y-6 animate-fade-in">
             <div className="border-b border-slate-100 pb-4">
               <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
-                <span>16 大主流肺腺癌特药国谈医保限定支付与红线全览表</span>
+                <ShieldCheck className="w-5 h-5 text-blue-600" />
+                <span>{meta.tableTitle}</span>
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
                 依据国家医疗保障局 (NHSA) 现行《国家基本医疗保险药品目录》法定支付范围整理
@@ -962,7 +1064,7 @@ export default function ReimbursementPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {DRUG_POLICIES.map((drug) => (
+                  {currentPolicies.map((drug) => (
                     <tr key={drug.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="p-3.5">
                         <div className="font-bold text-slate-900">{drug.name}</div>
@@ -1042,16 +1144,16 @@ export default function ReimbursementPage() {
                 {
                   id: "mat_pathology",
                   title: "3. 组织病理学诊断切片报告",
-                  req: "明确诊断为原发性非小细胞肺癌/肺腺癌的病理切片报告单原件及复印件。",
+                  req: meta.materials.pathologyReq,
                   dept: "病理科 / 病案室盖章",
-                  tip: "注明病理组织学亚型（如腺癌/鳞癌）及免疫组化结果。"
+                  tip: meta.materials.pathologyTip
                 },
                 {
                   id: "mat_genetics",
-                  title: "4. 分子基因分型 / PD-L1 报告",
-                  req: "具备资质的三甲医院或正规第三方实验室出具的 NGS / PCR 基因检测报告单。",
+                  title: meta.materials.geneticsTitle,
+                  req: meta.materials.geneticsReq,
                   dept: "分子病理中心 / 检验科",
-                  tip: "注明 EGFR 19del/L858R、ALK 融合或 KRAS/RET/MET 等靶点突变丰度。"
+                  tip: meta.materials.geneticsTip
                 },
                 {
                   id: "mat_form",
@@ -1097,8 +1199,9 @@ export default function ReimbursementPage() {
                       <p className="text-[11px] text-slate-600 leading-relaxed">
                         {item.req}
                       </p>
-                      <div className="text-[10px] text-slate-400 bg-slate-50 p-2 rounded-xl border border-slate-100 mt-1">
-                        💡 <strong>避坑提示：</strong>{item.tip}
+                      <div className="text-[10px] text-slate-500 bg-slate-50 p-2 rounded-xl border border-slate-100 mt-1 flex items-start gap-1">
+                        <Lightbulb className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />
+                        <span><strong>避坑提示：</strong>{item.tip}</span>
                       </div>
                     </div>
                   </div>
@@ -1122,7 +1225,7 @@ export default function ReimbursementPage() {
                 onClick={() => setActiveTab("dual_channel")}
                 className="px-3.5 py-1.5 bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-xl text-xs cursor-pointer shrink-0 transition-colors whitespace-nowrap"
               >
-                查看双通道药房流转流程 ›
+                查看双通道药房流转流程
               </button>
             </div>
           </div>
@@ -1170,7 +1273,7 @@ export default function ReimbursementPage() {
                     <span>门慢门特跨省直接联网刷卡</span>
                   </div>
                   <p className="text-slate-700 leading-relaxed text-[11px]">
-                    异地三甲医院门诊开具奥希替尼等靶向药时，直接出示<strong>医保码或社保卡</strong>，系统自动按门特比例直接扣除报销金额，无需垫付现金拿回老家报销。
+                    异地三甲医院门诊开具特药靶向/免疫药物（如 {meta.sampleDrugName} 等）时，直接出示<strong>医保码或社保卡</strong>，系统自动按门特比例直接扣除报销金额，无需垫付现金拿回老家报销。
                   </p>
                 </div>
 
@@ -1255,7 +1358,7 @@ export default function ReimbursementPage() {
                   <span>门慢门特跨省直接联网刷卡</span>
                 </div>
                 <p className="text-slate-700 leading-relaxed">
-                  全国已全面开通恶性肿瘤门诊放化疗与特药跨省联网结算。患者在异地三甲医院门诊开具奥希替尼等靶向药时，直接出示<strong>医保码或社保卡</strong>，系统自动按门特比例直接扣除报销金额，无需垫付现金拿回老家报销。
+                  全国已全面开通恶性肿瘤门诊放化疗与特药跨省联网结算。患者在异地三甲医院门诊开具特药靶向/免疫药物（如 {meta.sampleDrugName} 等）时，直接出示<strong>医保码或社保卡</strong>，系统自动按门特比例直接扣除报销金额，无需垫付现金拿回老家报销。
                 </p>
               </div>
 
@@ -1407,23 +1510,23 @@ export default function ReimbursementPage() {
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 hover:border-slate-300 transition-all">
                 <div className="font-bold text-slate-900 text-sm">Q4：买了“城市惠民保”，怎么申请靶向药报销？</div>
                 <p className="text-slate-600 leading-relaxed">
-                  微信搜索参保城市的惠民保公众号（如“上海沪惠保”、“北京普惠健康保”、“西湖益联保”），进入【理赔服务 ➔ 特药理赔申请】，拍照上传定点医院处方、病理与基因报告及购药发票，审核通过后 3~5 个工作日直接赔付到银行卡。
+                  微信搜索参保城市的惠民保公众号（如“上海沪惠保”、“北京普惠健康保”、“西湖益联保”），进入【理赔服务 → 特药理赔申请】，拍照上传定点医院处方、病理与基因报告及购药发票，审核通过后 3~5 个工作日直接赔付到银行卡。
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-2 hover:border-indigo-300 transition-all">
                 <div className="font-bold text-indigo-950 text-sm flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                  <FileCheck className="w-4 h-4 text-indigo-600 shrink-0" />
                   <span>Q5：以浙江省（浙里办）和浙大一院（浙一）为例，门特从申请到就医扣款的完整闭环是怎样的？</span>
                 </div>
                 <div className="space-y-1.5 text-slate-700 text-xs leading-relaxed">
                   <div className="flex items-start gap-1.5">
                     <span className="font-bold text-indigo-700 shrink-0">1. 开表与盖章：</span>
-                    <span>在浙大一院一楼便民服务中心领取门特纸质表 ➔ 请主治医生填写诊断并签字 ➔ 回到便民服务中心（拿表处）加盖公章并手机拍照；</span>
+                    <span>在浙大一院一楼便民服务中心领取门特纸质表 → 请主治医生填写诊断并签字 → 回到便民服务中心（拿表处）加盖公章并手机拍照；</span>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <span className="font-bold text-indigo-700 shrink-0">2. 浙里办线上认定：</span>
-                    <span>打开「浙里办」APP 搜索「浙里医保」➔ 进入「门诊慢特病待遇备案」➔ 申请病种精准选择<strong>「肺肿瘤」</strong> ➔ 上传盖章申请表、出院小结及病理报告，通常 1 个工作日内自动秒审生效；</span>
+                    <span>打开「浙里办」APP 搜索「浙里医保」→ 进入「门诊慢特病待遇备案」→ 申请病种精准选择<strong>「{meta.appDiseaseName}」</strong> → 上传盖章申请表、出院小结及病理报告，通常 1 个工作日内自动秒审生效；</span>
                   </div>
                   <div className="flex items-start gap-1.5">
                     <span className="font-bold text-indigo-700 shrink-0">3. 预约与自助机取号：</span>
@@ -1431,7 +1534,7 @@ export default function ReimbursementPage() {
                   </div>
                   <div className="flex items-start gap-1.5">
                     <span className="font-bold text-indigo-700 shrink-0">4. 自动统筹扣款：</span>
-                    <span>接诊医生开具靶向药（如奥希替尼等）或检查检验时，结算系统自动按门特标准统筹抵扣（报销约 80%~90%），患者仅需支付个人极少量自负差额！</span>
+                    <span>接诊医生开具靶向药（如 {meta.sampleDrugName} 等）或检查检验时，结算系统自动按门特标准统筹抵扣（报销约 80%~90%），患者仅需支付个人极少量自负差额！</span>
                   </div>
                 </div>
               </div>

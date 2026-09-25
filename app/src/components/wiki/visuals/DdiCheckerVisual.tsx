@@ -10,17 +10,19 @@ import {
   Check,
   X,
   AlertOctagon,
-  Sparkles,
+  Bookmark,
   Info,
   Calendar,
   ChevronRight
 } from "lucide-react";
 import {
-  TARGETED_DRUGS,
+  getTargetedDrugsForCancer,
+  checkDrugInteractionsUnified,
+  getDefaultTargetDrugId,
   CHRONIC_DRUG_CATEGORIES,
-  ALL_CHRONIC_DRUGS,
-  checkDrugInteractions
-} from "@/lib/ddiData";
+  ALL_CHRONIC_DRUGS
+} from "@/lib/ddiRegistry";
+import type { CancerType } from "@/lib/types";
 
 export interface DdiCheckerVisualProps {
   initialTargetDrugId?: string;
@@ -30,6 +32,7 @@ export interface DdiCheckerVisualProps {
   isEarlyStageIA?: boolean;
   isModalMode?: boolean;
   onClose?: () => void;
+  cancerType?: CancerType;
 }
 
 export function DdiCheckerVisual({
@@ -40,8 +43,15 @@ export function DdiCheckerVisual({
   isEarlyStageIA = false,
   isModalMode = false,
   onClose,
+  cancerType = "lung",
 }: DdiCheckerVisualProps = {}) {
-  const [selectedTargetId, setSelectedTargetId] = useState<string>(initialTargetDrugId || "osimertinib");
+  const availableTargetedDrugs = useMemo(() => {
+    return getTargetedDrugsForCancer(cancerType);
+  }, [cancerType]);
+
+  const [selectedTargetId, setSelectedTargetId] = useState<string>(() =>
+    initialTargetDrugId || getDefaultTargetDrugId(cancerType)
+  );
   const [selectedChronicIds, setSelectedChronicIds] = useState<string[]>(
     initialChronicDrugIds && initialChronicDrugIds.length > 0 
       ? initialChronicDrugIds 
@@ -50,6 +60,13 @@ export function DdiCheckerVisual({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTargetCategory, setActiveTargetCategory] = useState<string>("all");
   const [activeCategory, setActiveCategory] = useState<string>("all");
+
+  // Keep target selection in sync if cancerType changes
+  React.useEffect(() => {
+    if (!availableTargetedDrugs.some(d => d.id === selectedTargetId)) {
+      setSelectedTargetId(availableTargetedDrugs[0]?.id || getDefaultTargetDrugId(cancerType));
+    }
+  }, [cancerType, availableTargetedDrugs, selectedTargetId]);
 
   // Support keyboard Escape key to close modal
   React.useEffect(() => {
@@ -63,18 +80,23 @@ export function DdiCheckerVisual({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isModalMode, onClose]);
 
+  const targetCategories = useMemo(() => {
+    const cats = Array.from(new Set(availableTargetedDrugs.map(d => d.target as string))).filter(Boolean);
+    return ["all", ...cats];
+  }, [availableTargetedDrugs]);
+
   const selectedTarget = useMemo(() => {
-    return TARGETED_DRUGS.find(d => d.id === selectedTargetId) || TARGETED_DRUGS[0];
-  }, [selectedTargetId]);
+    return availableTargetedDrugs.find(d => d.id === selectedTargetId) || availableTargetedDrugs[0];
+  }, [selectedTargetId, availableTargetedDrugs]);
 
   const filteredTargetedDrugs = useMemo(() => {
-    if (activeTargetCategory === "all") return TARGETED_DRUGS;
-    return TARGETED_DRUGS.filter(d => d.target === activeTargetCategory);
-  }, [activeTargetCategory]);
+    if (activeTargetCategory === "all") return availableTargetedDrugs;
+    return availableTargetedDrugs.filter(d => (d.target as string) === activeTargetCategory);
+  }, [activeTargetCategory, availableTargetedDrugs]);
 
   const analysisResult = useMemo(() => {
-    return checkDrugInteractions(selectedTargetId, selectedChronicIds);
-  }, [selectedTargetId, selectedChronicIds]);
+    return checkDrugInteractionsUnified(cancerType, selectedTargetId, selectedChronicIds);
+  }, [cancerType, selectedTargetId, selectedChronicIds]);
 
   const filteredChronicDrugs = useMemo(() => {
     let list = ALL_CHRONIC_DRUGS;
@@ -151,7 +173,7 @@ export function DdiCheckerVisual({
           <div className="flex items-center justify-between md:justify-end gap-2 shrink-0">
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto">
               <span className="text-[10px] text-slate-400 font-semibold mr-0.5 flex items-center gap-1 shrink-0">
-                <Sparkles className="w-3 h-3 text-amber-500" />
+                <Bookmark className="w-3 h-3 text-slate-400" />
                 快捷组合:
               </span>
               <button
@@ -207,8 +229,9 @@ export function DdiCheckerVisual({
                   <strong>权威指南提醒</strong>：患者属于 <strong>IA 期极早期低危组</strong>，虽然检出【{geneInfo}】，但 CSCO / NCCN 指南明文规定<strong>术后无需辅助靶向治疗（严禁过度用药）</strong>。以下排查自检仅供常识储备了解。
                 </span>
               </div>
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0 font-bold self-start sm:self-auto">
-                ✓ IA期无需靶向用药
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0 font-bold self-start sm:self-auto inline-flex items-center gap-1">
+                <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                <span>IA期无需靶向用药</span>
               </span>
             </div>
           ) : (
@@ -220,8 +243,9 @@ export function DdiCheckerVisual({
                   <strong className="text-blue-700 ml-1">{selectedTarget.genericName} ({selectedTarget.brandName})</strong>
                 </span>
               </div>
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300 shrink-0 font-bold self-start sm:self-auto">
-                ✓ 档案精准互联
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300 shrink-0 font-bold self-start sm:self-auto inline-flex items-center gap-1">
+                <Check className="w-3 h-3 text-blue-600 shrink-0" />
+                <span>档案精准互联</span>
               </span>
             </div>
           )
@@ -232,7 +256,7 @@ export function DdiCheckerVisual({
         <div className="text-xs font-bold text-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
           <div className="flex items-center gap-2">
             <span className="w-5 h-5 min-w-[20px] rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-mono font-bold shrink-0 shadow-xs">1</span>
-            <span className="font-bold text-slate-900">第一步：选择您目前服用的抗肿瘤靶向药（共 {TARGETED_DRUGS.length} 种）</span>
+            <span className="font-bold text-slate-900">第一步：选择您目前服用的抗肿瘤靶向药（共 {availableTargetedDrugs.length} 种）</span>
           </div>
           <span className="text-[11px] text-blue-600 font-mono font-medium">
             当前选中: {selectedTarget.genericName} ({selectedTarget.standardDosage.split(" ")[0]})
@@ -241,7 +265,7 @@ export function DdiCheckerVisual({
 
         {/* Target Category Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-[11px]">
-          {["all", "EGFR", "ALK", "KRAS", "MET", "RET", "HER2"].map(targetKey => (
+          {targetCategories.map(targetKey => (
             <button
               key={targetKey}
               type="button"
@@ -252,7 +276,9 @@ export function DdiCheckerVisual({
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
-              {targetKey === "all" ? `全部靶向药 (${TARGETED_DRUGS.length})` : targetKey === "HER2" ? `HER2-ADC (${TARGETED_DRUGS.filter(d => d.target === targetKey).length})` : `${targetKey} 抑制剂 (${TARGETED_DRUGS.filter(d => d.target === targetKey).length})`}
+              {targetKey === "all"
+                ? `全部靶向药 (${availableTargetedDrugs.length})`
+                : `${targetKey} (${availableTargetedDrugs.filter(d => (d.target as string) === targetKey).length})`}
             </button>
           ))}
         </div>
@@ -324,7 +350,7 @@ export function DdiCheckerVisual({
         {/* Friendly Cognitive Guide Bubble */}
         <div className="p-2.5 bg-indigo-50/70 border border-indigo-200/80 rounded-xl text-[11px] text-indigo-950 flex items-center gap-2 shadow-2xs">
           <Info className="w-4 h-4 text-indigo-600 shrink-0" />
-          <span>💡 <strong>智能提示</strong>：系统已在第一步为您选定靶向药，您只需在下方勾选平时服用的胃药、降压降脂药、抗凝药或饮食即可一键排雷。</span>
+          <span><strong>临床提示</strong>：系统已在第一步为您选定靶向药，您只需在下方勾选平时服用的胃药、降压降脂药、抗凝药或饮食即可一键排雷。</span>
         </div>
 
         {/* Category Pills */}
@@ -472,7 +498,10 @@ export function DdiCheckerVisual({
                     {rule.mechanism}
                   </p>
                   <div className="p-2.5 rounded-xl bg-blue-50/80 border border-blue-200 text-[11px] text-blue-950 leading-relaxed">
-                    <span className="font-bold text-blue-800">💡 临床用药指引：</span>
+                    <span className="font-bold text-blue-800 inline-flex items-center gap-1">
+                      <Info className="w-3 h-3 text-blue-700 shrink-0" />
+                      <span>临床用药指引：</span>
+                    </span>
                     {rule.clinicalGuidance}
                   </div>
                   {rule.timingRecommendation && (
@@ -528,14 +557,17 @@ export function DdiCheckerVisual({
         <div className="sticky bottom-0 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 z-20 shrink-0">
           <div className="flex items-center gap-1.5 sm:gap-2 text-xs flex-wrap">
             <span className="text-[11px] text-slate-500 font-medium">排查小结：</span>
-            <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 font-bold text-[10px] sm:text-[11px]">
-              🔴 禁忌 {analysisResult.severeCount}
+            <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+              <span>禁忌 {analysisResult.severeCount}</span>
             </span>
-            <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold text-[10px] sm:text-[11px]">
-              🟡 需错峰 {analysisResult.cautionCount}
+            <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+              <span>需错峰 {analysisResult.cautionCount}</span>
             </span>
-            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold text-[10px] sm:text-[11px]">
-              🟢 安全 {analysisResult.safeCount}
+            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              <span>安全 {analysisResult.safeCount}</span>
             </span>
           </div>
 

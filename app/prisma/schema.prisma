@@ -113,6 +113,8 @@ model PatientProfile {
   sex                 String?
   
   // Disease
+  cancerType          String?  @default("lung")
+  cancerSpecificData  Json?
   organ               String?  @default("lung")
   histology           String?
   
@@ -175,6 +177,7 @@ model ClinicalCohort {
 
 model IngestedStudy {
   id               String   @id @default(uuid())
+  cancerType       String?  @default("lung")
   title            String
   journal          String?
   year             Int?
@@ -214,6 +217,7 @@ model User {
 
 model TimelineEvent {
   id              String   @id @default(uuid())
+  cancerType      String?  @default("lung")
   userId          String?
   profileId       String?
   eventDate       DateTime

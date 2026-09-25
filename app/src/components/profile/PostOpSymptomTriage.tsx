@@ -7,13 +7,13 @@ import {
   AlertTriangle, 
   AlertOctagon, 
   CheckCircle2, 
-  Sparkles,
   Stethoscope,
   ChevronRight,
   Wind,
   Activity,
   Flame,
-  Droplets
+  Droplets,
+  Check
 } from "lucide-react";
 
 export type SymptomCategory = "cough" | "pain" | "breath" | "blood_tinge";
@@ -412,7 +412,7 @@ export default function PostOpSymptomTriage() {
               onClick={() => setCurrentStep(3)}
               className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs cursor-pointer flex items-center gap-1.5 shadow-xs transition-colors"
             >
-              <span>查看个性化循证对策 ›</span>
+              <span>查看个性化循证对策</span>
             </button>
           </div>
         </div>
@@ -459,7 +459,7 @@ export default function PostOpSymptomTriage() {
 
                 <div className="pt-2 border-t border-emerald-200/60 space-y-1.5 text-xs text-emerald-900">
                   <div className="font-bold flex items-center gap-1 text-emerald-800">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <HeartPulse className="w-3.5 h-3.5 text-emerald-600" />
                     <span>居家日常舒缓技巧：</span>
                   </div>
                   <ul className="space-y-1.5 pl-1 text-xs">
@@ -473,8 +473,9 @@ export default function PostOpSymptomTriage() {
                 </div>
               </div>
 
-              <div className="text-xs text-emerald-800 font-bold bg-white/90 p-2.5 rounded-xl border border-emerald-200 mt-2">
-                ✓ 属于组织代偿修复必经阶段，遵循指引平稳度过
+              <div className="text-xs text-emerald-800 font-bold bg-white/90 p-2.5 rounded-xl border border-emerald-200 mt-2 flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>属于组织代偿修复必经阶段，遵循指引平稳度过</span>
               </div>
             </div>
 

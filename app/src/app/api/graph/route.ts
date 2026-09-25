@@ -2,9 +2,84 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import type { KnowledgeNode, EdgeEvidence } from '@/lib/knowledgeGraphData';
 import { DEFAULT_GRAPH_NODES, DEFAULT_EDGE_EVIDENCES } from '@/lib/defaultGraphData';
+import { BREAST_GRAPH_NODES, BREAST_EDGE_EVIDENCE_MAP } from '@/lib/breastKnowledgeGraphData';
+import { COLORECTAL_GRAPH_NODES, COLORECTAL_EDGE_EVIDENCE } from '@/lib/colorectalKnowledgeGraphData';
+import { GASTRIC_GRAPH_NODES, GASTRIC_EDGE_EVIDENCE } from '@/lib/gastricKnowledgeGraphData';
+import { LIVER_GRAPH_NODES, LIVER_EDGE_EVIDENCE } from '@/lib/liverKnowledgeGraphData';
+import { ESOPHAGEAL_GRAPH_NODES, ESOPHAGEAL_EDGE_EVIDENCE } from '@/lib/esophagealKnowledgeGraphData';
+import { THYROID_GRAPH_NODES, THYROID_EDGE_EVIDENCE } from '@/lib/thyroidKnowledgeGraphData';
+import { 
+  ENDOMETRIAL_GRAPH_NODES, ENDOMETRIAL_EDGE_EVIDENCE,
+  CERVICAL_GRAPH_NODES, CERVICAL_EDGE_EVIDENCE 
+} from '@/lib/gynecologicalKnowledgeGraphData';
 
-export async function GET() {
+const CACHE_HEADERS = {
+  headers: {
+    'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600'
+  }
+};
+
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const cancerType = searchParams.get('cancerType');
+
+    if (cancerType === 'breast') {
+      return NextResponse.json({
+        nodes: BREAST_GRAPH_NODES,
+        edgeEvidences: BREAST_EDGE_EVIDENCE_MAP
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'colorectal' || cancerType === 'colon' || cancerType === 'rectal') {
+      return NextResponse.json({
+        nodes: COLORECTAL_GRAPH_NODES,
+        edgeEvidences: COLORECTAL_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'gastric') {
+      return NextResponse.json({
+        nodes: GASTRIC_GRAPH_NODES,
+        edgeEvidences: GASTRIC_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'liver') {
+      return NextResponse.json({
+        nodes: LIVER_GRAPH_NODES,
+        edgeEvidences: LIVER_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'esophageal') {
+      return NextResponse.json({
+        nodes: ESOPHAGEAL_GRAPH_NODES,
+        edgeEvidences: ESOPHAGEAL_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'thyroid') {
+      return NextResponse.json({
+        nodes: THYROID_GRAPH_NODES,
+        edgeEvidences: THYROID_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'endometrial') {
+      return NextResponse.json({
+        nodes: ENDOMETRIAL_GRAPH_NODES,
+        edgeEvidences: ENDOMETRIAL_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
+    if (cancerType === 'cervical') {
+      return NextResponse.json({
+        nodes: CERVICAL_GRAPH_NODES,
+        edgeEvidences: CERVICAL_EDGE_EVIDENCE
+      }, CACHE_HEADERS);
+    }
+
     // 1. Fetch nodes and their outgoing edges from DB
     const rawNodes = await prisma.node.findMany({
       include: {

@@ -18,8 +18,8 @@ export async function exportElementToA4Pdf(
 ): Promise<boolean> {
   try {
     const {
-      fileName = "OncoPath_门诊就医便签.pdf",
-      headerTitle = "OncoPath 肺结节与肺腺癌临床数字档案 · 门诊就医沟通问诊便签",
+      fileName = "ZhiaiWiki_门诊就医便签.pdf",
+      headerTitle = "知癌维基 ZhiaiWiki · 肿瘤全病程临床数字档案 · 门诊就医沟通问诊便签",
       reportDate = new Date().toISOString().split("T")[0],
     } = options;
 
@@ -123,12 +123,12 @@ export async function exportElementToA4Pdf(
       pdf.setFontSize(7.5);
       pdf.setTextColor(148, 163, 184); // slate-400
       pdf.text(
-        "OncoPath 肺结节循证知识平台 · lung.dpdns.org | 本文档供就医沟通与学术参考，请以临床医师现场诊疗为准",
+        "知癌维基 ZhiaiWiki · zhiaiwiki.org | “知癌，方能治癌；每一次循证，皆因至爱。” | 本文档供就医沟通与学术参考，请以临床医师现场诊疗为准",
         marginXMm,
         a4HeightMm - 6
       );
       pdf.text(
-        `第 ${page + 1} / ${totalPages} 页 · lung.dpdns.org`,
+        `第 ${page + 1} / ${totalPages} 页 · zhiaiwiki.org`,
         a4WidthMm - marginXMm,
         a4HeightMm - 6,
         { align: "right" }

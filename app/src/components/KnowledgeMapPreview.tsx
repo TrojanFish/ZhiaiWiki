@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import type { PatientProfile } from "@/lib/types";
 import type { KnowledgeNode, EdgeEvidence } from "@/lib/knowledgeGraphData";
@@ -10,9 +10,13 @@ import { GraphRenderer } from "./knowledge-graph/GraphRenderer";
 import { EdgeEvidencePanel } from "./knowledge-graph/panels/EdgeEvidencePanel";
 import { NodeInfoPanel } from "./knowledge-graph/panels/NodeInfoPanel";
 import { TimeSlider } from "./knowledge-graph/TimeSlider";
+import { useCancerType } from "@/components/common/CancerSwitch";
+
+import type { CancerType } from "@/lib/types";
 
 interface KnowledgeMapProps {
   profile?: PatientProfile | null;
+  cancerType?: CancerType;
 }
 
 const ZoomControls = () => {
@@ -47,7 +51,9 @@ const ZoomControls = () => {
   );
 };
 
-export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProps) {
+export default function KnowledgeMapPreview({ profile = null, cancerType: propCancerType }: KnowledgeMapProps) {
+  const { cancerType: hookCancerType } = useCancerType();
+  const cancerType = propCancerType || hookCancerType;
   const [hoveredNode, setHoveredNode] = useState<KnowledgeNode | null>(null);
   const [selectedNode, setSelectedNode] = useState<KnowledgeNode | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<string | null>(null);
@@ -62,19 +68,21 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
   const [timeYears, setTimeYears] = useState<number>(0);
 
   useEffect(() => {
-     
     setPersonalMode(!!profile);
   }, [profile]);
 
   useEffect(() => {
-    fetch('/api/graph')
+    let isCurrent = true;
+    setIsLoading(true);
+    fetch(`/api/graph?cancerType=${cancerType}`)
       .then((res) => res.json())
       .then((data) => {
+        if (!isCurrent) return;
         if (data.nodes && data.edgeEvidences) {
           setNodes(data.nodes);
           setEdgeEvidences(data.edgeEvidences);
           const total = data.nodes.reduce((sum: number, n: any) => sum + (n.studies || 0), 0);
-          setTotalStudies(total > 0 ? total : 142);
+          setTotalStudies(total > 0 ? total : (cancerType === 'breast' ? 120 : 142));
 
           // Deep link: auto-select target node if ?node=... or ?focus=... is provided
           if (typeof window !== "undefined") {
@@ -92,12 +100,19 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
         }
       })
       .catch((err) => {
+        if (!isCurrent) return;
         console.error("Failed to fetch graph data:", err);
       })
       .finally(() => {
-        setIsLoading(false);
+        if (isCurrent) {
+          setIsLoading(false);
+        }
       });
-  }, []);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [cancerType]);
 
   const currentNodes = nodes;
   const activeNode = selectedNode || hoveredNode;
@@ -106,23 +121,83 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
   // Directions 1 calculation for highlights
   let activeHighlightNodes: string[] = [];
   if (personalMode && profile) {
-    if (profile.stas === "positive") activeHighlightNodes.push("STAS", "SURGERY");
-    if (profile.lvi === "positive") activeHighlightNodes.push("LVI", "METASTASIS");
-    if (profile.vpi === "positive") activeHighlightNodes.push("VPI", "STAGING", "ADJUVANT");
-    if (profile.ctr != null && profile.ctr > 0.5) activeHighlightNodes.push("CTR", "STAGING", "SURGERY");
-    if (profile.iaslcGrade === "3") activeHighlightNodes.push("IASLC", "ADJUVANT");
-    if (profile.egfr === "positive") activeHighlightNodes.push("EGFR", "TARGETED", "ADJUVANT");
-    
-    // Highlight SURVEILLANCE for all Stage IA & CTR <= 0.5 low-risk profiles
-    const isStageIA = profile.stage === "IA1" || profile.stage === "IA2" || profile.stage === "IA3" || (profile.stage?.startsWith("IA") ?? false) || profile.stage === "Tis" || profile.stage === "0";
-    if (isStageIA || (profile.ctr != null && profile.ctr <= 0.5)) {
-      activeHighlightNodes.push("CTR", "SURGERY", "STAGING", "SURVEILLANCE");
+    if (cancerType === 'breast' || profile.cancerType === 'breast') {
+      if (profile.erStatus === 'positive' || profile.prStatus === 'positive') {
+        activeHighlightNodes.push("ER_PR", "ENDOCRINE", "OS5YR");
+      }
+      if (profile.her2Status === 'positive' || profile.her2Status === '3+' || profile.her2Fish === 'amplified') {
+        activeHighlightNodes.push("HER2", "HP_TARGET", "OS5YR");
+      }
+      if (profile.oncotypeDxScore != null) {
+        activeHighlightNodes.push("GENE21");
+        if (profile.oncotypeDxScore <= 25) {
+          activeHighlightNodes.push("ENDOCRINE", "SURVEILLANCE");
+        } else {
+          activeHighlightNodes.push("CHEMO");
+        }
+      }
+      if (profile.axillaryNodesPositive && profile.axillaryNodesPositive >= 4) {
+        activeHighlightNodes.push("SLNB", "ABEMACICLIB", "RECURRENCE");
+      }
+      const isEarly = profile.stage === "I" || profile.stage === "IA" || profile.stage === "0";
+      if (isEarly) {
+        activeHighlightNodes.push("SURGERY", "SURVEILLANCE", "OS5YR");
+      }
+    } else if (cancerType === 'colorectal' || profile.cancerType === 'colorectal') {
+      const rawData = (profile as any).clinicalData || (profile as any).cancerSpecificData || profile;
+      const isMsiH = rawData.msiStatus === "MSI-H" || rawData.dmmrStatus === "dMMR";
+      const isRasMut = rawData.krasMutation && rawData.krasMutation !== "wildtype" && rawData.krasMutation !== "unknown";
+      if (isMsiH) {
+        activeHighlightNodes.push("MSI_MMR", "PD1_IMMUNO", "LONG_TERM_OS");
+      }
+      if (rawData.krasMutation || rawData.nrasMutation) {
+        activeHighlightNodes.push("RAS_GENE");
+      }
+      if (!isRasMut && rawData.primaryLocation === "left_colon") {
+        activeHighlightNodes.push("ANTI_EGFR", "LONG_TERM_OS");
+      }
+      if (isRasMut || rawData.primaryLocation === "right_colon") {
+        activeHighlightNodes.push("ANTI_VEGF", "LONG_TERM_OS");
+      }
+      if (profile.stage?.startsWith("III") || rawData.stage?.startsWith("III")) {
+        activeHighlightNodes.push("IDEA_CAPOX", "NEUROTOXICITY", "RECURRENCE_RISK");
+      }
+      if (profile.tStage || rawData.tStage) {
+        activeHighlightNodes.push("T_DEPTH");
+      }
+      if (profile.nStage || rawData.nStage) {
+        activeHighlightNodes.push("N_NODES");
+      }
+      activeHighlightNodes.push("SURGERY_TME", "LONG_TERM_OS");
+    } else {
+      if (profile.stas === "positive") activeHighlightNodes.push("STAS", "SURGERY");
+      if (profile.lvi === "positive") activeHighlightNodes.push("LVI", "METASTASIS");
+      if (profile.vpi === "positive") activeHighlightNodes.push("VPI", "STAGING", "ADJUVANT");
+      if (profile.ctr != null && profile.ctr > 0.5) activeHighlightNodes.push("CTR", "STAGING", "SURGERY");
+      if (profile.iaslcGrade === "3") activeHighlightNodes.push("IASLC", "ADJUVANT");
+      if (profile.egfr === "positive") activeHighlightNodes.push("EGFR", "TARGETED", "ADJUVANT");
+      
+      // Highlight SURVEILLANCE for all Stage IA & CTR <= 0.5 low-risk profiles
+      const isStageIA = profile.stage === "IA1" || profile.stage === "IA2" || profile.stage === "IA3" || (profile.stage?.startsWith("IA") ?? false) || profile.stage === "Tis" || profile.stage === "0";
+      if (isStageIA || (profile.ctr != null && profile.ctr <= 0.5)) {
+        activeHighlightNodes.push("CTR", "SURGERY", "STAGING", "SURVEILLANCE");
+      }
     }
     activeHighlightNodes = Array.from(new Set(activeHighlightNodes));
   }
 
   const factorCount = currentNodes.filter((n) => n.type === "factor").length;
   const connectionCount = currentNodes.reduce((sum, n) => sum + n.connections.length, 0);
+
+  // Compute dynamic height based on node distribution to ensure no clipping when content is large and no excess whitespace when content is compact
+  const dynamicCanvasHeight = useMemo(() => {
+    if (currentNodes.length === 0) return 460;
+    const maxY = Math.max(...currentNodes.map((n) => (n.y != null ? n.y : 100)));
+    const minY = Math.min(...currentNodes.map((n) => (n.y != null ? n.y : 10)));
+    const verticalSpread = Math.max(50, maxY - minY);
+    const calculated = Math.round(300 + verticalSpread * 3.0);
+    return Math.max(420, Math.min(calculated, 720));
+  }, [currentNodes]);
 
   const handleNodeClick = (node: KnowledgeNode) => {
     setSelectedEdge(null);
@@ -229,12 +304,12 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
             <div className="flex flex-col gap-3 w-full">
             {/* Graph Canvas Container */}
             <div
-              className={`bg-white rounded-2xl shadow-xs border overflow-hidden relative flex flex-col max-h-[65vh] lg:max-h-[700px] transition-all duration-500 ${
+              className={`bg-white rounded-2xl shadow-xs border overflow-hidden relative flex flex-col transition-all duration-500 ${
                 personalMode && profile
                   ? "border-teal-200 shadow-[0_0_30px_rgba(13,148,136,0.08)]"
                   : "border-slate-200"
               }`}
-              style={{ minHeight: 450 }}
+              style={{ minHeight: dynamicCanvasHeight, height: dynamicCanvasHeight }}
             >
               <div className="absolute inset-0 bg-slate-50/50 opacity-50 pointer-events-none" />
               
@@ -247,6 +322,7 @@ export default function KnowledgeMapPreview({ profile = null }: KnowledgeMapProp
                   hoveredEdge={hoveredEdge}
                   personalMode={personalMode}
                   profile={profile}
+                  cancerType={cancerType}
                   timeYears={timeYears}
                   edgeEvidences={edgeEvidences}
                   onNodeClick={handleNodeClick}

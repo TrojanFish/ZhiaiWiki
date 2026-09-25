@@ -15,42 +15,99 @@ import {
   CreditCard,
   Search,
   Coffee,
-  Heart
+  Heart,
+  Check,
+  Settings
 } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import LangSwitch from "@/components/LangSwitch";
+import CancerSwitch, { useCancerType, CANCER_TYPE_OPTIONS } from "@/components/common/CancerSwitch";
+import { CancerIcon } from "@/components/common/CancerIcons";
+import SettingsModal from "@/components/SettingsModal";
+
+import ZhiaiWikiLogo from "@/components/common/ZhiaiWikiLogo";
 
 export function LogoMark() {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center shadow-xs">
-        <img src="/logo.png" alt="OncoPath Logo" className="w-full h-full object-cover" />
-      </div>
-      <span className="font-bold text-slate-900 tracking-tight text-base">
-        Onco<span className="text-accent-blue font-extrabold">Path</span>
+    <div 
+      className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer select-none"
+      title="知癌，方能治癌；每一次循证，皆因至爱。· Knowing Cancer, Treating Cancer, Caring with Love."
+    >
+      <ZhiaiWikiLogo size="sm" showText={false} />
+      <span className="font-black text-slate-900 tracking-tight text-[15px] sm:text-base leading-none group-hover:text-blue-700 transition-colors">
+        知癌维基
       </span>
     </div>
   );
 }
 
-const NAV_LINKS = [
+const DESKTOP_NAV_LINKS = [
+  { label: "循证百科", href: "/wiki" },
+  { label: "知识图谱", href: "/knowledge" },
+  { label: "研究文献", href: "/studies" },
+  { label: "特药医保", href: "/reimbursement" },
+  { label: "学术指南", href: "/resources" },
+];
+
+const MOBILE_NAV_LINKS = [
   { label: "首页", href: "/", icon: Home, tag: "全景概览" },
   { label: "循证百科", href: "/wiki", icon: BookOpen, tag: "40+词条破译" },
-  { label: "特药医保", href: "/reimbursement", icon: CreditCard, tag: "自负测算·赠药" },
   { label: "知识图谱", href: "/knowledge", icon: Network, tag: "4D因果推演" },
-  { label: "国际研究库", href: "/studies", icon: FileText, tag: "顶刊效应量" },
-  { label: "学术导航", href: "/resources", icon: Compass, tag: "指南共识原文" },
+  { label: "研究文献", href: "/studies", icon: FileText, tag: "顶刊效应量" },
+  { label: "特药医保", href: "/reimbursement", icon: CreditCard, tag: "自负测算·赠药" },
+  { label: "学术指南", href: "/resources", icon: Compass, tag: "指南共识原文" },
 ];
 
 export default function SubpageNavbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [coffeeModalOpen, setCoffeeModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+  const { cancerType, setCancerType } = useCancerType();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const platform = window.navigator?.platform || window.navigator?.userAgent || "";
+    setIsMac(/Mac|iPhone|iPod|iPad/i.test(platform));
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkProfile = () => {
+      if (typeof window === "undefined") return;
+      const profile = localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile");
+      const email = localStorage.getItem("email") || sessionStorage.getItem("email");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      setHasProfile(!!profile || !!email || !!token);
+    };
+    checkProfile();
+    window.addEventListener("auth-change", checkProfile);
+    window.addEventListener("storage", checkProfile);
+    return () => {
+      window.removeEventListener("auth-change", checkProfile);
+      window.removeEventListener("storage", checkProfile);
+    };
+  }, []);
 
   useEffect(() => {
     const handleOpen = () => setCoffeeModalOpen(true);
     window.addEventListener("open-coffee-modal", handleOpen);
     return () => window.removeEventListener("open-coffee-modal", handleOpen);
+  }, []);
+
+  useEffect(() => {
+    const handleOpenSettings = () => setSettingsModalOpen(true);
+    window.addEventListener("open-settings-modal", handleOpenSettings);
+    return () => window.removeEventListener("open-settings-modal", handleOpenSettings);
   }, []);
 
   useEffect(() => {
@@ -71,44 +128,109 @@ export default function SubpageNavbar() {
     <>
       {/* Immersive Pass-Through Navbar: Full-width Edge-to-Edge with Safe Area on Mobile, Floating Island on Desktop */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none print:hidden md:top-3.5 md:px-6">
-        <nav className="w-full md:max-w-7xl md:mx-auto flex items-center justify-between px-3.5 sm:px-6 pt-[calc(0.6rem+env(safe-area-inset-top,0px))] pb-2.5 md:py-2.5 md:rounded-full bg-white/85 md:bg-white/95 backdrop-blur-xl md:backdrop-blur-md border-b md:border border-slate-200/80 md:border-slate-200/90 shadow-xs md:shadow-lg shadow-slate-900/5 transition-colors duration-200 pointer-events-auto hover:border-slate-300">
-          <Link href="/" prefetch={true} className="flex-shrink-0 hover:opacity-85 transition-opacity">
-            <LogoMark />
-          </Link>
+        <nav
+          className={`w-full md:max-w-7xl md:mx-auto flex items-center justify-between px-3.5 sm:px-6 pt-[calc(0.625rem+env(safe-area-inset-top,0px))] pb-2.5 md:py-2.5 md:rounded-full border-b md:border transition-all duration-300 pointer-events-auto ${
+            isScrolled
+              ? "bg-white/95 md:bg-white/95 backdrop-blur-xl md:backdrop-blur-md border-slate-200/90 shadow-xs md:shadow-lg shadow-slate-900/5 hover:border-slate-300"
+              : "bg-white/85 md:bg-white/90 backdrop-blur-lg md:backdrop-blur-sm border-slate-200/70 shadow-2xs md:shadow-md shadow-slate-900/5 hover:border-slate-300"
+          }`}
+        >
+          {/* Brand Logo & Cancer Type Quick Switcher */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <Link href="/" prefetch={true} className="flex-shrink-0 flex items-center hover:opacity-85 transition-opacity">
+              <LogoMark />
+            </Link>
+            <CancerSwitch variant="dropdown" />
+          </div>
           
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-5 lg:gap-7">
-
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                prefetch={true}
-                className={`text-xs sm:text-sm font-bold transition-colors ${
-                  pathname === link.href
-                    ? "text-accent-blue"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Desktop Navigation Links (Pill Container) — 精炼5大临床核心链路，释放横向呼吸空间 */}
+          <div className="hidden md:flex items-center gap-0.5 lg:gap-1 bg-slate-100/70 p-1 rounded-full border border-slate-200/60 text-xs">
+            {DESKTOP_NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  prefetch={true}
+                  className={`px-2.5 lg:px-3.5 py-1 rounded-full text-xs font-semibold transition-all ${
+                    isActive
+                      ? "bg-white text-blue-700 font-extrabold shadow-2xs border border-slate-200/60"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/70"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Right Action Area: Coffee + Search + LangSwitch + Avatar + Mobile Hamburger */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
-            {/* Coffee Sponsorship Trigger Button ("请喝咖啡") */}
+          {/* Desktop Right Action Area (>= md) */}
+          <div className="hidden md:flex items-center gap-1.5 lg:gap-2.5">
+            {/* 1. Unified Utility Cluster (Search + Settings) */}
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-100/90 p-0.5 rounded-full border border-slate-200/90 shadow-2xs">
+              {/* Spotlight Command Palette Trigger (动态按操作系统适配 Ctrl+K / ⌘K) */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new CustomEvent("open-command-palette"));
+                  }
+                }}
+                className="h-7.5 px-2.5 rounded-full hover:bg-white flex items-center gap-1.5 text-slate-500 hover:text-blue-600 hover:shadow-2xs transition-all cursor-pointer active:scale-95"
+                title={`全局搜索靶向药、顶刊研究或随访工具 (${isMac ? "⌘K" : "Ctrl+K"})`}
+                aria-label={`快速搜索 (${isMac ? "⌘K" : "Ctrl+K"})`}
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span className="text-[11px] font-mono text-slate-400 hidden xl:inline" suppressHydrationWarning>
+                  {isMac ? "⌘K" : "Ctrl K"}
+                </span>
+              </button>
+
+              {/* Settings Trigger: Unified Preferences Modal */}
+              <button
+                type="button"
+                onClick={() => setSettingsModalOpen(true)}
+                className="w-7.5 h-7.5 rounded-full hover:bg-white flex items-center justify-center text-slate-500 hover:text-blue-600 hover:shadow-2xs transition-all cursor-pointer active:scale-95"
+                title="系统偏好设置 (默认癌种、显示语言及循证体系)"
+                aria-label="系统偏好设置"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                <span className="sr-only">设置</span>
+              </button>
+            </div>
+
+            {/* 2. PROMINENT COFFEE SPONSORSHIP BUTTON (公益赞助·轻量温和图标) */}
             <button
               type="button"
               onClick={() => setCoffeeModalOpen(true)}
-              className="h-9 px-2.5 sm:px-3 rounded-full bg-amber-50 hover:bg-amber-100/90 border border-amber-200/90 text-amber-800 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer group"
-              title="请作者喝杯咖啡 · 自愿赞助支持"
+              className="w-8 h-8 rounded-full bg-slate-100/70 hover:bg-amber-50 hover:border-amber-200/90 border border-slate-200/70 text-slate-500 hover:text-amber-700 flex items-center justify-center transition-all shadow-2xs hover:shadow-xs cursor-pointer active:scale-95 group"
+              title="请作者喝杯咖啡 · 自愿赞助支持公益运转"
               aria-label="请作者喝杯咖啡"
             >
-              <Coffee className="w-4 h-4 text-amber-600 animate-coffee-wiggle group-hover:scale-110 transition-transform" />
-              <span className="hidden sm:inline">请喝咖啡</span>
+              <Coffee className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-600 transition-colors" />
+              <span className="sr-only">请喝咖啡</span>
             </button>
-            {/* Spotlight Command Palette Trigger (Circular Icon Button, Symmetrical with Avatar & LangSwitch) */}
+
+            {/* Subtle Vertical Divider */}
+            <div className="h-4 w-px bg-slate-200/90 my-auto" aria-hidden="true" />
+
+            {/* 3. Account / User Avatar */}
+            <UserAvatar />
+
+            {/* 4. Desktop Primary CTA Button: 建立档案 / 我的档案 */}
+            <Link
+              href="/profile"
+              prefetch={true}
+              className="h-8 px-3 lg:px-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs hover:shadow-md flex items-center gap-1.5 active:scale-95 shrink-0"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span suppressHydrationWarning>{hasProfile ? "我的档案" : "建立临床档案"}</span>
+            </Link>
+          </div>
+
+          {/* Mobile Right Action Area (< md): Streamlined [Search -> Coffee -> Menu] */}
+          <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+            {/* 1. Mobile Search Trigger (⌘K Command Palette) */}
             <button
               type="button"
               onClick={() => {
@@ -116,32 +238,35 @@ export default function SubpageNavbar() {
                   window.dispatchEvent(new CustomEvent("open-command-palette"));
                 }
               }}
-              className="w-9 h-9 rounded-full bg-slate-100/90 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-all cursor-pointer shadow-2xs group relative active:scale-95"
-              title="全局搜索靶向药、顶刊研究或随访工具 (⌘K / Ctrl+K)"
-              aria-label="快速搜索靶向药、顶刊研究或随访工具 (⌘K)"
+              className="w-8 h-8 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/80 text-slate-600 flex items-center justify-center transition-colors cursor-pointer active:scale-95 shrink-0"
+              title="快速搜索 (⌘K)"
+              aria-label="快速搜索"
             >
-              <Search className="w-4 h-4 text-slate-500 group-hover:text-blue-600 transition-colors" />
-              <span className="sr-only">搜索 (⌘K)</span>
+              <Search className="w-3.5 h-3.5" />
             </button>
 
-            {/* LangSwitch: 简繁转换按钮 (电脑端与移动端导航栏右侧常驻) */}
-            <LangSwitch />
+            {/* 2. Prominent Mobile Coffee Sponsorship Button (公益赞助·紧凑圆钮) */}
+            <button
+              type="button"
+              onClick={() => setCoffeeModalOpen(true)}
+              className="w-8 h-8 rounded-full bg-amber-50 hover:bg-amber-100/90 border border-amber-200/90 text-amber-900 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 group shrink-0"
+              title="请作者喝杯咖啡 · 自愿赞助支持公益运转"
+              aria-label="请作者喝杯咖啡"
+            >
+              <Coffee className="w-4 h-4 text-amber-600 animate-coffee-wiggle shrink-0" />
+              <span className="sr-only">请喝咖啡</span>
+            </button>
 
-            {/* UserAvatar: Single Home for Login, Profile, Timeline, Report, and Logout */}
-            <UserAvatar />
-
-            {/* Mobile Hamburger Button: Dedicated exclusively to Site Navigation */}
+            {/* 3. Mobile Hamburger Menu Trigger (Anchor at far right) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-9 h-9 rounded-full text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors focus:outline-none cursor-pointer flex items-center justify-center shadow-2xs active:scale-95"
+              className="w-8 h-8 rounded-full text-slate-700 hover:bg-slate-100 border border-slate-200/90 transition-colors focus:outline-none cursor-pointer flex items-center justify-center shadow-2xs active:scale-95 shrink-0"
               aria-label="打开全站导航菜单"
             >
               {mobileMenuOpen ? (
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-4 h-4" />
               ) : (
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
@@ -159,9 +284,9 @@ export default function SubpageNavbar() {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Drawer Panel: Compact Width max-w-[310px] with Safe Area Top */}
-          <div className="fixed top-0 right-0 bottom-0 w-[82%] max-w-[310px] bg-white/98 backdrop-blur-2xl shadow-2xl p-5 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] flex flex-col justify-between animate-fade-in-up border-l border-slate-200/90 overflow-y-auto">
-            <div className="space-y-4">
+          {/* Drawer Panel: Clean & Streamlined, Zero Duplication */}
+          <div className="fixed top-0 right-0 bottom-0 w-[84%] max-w-[320px] bg-white/98 backdrop-blur-2xl shadow-2xl p-4.5 pt-[calc(1.2rem+env(safe-area-inset-top,0px))] flex flex-col justify-between animate-fade-in-up border-l border-slate-200/90 overflow-y-auto">
+            <div className="space-y-3.5">
               {/* Drawer Header */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <Link href="/" prefetch={true} onClick={() => setMobileMenuOpen(false)}>
@@ -172,18 +297,39 @@ export default function SubpageNavbar() {
                   className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors flex items-center justify-center cursor-pointer"
                   aria-label="关闭菜单"
                 >
-                  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Navigation Links with Compact Mini-Tags */}
-              <div className="space-y-1 pt-1">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-1.5">
+              {/* Patient Profile Quick Card (档案状态与直达入口) */}
+              <Link
+                href="/profile"
+                prefetch={true}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-blue-50/90 to-indigo-50/70 border border-blue-200/80 shadow-2xs hover:shadow-xs transition-all text-left group"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-slate-900 leading-tight">
+                      <span suppressHydrationWarning>{hasProfile ? "我的个人临床档案" : "建立个人临床档案"}</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5 truncate">
+                      <span suppressHydrationWarning>{hasProfile ? "查看病理报告、随访与推演" : "5秒录入指标 · 专属破译"}</span>
+                    </div>
+                  </div>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-blue-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+
+              {/* Core Navigation Links */}
+              <div className="space-y-1">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-1">
                   系统功能导航
                 </div>
-                {NAV_LINKS.map((link) => {
+                {MOBILE_NAV_LINKS.map((link) => {
                   const isActive = pathname === link.href;
                   const IconComp = link.icon;
                   return (
@@ -192,7 +338,7 @@ export default function SubpageNavbar() {
                       href={link.href}
                       prefetch={true}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition-all ${
+                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                         isActive
                           ? "bg-blue-50 text-blue-700 border border-blue-100 font-bold shadow-2xs"
                           : "text-slate-700 hover:bg-slate-50 border border-transparent"
@@ -210,70 +356,101 @@ export default function SubpageNavbar() {
                 })}
               </div>
 
-              {/* Secondary Trust & Ethical Mission Link */}
-              <div className="pt-2">
+              {/* Settings & Support Area (非重复，一站式整合) */}
+              <div className="space-y-1 pt-2 border-t border-slate-100">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-1">
+                  设置与支持
+                </div>
+
+                {/* Unified Preferences Trigger (集中管理：默认癌种、显示语言及缓存清除，绝无多处分散重复！) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setSettingsModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Settings className="w-4 h-4 text-blue-600" />
+                    <span>偏好设置与语言</span>
+                  </div>
+                  <span className="text-[10px] text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                    默认癌种 / 语言
+                  </span>
+                </button>
+
+                {/* About Link */}
                 <Link
                   href="/about"
                   prefetch={true}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between p-3 rounded-xl border transition-all text-xs font-semibold ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border transition-all text-xs font-semibold ${
                     pathname === "/about"
                       ? "bg-sky-50 text-sky-700 border-sky-200 font-bold"
-                      : "bg-slate-50/80 hover:bg-slate-100 text-slate-600 border-slate-200/80"
+                      : "border-transparent hover:bg-slate-50 text-slate-700"
                   }`}
                 >
-
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <Info className="w-4 h-4 text-sky-600" />
-                    <span>关于我们与初衷</span>
+                    <span>关于我们</span>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] text-slate-400 font-mono">
-                    <span>医学伦理</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <span>初衷·伦理</span>
                   </div>
                 </Link>
-              </div>
 
-              {/* Mobile Drawer Coffee Sponsorship Button */}
-              <div className="pt-2">
+                {/* Love Relay Link */}
+                <Link
+                  href="/love-relay"
+                  prefetch={true}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border transition-all text-xs font-semibold ${
+                    pathname === "/love-relay"
+                      ? "bg-teal-50 text-teal-800 border-teal-200 font-bold"
+                      : "border-transparent hover:bg-slate-50 text-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Heart className="w-4 h-4 text-teal-600" />
+                    <span>抗癌爱心接力</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-teal-600 font-mono">
+                    <span>温暖回响</span>
+                  </div>
+                </Link>
+
+                {/* Coffee Sponsorship Trigger */}
                 <button
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     setCoffeeModalOpen(true);
                   }}
-                  className="w-full flex items-center justify-between p-3 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100/90 text-amber-900 text-xs font-bold transition-all active:scale-98 cursor-pointer"
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-amber-200/80 bg-amber-50/60 hover:bg-amber-100/80 text-amber-900 text-xs font-semibold transition-all cursor-pointer"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <Coffee className="w-4 h-4 text-amber-600 animate-coffee-wiggle" />
-                    <span>请作者喝杯咖啡 / 自愿赞助</span>
+                    <span>请作者喝杯咖啡</span>
                   </div>
-                  <span className="text-[10px] text-amber-700 font-mono bg-amber-100/80 px-2 py-0.5 rounded-full">支持公益</span>
+                  <span className="text-[10px] text-amber-700 font-mono bg-amber-100/80 px-1.5 py-0.5 rounded-full">自愿赞助</span>
                 </button>
-              </div>
-
-              {/* Mobile Drawer Language Switch */}
-              <div className="pt-2">
-                <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200/80 bg-slate-50/80">
-                  <span className="text-xs font-semibold text-slate-700">语言显示 / 語言切換</span>
-                  <LangSwitch showFullLabel={true} />
-                </div>
               </div>
             </div>
 
             {/* Drawer Footer */}
-            <div className="pt-4 mt-4 border-t border-slate-100 text-center space-y-1.5">
+            <div className="pt-3 mt-3 border-t border-slate-100 text-center space-y-1">
               <div className="flex items-center justify-center gap-3 text-[11px] text-slate-400">
                 <Link href="/terms" onClick={() => setMobileMenuOpen(false)} className="hover:text-slate-600 transition-colors">
                   免责声明
                 </Link>
                 <span>·</span>
                 <Link href="/privacy" onClick={() => setMobileMenuOpen(false)} className="hover:text-slate-600 transition-colors">
-                  隐私保护
+                  隐私政策
                 </Link>
               </div>
               <div className="text-[10px] text-slate-400">
-                © 2026 OncoPath · 严格同行评审循证医学库
+                © 2026 知癌维基 ZhiaiWiki · 严格同行评审循证医学库
               </div>
             </div>
           </div>
@@ -288,7 +465,8 @@ export default function SubpageNavbar() {
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-7 sm:max-w-sm w-full border-t sm:border border-slate-200/90 shadow-2xl flex flex-col items-center text-center space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-7 max-h-[92vh] overflow-y-auto"
+            style={{ maxWidth: "384px", width: "100%" }}
+            className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-7 sm:max-w-sm w-full border-t sm:border border-slate-200/90 shadow-2xl flex flex-col items-center text-center space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-7 max-h-[92vh] overflow-y-auto mx-auto"
           >
             {/* iOS HIG Sheet Grabber for Mobile */}
             <div className="sm:hidden -mt-2 mb-1 flex justify-center shrink-0 w-full">
@@ -351,6 +529,13 @@ export default function SubpageNavbar() {
           </div>
         </div>
       )}
+
+      {/* Settings Modal (Preferences for Cancer Domain, Language & Evidence Guidelines) */}
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+        onOpenCoffee={() => setCoffeeModalOpen(true)}
+      />
     </>
   );
 }

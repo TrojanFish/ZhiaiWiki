@@ -1,5 +1,8 @@
 import crypto from 'crypto';
+import { promisify } from 'util';
 import { NextResponse } from 'next/server';
+
+const pbkdf2Async = promisify(crypto.pbkdf2);
 
 const DEFAULT_SECRET = 'oncopath_patient_auth_secret_key_2026';
 const AUTH_SECRET = process.env.ADMIN_SECRET || DEFAULT_SECRET;
@@ -10,7 +13,7 @@ export const PBKDF2_ITERATIONS = 210000;
 export const LEGACY_PBKDF2_ITERATIONS = 1000;
 
 if (process.env.NODE_ENV === 'production' && AUTH_SECRET === DEFAULT_SECRET) {
-  console.warn('⚠️ [SECURITY WARNING] OncoPath is running in production with default ADMIN_SECRET! Please configure ADMIN_SECRET in your production .env file.');
+  console.warn('⚠️ [SECURITY WARNING] ZhiaiWiki is running in production with default ADMIN_SECRET! Please configure ADMIN_SECRET in your production .env file.');
 }
 
 /**
@@ -19,6 +22,16 @@ if (process.env.NODE_ENV === 'production' && AUTH_SECRET === DEFAULT_SECRET) {
 export function hashPassword(password: string): { hash: string; salt: string } {
   const salt = crypto.randomBytes(16).toString('hex');
   const rawHash = crypto.pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, 64, 'sha512').toString('hex');
+  const hash = `pbkdf2$${PBKDF2_ITERATIONS}$${rawHash}`;
+  return { hash, salt };
+}
+
+/**
+ * Non-blocking async password hashing executing on Node libuv threadpool (high concurrency safe)
+ */
+export async function hashPasswordAsync(password: string): Promise<{ hash: string; salt: string }> {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const rawHash = (await pbkdf2Async(password, salt, PBKDF2_ITERATIONS, 64, 'sha512')).toString('hex');
   const hash = `pbkdf2$${PBKDF2_ITERATIONS}$${rawHash}`;
   return { hash, salt };
 }
@@ -56,6 +69,42 @@ export function verifyPassword(password: string, storedHash: string, salt: strin
   // 3. Fallback check raw hex at modern iterations
   const modernHex = crypto.pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, 64, 'sha512').toString('hex');
   const modernBuf = Buffer.from(modernHex, 'hex');
+  if (storedBuf.length === modernBuf.length && crypto.timingSafeEqual(storedBuf, modernBuf)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Non-blocking async password verification executing on Node libuv threadpool (high concurrency safe)
+ */
+export async function verifyPasswordAsync(password: string, storedHash: string, salt: string | null | undefined): Promise<boolean> {
+  if (!salt) {
+    const simpleHash = crypto.createHash('sha256').update(password).digest('hex');
+    return simpleHash === storedHash;
+  }
+
+  // 1. Prefixed modern hash (e.g. pbkdf2$210000$<hex>)
+  if (storedHash.startsWith('pbkdf2$')) {
+    const parts = storedHash.split('$');
+    const iterations = parseInt(parts[1], 10) || PBKDF2_ITERATIONS;
+    const expectedHex = parts[2];
+    const computedBuf = (await pbkdf2Async(password, salt, iterations, 64, 'sha512')) as Buffer;
+    const expectedBuf = Buffer.from(expectedHex, 'hex');
+    if (expectedBuf.length !== computedBuf.length) return false;
+    return crypto.timingSafeEqual(expectedBuf, computedBuf);
+  }
+
+  // 2. Legacy raw hex format (check 1,000 iterations first for backward compatibility)
+  const legacyBuf = (await pbkdf2Async(password, salt, LEGACY_PBKDF2_ITERATIONS, 64, 'sha512')) as Buffer;
+  const storedBuf = Buffer.from(storedHash, 'hex');
+  if (storedBuf.length === legacyBuf.length && crypto.timingSafeEqual(storedBuf, legacyBuf)) {
+    return true;
+  }
+
+  // 3. Fallback check raw hex at modern iterations
+  const modernBuf = (await pbkdf2Async(password, salt, PBKDF2_ITERATIONS, 64, 'sha512')) as Buffer;
   if (storedBuf.length === modernBuf.length && crypto.timingSafeEqual(storedBuf, modernBuf)) {
     return true;
   }

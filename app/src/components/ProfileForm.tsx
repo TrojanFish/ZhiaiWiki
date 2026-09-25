@@ -95,7 +95,7 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-2.5 sm:px-6">
+    <div className="max-w-2xl mx-auto px-3.5 sm:px-6">
       {/* Progress */}
       <div className="mb-6 md:mb-8">
         <div className="flex justify-between items-center mb-2">
@@ -287,8 +287,8 @@ function Step1({ form, updateForm }: StepProps) {
               className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                 form.margin === m
                   ? m === "negative"
-                    ? "bg-green-50 border border-green-500 text-green-600"
-                    : "bg-red-50 border border-red-500 text-red-600"
+                    ? "bg-emerald-50 border border-emerald-500 text-emerald-700 font-bold"
+                    : "bg-rose-50 border border-rose-400 text-rose-700 font-bold"
                   : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50"
               }`}
             >
@@ -500,8 +500,9 @@ function Step2({ form, updateForm }: StepProps) {
 
           {/* TP53 & RB1 Co-mutations */}
           <div className="p-2.5 bg-amber-50/70 border border-amber-200 rounded-lg flex items-center justify-between gap-2 flex-wrap">
-            <span className="text-xs font-bold text-amber-900 flex items-center gap-1">
-              <span>⚠️ 高危伴随突变 (Co-mutations):</span>
+            <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>高危伴随突变 (Co-mutations):</span>
             </span>
             <div className="flex gap-1.5">
               {[
@@ -801,8 +802,8 @@ function ThreeWayToggle({
   colors: ("green" | "red" | "gray")[];
 }) {
   const colorClasses: Record<string, string> = {
-    green: "bg-green-50 border-green-500 text-green-600",
-    red: "bg-red-50 border-red-500 text-red-600",
+    green: "bg-emerald-50 border-emerald-500 text-emerald-700 font-bold",
+    red: "bg-rose-50 border-rose-400 text-rose-700 font-bold",
     gray: "bg-white border-gray-200 text-gray-500 hover:bg-gray-50",
   };
 

@@ -12,10 +12,16 @@ import {
   Search, 
   ExternalLink,
   ChevronDown,
-  ChevronUp,
-  Sparkles
+  ChevronUp
 } from "lucide-react";
 import Footer from "@/components/Footer";
+import { useCancerType } from "@/components/common/CancerSwitch";
+import { BREAST_RESOURCE_CATEGORIES } from "@/lib/breastResourcesData";
+import { COLORECTAL_RESOURCE_CATEGORIES } from "@/lib/colorectalResourcesData";
+import { GASTRIC_RESOURCE_CATEGORIES } from "@/lib/gastricResourcesData";
+import { LIVER_RESOURCE_CATEGORIES } from "@/lib/liverResourcesData";
+import { ESOPHAGEAL_RESOURCE_CATEGORIES } from "@/lib/esophagealResourcesData";
+import { THYROID_RESOURCE_CATEGORIES } from "@/lib/thyroidResourcesData";
 
 interface ResourceLink {
   name: string;
@@ -67,8 +73,8 @@ const CATEGORIES: ResourceCategory[] = [
       {
         name: "IASLC（国际肺癌研究协会）",
         url: "https://www.iaslc.org/",
-        description: "全球最大的专注于肺癌的学术组织，负责制定 TNM 分期系统（OncoPath 使用第九版）。提供最新的分期教育材料和患者手册。",
-        tip: "OncoPath 中的「T分期」「N分期」「M分期」定义均来源于此机构。",
+        description: "全球最大的专注于肺癌的学术组织，负责制定 TNM 分期系统（知癌维基使用第九版）。提供最新的分期教育材料和患者手册。",
+        tip: "知癌维基中的「T分期」「N分期」「M分期」定义均来源于此机构。",
         lang: "en",
         free: true,
       },
@@ -89,14 +95,14 @@ const CATEGORIES: ResourceCategory[] = [
     levelLabel: "进阶 · 高质量顶刊",
     levelColor: "text-blue-700 border-blue-300 bg-blue-50",
     title: "顶级学术期刊",
-    subtitle: "发表全球最顶尖的肺癌临床研究成果。OncoPath 的核心证据库中的研究均来自这些期刊。",
+    subtitle: "发表全球最顶尖的肺癌临床研究成果。知癌维基 (ZhiaiWiki) 的核心证据库中的研究均来自这些期刊。",
     warning: "注意：期刊论文面向医生撰写，数据专业且需要医学背景才能正确解读。请勿将单篇研究的结论直接套用于自身情况。",
     links: [
       {
         name: "Journal of Thoracic Oncology (JTO)",
         url: "https://www.jto.org/",
         description: "全球最顶级的胸部肿瘤学专业期刊，IASLC 官方出版物。JCOG0802、JCOG0804 等奠定肺癌手术方式的里程碑研究均发表于此。",
-        tip: "OncoPath 中引用的多数关键研究（如肺叶切除 vs. 肺段切除）均来自 JTO。",
+        tip: "知癌维基中引用的多数关键研究（如肺叶切除 vs. 肺段切除）均来自 JTO。",
         lang: "en",
         free: false,
       },
@@ -144,7 +150,7 @@ const CATEGORIES: ResourceCategory[] = [
       {
         name: "Europe PMC",
         url: "https://europepmc.org/",
-        description: "欧洲生物医学文献数据库，与 PubMed 数据同源但开放程度更高，提供全文检索，且通过 API 可机器读取（OncoPath 的外部抓取功能即对接此库）。",
+        description: "欧洲生物医学文献数据库，与 PubMed 数据同源但开放程度更高，提供全文检索，且通过 API 可机器读取（知癌维基的外部抓取功能即对接此库）。",
         tip: "搜索相同关键词，但 Europe PMC 更容易获取全文内容。",
         lang: "en",
         free: true,
@@ -200,7 +206,98 @@ const CATEGORIES: ResourceCategory[] = [
   },
 ];
 
+const ICON_MAP: Record<string, any> = {
+  Building2,
+  Newspaper,
+  Database,
+  Wrench,
+  BookOpen,
+};
+
+const BREAST_CATEGORIES: ResourceCategory[] = BREAST_RESOURCE_CATEGORIES.map((cat) => ({
+  id: cat.id,
+  icon: ICON_MAP[cat.iconName] || Building2,
+  level: cat.level,
+  levelLabel: cat.levelLabel,
+  levelColor: cat.levelColor,
+  title: cat.title,
+  subtitle: cat.subtitle,
+  warning: cat.warning,
+  links: cat.links,
+}));
+
+const COLORECTAL_CATEGORIES: ResourceCategory[] = COLORECTAL_RESOURCE_CATEGORIES.map((cat) => ({
+  id: cat.id,
+  icon: ICON_MAP[cat.iconName] || Building2,
+  level: cat.level,
+  levelLabel: cat.levelLabel,
+  levelColor: cat.levelColor,
+  title: cat.title,
+  subtitle: cat.subtitle,
+  warning: cat.warning,
+  links: cat.links,
+}));
+
+const GASTRIC_CATEGORIES: ResourceCategory[] = GASTRIC_RESOURCE_CATEGORIES.map((cat) => ({
+  id: cat.id,
+  icon: ICON_MAP[cat.iconName] || Building2,
+  level: cat.level,
+  levelLabel: cat.levelLabel,
+  levelColor: cat.levelColor,
+  title: cat.title,
+  subtitle: cat.subtitle,
+  warning: cat.warning,
+  links: cat.links,
+}));
+
+const LIVER_CATEGORIES: ResourceCategory[] = LIVER_RESOURCE_CATEGORIES.map((cat) => ({
+  id: cat.id,
+  icon: ICON_MAP[cat.iconName] || Building2,
+  level: cat.level,
+  levelLabel: cat.levelLabel,
+  levelColor: cat.levelColor,
+  title: cat.title,
+  subtitle: cat.subtitle,
+  warning: cat.warning,
+  links: cat.links,
+}));
+
+const ESOPHAGEAL_CATEGORIES: ResourceCategory[] = ESOPHAGEAL_RESOURCE_CATEGORIES.map((cat) => ({
+  id: cat.id,
+  icon: ICON_MAP[cat.iconName] || Building2,
+  level: cat.level,
+  levelLabel: cat.levelLabel,
+  levelColor: cat.levelColor,
+  title: cat.title,
+  subtitle: cat.subtitle,
+  warning: cat.warning,
+  links: cat.links,
+}));
+
+const THYROID_CATEGORIES: ResourceCategory[] = THYROID_RESOURCE_CATEGORIES.map((cat) => ({
+  id: cat.id,
+  icon: ICON_MAP[cat.iconName] || Building2,
+  level: cat.level,
+  levelLabel: cat.levelLabel,
+  levelColor: cat.levelColor,
+  title: cat.title,
+  subtitle: cat.subtitle,
+  warning: cat.warning,
+  links: cat.links,
+}));
+
 export default function ResourcesPage() {
+  const { cancerType } = useCancerType();
+  const currentCategories = useMemo(() => {
+    if (cancerType === "breast") return BREAST_CATEGORIES;
+    if (cancerType === "colorectal" || cancerType === "colon" || cancerType === "rectal") return COLORECTAL_CATEGORIES;
+    if (cancerType === "gastric") return GASTRIC_CATEGORIES;
+    if (cancerType === "liver") return LIVER_CATEGORIES;
+    if (cancerType === "esophageal") return ESOPHAGEAL_CATEGORIES;
+    if (cancerType === "thyroid") return THYROID_CATEGORIES;
+    return CATEGORIES;
+  }, [cancerType]);
+
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [langFilter, setLangFilter] = useState<"all" | "zh" | "en" | "free">("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -217,7 +314,7 @@ export default function ResourcesPage() {
 
   // Filter logic across categories, language, and search query
   const filteredCategories = useMemo(() => {
-    return CATEGORIES.map((cat) => {
+    return currentCategories.map((cat) => {
       // If a specific category tab is selected and doesn't match
       if (activeCategory !== "all" && activeCategory !== cat.id) {
         return null;
@@ -259,7 +356,7 @@ export default function ResourcesPage() {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-500 selection:text-white">
 
       {/* Hero Header */}
-      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-32 pb-8 px-2.5 sm:px-6 max-w-4xl mx-auto text-center space-y-4">
+      <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Unified Top Pill Badge */}
         <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs">
           <BookOpen className="w-3.5 h-3.5 text-sky-600" />
@@ -270,12 +367,18 @@ export default function ResourcesPage() {
 
         {/* Unified H1 */}
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          权威临床指南 · <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-teal-500">专业医学循证导航</span>
+          权威临床指南 · <span className="text-blue-700">专业医学循证导航</span>
         </h1>
 
         {/* Unified Subtitle */}
         <p className="max-w-3xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-          系统甄选 <strong>CSCO、NCCN、ASCO、IASLC</strong> 等全球权威学术组织官方指南与专业数据库。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。
+          {cancerType === "breast" ? (
+            <>系统甄选 <strong>CSCO、NCCN、St. Gallen、ASCO</strong> 等全球乳腺癌权威学术组织官方指南、Predict Breast 预测工具与中国权威乳腺专科导航。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。</>
+          ) : cancerType === "colorectal" ? (
+            <>系统甄选 <strong>CSCO、NCCN、CACA</strong> 等全球结直肠肿瘤权威指南、中国顶级结直肠专科中心与造口护理伤口治疗学会 (WCET) 权威资源。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。</>
+          ) : (
+            <>系统甄选 <strong>CSCO、NCCN、ASCO、IASLC</strong> 等全球权威学术组织官方指南与专业数据库。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。</>
+          )}
         </p>
 
         {/* Big Disclaimer */}
@@ -292,7 +395,7 @@ export default function ResourcesPage() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 pb-16 space-y-6">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-8 sm:pb-12 space-y-5 sm:space-y-6">
         
         {/* 1. Sticky Segmented Category Navigation Bar */}
         <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
@@ -304,11 +407,11 @@ export default function ResourcesPage() {
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <BookOpen className="w-3.5 h-3.5" />
             <span>全部 15+ 权威资源</span>
           </button>
 
-          {CATEGORIES.map((cat) => {
+          {currentCategories.map((cat) => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.id;
             return (
@@ -551,8 +654,8 @@ export default function ResourcesPage() {
                 <p className="text-slate-600 text-xs leading-relaxed">{item.content}</p>
                 <ul className="space-y-1 pt-1">
                   {item.example.map((e, i) => (
-                    <li key={i} className="text-xs text-slate-600 flex items-start gap-1.5">
-                      <span className="text-teal-600 mt-0.5">›</span>
+                    <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0" />
                       <span>{e}</span>
                     </li>
                   ))}

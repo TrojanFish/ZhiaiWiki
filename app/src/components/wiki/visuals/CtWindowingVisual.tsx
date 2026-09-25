@@ -7,7 +7,6 @@ import {
   Columns2,
   Ruler,
   Layers,
-  Sparkles,
   ShieldCheck,
   Info,
   Crosshair,
@@ -587,7 +586,7 @@ export function CtWindowingVisual({
       {/* 2. Clinical Case Presets Bar (Quick Loading) */}
       <div className="mb-3.5">
         <div className="text-[10px] font-bold text-slate-400 mb-1.5 flex items-center gap-1">
-          <Sparkles className="w-3 h-3 text-amber-400" />
+          <Scan className="w-3 h-3 text-amber-400" />
           <span>典型临床病例一键载入对比：</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">

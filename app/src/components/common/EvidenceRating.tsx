@@ -85,7 +85,7 @@ export default function EvidenceRating({
             : numericLevel === 3
             ? "bg-teal-50 text-teal-800 border-teal-200"
             : "bg-slate-50 text-slate-700 border-slate-200"
-        } ${textClasses[size]} ${className}`}
+        } ${textClasses[size]}${className ? ` ${className}` : ""}`}
       >
         <span className="flex items-center gap-0.5">
           {Array.from({ length: max }).map((_, i) => (
@@ -107,7 +107,7 @@ export default function EvidenceRating({
   if (variant === "compact") {
     return (
       <span
-        className={`inline-flex items-center gap-1 text-slate-600 font-medium tabular-nums ${textClasses[size]} ${className}`}
+        className={`inline-flex items-center gap-1 text-slate-600 font-medium tabular-nums ${textClasses[size]}${className ? ` ${className}` : ""}`}
         title={LEVEL_TEXT_MAP[numericLevel]}
       >
         <Star className={`${starSizeClasses[size]} fill-amber-400 text-amber-400`} />
@@ -120,7 +120,7 @@ export default function EvidenceRating({
   // Default "stars" variant
   return (
     <div
-      className={`inline-flex items-center gap-1.5 ${className}`}
+      className={`inline-flex items-center gap-1.5${className ? ` ${className}` : ""}`}
       title={text || LEVEL_TEXT_MAP[numericLevel]}
     >
       <div className="flex items-center gap-0.5">

@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       title: s.title,
       journal: s.journal,
       year: s.year,
-      authors: 'OncoPath Curated Clinical Group',
+      authors: 'ZhiaiWiki Curated Clinical Group',
       summary: s.keyConclusions?.join('; ') || '',
       conclusion: s.keyConclusions?.[0] || '',
       keywords: s.relevantFactors?.join(', ') || 'NSCLC, GGO, STAS',

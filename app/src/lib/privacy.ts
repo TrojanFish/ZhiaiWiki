@@ -1,5 +1,5 @@
 /**
- * OncoPath Patient Privacy & PII (Personally Identifiable Information) Sanitizer
+ * ZhiaiWiki Patient Privacy & PII (Personally Identifiable Information) Sanitizer
  * Compliant with PIPL (中国个人信息保护法) & Medical Data De-identification Standards.
  */
 

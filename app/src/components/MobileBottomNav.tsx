@@ -7,8 +7,7 @@ import {
   Home, 
   ClipboardList, 
   BookOpen, 
-  CreditCard, 
-  Activity 
+  CreditCard 
 } from "lucide-react";
 import { triggerHaptic } from "@/lib/haptics";
 
@@ -21,10 +20,9 @@ interface TabItem {
 
 const TABS: TabItem[] = [
   { label: "首页", href: "/", icon: Home },
-  { label: "临床档案", href: "/profile", icon: ClipboardList, badgeKey: "hasProfile" },
   { label: "循证百科", href: "/wiki", icon: BookOpen },
+  { label: "临床档案", href: "/profile", icon: ClipboardList, badgeKey: "hasProfile" },
   { label: "特药医保", href: "/reimbursement", icon: CreditCard },
-  { label: "生命线", href: "/timeline", icon: Activity },
 ];
 
 export default function MobileBottomNav() {
@@ -63,12 +61,13 @@ export default function MobileBottomNav() {
         }}
         aria-label="移动端快速导航栏"
       >
-        <div className="grid grid-cols-5 items-center max-w-md mx-auto pt-1.5 px-1">
+        <div className="grid grid-cols-4 items-center max-w-md mx-auto pt-1 px-1">
           {TABS.map((tab) => {
             const isActive = tab.href === "/" 
               ? pathname === "/" 
               : pathname.startsWith(tab.href);
             const Icon = tab.icon;
+            const isProfile = tab.href === "/profile";
 
             return (
               <Link
@@ -87,24 +86,42 @@ export default function MobileBottomNav() {
                   <span className="absolute -top-1 w-6 h-1 bg-blue-600 rounded-full animate-fade-in" />
                 )}
 
-                {/* Icon Container with optional Notification / Profile Badge */}
-                <div className="relative">
-                  <Icon 
-                    className={`w-5 h-5 transition-transform duration-200 ${
-                      isActive ? "scale-110 stroke-[2.4]" : "stroke-[1.8]"
-                    }`} 
-                  />
-                  {tab.badgeKey === "hasProfile" && hasProfile && !isActive && (
-                    <span 
-                      className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white" 
-                      title="已建立临床数字档案"
+                {/* Icon Container: Specialized Ergonomic Hub for Profile */}
+                {isProfile ? (
+                  <div className="relative">
+                    <div className={`w-9 h-7 rounded-xl flex items-center justify-center transition-all ${
+                      isActive 
+                        ? "bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-2xs shadow-blue-500/30 scale-105" 
+                        : hasProfile 
+                          ? "bg-blue-50 text-blue-700 border border-blue-200/80" 
+                          : "bg-slate-100/90 text-slate-600"
+                    }`}>
+                      <Icon className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    {hasProfile && !isActive && (
+                      <span 
+                        className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white" 
+                        title="已建立临床数字档案"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Icon 
+                      className={`w-5 h-5 transition-transform duration-200 ${
+                        isActive ? "scale-110 stroke-[2.4]" : "stroke-[1.8]"
+                      }`} 
                     />
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Tab Label */}
                 <span className={`text-[10px] tracking-tight mt-0.5 ${
-                  isActive ? "text-blue-600 font-bold" : "text-slate-600"
+                  isActive 
+                    ? "text-blue-600 font-bold" 
+                    : isProfile 
+                      ? "text-slate-700 font-semibold" 
+                      : "text-slate-600"
                 }`}>
                   {tab.label}
                 </span>

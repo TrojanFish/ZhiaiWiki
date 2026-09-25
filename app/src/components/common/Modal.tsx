@@ -17,7 +17,7 @@ export interface ModalProps {
 }
 
 /**
- * OncoPath 全局统一基础模态框容器 (3-Tier Standard Architecture)
+ * 知癌维基 ZhiaiWiki 全局统一基础模态框容器 (3-Tier Standard Architecture)
  * 1. 顶部 Header (固定吸顶)
  * 2. 中间 Body (flex-1 弹性滚动)
  * 3. 底部 Footer (实体纯白吸底操作栏)
@@ -66,7 +66,7 @@ export default function Modal({
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-hidden sm:overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-hidden sm:overflow-y-auto animate-fade-in"
     >
       {/* 标准高质感毛玻璃遮罩 */}
       <div

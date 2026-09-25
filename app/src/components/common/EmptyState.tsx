@@ -14,7 +14,7 @@ export interface EmptyStateProps {
 }
 
 /**
- * OncoPath 全局统一医疗级空状态与缺省占位组件
+ * 知癌维基 ZhiaiWiki 全局统一医疗级空状态与缺省占位组件
  * 提供安抚性温和文案、高信赖青蓝图标背景与明确的操作指引
  */
 export default function EmptyState({

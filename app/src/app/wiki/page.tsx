@@ -5,14 +5,24 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { BookOpen, User, Search } from "lucide-react";
 import Footer from "@/components/Footer";
-import EmptyState from "@/components/common/EmptyState";
-import { WIKI_TOPICS, WIKI_CATEGORIES, type WikiCategory, type RiskLevel } from "@/lib/wikiData";
+import { WIKI_TOPICS, WIKI_CATEGORIES, getWikiCategories, type WikiCategory, type RiskLevel, type WikiTopic } from "@/lib/wikiData";
+import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
+import { COLORECTAL_WIKI_TOPICS } from "@/lib/colorectalWikiData";
+import { COLON_WIKI_TOPICS } from "@/lib/colonWikiData";
+import { RECTAL_WIKI_TOPICS } from "@/lib/rectalWikiData";
+import { GASTRIC_WIKI_TOPICS } from "@/lib/gastricWikiData";
+import { LIVER_WIKI_TOPICS } from "@/lib/liverWikiData";
+import { ESOPHAGEAL_WIKI_TOPICS } from "@/lib/esophagealWikiData";
+import { useCancerType } from "@/components/common/CancerSwitch";
+import { CancerRegistry } from "@/lib/cancerRegistry";
+import { CancerIcon } from "@/components/common/CancerIcons";
 
 import { WikiScenarioTabs } from "@/components/wiki/WikiScenarioTabs";
 import { WikiSearchBar } from "@/components/wiki/WikiSearchBar";
 import { WikiCompactCard } from "@/components/wiki/WikiCompactCard";
 import { WikiDetailDrawer } from "@/components/wiki/WikiDetailDrawer";
 import { WikiFloatingNav } from "@/components/wiki/WikiFloatingNav";
+import EmptyState from "@/components/common/EmptyState";
 
 import type { PatientProfile } from "@/lib/types";
 
@@ -29,12 +39,36 @@ const PostOpSymptomTriage = dynamic(
 );
 
 export default function WikiPage() {
+  const { cancerType } = useCancerType();
+  const allTopics: WikiTopic[] = useMemo(() => {
+    try {
+      const plugin = CancerRegistry.get(cancerType);
+      if (plugin?.content?.wikiTopics && plugin.content.wikiTopics.length > 0) {
+        return plugin.content.wikiTopics as WikiTopic[];
+      }
+    } catch {
+      // fallback
+    }
+    return WIKI_TOPICS;
+  }, [cancerType]);
+
   const [activeCategory,     setActiveCategory]     = useState<WikiCategory | "all">("all");
   const [searchQuery,        setSearchQuery]         = useState<string>("");
   const [selectedRisk,       setSelectedRisk]        = useState<RiskLevel | "all">("all");
   const [userProfile,        setUserProfile]         = useState<PatientProfile | null>(null);
   const [activeDrawerTopicId, setActiveDrawerTopicId] = useState<string | null>(null);
   const [isSpotlightOpen,    setIsSpotlightOpen]     = useState(false);
+
+  // ── 癌种切换时重置检索与抽屉，优雅展示新癌种的完整全景大盘 ──────────────
+  useEffect(() => {
+    setActiveCategory("all");
+    setSearchQuery("");
+    setSelectedRisk("all");
+    setActiveDrawerTopicId(null);
+    if (typeof window !== "undefined" && window.location.hash.startsWith("#topic-")) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [cancerType]);
 
   // ── 加载用户档案 ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -89,13 +123,13 @@ export default function WikiPage() {
         targetTopicId = hash.replace("#topic-", "").toLowerCase();
       } else if (hash.length > 1 && !hash.startsWith("#wiki-") && !hash.startsWith("#category-")) {
         const clean = hash.replace("#", "").toLowerCase();
-        if (WIKI_TOPICS.some((t) => t.id.toLowerCase() === clean)) {
+        if (allTopics.some((t) => t.id.toLowerCase() === clean)) {
           targetTopicId = clean;
         }
       }
 
       if (targetTopicId) {
-        const target = WIKI_TOPICS.find((t) => t.id.toLowerCase() === targetTopicId);
+        const target = allTopics.find((t) => t.id.toLowerCase() === targetTopicId);
         if (target) {
           setActiveCategory(target.category);
           setSelectedRisk("all");
@@ -109,7 +143,7 @@ export default function WikiPage() {
     handleHashAndParams();
     window.addEventListener("hashchange", handleHashAndParams);
     return () => window.removeEventListener("hashchange", handleHashAndParams);
-  }, []);
+  }, [allTopics]);
 
   // ── 打开/关闭抽屉，并同步 URL hash ────────────────────────────────────────
   const openDrawer = useCallback((topicId: string) => {
@@ -136,15 +170,16 @@ export default function WikiPage() {
 
   // ── 分类计数 ──────────────────────────────────────────────────────────────
   const categoryCounts = useMemo(() => {
-    return (Object.keys(WIKI_CATEGORIES) as WikiCategory[]).reduce((acc, key) => {
-      acc[key] = WIKI_TOPICS.filter((t) => t.category === key).length;
+    const currentCategories = getWikiCategories(cancerType);
+    return (Object.keys(currentCategories) as WikiCategory[]).reduce((acc, key) => {
+      acc[key] = allTopics.filter((t) => t.category === key).length;
       return acc;
     }, {} as Record<WikiCategory, number>);
-  }, []);
+  }, [allTopics, cancerType]);
 
   // ── 过滤排序 ──────────────────────────────────────────────────────────────
   const filteredTopics = useMemo(() => {
-    let list = [...WIKI_TOPICS];
+    let list = [...allTopics];
     if (activeCategory !== "all") list = list.filter((t) => t.category === activeCategory);
     if (selectedRisk !== "all") list = list.filter((t) => t.riskLevel === selectedRisk);
     if (searchQuery.trim()) {
@@ -155,29 +190,144 @@ export default function WikiPage() {
           (t.subtitle && t.subtitle.toLowerCase().includes(q)) ||
           t.metaphor.toLowerCase().includes(q) ||
           t.clinicalTruth.toLowerCase().includes(q) ||
-          t.searchKeywords.some((kw) => kw.toLowerCase().includes(q))
+          t.searchKeywords.some((kw: string) => kw.toLowerCase().includes(q))
       );
     }
     return list.sort((a, b) => b.priorityOrder - a.priorityOrder);
-  }, [activeCategory, selectedRisk, searchQuery]);
+  }, [allTopics, activeCategory, selectedRisk, searchQuery]);
 
   // ── 当前打开的词条对象 ────────────────────────────────────────────────────
   const activeDrawerTopic = useMemo(
-    () => (activeDrawerTopicId ? WIKI_TOPICS.find((t) => t.id === activeDrawerTopicId) ?? null : null),
-    [activeDrawerTopicId]
+    () => (activeDrawerTopicId ? allTopics.find((t) => t.id === activeDrawerTopicId) ?? null : null),
+    [activeDrawerTopicId, allTopics]
   );
 
-  // ── 个人档案匹配 ──────────────────────────────────────────────────────────
+  // ── 个人档案匹配（严格隔离当前专区，严防跨癌种指标串扰） ───────────────
   const isTopicMatchedToProfile = useCallback((topicId: string) => {
     if (!userProfile) return false;
-    if (topicId === "stas"          && userProfile.stas === "positive") return true;
-    if (topicId === "vpi"           && userProfile.vpi === "positive") return true;
-    if (topicId === "lvi"           && userProfile.lvi === "positive") return true;
-    if (topicId === "ggo-evolution" && ((userProfile.ctr != null && userProfile.ctr > 0) || userProfile.morphology === "mixed_ggo")) return true;
-    if (topicId === "egfr-targeted" && userProfile.egfr === "positive") return true;
-    if (topicId === "iaslc-grade3"  && userProfile.iaslcGrade === "3") return true;
+    const profileCancerType = userProfile.cancerType || "lung";
+    if (profileCancerType !== cancerType) return false;
+
+    if (cancerType === "liver") {
+      const liv = (userProfile.cancerSpecificData || (userProfile as any).liverData || userProfile) as any;
+      if (topicId === "liver_cnlc_staging_system" && (userProfile.currentStage || userProfile.stage || liv.cnlcStage)) return true;
+      if (topicId === "liver_child_pugh_albi_reserve" && (liv.childPughClass || liv.childPughScore != null || liv.albiGrade != null)) return true;
+      if (topicId === "liver_tace_haic_intervention" && (liv.interventionType || liv.vascularInvasion !== "none" || (liv.tumorCount && liv.tumorCount > 1))) return true;
+      if (topicId === "liver_targeted_immuno_therapy" && (liv.systemicRegimen || userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("IV") || liv.cnlcStage === "IIIa" || liv.cnlcStage === "IIIb")) return true;
+      if (topicId === "liver_hbv_antiviral_prevention" && (liv.hbvDnaStatus || liv.antiviralTherapy || liv.hasCirrhosis)) return true;
+      if (topicId === "liver_afp_pivka_ii_biomarkers" && (liv.afp != null || liv.pivkaIi != null || liv.afpL3 != null)) return true;
+      if (topicId === "liver_ablation_transplant_early" && (liv.isMilanEligible || (liv.tumorSize && liv.tumorSize <= 3) || liv.childPughClass === "B" || liv.childPughClass === "C")) return true;
+      return false;
+    }
+
+    if (cancerType === "gastric") {
+      const gas = (userProfile.cancerSpecificData || (userProfile as any).gastricData || userProfile) as any;
+      if (topicId === "gastric_screening_esd" && (userProfile.currentStage === "evaluation" || userProfile.tStage === "T1a" || gas.tStage === "T1a")) return true;
+      if (topicId === "gastric_lauren_signet_ring" && (gas.laurenType || gas.borrmannType || userProfile.histology?.includes("印戒"))) return true;
+      if (topicId === "gastric_d2_surgery_lymphnodes" && (gas.lymphNodesExamined != null || userProfile.nStage?.startsWith("N"))) return true;
+      if (topicId === "gastric_claudin_her2_biomarkers" && (gas.claudin18_2Status === "positive" || gas.her2Status === "positive" || gas.pdl1Cps != null)) return true;
+      if (topicId === "gastric_flot_sox_perioperative" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("IV"))) return true;
+      if (topicId === "gastric_dumping_syndrome_reconstruction" && (gas.reconstructionType || (userProfile as any).treatmentPlan?.includes("切除") || (userProfile as any).treatmentPlan?.includes("术后"))) return true;
+      if (topicId === "gastric_peritoneal_hipec_management" && (gas.hasPeritonealMets || gas.peritonealCytology === "CY1" || userProfile.stage?.startsWith("IV"))) return true;
+      return false;
+    }
+
+    if (cancerType === "breast") {
+      if (topicId === "luminal_a_and_b" && (userProfile.erStatus === "positive" || userProfile.prStatus === "positive")) return true;
+      if (topicId === "her2_positive_and_adc" && (userProfile.her2Status === "positive" || userProfile.her2Low || userProfile.her2Status === "3+")) return true;
+      if (topicId === "her2_cardiac_safety" && (userProfile.her2Status === "positive" || userProfile.her2Status === "3+")) return true;
+      if (topicId === "nottingham_grade" && (userProfile.nottinghamGrade || userProfile.grade)) return true;
+      if (topicId === "oncotype_dx_21_gene" && userProfile.oncotypeDxScore != null) return true;
+      if (topicId === "triple_negative_tnbc" && (userProfile.molecularSubtype === "TNBC" || userProfile.molecularSubtype === "Triple_Negative")) return true;
+      if (topicId === "slnb_sentinel_nodes" && (userProfile.sentinelNodesPositive != null || userProfile.axillaryNodesPositive != null)) return true;
+      if (topicId === "bi_rads_scale" && userProfile.biRads != null) return true;
+      if (topicId === "microcalcifications" && userProfile.calcificationType) return true;
+      if (topicId === "dcis_in_situ" && (userProfile.histologyType === "DCIS" || userProfile.stage === "0")) return true;
+      if (topicId === "brca_gene_testing" && (userProfile.brca1 === "positive" || userProfile.brca2 === "positive")) return true;
+      if (topicId === "neoadjuvant_pcr" && (userProfile.neoadjuvantChemo || userProfile.pcrStatus != null)) return true;
+      if (topicId === "ki67_proliferation_index" && (userProfile.ki67 != null || userProfile.isKi67GrayZone)) return true;
+      if (topicId === "ovarian_suppression_ofs" && (userProfile.menopauseStatus === "pre" || (userProfile.age && userProfile.age < 50 && (userProfile.erStatus === "positive" || userProfile.prStatus === "positive")))) return true;
+      if (topicId === "lymphedema_prevention" && (userProfile.axillaryNodesPositive != null && userProfile.axillaryNodesPositive > 0)) return true;
+      if (topicId === "endocrine_bone_and_hot_flashes" && (userProfile.erStatus === "positive" || userProfile.prStatus === "positive")) return true;
+      return false;
+    }
+
+    if (cancerType === "colon") {
+      const col = (userProfile.cancerSpecificData || (userProfile as any).colonData || (userProfile as any).colorectalData || userProfile) as any;
+      if (topicId === "colon_screening_polyps" && (userProfile.currentStage === "evaluation" || userProfile.currentStage === "discovery")) return true;
+      if (topicId === "colon_sidedness_biology" && (col.primaryLocation || userProfile.noduleLocation)) return true;
+      if (topicId === "colon_cme_surgery_lymphnodes" && (col.lymphNodesExamined != null || userProfile.nStage?.startsWith("N"))) return true;
+      if (topicId === "colon_dmmr_msih" && (col.msiStatus === "MSI-H" || col.dmmrStatus === "dMMR")) return true;
+      if (topicId === "colon_idea_3months_capox" && (userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("II"))) return true;
+      if (topicId === "colon_liver_metastasis_mdt" && (userProfile.stage?.startsWith("IV") || col.hasDistantMets)) return true;
+      return false;
+    }
+
+    if (cancerType === "rectal") {
+      const rec = (userProfile.cancerSpecificData || (userProfile as any).rectalData || (userProfile as any).colorectalData || userProfile) as any;
+      if (topicId === "rectal_anatomy_ruler" && (rec.distanceFromAnalVerge != null || rec.primaryLocation === "rectum")) return true;
+      if (topicId === "rectal_pelvic_hr_mri" && (rec.crmStatus != null || rec.emviStatus != null)) return true;
+      if (topicId === "rectal_tnt_rapido_prodige23" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
+      if (topicId === "rectal_watch_and_wait" && (rec.pcrStatus === "pCR" || rec.pcrStatus === "cCR")) return true;
+      if (topicId === "rectal_protective_stoma_care" && (rec.stomaType != null || (userProfile as any).treatmentPlan?.includes("造口"))) return true;
+      if (topicId === "rectal_lars_rehabilitation" && (rec.larsScore != null || (userProfile as any).treatmentPlan?.includes("保肛"))) return true;
+      if (topicId === "rectal_tme_sacred_plane" && (rec.tmeQuality != null || userProfile.tStage)) return true;
+      return false;
+    }
+
+    if (cancerType === "colorectal") {
+      const crc = (userProfile.cancerSpecificData || (userProfile as any).colorectalData || userProfile) as any;
+      if (topicId === "colonoscopy_polyps" && (userProfile.currentStage === "evaluation" || userProfile.currentStage === "discovery")) return true;
+      if (topicId === "t_depth_submucosa" && (crc.tStage || userProfile.tStage)) return true;
+      if (topicId === "lymph_node_12_and_td" && (crc.lymphNodesExamined != null || crc.tumorDeposits || userProfile.nStage?.startsWith("N"))) return true;
+      if (topicId === "msi_dmmr_immunotherapy" && (crc.msiStatus === "MSI-H" || crc.dmmrStatus === "dMMR")) return true;
+      if (topicId === "ras_braf_precision" && (crc.krasMutation || crc.nrasMutation || crc.brafMutation)) return true;
+      if (topicId === "left_vs_right_colon" && (crc.primaryLocation || userProfile.noduleLocation)) return true;
+      if (topicId === "idea_chemo_duration" && (userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("II"))) return true;
+      if (topicId === "rectal_stoma_nerves" && (crc.primaryLocation === "rectum" || userProfile.noduleLocation?.includes("直肠"))) return true;
+      return false;
+    }
+
+    if (cancerType === "lung") {
+      if (topicId === "stas"          && userProfile.stas === "positive") return true;
+      if (topicId === "vpi"           && userProfile.vpi === "positive") return true;
+      if (topicId === "lvi"           && userProfile.lvi === "positive") return true;
+      if (topicId === "ggo-evolution" && ((userProfile.ctr != null && userProfile.ctr > 0) || userProfile.morphology === "mixed_ggo")) return true;
+      if (topicId === "egfr-targeted" && userProfile.egfr === "positive") return true;
+      if (topicId === "iaslc-grade3"  && userProfile.iaslcGrade === "3") return true;
+      return false;
+    }
+
+    if (cancerType === "esophageal") {
+      if (topicId === "esophageal_staging_anatomy_incisors" && userProfile.stage) return true;
+      if (topicId === "esophageal_neocrtec5010_cross_chemorad" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
+      if (topicId === "esophageal_immunotherapy_escort_checkmate" && (userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("IV"))) return true;
+      return false;
+    }
+
+    if (cancerType === "thyroid") {
+      if (topicId === "thyroid_rads_active_surveillance" && (userProfile.tStage === "T1a" || userProfile.stage === "I")) return true;
+      if (topicId === "thyroid_braf_tert_molecular" && (userProfile as any).brafStatus) return true;
+      if (topicId === "thyroid_tsh_suppression_calcium" && ((userProfile as any).postOp || userProfile.stage)) return true;
+      return false;
+    }
+
+    if (cancerType === "endometrial") {
+      if (topicId === "endometrial_figo2023_molecular_tcga" && userProfile.stage) return true;
+      if (topicId === "endometrial_early_abnormal_bleeding" && userProfile.currentStage === "evaluation") return true;
+      if (topicId === "endometrial_portec_radiotherapy" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
+      return false;
+    }
+
+    if (cancerType === "cervical") {
+      if (topicId === "cervical_hpv_cin_evolution" && userProfile.currentStage === "evaluation") return true;
+      if (topicId === "cervical_ccrt_radiochemotherapy" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
+      if (topicId === "cervical_keynote826_immunotherapy" && (userProfile.stage?.startsWith("IV") || (userProfile as any).pdl1Status)) return true;
+      return false;
+    }
+
     return false;
-  }, [userProfile]);
+  }, [userProfile, cancerType]);
 
   // ── 情景/分类 Tab 切换（五位一体） ───────────────────────────────────────
   const handleSelectCategory = useCallback((cat: WikiCategory | "all") => {
@@ -191,13 +341,35 @@ export default function WikiPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-blue-500 selection:text-white relative">
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-32 pb-16 space-y-6 sm:space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 space-y-5 sm:space-y-6">
 
         {/* Hero Section */}
         <section className="text-center space-y-4 pb-4">
           <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200 shadow-xs">
-            <BookOpen className="w-3.5 h-3.5 text-sky-600" />
-            <span>肺结节与肺癌全景循证视觉百科</span>
+            <CancerIcon type={cancerType} className="w-4 h-4 text-sky-600 shrink-0" />
+            <span>
+              {cancerType === "esophageal"
+                ? "食管解剖与食管鳞癌全景循证视觉百科"
+                : cancerType === "liver"
+                ? "原发性肝癌与介入靶免全景循证视觉百科"
+                : cancerType === "gastric"
+                ? "胃镜早筛与胃癌全景循证视觉百科"
+                : cancerType === "breast" 
+                ? "乳腺结节与乳腺癌全景循证视觉百科" 
+                : cancerType === "colon"
+                ? "结肠息肉与结肠癌全景循证视觉百科"
+                : cancerType === "rectal"
+                ? "直肠解剖保肛与直肠癌全景循证视觉百科"
+                : cancerType === "colorectal" 
+                ? "结直肠息肉与肠癌全景循证视觉百科" 
+                : cancerType === "thyroid"
+                ? "甲状腺结节与甲状腺癌全景循证视觉百科"
+                : cancerType === "endometrial"
+                ? "子宫内膜与内膜癌全景循证视觉百科"
+                : cancerType === "cervical"
+                ? "宫颈筛查与宫颈癌全景循证视觉百科"
+                : "肺结节与肺癌全景循证视觉百科"}
+            </span>
             <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
             <span>按风险优先级排序</span>
           </div>
@@ -210,26 +382,59 @@ export default function WikiPage() {
             拒绝冰冷晦涩的医学术语与网络恐慌谣言。我们用<strong>生活化大白话比喻</strong>、<strong>高精 SVG 微观解剖图解</strong>与<strong>全球顶级循证试验数据</strong>，为您逐一破译病理指标，构筑坚不可摧的抗癌信心。
           </p>
 
-          {userProfile && (
-            <div className="max-w-2xl mx-auto bg-teal-50/90 border border-teal-300 p-3.5 rounded-2xl text-xs text-teal-950 flex items-center justify-between gap-3 shadow-xs">
-              <div className="flex items-center gap-2 text-left">
-                <User className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>
-                  已识别到您的个人数字档案（<strong>{userProfile.stage}期 · {userProfile.gender === "female" ? "女性" : "男性"} · {userProfile.age}岁</strong>），已为您智能置顶关联词条。
-                </span>
+          {userProfile && (() => {
+            const profileCancerType = userProfile.cancerType || "lung";
+            const isMatching = profileCancerType === cancerType;
+            const getCancerLabel = (type: string) => 
+              type === "esophageal" ? "食管癌" :
+              type === "liver" ? "原发性肝癌" :
+              type === "gastric" ? "胃癌" :
+              type === "breast" ? "乳腺癌" : 
+              type === "colon" ? "结肠癌" : 
+              type === "rectal" ? "直肠癌" : 
+              type === "colorectal" ? "结直肠癌" :
+              type === "thyroid" ? "甲状腺癌" :
+              type === "endometrial" ? "子宫内膜癌" :
+              type === "cervical" ? "宫颈癌" : "肺癌";
+            if (isMatching) {
+              return (
+                <div className="max-w-2xl mx-auto bg-teal-50/90 border border-teal-300 p-3.5 rounded-2xl text-xs text-teal-950 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-2 text-left">
+                    <User className="w-4 h-4 text-teal-700 shrink-0" />
+                    <span>
+                      已识别到您的个人数字档案（<strong>{getCancerLabel(cancerType)} · {userProfile.stage}期 · {userProfile.gender === "female" ? "女性" : "男性"} · {userProfile.age}岁</strong>），已为您优先推荐匹配词条。
+                    </span>
+                  </div>
+                  <Link href="/profile" className="flex-shrink-0 font-bold text-teal-700 hover:underline">
+                    管理档案
+                  </Link>
+                </div>
+              );
+            }
+            return (
+              <div className="max-w-2xl mx-auto bg-slate-100/90 border border-slate-200/90 p-3 rounded-2xl text-xs text-slate-600 flex items-center justify-between gap-3 shadow-2xs">
+                <div className="flex items-center gap-2 text-left">
+                  <User className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span>
+                    您当前已建立【<strong>{getCancerLabel(profileCancerType)}</strong>】临床档案，当前浏览【<strong>{getCancerLabel(cancerType)}</strong>】百科专区。
+                  </span>
+                </div>
+                <Link href="/profile" className="flex-shrink-0 font-bold text-blue-600 hover:underline">
+                  查看档案
+                </Link>
               </div>
-              <Link href="/profile" className="flex-shrink-0 font-bold text-teal-700 hover:underline">
-                管理档案
-              </Link>
-            </div>
-          )}
+            );
+          })()}
         </section>
 
         {/* ── 五位一体情景 Tab 导航（场景选择 + 分类过滤一体化） ─────────────── */}
         <section className="pt-2">
           <WikiScenarioTabs
+            key={`scenario-${cancerType}`}
             activeCategory={activeCategory}
             onSelectCategory={handleSelectCategory}
+            cancerType={cancerType}
+            topics={allTopics}
           />
         </section>
 
@@ -238,16 +443,18 @@ export default function WikiPage() {
 
           {/* 搜索 & 风险过滤栏 */}
           <WikiSearchBar
+            key={`search-${cancerType}`}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             selectedRisk={selectedRisk}
             onRiskChange={setSelectedRisk}
-            totalCount={WIKI_TOPICS.length}
+            totalCount={allTopics.length}
             filteredCount={filteredTopics.length}
+            cancerType={cancerType}
           />
 
-          {/* 术后康复症状自查助手（recovery 专区或全部默认状态时展示） */}
-          {(activeCategory === "recovery" || (activeCategory === "all" && !searchQuery && selectedRisk === "all")) && (
+          {/* 术后康复症状自查助手（仅肺癌：recovery 专区或全部默认状态时展示） */}
+          {cancerType === "lung" && (activeCategory === "recovery" || (activeCategory === "all" && !searchQuery && selectedRisk === "all")) && (
             <div className="animate-fade-in">
               <PostOpSymptomTriage />
             </div>
@@ -263,6 +470,7 @@ export default function WikiPage() {
                   isMatchedProfile={isTopicMatchedToProfile(topic.id)}
                   isHighlighted={activeDrawerTopicId === topic.id}
                   onClick={() => openDrawer(topic.id)}
+                  cancerType={cancerType}
                 />
               ))}
             </div>
@@ -291,9 +499,10 @@ export default function WikiPage() {
       <WikiFloatingNav
         activeCategory={activeCategory}
         onSelectCategory={handleSelectCategory}
-        totalTopics={WIKI_TOPICS.length}
+        totalTopics={allTopics.length}
         categoryCounts={categoryCounts}
         onOpenSearch={() => setIsSpotlightOpen(true)}
+        cancerType={cancerType}
       />
 
       {/* 移动端 FAB 搜索气泡 */}
@@ -312,6 +521,8 @@ export default function WikiPage() {
         onClose={() => setIsSpotlightOpen(false)}
         userProfile={userProfile}
         onSelectTopic={handleSelectTopicFromSpotlight}
+        topics={allTopics}
+        cancerType={cancerType}
       />
 
       {/* ── 侧滑深度阅读抽屉 ──────────────────────────────────────────────── */}
@@ -321,6 +532,7 @@ export default function WikiPage() {
         isMatchedProfile={activeDrawerTopic ? isTopicMatchedToProfile(activeDrawerTopic.id) : false}
         onClose={closeDrawer}
         onNavigate={openDrawer}
+        cancerType={cancerType}
       />
     </div>
   );

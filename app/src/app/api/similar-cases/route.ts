@@ -1,14 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getClinicalCohortForProfile } from '@/lib/staging';
+import { getClinicalCohortUnified } from '@/lib/stagingRegistry';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const profile = await request.json();
+    let profile: any = {};
+    try {
+      profile = await request.json();
+    } catch {
+      profile = {};
+    }
     
-    // Dynamically calculate the matching cohort and survival metrics based on current profile and stage
-    const matchedCohort = getClinicalCohortForProfile(profile);
+    // Dynamically calculate the matching cohort and survival metrics based on cancer plugin
+    const matchedCohort = getClinicalCohortUnified(profile);
 
     return NextResponse.json({ success: true, data: matchedCohort });
   } catch (error: any) {
@@ -16,4 +21,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
-

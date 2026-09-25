@@ -1,4 +1,11 @@
 import type { PatientProfile } from "@/lib/types";
+import { getBreastNodeActivation } from "./breastKnowledgeGraphData";
+import { getColorectalNodeActivation } from "./colorectalKnowledgeGraphData";
+import { getGastricNodeActivation } from "./gastricKnowledgeGraphData";
+import { getLiverNodeActivation } from "./liverKnowledgeGraphData";
+import { getEsophagealNodeActivation } from "./esophagealKnowledgeGraphData";
+import { getThyroidNodeActivation } from "./thyroidKnowledgeGraphData";
+import { getEndometrialNodeActivation, getCervicalNodeActivation } from "./gynecologicalKnowledgeGraphData";
 
 export interface KnowledgeNode {
   id: string;
@@ -30,8 +37,6 @@ export const aiNewNode: KnowledgeNode = {
   description: "循环肿瘤DNA（微小残留病灶）：最新一代超高敏感度复发监测技术。术后ctDNA持续阴性患者复发风险极低，阳性则预示极高复发可能。",
 };
 
-
-
 export const typeColors: Record<string, { bg: string; border: string; text: string; dot: string }> = {
   factor: { bg: "#eff6ff", border: "#60a5fa", text: "#1d4ed8", dot: "#2563eb" },
   outcome: { bg: "#fef2f2", border: "#f87171", text: "#b91c1c", dot: "#dc2626" },
@@ -47,8 +52,18 @@ export const typeLabels: Record<string, string> = {
 };
 
 /** Direction 1: map PatientProfile fields to node activation levels */
-export function getNodeActivation(nodeId: string, profile: PatientProfile | null): "primary" | "active" | "warning" | "dim" | "normal" {
+export function getNodeActivation(nodeId: string, profile: PatientProfile | null, cancerType?: string): "primary" | "active" | "warning" | "dim" | "normal" {
   if (!profile) return "normal";
+
+  const effectiveCancer = cancerType || profile.cancerType || "lung";
+  if (effectiveCancer === "breast") return getBreastNodeActivation(nodeId, profile);
+  if (effectiveCancer === "colorectal" || effectiveCancer === "colon" || effectiveCancer === "rectal") return getColorectalNodeActivation(nodeId, profile);
+  if (effectiveCancer === "gastric") return getGastricNodeActivation(nodeId, profile);
+  if (effectiveCancer === "liver") return getLiverNodeActivation(nodeId, profile);
+  if (effectiveCancer === "esophageal") return getEsophagealNodeActivation(nodeId, profile);
+  if (effectiveCancer === "thyroid") return getThyroidNodeActivation(nodeId, profile);
+  if (effectiveCancer === "endometrial") return getEndometrialNodeActivation(nodeId, profile);
+  if (effectiveCancer === "cervical") return getCervicalNodeActivation(nodeId, profile);
 
   const isStageIA = profile.stage === "IA1" || profile.stage === "IA2" || profile.stage === "IA3" || (profile.stage?.startsWith("IA") ?? false) || profile.stage === "Tis" || profile.stage === "0";
 

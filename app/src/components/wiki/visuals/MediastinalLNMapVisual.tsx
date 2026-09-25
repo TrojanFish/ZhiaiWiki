@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CircleDot, Info, Sparkles } from "lucide-react";
+import { CircleDot, Info, Stethoscope, Lightbulb } from "lucide-react";
 
 export function MediastinalLNMapVisual() {
   const [selectedStation, setSelectedStation] = useState<string>("7");
@@ -346,8 +346,9 @@ export function MediastinalLNMapVisual() {
         </svg>
 
         {/* Floating Quick Hint Overlay */}
-        <div className="absolute bottom-2 right-2 text-[9px] text-slate-500 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800">
-          💡 点击图谱圆点或下方按钮即刻高亮
+        <div className="absolute bottom-2 right-2 text-[9px] text-slate-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800 flex items-center gap-1">
+          <Lightbulb className="w-3 h-3 text-amber-400 shrink-0" />
+          <span>点击图谱圆点或下方按钮即刻高亮</span>
         </div>
       </div>
 
@@ -457,7 +458,7 @@ export function MediastinalLNMapVisual() {
         </p>
 
         <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+          <Stethoscope className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold text-amber-300">临床决策与外科意义：</span>
             <span className="text-slate-300 ml-1">{active.clinicalMeaning}</span>

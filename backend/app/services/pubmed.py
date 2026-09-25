@@ -3,7 +3,7 @@ from Bio import Entrez
 import json
 
 # Set email for NCBI E-utilities (required by NCBI guidelines)
-Entrez.email = "bot@oncopath.com"
+Entrez.email = "bot@zhiaiwiki.org"
 
 async def fetch_pubmed_studies(query: str, max_results: int = 5):
     """

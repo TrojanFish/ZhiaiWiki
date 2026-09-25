@@ -14,16 +14,43 @@ import {
   Check, 
   Copy, 
   X, 
-  ZoomIn 
+  ZoomIn,
+  Server,
+  Globe,
+  Lock,
+  Receipt,
+  MessageSquareHeart,
+  Heart,
+  ShieldCheck,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  PenLine
 } from "lucide-react";
 import Footer from "@/components/Footer";
+import { OPERATING_COST_LEDGER, LOVE_RELAY_ITEMS, DONATION_TIERS, type LoveRelayItem } from "@/lib/loveRelayData";
+import LoveRelaySubmitModal from "@/components/about/LoveRelaySubmitModal";
 
 export default function AboutPage() {
-
-
   const [copied, setCopied] = useState(false);
   const [previewImage, setPreviewImage] = useState<{ src: string; title: string } | null>(null);
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
+  const [relayItems, setRelayItems] = useState<LoveRelayItem[]>(LOVE_RELAY_ITEMS);
   const contactEmail = "2909138455@qq.com";
+
+  // Fetch live love relay items from server
+  useEffect(() => {
+    fetch("/api/love-relay")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.items) && data.items.length > 0) {
+          setRelayItems(data.items);
+        }
+      })
+      .catch((err) => {
+        console.warn("Notice: Fallback to static love relay items:", err);
+      });
+  }, []);
 
   // Support Esc key to dismiss QR modal
   useEffect(() => {
@@ -71,7 +98,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <main className="flex-1 max-w-7xl mx-auto w-full space-y-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 lg:px-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 px-3.5 sm:px-6 lg:px-8">
         
         {/* Top Navigation */}
         <div className="flex items-center justify-between">
@@ -82,11 +109,11 @@ export default function AboutPage() {
             <ChevronLeft className="w-4 h-4 text-slate-500" />
             <span>返回首页</span>
           </Link>
-          <span className="text-xs text-slate-400 font-mono">OncoPath · 创作者初衷</span>
+          <span className="text-xs text-slate-400 font-mono">知癌维基 ZhiaiWiki · 关于我们</span>
         </div>
 
         {/* Main Article Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-sm border border-slate-200 space-y-10">
+        <div className="bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-sm border border-slate-200 space-y-8">
           
           {/* Header Banner */}
           <div className="space-y-4 border-b border-slate-100 pb-8">
@@ -99,8 +126,12 @@ export default function AboutPage() {
               所以想为同样迷茫的你撑一把伞
             </h1>
             <p className="text-sm sm:text-base text-slate-500 font-medium">
-              —— 一个早期肺癌亲历者的心路历程与 OncoPath 循证平台的诞生始末
+              —— 一个癌症亲历者的心路历程与 知癌维基 (ZhiaiWiki) 平台的诞生始末
             </p>
+            <div className="pt-2 text-xs font-bold text-slate-700 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 border-t border-slate-100/80">
+              <span className="text-blue-700">“知癌，方能治癌；每一次循证，皆因至爱。”</span>
+              <span className="text-[11px] font-mono text-slate-400">Knowing Cancer, Treating Cancer, Caring with Love.</span>
+            </div>
           </div>
 
           {/* Narrative Content (Unified Harmonious 3-Act Structure) */}
@@ -138,13 +169,13 @@ export default function AboutPage() {
             <section className="space-y-3">
               <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2.5">
                 <span className="w-7 h-7 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-black shrink-0">2</span>
-                <span>为什么做 OncoPath —— 用理性的证据，消解不必要的恐惧</span>
+                <span>为什么做知癌维基 (ZhiaiWiki) —— 用理性的证据，消解不必要的恐惧</span>
               </h2>
               <p>
                 恐慌往往来源于对未知的想象。随着我深入研读了数百篇国际同行评审的前瞻性临床队列研究（如日本 JCOG0804/JCOG0802 系列研究、ADAURA 第三代靶向研究、IASLC / AJCC 第 9 版 TNM 分期指南），我发现：<strong>现代胸部肿瘤医学对早期肺癌的根治率、高危病理特征以及规范随访路径，已经有了极为清晰、严谨的统计学定论。</strong>
               </p>
               <p>
-                作为一名技术开发者，我决定搭建 <strong>OncoPath</strong> 这个纯粹的公益工具：
+                作为一名技术开发者，我决定搭建 <strong>知癌维基 (ZhiaiWiki)</strong> 这个纯粹的公益工具：
               </p>
               <div className="grid sm:grid-cols-3 gap-3 pt-1">
                 <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80 space-y-1">
@@ -194,30 +225,173 @@ export default function AboutPage() {
           </div>
 
           {/* Connect & Sponsorship Cards Section */}
-          <div className="pt-6 border-t border-slate-100 space-y-6">
-            <div className="text-center max-w-md mx-auto">
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900">同路相伴 · 交流与支持</h3>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                本平台承诺所有核心功能对病友<strong>永久免费且无任何商业广告</strong>
+          <div className="pt-6 border-t border-slate-100 space-y-10">
+            <div className="text-center max-w-xl mx-auto space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
+                <Heart className="w-3.5 h-3.5 text-teal-600" />
+                <span>非营利开源 · 阳光透明同行</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900">同路相伴 · 爱心接力与支持</h3>
+              <p className="text-xs sm:text-sm text-slate-500">
+                本平台承诺所有核心功能对病友<strong>永久免费且无任何商业广告</strong>。每一份自愿赞助都用于分担刚性硬件与科研算力成本。
               </p>
             </div>
 
-            {/* Sponsorship Card */}
-            <div className="max-w-md mx-auto w-full">
-              <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200 text-center flex flex-col items-center justify-between space-y-4 hover:border-amber-300 transition-colors shadow-2xs">
-                <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
-                    <Coffee className="w-3.5 h-3.5" />
-                    <span>支持服务器与算力支出</span>
+            {/* 1. Transparent Operational Ledger */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                  <Receipt className="w-4 h-4 text-teal-600" />
+                  <span>平台刚性技术运维开支公开账单</span>
+                </h4>
+                <span className="text-[11px] text-slate-400 font-mono">100% 用于开源算力</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {OPERATING_COST_LEDGER.map((item, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 hover:border-teal-300 transition-colors">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        {idx === 0 ? <Server className="w-3.5 h-3.5 text-teal-600 shrink-0" /> : idx === 1 ? <Globe className="w-3.5 h-3.5 text-sky-600 shrink-0" /> : idx === 2 ? <ShieldCheck className="w-3.5 h-3.5 text-indigo-600 shrink-0" /> : <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                        <span>{item.name}</span>
+                      </span>
+                      <span className="text-xs font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200/60 shrink-0">
+                        {item.monthlyCost}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {item.detail}
+                    </p>
                   </div>
-                  <h4 className="text-base font-bold text-slate-900">请喝咖啡 · 自愿赞赏</h4>
-                  <p className="text-xs text-slate-500">所有赞助将全部用于覆盖 VPS 服务器、域名与大模型 Token 成本</p>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Love-Relay Wall (Featured Showcase) */}
+            <div className="space-y-3.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/80 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80">
+                <div>
+                  <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                    <HeartHandshake className="w-4 h-4 text-teal-600" />
+                    <span>抗癌爱心接力</span>
+                    <span className="text-[10px] font-mono text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
+                      已累计 {relayItems.length} 位温暖同行者
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    生命相托 · 温暖回响 · 欢迎在此留下您的康复大复查好消息与同路人祈福寄语
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setSubmitModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold shadow-xs hover:shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                  >
+                    <PenLine className="w-3.5 h-3.5" />
+                    <span>留下抗癌寄语</span>
+                  </button>
+
+                  <Link
+                    href="/love-relay"
+                    className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-teal-800 text-xs font-semibold border border-slate-200/80 shadow-3xs transition-all flex items-center gap-1 shrink-0"
+                  >
+                    <span>抗癌爱心接力</span>
+                    <ArrowRight className="w-3 h-3 text-teal-600" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {relayItems.slice(0, 4).map((item) => (
+                  <div key={item.id} className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-3xs space-y-2 hover:border-slate-300 transition-colors flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-xs font-bold text-slate-900 truncate">{item.donorName}</span>
+                          {item.isTest && (
+                            <span className="text-[9px] font-medium text-slate-500 bg-slate-100 px-1 py-0.2 rounded border border-slate-200 shrink-0">
+                              示范数据
+                            </span>
+                          )}
+                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border shrink-0 ${item.cancerColor}`}>
+                            {item.cancerTag}
+                          </span>
+                        </div>
+                        <span className="text-xs font-black text-teal-700 font-mono shrink-0">
+                          {item.amount?.includes("支持") || item.amount?.includes("祈福") ? item.amount : `支持 ${item.amount}`}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        “{item.message}”
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1.5 border-t border-slate-100 mt-1">
+                      <span>{item.city ? `${item.city} · ` : ""}{item.date}</span>
+                      {item.verified ? (
+                        <span className="text-emerald-700 font-medium flex items-center gap-1">
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          <span>已验证爱心支持</span>
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 font-medium flex items-center gap-1">
+                          <span>待站长微信账单核验</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom Jump Card to Dedicated Subpage */}
+              <div className="pt-1">
+                <Link
+                  href="/love-relay"
+                  className="w-full py-3 px-4 rounded-2xl bg-teal-50/70 hover:bg-teal-100/70 text-teal-900 border border-teal-200/80 text-xs font-bold flex items-center justify-between transition-all group shadow-3xs"
+                >
+                  <div className="flex items-center gap-2">
+                    <HeartHandshake className="w-4 h-4 text-teal-700" />
+                    <span>查看全部 {relayItems.length} 位病友的抗癌接力（支持 8 大实体瘤专区筛选）</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-teal-700 font-semibold group-hover:translate-x-0.5 transition-transform text-xs">
+                    <span>进入抗癌爱心接力专区</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* 3. Upgraded QR & Tiers Sponsorship Card */}
+            <div className="max-w-xl mx-auto w-full">
+              <div className="bg-gradient-to-br from-slate-50 via-teal-50/20 to-white rounded-3xl p-6 sm:p-8 border border-slate-200 text-center flex flex-col items-center justify-between space-y-5 hover:border-teal-300 transition-colors shadow-2xs">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-teal-100 text-teal-800 text-[11px] font-bold">
+                    <Coffee className="w-3.5 h-3.5 text-teal-700" />
+                    <span>自愿赞赏 · 请喝咖啡</span>
+                  </div>
+                  <h4 className="text-base sm:text-lg font-black text-slate-900">请喝咖啡 · 资助服务器与科研算力</h4>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                    所有赞助将 100% 用于分担云服务器 VPS、全球文献检索 API 及 AI 安全质控 Token 成本
+                  </p>
+                </div>
+
+                {/* Preset Tier Pills */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md text-left">
+                  {DONATION_TIERS.map((tier) => (
+                    <div key={tier.id} className="p-2.5 rounded-xl bg-white border border-slate-200 text-center shadow-3xs">
+                      <div className="text-[11px] font-bold text-slate-800 truncate">{tier.title}</div>
+                      <div className="text-xs font-black text-teal-700 font-mono mt-0.5">
+                        {tier.amount === "custom" ? "随心" : `¥${tier.amount}`}
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* QR Slot */}
                 <div 
                   onClick={() => setPreviewImage({ src: "/sponsor_qr.png?v=2026", title: "请喝咖啡 · 赞赏支持码" })}
-                  className="w-52 h-52 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400 hover:shadow-md transition-all"
+                  className="w-48 h-48 sm:w-52 sm:h-52 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-teal-500 hover:shadow-md transition-all"
                   title="点击放大查看 / 微信扫码"
                 >
                   <img 
@@ -234,17 +408,29 @@ export default function AboutPage() {
                     <Coffee className="w-10 h-10 text-slate-400 mb-1.5" />
                     <span className="text-xs font-bold text-slate-600">自愿赞赏支持码</span>
                   </div>
-                  <div className="absolute inset-0 bg-amber-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                    <span className="bg-white/90 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs backdrop-blur-xs flex items-center gap-1">
+                  <div className="absolute inset-0 bg-teal-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <span className="bg-white/90 text-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs backdrop-blur-xs flex items-center gap-1">
                       <ZoomIn className="w-3 h-3" />
                       <span>点击放大</span>
                     </span>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-400">
-                  金额随心 · 感谢每一份让公益平台长久活下去的温暖鼓励
+                <div className="text-[11px] text-slate-400 max-w-sm leading-relaxed">
+                  金额随心 · 感谢每一份让公益平台长久活下去的温暖鼓励。<br />
+                  若正面临治疗支出压力，请千万不要打赏，多给自己补充营养！
                 </div>
+
+                {/* Direct Blessing Submission CTA */}
+                <button
+                  type="button"
+                  onClick={() => setSubmitModalOpen(true)}
+                  className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold shadow-xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <HeartHandshake className="w-4 h-4 text-teal-100" />
+                  <span>已微信赞赏？点此留下抗癌寄语上墙</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-teal-200" />
+                </button>
               </div>
             </div>
 
@@ -290,17 +476,19 @@ export default function AboutPage() {
               “愿每一个认真了解疾病的灵魂，都能在理性和科学的光芒中重获笃定与安宁。”
             </div>
             <div className="font-bold text-slate-700">
-              —— OncoPath 创作者 · 与您并肩同行
+              —— 知癌维基 ZhiaiWiki 创作者 · 与您并肩同行
             </div>
           </div>
 
           {/* Quick Sub-Links */}
           <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-            <div>© 2026 OncoPath 创作者初衷 · 官方网址：lung.dpdns.org</div>
+            <div>© 2026 知癌维基 ZhiaiWiki · 关于我们</div>
             <div className="flex items-center gap-3">
-              <Link href="/terms" className="text-blue-600 hover:underline font-medium">查看《服务协议与免责声明》</Link>
+              <Link href="/love-relay" className="text-teal-700 hover:underline font-medium">抗癌爱心接力</Link>
               <span>·</span>
-              <Link href="/privacy" className="text-blue-600 hover:underline font-medium">查看完整《隐私政策》</Link>
+              <Link href="/terms" className="text-blue-600 hover:underline font-medium">免责声明</Link>
+              <span>·</span>
+              <Link href="/privacy" className="text-blue-600 hover:underline font-medium">隐私政策</Link>
             </div>
           </div>
 
@@ -347,6 +535,15 @@ export default function AboutPage() {
           </div>
         </div>
       )}
+
+      {/* Love-Relay Blessing Submission Modal */}
+      <LoveRelaySubmitModal
+        isOpen={submitModalOpen}
+        onClose={() => setSubmitModalOpen(false)}
+        onSuccess={(newItem) => {
+          setRelayItems((prev) => [newItem, ...prev]);
+        }}
+      />
       </main>
 
       {/* Unified Global Footer */}

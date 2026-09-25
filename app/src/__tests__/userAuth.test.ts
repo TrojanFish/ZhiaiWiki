@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   hashPassword,
   verifyPassword,
+  hashPasswordAsync,
+  verifyPasswordAsync,
   generateUserToken,
   verifyUserToken,
   extractTokenFromRequest,
@@ -21,6 +23,18 @@ describe('User Authentication & Session Security Engine (P1)', () => {
       expect(verifyPassword('MySecretPass2026!', p2.hash, p2.salt)).toBe(true);
       expect(verifyPassword('WrongPassword', p1.hash, p1.salt)).toBe(false);
     });
+
+    it('should support non-blocking async PBKDF2 hash and verification', async () => {
+      const p1 = await hashPasswordAsync('AsyncSecretPass2026!');
+      expect(p1.salt).toBeDefined();
+      expect(p1.hash.startsWith('pbkdf2$210000$')).toBe(true);
+
+      const valid = await verifyPasswordAsync('AsyncSecretPass2026!', p1.hash, p1.salt);
+      expect(valid).toBe(true);
+
+      const invalid = await verifyPasswordAsync('WrongPassword!', p1.hash, p1.salt);
+      expect(invalid).toBe(false);
+    }, 15000);
   });
 
   describe('HMAC Token Lifecycle & Anti-Tampering', () => {

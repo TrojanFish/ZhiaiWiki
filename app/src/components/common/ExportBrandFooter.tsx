@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
+import { ZHIAIWIKI_LOGO_DATA_URI } from "@/lib/brandLogo";
 import { 
   LUNG_PORTAL_URL, 
   LUNG_QR_SVG_LIGHT_DATA_URI, 
@@ -20,14 +20,14 @@ export interface ExportBrandFooterProps {
 /**
  * Standardized Clinical Evidence & Verification Brand Footer
  * Used across all exported image posters and consultation cards.
- * Ensures clear portal domain visibility (lung.dpdns.org), QR code access, and zero PII leakage.
+ * Ensures clear portal domain visibility (zhiaiwiki.org), QR code access, and zero PII leakage.
  */
 export default function ExportBrandFooter({
   variant = "light",
   compact = false,
-  title = "OncoPath 肺结节循证知识平台",
-  subtitle = "基于 NCCN · CSCO · IASLC 国际现行肺癌诊疗指南与顶刊证据",
-  disclaimer = "免责声明：本卡片由 OncoPath 循证引擎基于临床报告提取生成，仅供就医沟通与学术参考，请以主管医师现场诊疗为准。",
+  title = "知癌维基 ZhiaiWiki · 循证肿瘤知识库",
+  subtitle = "“知癌，方能治癌；每一次循证，皆因至爱。”",
+  disclaimer = "免责声明：本卡片由知癌维基 (ZhiaiWiki) 循证引擎基于临床报告提取生成，仅供就医沟通与学术参考，请以主管医师现场诊疗为准。",
   scanHint = "扫码查阅循证文献",
 }: ExportBrandFooterProps) {
   const isLight = variant === "light";
@@ -50,8 +50,8 @@ export default function ExportBrandFooter({
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, minWidth: 0 }}>
           <img
-            src={ONCOPATH_LOGO_DATA_URI}
-            alt="OncoPath Logo"
+            src={ZHIAIWIKI_LOGO_DATA_URI}
+            alt="ZhiaiWiki Logo"
             style={{
               width: "22px",
               height: "22px",
@@ -80,7 +80,7 @@ export default function ExportBrandFooter({
                   fontFamily: "monospace",
                 }}
               >
-                lung.dpdns.org
+                zhiaiwiki.org
               </span>
             </div>
             <div
@@ -167,8 +167,8 @@ export default function ExportBrandFooter({
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "4px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <img
-              src={ONCOPATH_LOGO_DATA_URI}
-              alt="OncoPath Logo"
+              src={ZHIAIWIKI_LOGO_DATA_URI}
+              alt="ZhiaiWiki Logo"
               style={{
                 width: "26px",
                 height: "26px",
@@ -234,7 +234,7 @@ export default function ExportBrandFooter({
                 letterSpacing: "0.2px",
               }}
             >
-              lung.dpdns.org
+              zhiaiwiki.org
             </span>
           </div>
 

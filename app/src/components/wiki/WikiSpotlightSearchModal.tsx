@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Search, X, CornerDownLeft, Command, Clock, Trash2 } from "lucide-react";
+import { Search, X, CornerDownLeft, Command, Clock, Trash2, Target, Flame, Wind, Layers, Dna, Microscope, Heart, ClipboardList } from "lucide-react";
 import { WIKI_TOPICS, WIKI_CATEGORIES, type WikiCategory, type WikiTopic, type RiskLevel } from "@/lib/wikiData";
-import type { PatientProfile } from "@/lib/types";
+import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
+import type { PatientProfile, CancerType } from "@/lib/types";
 
 // ── 固定策划热词胶囊 ──────────────────────────────────────────────
 const HOT_KEYWORDS: Array<{ text: string; topicId: string; riskLevel: RiskLevel }> = [
@@ -17,12 +18,23 @@ const HOT_KEYWORDS: Array<{ text: string; topicId: string; riskLevel: RiskLevel 
   { text: "血管侵犯 LVI",    topicId: "lvi",             riskLevel: "high"     },
 ];
 
+const BREAST_HOT_KEYWORDS: Array<{ text: string; topicId: string; riskLevel: RiskLevel }> = [
+  { text: "BI-RADS 影像分级", topicId: "bi_rads_scale",             riskLevel: "moderate" },
+  { text: "成簇微钙化识别",   topicId: "microcalcifications",       riskLevel: "high"     },
+  { text: "HER2 靶向与 ADC",  topicId: "her2_positive_and_adc",     riskLevel: "high"     },
+  { text: "Luminal 受体分型", topicId: "luminal_a_and_b",           riskLevel: "safe"     },
+  { text: "21-基因免化疗",    topicId: "oncotype_dx_21_gene",       riskLevel: "safe"     },
+  { text: "前哨淋巴结 SLNB",  topicId: "slnb_sentinel_nodes",       riskLevel: "moderate" },
+  { text: "致密型乳腺早筛",   topicId: "breast_density",            riskLevel: "low"      },
+  { text: "防患肢淋巴水肿",   topicId: "lymphedema_prevention",     riskLevel: "high"     },
+];
+
 // ── 风险等级视觉配置 ─────────────────────────────────────────────
 const RISK_CONFIG: Record<RiskLevel, { badge: string; dot: string; label: string; groupLabel: string }> = {
-  high:     { badge: "bg-rose-100 text-rose-700 border border-rose-200",          dot: "bg-rose-500",    label: "高危",     groupLabel: "🔴 高危指标" },
-  moderate: { badge: "bg-amber-100 text-amber-700 border border-amber-200",        dot: "bg-amber-500",   label: "中危",     groupLabel: "🟡 中危因素" },
-  low:      { badge: "bg-emerald-100 text-emerald-700 border border-emerald-200",  dot: "bg-emerald-500", label: "低危",     groupLabel: "🟢 低危/惰性" },
-  safe:     { badge: "bg-teal-100 text-teal-700 border border-teal-200",           dot: "bg-teal-500",    label: "安全基石", groupLabel: "✅ 安全基石" },
+  high:     { badge: "bg-rose-100 text-rose-700 border border-rose-200",          dot: "bg-rose-500",    label: "高危",     groupLabel: "高危指标" },
+  moderate: { badge: "bg-amber-100 text-amber-700 border border-amber-200",        dot: "bg-amber-500",   label: "中危",     groupLabel: "中危因素" },
+  low:      { badge: "bg-emerald-100 text-emerald-700 border border-emerald-200",  dot: "bg-emerald-500", label: "低危",     groupLabel: "低危/惰性" },
+  safe:     { badge: "bg-teal-100 text-teal-700 border border-teal-200",           dot: "bg-teal-500",    label: "安全基石", groupLabel: "安全基石" },
 };
 
 // ── 建议 #6: 埋点日志与本地高频词条分析 ───────────────────────────
@@ -50,7 +62,7 @@ function HighlightText({ text, query, maxLen = 60 }: { text: string; query: stri
   return (
     <span>
       {display.slice(0, idx)}
-      <mark className="bg-yellow-200 text-yellow-900 rounded-sm px-0.5 not-italic font-semibold">
+      <mark className="bg-amber-100 text-amber-900 border border-amber-200/80 rounded-sm px-1 py-0.5 not-italic font-semibold">
         {display.slice(idx, idx + query.length)}
       </mark>
       {display.slice(idx + query.length)}
@@ -70,16 +82,22 @@ interface WikiSpotlightSearchModalProps {
   onClose: () => void;
   userProfile: PatientProfile | null;
   onSelectTopic: (topicId: string, category: WikiCategory) => void;
+  topics?: WikiTopic[];
+  cancerType?: CancerType;
 }
 
-export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelectTopic }: WikiSpotlightSearchModalProps) {
+export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelectTopic, topics, cancerType = "lung" }: WikiSpotlightSearchModalProps) {
+  const currentTopics: WikiTopic[] = topics || (cancerType === "breast" ? BREAST_WIKI_TOPICS : WIKI_TOPICS);
+  const isBreast = cancerType === "breast";
+  const hotKeywords = isBreast ? BREAST_HOT_KEYWORDS : HOT_KEYWORDS;
+
   const [query, setQuery] = useState("");
   const [cursorIndex, setCursorIndex] = useState(-1);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // ── 建议 #5: 从 LocalStorage 读取最近 5 条查阅历史 ──────────────
+  // ── 建议 #5: 从 LocalStorage 读取最近 5 条查阅历史（严格限定当前癌种，严禁跨癌种串扰） ──────────────
   const loadSearchHistory = useCallback(() => {
     try {
       if (typeof window === "undefined") return;
@@ -87,11 +105,12 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          setSearchHistory(parsed.slice(0, 5));
+          const filtered = parsed.filter((item) => currentTopics.some((t) => t.id === item.topicId));
+          setSearchHistory(filtered.slice(0, 5));
         }
       }
     } catch {}
-  }, []);
+  }, [currentTopics]);
 
   const saveToHistory = useCallback((topic: WikiTopic) => {
     try {
@@ -106,11 +125,12 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
         riskLevel: topic.riskLevel,
         timestamp: Date.now(),
       });
-      list = list.slice(0, 5);
+      list = list.slice(0, 10);
       localStorage.setItem("oncopath_wiki_search_history", JSON.stringify(list));
-      setSearchHistory(list);
+      // 重新按当前癌种装载
+      loadSearchHistory();
     } catch {}
-  }, []);
+  }, [loadSearchHistory]);
 
   const clearHistory = useCallback(() => {
     try {
@@ -119,24 +139,43 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
     } catch {}
   }, []);
 
-  // ── 档案专属推荐 ──────────────────────────────────────────────
+  // ── 档案专属推荐（严格限定当前癌种，严防跨癌种推荐） ───────────────────
   const profileMatches = useMemo<WikiTopic[]>(() => {
     if (!userProfile) return [];
+    const profileCancerType = userProfile.cancerType || "lung";
+    if (profileCancerType !== cancerType) return [];
+
     const ids: string[] = [];
-    if (userProfile.stas === "positive") ids.push("stas");
-    if (userProfile.vpi === "positive") ids.push("vpi");
-    if (userProfile.lvi === "positive") ids.push("lvi");
-    if (userProfile.egfr === "positive") ids.push("egfr-targeted");
-    if (userProfile.iaslcGrade === "3") ids.push("iaslc-grade3");
-    if (userProfile.morphology === "mixed_ggo" || (userProfile.ctr && userProfile.ctr > 0)) ids.push("ggo-evolution");
-    return ids.map((id) => WIKI_TOPICS.find((t) => t.id === id)).filter(Boolean) as WikiTopic[];
-  }, [userProfile]);
+    if (cancerType === "breast") {
+      if (userProfile.erStatus === "positive" || userProfile.prStatus === "positive") ids.push("luminal_a_and_b");
+      if (userProfile.her2Status === "positive" || userProfile.her2Low || userProfile.her2Status === "3+") ids.push("her2_positive_and_adc");
+      if (userProfile.oncotypeDxScore != null) ids.push("oncotype_dx_21_gene");
+      if (userProfile.biRads != null) ids.push("bi_rads_scale");
+      if (userProfile.calcificationType) ids.push("microcalcifications");
+      if (userProfile.nottinghamGrade || userProfile.grade) ids.push("nottingham_grade");
+      if (userProfile.sentinelNodesPositive != null || userProfile.axillaryNodesPositive != null) ids.push("slnb_sentinel_nodes");
+      if (userProfile.molecularSubtype === "TNBC" || userProfile.molecularSubtype === "Triple_Negative") ids.push("triple_negative_tnbc");
+      return ids.map((id) => currentTopics.find((t) => t.id === id)).filter(Boolean) as WikiTopic[];
+    }
+
+    if (cancerType === "lung") {
+      if (userProfile.stas === "positive") ids.push("stas");
+      if (userProfile.vpi === "positive") ids.push("vpi");
+      if (userProfile.lvi === "positive") ids.push("lvi");
+      if (userProfile.egfr === "positive") ids.push("egfr-targeted");
+      if (userProfile.iaslcGrade === "3") ids.push("iaslc-grade3");
+      if (userProfile.morphology === "mixed_ggo" || (userProfile.ctr && userProfile.ctr > 0)) ids.push("ggo-evolution");
+      return ids.map((id) => currentTopics.find((t) => t.id === id)).filter(Boolean) as WikiTopic[];
+    }
+
+    return [];
+  }, [userProfile, cancerType, currentTopics]);
 
   // ── 实时搜索结果 ──────────────────────────────────────────────
   const searchResults = useMemo<WikiTopic[]>(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    return WIKI_TOPICS.filter(
+    return currentTopics.filter(
       (t) =>
         t.title.toLowerCase().includes(q) ||
         (t.subtitle && t.subtitle.toLowerCase().includes(q)) ||
@@ -144,7 +183,7 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
         t.clinicalTruth.toLowerCase().includes(q) ||
         t.searchKeywords.some((kw) => kw.toLowerCase().includes(q))
     ).sort((a, b) => b.priorityOrder - a.priorityOrder);
-  }, [query]);
+  }, [query, currentTopics]);
 
   // ── 建议 #3: 搜索结果按风险等级分组 ─────────────────────────────
   const groupedResults = useMemo(() => {
@@ -178,12 +217,12 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
   }, [onClose, onSelectTopic, saveToHistory, query]);
 
   const handleHotKeyword = useCallback((topicId: string) => {
-    const topic = WIKI_TOPICS.find((t) => t.id === topicId);
+    const topic = currentTopics.find((t) => t.id === topicId);
     if (topic) {
       logSearchEvent("hot_click", { topicId });
       handleSelect(topic);
     }
-  }, [handleSelect]);
+  }, [handleSelect, currentTopics]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (searchResults.length === 0) return;
@@ -198,7 +237,7 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
   const hasResults = searchResults.length > 0;
 
   const panelContent = (isMobile: boolean) => (
-    <div className={`bg-white flex flex-col overflow-hidden shadow-2xl border border-slate-200 ${isMobile ? "rounded-t-3xl max-h-[82vh]" : "rounded-3xl max-h-[70vh]"}`}>
+    <div className={`bg-white flex flex-col overflow-hidden shadow-2xl border border-slate-200 ${isMobile ? "rounded-t-3xl max-h-[82vh] pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]" : "rounded-3xl max-h-[70vh]"}`}>
       {/* 1. Header */}
       <div className="flex items-center gap-3 px-4 sm:px-5 py-4 border-b border-slate-100 shrink-0">
         <Search className="w-5 h-5 text-blue-500 shrink-0" />
@@ -266,7 +305,8 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
             {profileMatches.length > 0 && (
               <div>
                 <p className="text-[11px] font-extrabold text-teal-600 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                  <span>🎯</span><span>基于您的病历档案——专属关联词条</span>
+                  <Target className="w-3.5 h-3.5 shrink-0" />
+                  <span>基于您的病历档案——专属关联词条</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {profileMatches.map((t) => (
@@ -282,10 +322,11 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
             {/* 高频热词 */}
             <div>
               <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                <span>🔥</span><span>临床高频速查</span>
+                <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span>临床高频速查</span>
               </p>
               <div className="flex flex-wrap gap-2">
-                {HOT_KEYWORDS.map((hw) => (
+                {hotKeywords.map((hw) => (
                   <button key={hw.topicId} type="button" onClick={() => handleHotKeyword(hw.topicId)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer">
                     <span className={`w-2 h-2 rounded-full shrink-0 ${RISK_CONFIG[hw.riskLevel].dot}`} />
                     <span>{hw.text}</span>
@@ -293,7 +334,7 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
                 ))}
               </div>
             </div>
-            <p className="text-[11px] text-slate-400 text-center pb-1">输入关键词即时联想全部 {WIKI_TOPICS.length} 个词条 · 支持中文 / 英文 / 拼音首字母</p>
+            <p className="text-[11px] text-slate-400 text-center pb-1">输入关键词即时联想全部 {currentTopics.length} 个词条 · 支持中文 / 英文 / 拼音首字母</p>
           </div>
         )}
 
@@ -305,7 +346,10 @@ export function WikiSpotlightSearchModal({ isOpen, onClose, userProfile, onSelec
               return groupedResults.map(({ level, items }) => (
                 <div key={level}>
                   <div className="px-4 sm:px-5 py-2 sticky top-0 bg-white/95 backdrop-blur-sm z-10">
-                    <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">{RISK_CONFIG[level].groupLabel}</span>
+                    <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${RISK_CONFIG[level].dot}`} />
+                      <span>{RISK_CONFIG[level].groupLabel}</span>
+                    </span>
                   </div>
                   {items.map((topic) => {
                     const idx = globalIdx++;
@@ -374,7 +418,12 @@ function ResultItem({ topic, query, isActive, onHover, onSelect }: { topic: Wiki
       aria-selected={isActive}
     >
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0 mt-0.5 ${isActive ? "bg-blue-100" : "bg-slate-100"}`}>
-        {topic.icon === "wind" ? "💨" : topic.icon === "layers" ? "📚" : topic.icon === "dna" ? "🧬" : topic.icon === "microscope" ? "🔬" : topic.icon === "heart" ? "❤️" : "📋"}
+        {topic.icon === "wind" ? <Wind className="w-4 h-4 text-sky-600" /> :
+         topic.icon === "layers" ? <Layers className="w-4 h-4 text-indigo-600" /> :
+         topic.icon === "dna" ? <Dna className="w-4 h-4 text-purple-600" /> :
+         topic.icon === "microscope" ? <Microscope className="w-4 h-4 text-teal-600" /> :
+         topic.icon === "heart" ? <Heart className="w-4 h-4 text-rose-600" /> :
+         <ClipboardList className="w-4 h-4 text-slate-600" />}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">

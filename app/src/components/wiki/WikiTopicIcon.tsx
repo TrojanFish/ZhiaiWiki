@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  Sparkles,
   CircleDot,
   Spline,
   Triangle,
@@ -27,9 +26,24 @@ import {
   Scan,
   TestTube2,
   FileBadge2,
-  BrainCircuit,
+  Brain,
+  Target,
+  Award,
+  AlertTriangle,
   Info,
 } from "lucide-react";
+import {
+  LungIcon,
+  BreastRibbonIcon,
+  ColonIcon,
+  RectalIcon,
+  GastricIcon,
+  LiverIcon,
+  EsophagealIcon,
+  ThyroidIcon,
+  EndometrialIcon,
+  CervicalIcon,
+} from "@/components/common/CancerIcons";
 
 interface WikiTopicIconProps {
   icon?: string;
@@ -41,9 +55,10 @@ interface WikiTopicIconProps {
 export function getWikiIconComponent(icon?: string, topicId?: string) {
   if (topicId) {
     switch (topicId) {
+      // 肺癌词条
       case "spiculation":
       case "spiculation-sign":
-        return { component: Sparkles, color: "text-amber-500" };
+        return { component: Crosshair, color: "text-amber-500" };
       case "vacuole":
       case "vacuole-sign":
         return { component: CircleDot, color: "text-teal-500" };
@@ -88,15 +103,142 @@ export function getWikiIconComponent(icon?: string, topicId?: string) {
         return { component: FileBadge2, color: "text-purple-500" };
       case "tumor-markers":
         return { component: TestTube2, color: "text-rose-500" };
+
+      // 乳腺癌专区词条
+      case "bi_rads_scale":
+        return { component: Scan, color: "text-sky-500" };
+      case "microcalcifications":
+        return { component: Layers, color: "text-amber-500" };
+      case "breast_density":
+        return { component: ShieldCheck, color: "text-teal-500" };
+      case "dcis_in_situ":
+        return { component: ShieldCheck, color: "text-emerald-500" };
+      case "invasive_ductal_carcinoma":
+        return { component: Microscope, color: "text-rose-500" };
+      case "nottingham_grade":
+        return { component: Activity, color: "text-purple-500" };
+      case "margins_no_ink":
+        return { component: ShieldCheck, color: "text-emerald-500" };
+      case "slnb_sentinel_nodes":
+        return { component: Layers, color: "text-indigo-500" };
+      case "neoadjuvant_pcr":
+        return { component: Award, color: "text-sky-500" };
+      case "ki67_proliferation_index":
+        return { component: Activity, color: "text-rose-500" };
+      case "luminal_a_and_b":
+        return { component: Dna, color: "text-emerald-500" };
+      case "her2_positive_and_adc":
+        return { component: Target, color: "text-purple-500" };
+      case "triple_negative_tnbc":
+        return { component: AlertTriangle, color: "text-rose-500" };
+      case "oncotype_dx_21_gene":
+        return { component: Dna, color: "text-blue-500" };
+      case "brca_gene_testing":
+        return { component: Dna, color: "text-purple-500" };
+      case "lymphedema_prevention":
+        return { component: ShieldCheck, color: "text-sky-500" };
+      case "shoulder_rehabilitation":
+        return { component: Activity, color: "text-emerald-500" };
+      case "endocrine_bone_and_hot_flashes":
+        return { component: ShieldCheck, color: "text-amber-500" };
+      case "ovarian_suppression_ofs":
+        return { component: ShieldCheck, color: "text-teal-500" };
+      case "breast_reconstruction":
+        return { component: HeartPulse, color: "text-pink-500" };
+      case "her2_cardiac_safety":
+        return { component: Activity, color: "text-rose-500" };
+      case "breast_tumor_markers":
+        return { component: AlertTriangle, color: "text-amber-500" };
+
+      // 胃癌专区词条
+      case "gastric_screening_esd":
+        return { component: GastricIcon, color: "text-amber-600" };
+      case "gastric_lauren_signet_ring":
+        return { component: GastricIcon, color: "text-rose-600" };
+      case "gastric_d2_surgery_lymphnodes":
+        return { component: Scissors, color: "text-blue-500" };
+      case "gastric_claudin_her2_biomarkers":
+        return { component: Dna, color: "text-purple-600" };
+      case "gastric_flot_sox_perioperative":
+        return { component: Network, color: "text-indigo-600" };
+      case "gastric_dumping_syndrome_reconstruction":
+        return { component: GastricIcon, color: "text-amber-600" };
+      case "gastric_peritoneal_hipec_management":
+        return { component: AlertTriangle, color: "text-rose-600" };
+
+      // 原发性肝癌专区词条
+      case "liver_cnlc_staging_system":
+        return { component: LiverIcon, color: "text-emerald-700" };
+      case "liver_child_pugh_albi_reserve":
+        return { component: ShieldCheck, color: "text-teal-600" };
+      case "liver_tace_haic_intervention":
+        return { component: Crosshair, color: "text-blue-600" };
+      case "liver_targeted_immuno_therapy":
+        return { component: Zap, color: "text-purple-600" };
+      case "liver_hbv_antiviral_prevention":
+        return { component: ShieldCheck, color: "text-emerald-600" };
+      case "liver_afp_pivka_ii_biomarkers":
+        return { component: TestTube2, color: "text-rose-500" };
+      case "liver_ablation_transplant_early":
+        return { component: LiverIcon, color: "text-teal-600" };
+
+      // 结直肠癌专区词条
+      case "colon_screening_polyps":
+      case "colonoscopy_polyps":
+        return { component: ColonIcon, color: "text-emerald-600" };
+      case "colon_sidedness_biology":
+      case "left_vs_right_colon":
+        return { component: ColonIcon, color: "text-blue-600" };
+      case "colon_cme_surgery_lymphnodes":
+      case "lymph_node_12_and_td":
+        return { component: Scissors, color: "text-blue-500" };
+      case "colon_dmmr_msih":
+      case "msi_dmmr_immunotherapy":
+        return { component: Dna, color: "text-purple-600" };
+      case "colon_idea_3months_capox":
+      case "idea_chemo_duration":
+        return { component: Network, color: "text-indigo-600" };
+      case "colon_liver_metastasis_mdt":
+        return { component: LiverIcon, color: "text-rose-600" };
+      case "rectal_anatomy_ruler":
+        return { component: RectalIcon, color: "text-rose-600" };
+      case "rectal_pelvic_hr_mri":
+        return { component: Scan, color: "text-indigo-600" };
+      case "rectal_tnt_rapido_prodige23":
+        return { component: Network, color: "text-purple-600" };
+      case "rectal_watch_and_wait":
+        return { component: Compass, color: "text-teal-600" };
+      case "rectal_tme_sacred_plane":
+      case "rectal_stoma_nerves":
+        return { component: RectalIcon, color: "text-blue-600" };
+
+      // 食管癌专区词条
+      case "esophageal_screening_early":
+        return { component: EsophagealIcon, color: "text-orange-600" };
+
+      // 甲状腺癌专区词条
+      case "thyroid_tirads_ultrasound":
+        return { component: ThyroidIcon, color: "text-cyan-600" };
+      case "thyroid_ptmc_active_surveillance":
+        return { component: ThyroidIcon, color: "text-teal-600" };
+
+      // 妇科肿瘤专区词条
+      case "endometrial_screening_ultrasound":
+        return { component: EndometrialIcon, color: "text-rose-600" };
+      case "cervical_hpv_tct_screening":
+        return { component: CervicalIcon, color: "text-purple-600" };
     }
   }
 
+  // 规范化 icon 字符串（小写、移除标点）
+  const normalized = (icon || "").toLowerCase().replace(/[-_\s]/g, "");
+
   // Map by semantic identifier string or fallback emoji
-  switch (icon) {
+  switch (normalized) {
     case "sparkles":
     case "spiculation":
     case "🦔": 
-      return { component: Sparkles, color: "text-amber-500" };
+      return { component: Crosshair, color: "text-amber-500" };
     case "circle-dot":
     case "vacuole":
     case "🧀":
@@ -140,10 +282,44 @@ export function getWikiIconComponent(icon?: string, topicId?: string) {
     case "diamond":
     case "calcification":
     case "💎": 
-      return { component: Sparkles, color: "text-purple-500" };
+      return { component: Layers, color: "text-purple-500" };
     case "lung":
-    case "nodule":
+    case "lungs":
     case "🫁": 
+      return { component: LungIcon, color: "text-teal-600" };
+    case "breast":
+    case "ribbon":
+    case "pinkribbon":
+    case "🎀":
+      return { component: BreastRibbonIcon, color: "text-pink-600" };
+    case "colon":
+    case "colorectal":
+    case "bowel":
+    case "gut":
+      return { component: ColonIcon, color: "text-emerald-600" };
+    case "rectal":
+    case "rectum":
+    case "intestine":
+      return { component: RectalIcon, color: "text-rose-600" };
+    case "gastric":
+    case "stomach":
+      return { component: GastricIcon, color: "text-amber-600" };
+    case "liver":
+    case "hepatic":
+    case "hepatitis":
+      return { component: LiverIcon, color: "text-emerald-700" };
+    case "esophageal":
+    case "esophagus":
+      return { component: EsophagealIcon, color: "text-orange-600" };
+    case "thyroid":
+      return { component: ThyroidIcon, color: "text-cyan-600" };
+    case "endometrial":
+    case "uterus":
+      return { component: EndometrialIcon, color: "text-rose-600" };
+    case "cervical":
+    case "cervix":
+      return { component: CervicalIcon, color: "text-purple-600" };
+    case "nodule":
       return { component: CircleDot, color: "text-teal-600" };
     case "microscope":
     case "pathology":
@@ -182,7 +358,13 @@ export function getWikiIconComponent(icon?: string, topicId?: string) {
     case "immune":
     case "⚡": 
       return { component: Zap, color: "text-amber-500" };
+    case "alert":
+    case "alerttriangle":
+    case "warning":
+    case "⚠️":
+      return { component: AlertTriangle, color: "text-rose-500" };
     case "shield":
+    case "shieldcheck":
     case "🛡️":
     case "🛡": 
       return { component: ShieldCheck, color: "text-emerald-600" };
@@ -192,9 +374,10 @@ export function getWikiIconComponent(icon?: string, topicId?: string) {
     case "🗺": 
       return { component: Network, color: "text-purple-600" };
     case "brain":
+    case "braincircuit":
     case "ai":
     case "🤖": 
-      return { component: BrainCircuit, color: "text-sky-600" };
+      return { component: Brain, color: "text-sky-600" };
     case "globe":
     case "staging":
     case "🌐": 

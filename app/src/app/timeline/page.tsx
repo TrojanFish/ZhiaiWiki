@@ -1,24 +1,7 @@
-import type { Metadata } from "next";
-import ClinicalTimelineView from "@/components/timeline/ClinicalTimelineView";
-import Footer from "@/components/Footer";
-
-export const metadata: Metadata = {
-  title: "检查报告时间生命线 - OncoPath 肺癌全景时序诊疗管理",
-  description:
-    "按时间轴与临床类别结构化归集历次薄层CT、手术大体病理、靶向基因测序（NGS）与血液肿瘤标志物，提供病灶生长曲线、实性占比演变与一键门诊就诊沟通清单导出。",
-};
+import { redirect } from "next/navigation";
 
 export default function TimelinePage() {
-  return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-slate-900">
-
-      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-28 pb-4 sm:pb-16">
-        {/* Master Timeline View Container */}
-        <ClinicalTimelineView />
-      </main>
-
-      <Footer maxWidth="max-w-7xl" />
-    </div>
-  );
+  redirect("/profile");
 }
+
 
