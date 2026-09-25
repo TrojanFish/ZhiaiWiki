@@ -156,13 +156,23 @@ useEffect(() => {
    - 当患者设备出现 GPU 加速异常、Canvas 崩溃或网络断流时，**严禁向患者直接展示白屏或报错堆栈**；
    - 必须提供 `ClinicalChartErrorBoundary` 配合无障碍结构化数据表格（`TabularDataFallback`），优雅降级输出 5 年总生存率、HR 危害比与置信区间数值列表，保障临床知情权不中断。
 
+4. **离屏海报与 Canvas 导出零伪影黄金法则 (Export Canvas Rasterization Precision Rules)**：
+   - 所有参与 `html-to-image` / Canvas 导出的卡片容器，**严禁使用 CSS 模糊投影**（`shadow-xs` / `shadow-md` / `shadow-2xl` 等），在移动端/高分屏栅格化时极易出现亚像素右侧灰色污边；统一改用清晰的 1px 细线边框（`border border-slate-200/90`）；
+   - 卡片与 Logo 底盒背景色统一采用纯白 `bg-white`，禁止使用 `bg-slate-100` 等浅灰色，杜绝因 0.5px 亚像素舍入漏出底层灰色。
+
+5. **复杂用户交互向导的「防静默覆盖引用锁（Mutable Ref Lock Pattern）」**：
+   - 当用户主动处于“校对、微调或表单向导”交互状态时，挂载期读取本地缓存/示范模板，以及后台静默拉取接口的异步回调，**绝对不能无差别调用 `setShowUploader(false)` 误关向导**；
+   - 必须通过同步 `useRef` 可变引用锁与 `isCalibrate` 挂载守卫双重保障用户交互界面不闪退。
+
 ---
 
 ## 5. 全栈回归验证契约 (Full-Stack Verification Contract)
 
-任何影响 UI 布局、状态治理或医学展示的代码，在发布前必须满足以下两道自动化防线：
+任何影响 UI 布局、状态治理或医学展示的代码，在发布前必须满足以下三道工业级防线：
 
 1. **单元与临床测试网** (`npm run test:unit`)：
-   - **438+ 项单元测试全部通过（100% 成功，0 失败）**。
-2. **生产全量编译构建** (`npm run build`)：
-   - Next.js 16 (Turbopack) 必须输出 **30/30 静态页面生成全部通过（Exit Code 0）**，无任何 Hydration 水合不匹配或布局穿模警告。
+   - **466+ 项单元测试全部通过（100% 成功，0 失败）**。
+2. **生产全量编译构建** (`npm run build` / `npx tsc --noEmit`)：
+   - Next.js 16 (Turbopack) 静态页面生成与 TypeScript 编译器全量扫描通过（Exit Code 0），0 Error，无任何 Hydration 水合不匹配。
+3. **真实浏览器双端视觉渲染审计** (`scripts/capture-visual-audit.ps1`)：
+   - 覆盖全站 15 个独立页面在移动端（393px）与电脑端（1440px）的共 30 张真机截图，直接用视觉模式验证零折行断字、零截字、零灰色阴影与零状态闪退。

@@ -1298,15 +1298,17 @@ npm run build
 - [ ] `page.tsx` 已在 `CANCER_MATRIX_CARDS` 中挂载卡片，网格排版自适应（如 3x3 九宫格），移动端启动器对其对齐。
 - [ ] `WikiScenarioTabs.tsx` 与 `WikiSearchBar.tsx` 已配置专科场景 Tabs 与热词占位符。
 - [ ] `SettingsModal.tsx` 与 `PatientDashboard.tsx` 已支持该癌种偏好切换、靶向药推荐与多卡槽病历隔离。
-- [ ] `StatsBanner.tsx` 已并入专科顶刊证据库，更新全站支持癌种总数计数器。
+- [ ] `StatsBanner.tsx` 与 `PwaInstallBanner.tsx` 已更新全站实体瘤总数计数器（严禁在业务页面或组件内写死历史遗留数字）。
+- [ ] `love-relay`、`reimbursement` 等业务页面已同步新增该癌种专区 Tab 与特药医保条目，杜绝 Tabs 列表残缺遗漏。
 - [ ] `api/parse-report`、`api/generate-report` 与 `api/graph` 已挂载专科 System Prompt 模板与证据库。
 
-#### 四、工程质量与 CI 验收
+#### 四、工程质量、CI 验收与真实视觉审计
 - [ ] `npx tsc --noEmit` $\to$ 0 errors。
 - [ ] `npm run test:unit` $\to$ 全部通过，包含新增的 $\ge 8$ 项单元用例。
 - [ ] `npm run test:guardrails` $\to$ 0 警告，零跨专科概念穿模。
 - [ ] `npx tsx scripts/simulate-{name}-cancer.ts` $\to$ 7 维度全景仿真 100% 通过。
 - [ ] `npm run build` $\to$ 退出码 0，生产包打包顺利，无水合告警。
+- [ ] **真机双端视觉渲染审计**：运行 `powershell -ExecutionPolicy Bypass -File scripts/capture-visual-audit.ps1`，确保全站 15 个页面在移动端（393px）与电脑端（1440px）共 30 张真机截图中，零孤字折行、零胶囊截字、零 Canvas 灰色阴影、零交互向导闪退。
 
 ---
 

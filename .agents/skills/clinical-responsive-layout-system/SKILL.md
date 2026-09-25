@@ -51,12 +51,15 @@ export default function StandardPageTemplate() {
       
       {/* 1. 页面头部区域 (Header) */}
       <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
-        {/* 顶部胶囊徽章 */}
-        <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs">
-          ...
+        {/* 顶部胶囊徽章 (移动端自适应收拢，防右边缘截断) */}
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-2xs sm:text-xs font-bold text-sky-700 border border-sky-200/80 shadow-xs max-w-full">
+          <CancerIcon type={cancerType} className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+          <span className="truncate">核心主题名称</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 hidden xs:inline-block" />
+          <span className="hidden xs:inline-block">次要修饰说明</span>
         </div>
-        {/* 统一 H1 主标题 */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        {/* 统一 H1 主标题 (移动端严禁使用 text-3xl，必须降阶至 text-2xl 防孤字折行) */}
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           ...
         </h1>
         {/* 统一副标题描述 */}
@@ -339,37 +342,82 @@ export default function StandardPageTemplate() {
 
 ---
 
-## 9. 反模式黑名单 (Anti-Patterns Prohibited)
+## 9. 移动端中文排版与海报导出黄金法则 (CJK Mobile Typography & Rasterization)
+
+在 2026 年针对知癌维基全站 15 个页面的真机视觉审计中沉淀的四大高精细节铁律：
+
+### 9.1 中文标题排版与防孤字折行法则 (CJK Typography Responsive Ratio)
+* **数学背景**：393px 手机屏扣除两端 `px-3.5`（28px）与卡片内衬后，可用文字宽度仅为 340px ~ 365px。
+* ❌ **反模式**：移动端无脑使用 `text-3xl`（30px）。中文字符若达 13~16 字（如“破除用药负担 · 肺癌特药医保与慈善赠药”），宽度 $18 \times 30\text{px} = 540\text{px} > 365\text{px}$，必将导致末尾单字（如“药”）或短语断开孤零零悬挂在第 2 行。
+* ✅ **规范要求**：
+  1. 移动端大标题基准一律使用 `text-2xl`（24px）（如 `text-2xl sm:text-4xl lg:text-5xl`）；
+  2. 复合型标题必须采用语义切分与智能断点：
+     ```tsx
+     <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+       <span className="inline-block">前半句核心主标</span>
+       <span className="hidden sm:inline"> · </span>
+       <br className="sm:hidden" />
+       <span className="text-blue-600 inline-block">后半句专科修饰</span>
+     </h1>
+     ```
+
+### 9.2 胶囊徽章与顶栏面包屑防挤压标准 (Pill Badge & Breadcrumb Overflow Protection)
+* **胶囊徽章规范**：
+  - 顶栏胶囊必须配置 `max-w-full`，字号为 `text-2xs sm:text-xs`；
+  - 辅助修饰短语（如“100% 专区 1:1 循证图谱”、“2024~2025 现行标准”）必须添加 `hidden xs:inline-block`，确保在 375px/393px 紧凑视口下不触碰屏幕右侧物理边缘。
+* **面包屑防挤压**：
+  - `flex justify-between` 布局下，左侧返回链接必须 `shrink-0`，右侧说明文字必须配置 `truncate max-w-[160px] sm:max-w-none text-right`，杜绝横向挤出视口。
+
+### 9.3 离屏海报与 Canvas 导出防灰色伪影标准 (Export Canvas Rasterization Rules)
+* **消除模糊投影伪影**：
+  - 所有参与 `html-to-image` / Canvas 导出的卡片与徽章，**严禁使用任何 CSS 模糊投影**（`shadow-xs` / `shadow-md` / `shadow-2xl` 等），离屏高倍率渲染时会导致右侧产生灰黑断层；必须 100% 替换为纯色 1px 细线边框（`border border-slate-200/90`）；
+* **底色防侧漏**：
+  - 外层容器与 Logo 底盒严禁使用浅灰阶（`bg-slate-100`），必须固化为纯白 `bg-white`，彻底解决 0.5px 亚像素舍入露出的灰色杂边。
+
+### 9.4 复杂交互向导的「防静默覆盖引用锁（Mutable Ref Lock Pattern）」
+* 当用户处于“编辑/校对/向导”状态时，后台静默网络请求返回或缓存加载**绝不能误杀当前界面**：
+  ```tsx
+  // 必须使用同步可变引用锁
+  const showUploaderRef = useRef(showUploader);
+  showUploaderRef.current = showUploader;
+  // 在异步请求回调中检查引用锁
+  if (!showUploaderRef.current && !editModeRef.current) {
+    setShowUploader(false);
+  }
+  ```
+
+---
+
+## 10. 反模式黑名单 (Anti-Patterns Prohibited)
 
 开发与代码审查中，若出现以下写法**直接判定不合格并拦截修复**：
 
 | ❌ 严禁的反模式代码 | 根因与危害 | ✅ 必须使用的规范标准 |
 | :--- | :--- | :--- |
 | `md:pt-32` / `md:pt-28` | 在悬浮导航栏下方留出 60px+ 的巨大视觉荒原 | `md:pt-20 lg:pt-24` |
+| 移动端中文标题使用 `text-3xl`（超过 12 字未分行） | 造成末尾单个汉字孤立换行（如“药”字单落一行） | `text-2xl sm:text-4xl` 配合智能语义 `<br className="sm:hidden" />` |
+| 胶囊 Badge 内文字超过 15 字且未配响应式折叠 | 在 393px 手机屏上右侧文字被直接切掉或发生粗暴折行 | 次级说明配置 `hidden xs:inline-block`，外层配置 `max-w-full` |
+| 在 Canvas 导出卡片容器上使用 `shadow-xs` / `shadow-2xl` | Canvas 栅格化产生严重亚像素灰黑色阴影伪影 | 移除所有 shadow，改用 `border border-slate-200` 纯线框 |
+| 导出卡片 Logo 容器使用 `bg-slate-100` 底色 | 0.5px 亚像素舍入导致右侧缝隙露出灰色杂边 | 统一固化为纯白 `bg-white` |
 | `pb-24` / `pb-16` (在 main 上) | 页面触底前产生冗长空洞，手机端极易产生手势疲劳 | `pb-8 sm:pb-12` |
 | `mb-16` / `mt-16` (在通用模块间) | 造成页面模块间严重的视觉撕裂感 | `mb-8 sm:mb-12` 或 `space-y-5 sm:space-y-6` |
 | `p-6` / `p-8` (移动端卡片直接使用) | 挤占手机横向 30% 面积，导致核心文本折行断裂 | `p-4 sm:p-5 md:p-8` |
 | 弹窗容器使用 `z-50` | 与桌面导航栏同层竞争，引发遮罩穿模 | 统一提升为 `z-[9999]` |
 | 移动端抽屉未配 `env(safe-area-bottom)` | 底部按钮被 iPhone 底部手势横条遮挡并误触 | `pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]` 或 `pb-safe` |
-| 容器外层与内层双重设置 `pb-8 sm:pb-12` | 产生 2 倍叠加空白 | 仅在最内层或最外层单一容器保留，杜绝嵌套叠加 |
-| 移动端抽屉未加 `overscroll-behavior: contain` | 局部滚动到底时引发底层父页面剧烈橡皮筋弹跳 | 滚动容器显式配置 `overscroll-behavior: contain` |
-| 移动端表单输入框设置 `text-xs` / `text-sm` (未到 16px) | 触发 iOS Safari 破坏性的自动放大视口 Bug | 移动端表单输入框基准设为 `text-base` (16px) |
-| 将核心临床依据仅置于 `group-hover` 纯 CSS Tooltip | 移动设备无鼠标悬停，用户彻底丧失阅读关键证据入口 | 移动端提供 Tap 点击触发轻量抽屉或居中卡片 |
+| 异步数据加载直接无条件调用 `setShowUploader(false)` | 产生竞态条件，将用户刚刚打开的校对向导当场关闭 | 使用 `showUploaderRef` / `editModeRef` 引用锁做挂载守卫 |
 
 ---
 
-## 10. 代码审查与落地验证清单 (Pre-Commit / PR Checklist)
+## 11. 代码审查与落地验证清单 (Pre-Commit / PR Checklist)
 
 任何修改或新建 UI 代码提交前，必须逐项核对：
 
 - [ ] **顶部避让校验**：页面主容器或 Header 是否已采用 `pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24`？
 - [ ] **触底距离校验**：页面主容器底部是否已统一为 `pb-8 sm:pb-12`，且不存在冗余双重嵌套？
-- [ ] **手机卡片内边距校验**：移动端卡片是否保持在 `p-4` 或 `p-5`，桌面端是否平滑放大至 `sm:p-6 md:p-8`？
+- [ ] **移动端标题排版校验**：中文长标题是否采用 `text-2xl` 并消除孤字末行折行？
+- [ ] **胶囊徽章响应式校验**：顶部 Badge 次级文案是否已设置 `hidden xs:inline-block` 防止小屏溢出？
+- [ ] **导出卡片渲染校验**：海报导出组件是否已 100% 移除 `shadow-*` 投影并采用纯色边框？
+- [ ] **交互状态锁校验**：向导与编辑模式是否具备 `useRef` 状态锁，防止异步加载闪退？
 - [ ] **安全区避让校验**：弹窗与抽屉是否配备 `pb-safe` 或动态 `env(safe-area-inset-bottom)`？
-- [ ] **动态视口高度校验**：抽屉与全屏遮罩是否采用 `max-h-[92dvh]` 或 `.max-h-sheet`，防止移动端动态地址栏截断？
-- [ ] **滚动链穿透防御校验**：模态框滚动区域是否已添加 `overscroll-behavior: contain`？
-- [ ] **触控命中热区校验**：移动端紧凑小按钮是否已通过 `.touch-target-min` 或伪元素扩张至 $\ge 44\text{px}$ 物理命中区？
-- [ ] **Z-Index 层级校验**：新出现的弹窗或遮罩层是否严格为 `z-[9999]`，吸顶工具栏是否为 `z-20`？
-- [ ] **超宽屏锁死校验**：大屏主容器是否配置 `max-w-7xl mx-auto`，长文是否配置 `max-w-4xl mx-auto`？
-- [ ] **全量回归测试**：运行 `npm run test:unit` 全部通过，且静态页面零水合与零布局告警？
+- [ ] **自动化测试与真机视觉校验**：运行 `npm run test:unit` 全部通过，并可通过 `scripts/capture-visual-audit.ps1` 进行双端真实截图验收？
 
