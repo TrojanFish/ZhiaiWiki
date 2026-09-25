@@ -156,13 +156,13 @@ export default function CrossCancerSynergyCard({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold tracking-tight">多原发肿瘤多学科协同决策舱 (Cross-Cancer MDT Hub)</h3>
+                <h3 className="text-base font-bold tracking-tight">多原发肿瘤多学科协同支持 (Cross-Cancer MDT Support)</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-extrabold bg-purple-500/30 text-purple-200 border border-purple-400/30">
-                  {presentCancers.length} 癌并发 · 协同排雷
+                  {presentCancers.length} 癌共存 · 协同评估
                 </span>
               </div>
               <p className="text-xs text-purple-200/80 mt-0.5">
-                {combinationTitle} · 跨学科联合用药自检、鉴别诊断排雷与全身排查共享
+                {combinationTitle} · 跨学科联合用药自检、多原发鉴别与全身排查共享
               </p>
             </div>
           </div>

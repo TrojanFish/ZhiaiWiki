@@ -350,7 +350,7 @@ export function DdiCheckerVisual({
         {/* Friendly Cognitive Guide Bubble */}
         <div className="p-2.5 bg-indigo-50/70 border border-indigo-200/80 rounded-xl text-[11px] text-indigo-950 flex items-center gap-2 shadow-2xs">
           <Info className="w-4 h-4 text-indigo-600 shrink-0" />
-          <span><strong>临床提示</strong>：系统已在第一步为您选定靶向药，您只需在下方勾选平时服用的胃药、降压降脂药、抗凝药或饮食即可一键排雷。</span>
+          <span><strong>临床提示</strong>：系统已在第一步为您选定靶向药，您只需在下方勾选平时服用的胃药、降压降脂药、抗凝药或日常饮食即可一键自检相互作用。</span>
         </div>
 
         {/* Category Pills */}

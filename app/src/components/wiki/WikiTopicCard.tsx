@@ -168,7 +168,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
       }
 
       setSavedQuestions((prev) => ({ ...prev, [questionText]: true }));
-      triggerToast("已成功加入门诊就医提问小抄！可在就医便签卡与打印清单中查看。");
+      triggerToast("已成功加入门诊问诊清单！可在就诊便签卡与打印清单中查看。");
     } catch (e) {
       console.error("Failed to save clinic question", e);
     }
@@ -359,7 +359,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
           )}
 
 
-          {/* Section 4: Patient High-Frequency FAQ (手风琴 + 提问小抄按钮) */}
+          {/* Section 4: Patient High-Frequency FAQ (手风琴 + 问诊清单按钮) */}
           {topic.faq && topic.faq.length > 0 && (
             <div className="space-y-2 mb-4">
               <div className="text-xs font-bold text-slate-700 flex items-center justify-between gap-1.5">
@@ -409,7 +409,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
                             ) : (
                               <>
                                 <PlusCircle className="w-3.5 h-3.5 text-blue-600" />
-                                <span>+ 加入门诊提问小抄</span>
+                                <span>+ 加入门诊问诊清单</span>
                               </>
                             )}
                           </button>

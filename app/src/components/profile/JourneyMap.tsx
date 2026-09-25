@@ -13,7 +13,7 @@ export default function JourneyMap({
   psychologicalState = "understanding" 
 }: JourneyMapProps) {
   const medicalStages = [
-    { id: "discovery", label: "发现结节", desc: "体检筛查发现" },
+    { id: "discovery", label: "发现异常", desc: "体检初筛排查" },
     { id: "evaluation", label: "术前评估/诊断", desc: "CT与恶性风险" },
     { id: "post_op", label: "病理确诊/治疗", desc: "手术与病理浸润" },
     { id: "follow_up", label: "长期随访康复", desc: "5年长程管理" },
@@ -61,7 +61,7 @@ export default function JourneyMap({
               诊疗旅程定位与阶段指引
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-              医学规范干预与心理循证重建协同推进
+              全程医疗规范与心理支持协同指引
             </p>
           </div>
         </div>

@@ -1149,7 +1149,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
             知癌维基 门诊就诊循证沟通单
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            个人临床档案精选问询小抄 · 医患协同辅助决策
+            个人临床档案精选问诊清单 · 医患协同辅助决策
           </p>
         </div>
         <div className="text-right text-xs">

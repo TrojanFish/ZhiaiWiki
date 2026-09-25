@@ -1683,7 +1683,7 @@ export default function HomePage() {
                 <div className="bg-white p-4 rounded-2xl border border-emerald-300 shadow-2xs space-y-2.5 animate-fade-in">
                   <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>知癌维基 结构化循证临床对照系统</span>
+                    <span>知癌维基 严谨循证诊疗体系</span>
                   </div>
                   <ul className="space-y-2 text-xs text-slate-700 leading-relaxed font-medium">
                     <li className="flex items-start gap-2">
@@ -1704,7 +1704,7 @@ export default function HomePage() {
                 <div className="bg-white/90 p-4 rounded-2xl border border-rose-200/80 space-y-2.5 animate-fade-in">
                   <div className="flex items-center gap-2 text-rose-700 font-bold text-xs">
                     <XCircle className="w-4 h-4 text-rose-500 shrink-0" />
-                    <span>非循证通用大模型 (黑盒概率生成)</span>
+                    <span>通用 AI 大模型 (无溯源黑盒)</span>
                   </div>
                   <ul className="space-y-2 text-xs text-slate-600 leading-relaxed">
                     <li className="flex items-start gap-2">
@@ -1740,9 +1740,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center mt-4 sm:mt-6">
             <div className="inline-flex items-center gap-2 text-xs text-slate-500 bg-white px-3.5 sm:px-4 py-1.5 rounded-full border border-slate-200/90 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-              <span>当前研究库：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType).name}专区</strong></span>
-              <span className="text-slate-300">·</span>
-              <span className="text-slate-400">已与顶栏专区联动</span>
+              <span>当前专区：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType).name}文献库</strong></span>
             </div>
           </div>
 
@@ -1807,9 +1805,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center mt-4 sm:mt-6">
             <div className="inline-flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3.5 sm:px-4 py-1.5 rounded-full border border-slate-200/90 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              <span>当前图谱：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType).name}专区</strong></span>
-              <span className="text-slate-300">·</span>
-              <span className="text-slate-400">已与顶栏专区联动</span>
+              <span>当前专区：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType).name}知识图谱</strong></span>
             </div>
           </div>
 
@@ -1863,7 +1859,7 @@ export default function HomePage() {
               href="/knowledge"
               className="btn-primary px-8 py-3.5 rounded-2xl text-sm font-bold inline-flex items-center justify-center shadow-md cursor-pointer"
             >
-              <span>进入 {CancerRegistry.get(cancerType).name} 4D 知识图谱全屏沉浸沙盘 (支持时间轴推演)</span>
+              <span>进入 {CancerRegistry.get(cancerType).name} 4D 知识图谱全屏推演沙盘</span>
             </Link>
           </div>
         </div>
@@ -1882,9 +1878,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center -mt-2 sm:-mt-4">
             <div className="inline-flex items-center gap-2 text-xs text-slate-500 bg-white/90 px-3.5 sm:px-4 py-1.5 rounded-full border border-slate-200/90 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>当前百科：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType).name}专区</strong></span>
-              <span className="text-slate-300">·</span>
-              <span className="text-slate-400">核心破恐话题与临床循证已实时装配</span>
+              <span>当前专区：<strong className="text-slate-900 font-bold">{CancerRegistry.get(cancerType).name}循证百科</strong></span>
             </div>
           </div>
 

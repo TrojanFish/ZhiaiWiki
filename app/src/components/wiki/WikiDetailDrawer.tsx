@@ -162,7 +162,7 @@ export function WikiDetailDrawer({
         localStorage.setItem("oncopath_clinic_questions", JSON.stringify(list));
       }
       setSavedQuestions((prev) => ({ ...prev, [questionText]: true }));
-      triggerToast("已成功加入门诊就医提问小抄！可在就医便签卡与打印清单中查看。");
+      triggerToast("已成功加入门诊问诊清单！可在就诊便签卡与打印清单中查看。");
     } catch (e) {
       console.error("Failed to save clinic question", e);
     }
@@ -426,7 +426,7 @@ export function WikiDetailDrawer({
                                 {isSaved ? (
                                   <><Check className="w-3.5 h-3.5 text-emerald-600" /><span>已在就医提问清单</span></>
                                 ) : (
-                                  <><PlusCircle className="w-3.5 h-3.5 text-blue-600" /><span>+ 加入门诊提问小抄</span></>
+                                  <><PlusCircle className="w-3.5 h-3.5 text-blue-600" /><span>+ 加入门诊问诊清单</span></>
                                 )}
                               </button>
                             </div>

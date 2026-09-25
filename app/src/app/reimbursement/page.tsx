@@ -57,11 +57,11 @@ interface CancerReimbursementMeta {
 
 const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
   lung: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (肺癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (肺癌专区)",
     title: "破除用药负担 · 肺癌特药医保与慈善赠药",
     subtitle: "系统梳理 16 大肺腺癌主流靶向与免疫药物官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "肺腺癌 16 大特药自负费用在线测算模拟器",
-    tableTitle: "16 大主流肺腺癌特药国谈医保限定支付与红线全览表",
+    calcTitle: "肺癌特药医保报销与自负测算",
+    tableTitle: "主流肺癌特药医保支付条件一览表",
     appDiseaseName: "肺恶性肿瘤 / 肺癌",
     sampleDrugName: "奥希替尼 (泰瑞沙)",
     categories: [
@@ -87,11 +87,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   breast: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (乳腺癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (乳腺癌专区)",
     title: "破除用药负担 · 乳腺癌特药医保与慈善赠药",
     subtitle: "系统梳理乳腺癌主流靶向、CDK4/6、ADC 与内分泌特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "乳腺癌重大特药自负费用在线测算模拟器",
-    tableTitle: "乳腺癌重大特药国谈医保限定支付与红线全览表",
+    calcTitle: "乳腺癌特药医保报销与自负测算",
+    tableTitle: "主流乳腺癌特药医保支付条件一览表",
     appDiseaseName: "乳腺恶性肿瘤 / 乳腺癌",
     sampleDrugName: "曲妥珠单抗 (赫赛汀)",
     categories: [
@@ -118,11 +118,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   colorectal: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (结直肠癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (结直肠癌专区)",
     title: "破除用药负担 · 结直肠癌特药医保与慈善赠药",
     subtitle: "系统梳理结直肠癌抗 EGFR、抗 VEGF、小分子抗血管、口服化疗与免疫特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "结直肠癌核心特药自负费用在线测算模拟器",
-    tableTitle: "结直肠癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "结直肠癌特药医保报销与自负测算",
+    tableTitle: "主流结直肠癌特药医保支付条件一览表",
     appDiseaseName: "结直肠恶性肿瘤 / 结肠癌 / 直肠癌",
     sampleDrugName: "西妥昔单抗 (爱必妥)",
     categories: [
@@ -150,11 +150,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   colon: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (结肠癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (结肠癌专区)",
     title: "破除用药负担 · 结肠癌特药医保与慈善赠药",
     subtitle: "系统梳理结肠癌左半/右半靶向分流、抗 EGFR、抗 VEGF、口服化疗与免疫特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "结肠癌核心特药自负费用在线测算模拟器",
-    tableTitle: "结肠癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "结肠癌特药医保报销与自负测算",
+    tableTitle: "主流结肠癌特药医保支付条件一览表",
     appDiseaseName: "结肠恶性肿瘤",
     sampleDrugName: "西妥昔单抗 (爱必妥)",
     categories: [
@@ -182,11 +182,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   rectal: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (直肠癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (直肠癌专区)",
     title: "破除用药负担 · 直肠癌特药医保与慈善赠药",
     subtitle: "系统梳理直肠癌新辅助同步放化疗增敏、抗 EGFR、抗 VEGF、小分子抗血管与免疫特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "直肠癌核心特药自负费用在线测算模拟器",
-    tableTitle: "直肠癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "直肠癌特药医保报销与自负测算",
+    tableTitle: "主流直肠癌特药医保支付条件一览表",
     appDiseaseName: "直肠恶性肿瘤",
     sampleDrugName: "西妥昔单抗 / 贝伐珠单抗",
     categories: [
@@ -214,11 +214,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   gastric: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (胃癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (胃癌专区)",
     title: "破除用药负担 · 胃癌特药医保与慈善赠药",
     subtitle: "系统梳理胃癌 HER2 / Claudin 18.2 靶向、PD-1 免疫、抗血管与口服化疗特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "胃癌核心特药自负费用在线测算模拟器",
-    tableTitle: "胃癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "胃癌特药医保报销与自负测算",
+    tableTitle: "主流胃癌特药医保支付条件一览表",
     appDiseaseName: "胃恶性肿瘤 / 胃腺癌",
     sampleDrugName: "曲妥珠单抗 (赫赛汀) / 纳武利尤单抗",
     categories: [
@@ -243,11 +243,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   liver: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (原发性肝癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (原发性肝癌专区)",
     title: "破除用药负担 · 原发性肝癌特药医保与慈善赠药",
     subtitle: "系统梳理原发性肝细胞癌 T+A 双达方案、小分子多靶点 TKI 与 HAIC 特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "原发性肝癌核心特药自负费用在线测算模拟器",
-    tableTitle: "原发性肝癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "原发性肝癌特药医保报销与自负测算",
+    tableTitle: "主流原发性肝癌特药医保支付条件一览表",
     appDiseaseName: "原发性肝恶性肿瘤 / 肝细胞癌",
     sampleDrugName: "信迪利单抗 (达伯舒) / 仑伐替尼",
     categories: [
@@ -271,11 +271,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   esophageal: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (食管癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (食管癌专区)",
     title: "破除用药负担 · 食管癌特药医保与慈善赠药",
     subtitle: "系统梳理食管鳞癌一线 PD-1 免疫联合化疗、术后辅助免疫维持与放化疗特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "食管癌核心特药自负费用在线测算模拟器",
-    tableTitle: "食管癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "食管癌特药医保报销与自负测算",
+    tableTitle: "主流食管癌特药医保支付条件一览表",
     appDiseaseName: "食管恶性肿瘤 / 食管鳞癌",
     sampleDrugName: "卡瑞利珠单抗 (艾瑞卡) / 替雷利珠",
     categories: [
@@ -299,11 +299,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   thyroid: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (甲状腺癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (甲状腺癌专区)",
     title: "破除用药负担 · 甲状腺癌特药医保与慈善赠药",
     subtitle: "系统梳理甲状腺癌术后终身 TSH 抑制优甲乐、放射性碘难治小分子靶向与副甲状腺保护特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "甲状腺癌核心特药自负费用在线测算模拟器",
-    tableTitle: "甲状腺癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "甲状腺癌特药医保报销与自负测算",
+    tableTitle: "主流甲状腺癌特药医保支付条件一览表",
     appDiseaseName: "甲状腺恶性肿瘤 / 甲状腺乳头状癌",
     sampleDrugName: "左甲状腺素钠片 (优甲乐) / 仑伐替尼",
     categories: [
@@ -328,11 +328,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   endometrial: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (子宫内膜癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (子宫内膜癌专区)",
     title: "破除用药负担 · 子宫内膜癌特药医保与慈善赠药",
     subtitle: "系统梳理子宫内膜癌大剂量孕激素逆转保生育、TC 方案一线辅助化疗、MSI-H 免疫单药与靶免联合官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "子宫内膜癌核心特药自负费用在线测算模拟器",
-    tableTitle: "子宫内膜癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "子宫内膜癌特药医保报销与自负测算",
+    tableTitle: "主流子宫内膜癌特药医保支付条件一览表",
     appDiseaseName: "子宫内膜恶性肿瘤 / 子宫体癌",
     sampleDrugName: "醋酸甲地孕酮 (美适亚) / 仑伐替尼",
     categories: [
@@ -358,11 +358,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   cervical: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (宫颈癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (宫颈癌专区)",
     title: "破除用药负担 · 宫颈癌特药医保与慈善赠药",
     subtitle: "系统梳理局部进展期宫颈癌根治性同步放化疗顺铂增敏、抗血管贝伐珠单抗、双抗卡度尼利与 KEYNOTE-826 靶免四联特药官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "宫颈癌核心特药自负费用在线测算模拟器",
-    tableTitle: "宫颈癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "宫颈癌特药医保报销与自负测算",
+    tableTitle: "主流宫颈癌特药医保支付条件一览表",
     appDiseaseName: "子宫颈恶性肿瘤 / 宫颈鳞癌",
     sampleDrugName: "顺铂注射液 / 贝伐珠单抗",
     categories: [
@@ -387,11 +387,11 @@ const CANCER_REIMBURSEMENT_META: Record<CancerType, CancerReimbursementMeta> = {
 6. 选定定点：选定 1~2 家定点三甲医院及 1 家“双通道”定点零售药房备案回执。`,
   },
   pancreatic: {
-    badge: "国家医保谈判药品目录 · 门慢门特 · 官方 PAP 落地指南 (胰腺癌专区)",
+    badge: "国家医保国谈特药 · 门慢门特报销指引 (胰腺癌专区)",
     title: "破除用药负担 · 胰腺癌特药医保与慈善赠药",
     subtitle: "系统梳理胰腺癌胚系 BRCA 突变维持奥拉帕利、白蛋白紫杉醇集采、二线伊立替康脂质体及外分泌消化酶 (PERT) 官方医保限定支付标准。为您提供门慢门特 3 步办结、跨省异地直接结算、双通道定点药房刷卡与官方基金会 PAP 免费赠药的权威实操路径。",
-    calcTitle: "胰腺癌核心特药自负费用在线测算模拟器",
-    tableTitle: "胰腺癌核心特药国谈医保限定支付与红线全览表",
+    calcTitle: "胰腺癌特药医保报销与自负测算",
+    tableTitle: "主流胰腺癌特药医保支付条件一览表",
     appDiseaseName: "胰腺恶性肿瘤 / 胰腺癌",
     sampleDrugName: "奥拉帕利 (利普卓) / 白蛋白紫杉醇",
     categories: [

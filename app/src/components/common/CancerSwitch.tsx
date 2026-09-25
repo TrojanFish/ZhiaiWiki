@@ -498,7 +498,7 @@ export default function CancerSwitch({
               <span>切换临床循证专区</span>
             </div>
           }
-          description="系统依据所选癌种，自动装配对应的权威国际指南分期、靶向药物相互作用检测及前瞻队列证据。"
+          description="系统依据所选癌种，无缝呈现对应的权威国际指南分期、靶向药物相互作用检测及前瞻队列证据。"
         >
           <div className="p-1 pb-4">
             {renderPluginItems(true)}

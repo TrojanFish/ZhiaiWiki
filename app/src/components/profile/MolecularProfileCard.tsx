@@ -262,19 +262,19 @@ export function MolecularProfileCard({
                 <div className="space-y-1">
                   <div className="font-extrabold text-purple-950 flex items-center gap-1.5">
                     <Pill className="w-4 h-4 text-purple-600 shrink-0" />
-                    <span>靶向药与慢病用药相互作用 (DDI) 排雷：</span>
+                    <span>靶向药与合并用药相互作用 (DDI) 自检：</span>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                       isStageIA 
                         ? "bg-emerald-100 text-emerald-800 border border-emerald-200" 
                         : "bg-purple-200/80 text-purple-900"
                     }`}>
-                      {isStageIA ? "IA期无需服药 · 仅供储备排雷" : `已关联 ${matchedGeneLabel}`}
+                      {isStageIA ? "IA 期无需辅助用药 · 仅作常识储备" : `已关联 ${matchedGeneLabel}`}
                     </span>
                   </div>
                   <p className="text-[11px] text-purple-900/90 leading-relaxed">
                     {isStageIA
-                      ? "由于您属于 IA 期极早期，指南明确无需术后吃靶向药。如您想了解平时吃的胃药（奥美拉唑）、降压降脂药与常见抗癌靶向药的相互作用机制，可自检储备常识。"
-                      : "正在服用降压降脂药、胃药（奥美拉唑）、抗凝抗栓药或日常西柚？一键自检合并用药禁忌并生成 24 小时错峰服药规划。"}
+                      ? "由于您属于 IA 期极早期，指南明确无需术后接受辅助靶向治疗。如您想了解平时服用的胃药（如奥美拉唑）、降压降脂药与常见抗癌靶向药的相互作用机制，可自检储备用药常识。"
+                      : "正在服用降压降脂药、胃药（如奥美拉唑）、抗凝抗栓药或日常西柚？一键自检合并用药禁忌并生成 24 小时错峰服药规划。"}
                   </p>
                 </div>
                 <button
@@ -283,7 +283,7 @@ export function MolecularProfileCard({
                   className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 shrink-0 transition-all cursor-pointer"
                 >
                   <Pill className="w-3.5 h-3.5" />
-                  <span>{isStageIA ? "探索用药排雷知识" : "一键自检当前用药"}</span>
+                  <span>{isStageIA ? "了解用药相互作用常识" : "一键自检合并用药"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>

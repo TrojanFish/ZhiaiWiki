@@ -3,7 +3,7 @@ export interface GlossaryTerm {
   enName: string;
   category: "imaging" | "pathology" | "benign" | "biomarker" | "staging";
   categoryLabel: string;
-  summary: string;                  // 一句话人话核心定义
+  summary: string;                  // 一句话通俗核心定义
   clinicalMeaning: string;          // 临床医学机制
   plainLanguageReassurance: string; // 患者定心丸（消除恐慌）
 }
@@ -193,12 +193,12 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     plainLanguageReassurance: "早期磨玻璃结节手术后病理绝大部分为 G1 或 G2，属于温和亚型，术后预后极为优良。"
   },
 
-  // ================= 伴发良性病变排雷 =================
+  // ================= 伴发良性病变鉴别 =================
   "肝囊肿": {
     term: "肝囊肿",
     enName: "Hepatic Cyst",
     category: "benign",
-    categoryLabel: "良性排雷定心丸",
+    categoryLabel: "良性病变鉴别",
     summary: "肝脏表面或内部出现的一个充满清亮液体的微小水泡，外面包裹一层薄薄的良性上皮组织。",
     clinicalMeaning: "属于先天性发育或人体极其常见的良性退行性改变，在 40 岁以上成人中体检检出率高达 15%~20%。",
     plainLanguageReassurance: "就像皮肤上长了个小水泡一样，与肺部结节 100% 毫无因果关系，绝非肿瘤转移！终身无需处理。"
@@ -207,7 +207,7 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     term: "肝血管瘤",
     enName: "Hepatic Hemangioma",
     category: "benign",
-    categoryLabel: "良性排雷定心丸",
+    categoryLabel: "良性病变鉴别",
     summary: "肝脏内部由大量微小毛细血管错构缠绕形成的一个良性血管团块。",
     clinicalMeaning: "人体最常见的肝脏良性肿瘤，生长极其缓慢或终身不变，不会发生恶变或转移。",
     plainLanguageReassurance: "属于先天性良性血管团，超声和 CT 增强表现典型，绝非恶性转移，安心即可。"
@@ -216,7 +216,7 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     term: "胆囊息肉 / 胆固醇结晶",
     enName: "Gallbladder Polyp",
     category: "benign",
-    categoryLabel: "良性排雷定心丸",
+    categoryLabel: "良性病变鉴别",
     summary: "胆囊内壁向胆囊腔内隆起生长的微小良性肉芽或胆固醇结晶颗粒。",
     clinicalMeaning: "90% 以上属于胆固醇性良性息肉，由胆汁中胆固醇代谢结晶析出黏附在胆囊黏膜引起。",
     plainLanguageReassurance: "微小胆囊息肉（<10mm）属于消化系统非常普遍的良性发现，与肺部完全无关，定期年度腹部 B 超复查即可。"
@@ -225,7 +225,7 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     term: "肾囊肿",
     enName: "Renal Cyst",
     category: "benign",
-    categoryLabel: "良性排雷定心丸",
+    categoryLabel: "良性病变鉴别",
     summary: "肾脏实质内出现的圆形水泡样良性小液囊。",
     clinicalMeaning: "多为单纯性肾囊肿，随年龄增长在成年人体检中极其多见（类似人体长出的一根白头发）。",
     plainLanguageReassurance: "100% 良性单纯性水泡，不损害肾功能，绝非肺部肿瘤播散，无需任何特殊治疗。"
@@ -234,7 +234,7 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     term: "甲状腺结节 (TI-RADS 2/3类)",
     enName: "Thyroid Nodule (TI-RADS 2/3)",
     category: "benign",
-    categoryLabel: "良性排雷定心丸",
+    categoryLabel: "良性病变鉴别",
     summary: "甲状腺超声检查中发现的微小囊性或实性良性结节。",
     clinicalMeaning: "TI-RADS 2 类属于 100% 良性病变（如单纯胶质囊肿）；3 类恶性概率小于 2%。",
     plainLanguageReassurance: "现代超声分辨率高达 1 毫米，体检中超半数成年人均有甲状腺结节，属于独立良性表现，与肺癌毫不相干。"

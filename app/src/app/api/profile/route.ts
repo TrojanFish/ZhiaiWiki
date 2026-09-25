@@ -580,7 +580,7 @@ export async function POST(request: Request) {
           category: 'imaging',
           subType: 'SystemicStaging',
           hospital: data.hospital || (existingSystemic?.hospital || '医学影像中心'),
-          title: '全身远处转移排查与伴发良性排雷 (M0确立)',
+          title: '全身远处转移排查与伴随病变 (M0确立)',
           summary: `【M0排查】${systemicSummaryParts.join(' · ') || '全身排查已结构化归档'}`,
           keyFindings: {
             brainMri: brainMriVal,

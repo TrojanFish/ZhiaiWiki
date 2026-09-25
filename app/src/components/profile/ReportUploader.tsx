@@ -2933,7 +2933,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                    血液肿瘤标志物 (选填 · 结合影像综合排雷)
+                    血液肿瘤标志物 (选填 · 结合影像综合鉴别)
                   </h3>
                   <p className="text-[11px] text-slate-500">
                     血清学指标基线建立，正常范围内波动属生理正常代谢

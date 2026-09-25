@@ -348,30 +348,10 @@ export default function WikiPage() {
           <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full">
             <CancerIcon type={cancerType} className="w-4 h-4 text-sky-600 shrink-0" />
             <span className="truncate">
-              {cancerType === "esophageal"
-                ? "食管解剖与食管鳞癌全景循证视觉百科"
-                : cancerType === "liver"
-                ? "原发性肝癌与介入靶免全景循证视觉百科"
-                : cancerType === "gastric"
-                ? "胃镜早筛与胃癌全景循证视觉百科"
-                : cancerType === "breast" 
-                ? "乳腺结节与乳腺癌全景循证视觉百科" 
-                : cancerType === "colon"
-                ? "结肠息肉与结肠癌全景循证视觉百科"
-                : cancerType === "rectal"
-                ? "直肠解剖保肛与直肠癌全景循证视觉百科"
-                : cancerType === "colorectal" 
-                ? "结直肠息肉与肠癌全景循证视觉百科" 
-                : cancerType === "thyroid"
-                ? "甲状腺结节与甲状腺癌全景循证视觉百科"
-                : cancerType === "endometrial"
-                ? "子宫内膜与内膜癌全景循证视觉百科"
-                : cancerType === "cervical"
-                ? "宫颈筛查与宫颈癌全景循证视觉百科"
-                : "肺结节与肺癌全景循证视觉百科"}
+              {CancerRegistry.get(cancerType).name}循证百科
             </span>
             <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-            <span className="hidden sm:inline shrink-0">按风险优先级排序</span>
+            <span className="hidden sm:inline shrink-0">重点指征优先</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">

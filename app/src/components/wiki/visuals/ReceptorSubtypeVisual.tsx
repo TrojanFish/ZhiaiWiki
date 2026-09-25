@@ -69,7 +69,7 @@ export function ReceptorSubtypeVisual() {
     her2: {
       id: "her2",
       name: "HER2 过表达型",
-      badge: "靶向神药受益者",
+      badge: "抗 HER2 靶向获益人群",
       badgeBg: "bg-purple-500 text-white",
       textColor: "text-purple-400",
       er: "阴性 (-)",

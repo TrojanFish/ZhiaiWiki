@@ -871,22 +871,22 @@ export default function PatientDashboard() {
           </h1>
           <p className="text-slate-500 font-medium text-xs sm:text-sm mt-1 leading-relaxed">
             {isEsophageal
-              ? '动态决策状态机 · 基于 AJCC 第 8 版食管鳞癌分期 · NEOCRTEC5010 新辅助放化疗 · ESCORT-1st / RATIONALE-306 一线免疫'
+              ? '基于 AJCC 第 8 版与 CSCO 食管癌诊疗指南 · 个体化动态循证档案'
               : isLiver
-              ? '动态决策状态机 · 基于国家卫健委 CNLC 2024 · Child-Pugh / ALBI 双肝储备量化 · HAIC/TACE 介入转化 · 终身抗病毒'
+              ? '基于国家卫健委 CNLC 2024 规范与肝储备量化 · 肝癌个体化动态循证档案'
               : isGastric
-              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/JGCA 2024 · ESD早癌保留 · D2清扫质控'
+              ? '基于 AJCC 第 8 版与 CSCO/JGCA 2024 规范 · 胃癌个体化动态循证档案'
               : isBreast 
-              ? '动态决策状态机 · 基于 AJCC 第 8/9 版解剖与预后分期 · St. Gallen 分型 · 21基因 Oncotype DX' 
+              ? '基于 AJCC 第 8/9 版解剖与预后分期及 St. Gallen 共识 · 乳腺癌动态循证档案' 
               : isColon
-              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CME 规范 · IDEA 3个月减毒方案'
+              ? '基于 AJCC 第 8 版与 CSCO 结直肠癌指南 · 结肠癌个体化动态循证档案'
               : isRectal
-              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · TME/HR-MRI · RAPIDO/PRODIGE 23 全程新辅助 TNT'
+              ? '基于 AJCC 第 8 版与直肠高分辨 MRI/TME 规范 · 直肠癌个体化动态循证档案'
               : isPancreatic
-              ? '动态决策状态机 · 基于 NCCN / CSCO 2024 胰腺癌指南 · 薄层增强CT/MRI血管侵犯三分类 · mFOLFIRINOX 转化 · Whipple R0切缘'
+              ? '基于 NCCN / CSCO 2024 胰腺癌指南 · 胰腺癌个体化动态循证档案'
               : isColorectal
-              ? '动态决策状态机 · 基于 AJCC 第 8 版 TNM 分期 · CSCO/NCCN 2024 · IDEA 协作组前瞻队列'
-              : '动态决策状态机 · 基于 IASLC / AJCC 第 9 版 实性成分与前瞻性临床队列'}
+              ? '基于 AJCC 第 8 版与 CSCO/NCCN 2024 指南 · 结直肠癌个体化动态循证档案'
+              : '基于 IASLC / AJCC 第 9 版国际分期金标准 · 肺癌动态循证档案'}
           </p>
         </div>
         {/* Ergonomic Segmented Capsule Dock (校对 -> 用药 -> 导出 -> [隔离线] -> 清空) */}
@@ -1120,7 +1120,7 @@ export default function PatientDashboard() {
                 {/* Breast Malignant Signs Pills with GlossaryTooltip */}
                 <div className="space-y-1.5 pt-1">
                   <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    已识别的乳腺影像特征（点击词条查看人话释义）：
+                    已排查乳腺影像特征（可点击查看释义）：
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {profile.imagingFeatures && profile.imagingFeatures.length > 0 ? (
@@ -1278,7 +1278,7 @@ export default function PatientDashboard() {
               {/* CT Malignant Signs Pills with GlossaryTooltip */}
               <div className="space-y-1.5 pt-1">
                 <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  已识别的恶性影像风险征象（点击词条查看人话释义）：
+                  已排查影像特征（可点击查看释义）：
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.imagingFeatures && profile.imagingFeatures.length > 0 ? (
@@ -1452,9 +1452,9 @@ export default function PatientDashboard() {
                     text={profile.her2Fish === 'amplified' ? '阳性 (FISH扩增)' : profile.her2Status === '3+' ? '阳性 (IHC 3+)' : (profile.her2Low || profile.her2Status === 'low' || profile.her2Status === '1+' || (profile.her2Status === '2+' && profile.her2Fish === 'negative')) ? 'HER2 低表达 (Low · DESTINY-04)' : (profile.her2Status === '0' || profile.her2Status === 'negative' ? '阴性 (0)' : profile.her2Status || '待查')} 
                   />
                   <RiskBadge 
-                    label="切缘状态 (R0)" 
+                    label="切缘状态" 
                     status={isMarginSafe ? 'good' : profile.marginStatus === 'positive' || profile.margin === 'positive' ? 'danger' : 'neutral'} 
-                    text={isMarginSafe ? '阴性 (R0安全)' : profile.marginStatus === 'positive' || profile.margin === 'positive' ? '阳性 (有残留)' : '未检测 / 待查'} 
+                    text={isMarginSafe ? '阴性 (R0 安全)' : profile.marginStatus === 'positive' || profile.margin === 'positive' ? '阳性 (有残留)' : '未检测 / 待查'} 
                   />
                   <RiskBadge 
                     label="前哨淋巴结 (SLNB)" 
@@ -1705,13 +1705,13 @@ export default function PatientDashboard() {
                 {/* 6-Core Risk Badges Matrix */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <RiskBadge 
-                    label="切缘状态 (R0)" 
+                    label="切缘状态" 
                     status={
                       profile.marginStatus === 'negative' || profile.margin === 'negative' ? 'good' :
                       profile.marginStatus === 'positive' || profile.margin === 'positive' ? 'danger' : 'neutral'
                     } 
                     text={
-                      profile.marginStatus === 'negative' || profile.margin === 'negative' ? '阴性 (R0安全)' :
+                      profile.marginStatus === 'negative' || profile.margin === 'negative' ? '阴性 (R0 安全)' :
                       profile.marginStatus === 'positive' || profile.margin === 'positive' ? '阳性 (有残留)' : '未检测 / 待查'
                     } 
                   />
@@ -1752,7 +1752,7 @@ export default function PatientDashboard() {
                       profile.stas === 'positive' || (profile.stas as any) === true ? 'warning' : 'neutral'
                     } 
                     text={
-                      profile.stas === 'negative' || (profile.stas as any) === false ? '无 / 阴性' :
+                      profile.stas === 'negative' || (profile.stas as any) === false ? '阴性 (未侵犯)' :
                       profile.stas === 'positive' || (profile.stas as any) === true ? '阳性 (高危)' : '未检测 / 待查'
                     } 
                   />
@@ -1763,7 +1763,7 @@ export default function PatientDashboard() {
                       profile.lvi === 'positive' || (profile.lvi as any) === true ? 'warning' : 'neutral'
                     } 
                     text={
-                      profile.lvi === 'negative' || (profile.lvi as any) === false ? '无 / 阴性' :
+                      profile.lvi === 'negative' || (profile.lvi as any) === false ? '阴性 (未侵犯)' :
                       profile.lvi === 'positive' || (profile.lvi as any) === true ? '阳性 (高危)' : '未检测 / 待查'
                     } 
                   />
@@ -1796,7 +1796,7 @@ export default function PatientDashboard() {
                       </span>
                     </span>
                     <span className="text-[11px] text-purple-700 font-semibold">
-                      {(typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) <= 5 ? '惰性分裂 · 极高预后安全性' : '常规代谢增殖'}
+                      {(typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) <= 5 ? '低增殖指数 (≤5%) · 预后良好' : '常规增殖水平'}
                     </span>
                   </div>
                 )}
@@ -1815,10 +1815,10 @@ export default function PatientDashboard() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                    全身远处转移排查与良性排雷
+                    全身远处转移排查与伴随病变
                   </h3>
                   <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">
-                    全身靶器官评估与 M 分期排查
+                    全身靶器官系统评估与 M 分期排查
                   </p>
                 </div>
               </div>
@@ -2005,11 +2005,11 @@ export default function PatientDashboard() {
                   <div className="text-xs font-bold text-emerald-950 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>伴发良性发现（非肿瘤转移，点击查看释义）：</span>
+                      <span>伴发良性病变（非转移，可点击释义）：</span>
                     </span>
                     <span className="text-xs text-emerald-700 font-semibold bg-white/80 px-2 py-0.5 rounded-md border border-emerald-200 shrink-0 inline-flex items-center gap-1">
                       <Check className="w-3 h-3 text-emerald-600 shrink-0" />
-                      <span>临床排雷确认为良性</span>
+                      <span>已确认为良性病变</span>
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
@@ -2036,10 +2036,10 @@ export default function PatientDashboard() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                    循证推演与文献对照引擎
+                    循证推演与临床决策建议
                   </h3>
                   <p className="text-xs font-medium text-blue-600/80 mt-0.5 truncate">
-                    多维度前瞻队列与前沿文献对齐
+                    基于权威指南与前瞻队列综合推演
                   </p>
                 </div>
               </div>
@@ -2324,10 +2324,10 @@ export default function PatientDashboard() {
                     <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-purple-900">
                       追加 / 上传新检查报告
                     </h4>
-                    <span className="text-[11px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md">AI 跨模态增量</span>
+                    <span className="text-[11px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md">智能追加 · 保留已有数据</span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    拿到了新的术后大病理、复查薄层CT、脑增强MRI或PET-CT？上传后由 AI 跨模态增量融合提取，不抹除已有记录
+                    拿到新的术后病理、复查胸部CT、增强MRI或PET-CT？上传后由系统智能结构化融合，不覆盖已有检查记录
                   </p>
                 </div>
               </button>

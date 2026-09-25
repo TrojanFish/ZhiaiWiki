@@ -277,25 +277,25 @@ export default function StudiesPage() {
 
   const topicTabs = cancerType === "breast" ? [
     { id: "all", label: "全部核心文献", icon: BookOpen },
-    { id: "surgery", label: "手术与前哨免清扫 (Z0011/B-06)", icon: Layers },
-    { id: "targeted", label: "HER2 双靶与新型 ADC (DESTINY/APHINITY)", icon: Target },
-    { id: "pathology", label: "21-基因与免化疗 (TAILORx/RxPONDER)", icon: Microscope },
-    { id: "immunotherapy", label: "三阴性免疫突破 (KEYNOTE-522)", icon: ShieldCheck },
-    { id: "imaging", label: "钼靶微钙化与致密腺体 (BI-RADS)", icon: Activity },
+    { id: "surgery", label: "手术与前哨淋巴结", icon: Layers },
+    { id: "targeted", label: "HER2 双靶与 ADC", icon: Target },
+    { id: "pathology", label: "21 基因多基因检测", icon: Microscope },
+    { id: "immunotherapy", label: "三阴性乳腺癌免疫", icon: ShieldCheck },
+    { id: "imaging", label: "钼靶与影像学特征", icon: Activity },
   ] : cancerType === "colorectal" ? [
     { id: "all", label: "全部核心文献", icon: BookOpen },
-    { id: "surgery", label: "直肠新辅助与全程TNT (RAPIDO/PROSPECT)", icon: Layers },
-    { id: "targeted", label: "左右半与RAS/BRAF靶向 (CALGB/BEACON/FRESCO)", icon: Target },
-    { id: "pathology", label: "化疗时长减毒与分期 (IDEA/MOSAIC)", icon: Microscope },
-    { id: "immunotherapy", label: "dMMR/MSI-H免疫单药 (KEYNOTE-177/NICHE)", icon: ShieldCheck },
-    { id: "imaging", label: "直肠高分MRI与CRM/EMVI评价", icon: Activity },
+    { id: "surgery", label: "直肠新辅助与全程 TNT", icon: Layers },
+    { id: "targeted", label: "左右半与 RAS/BRAF 靶向", icon: Target },
+    { id: "pathology", label: "辅助化疗周期与分期", icon: Microscope },
+    { id: "immunotherapy", label: "dMMR/MSI-H 免疫单药", icon: ShieldCheck },
+    { id: "imaging", label: "直肠高分辨 MRI 与 CRM", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
-    { id: "surgery", label: "手术与保肺切除 (JCOG/CALGB)", icon: Layers },
-    { id: "targeted", label: "靶向辅助阻断 (ADAURA/ALINA)", icon: Target },
-    { id: "immunotherapy", label: "免疫长效巡逻 (IMpower/KEYNOTE)", icon: ShieldCheck },
-    { id: "pathology", label: "高危病理与预后 (STAS/VPI)", icon: Microscope },
-    { id: "imaging", label: "影像实性比与CTR (GGO)", icon: Activity },
+    { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
+    { id: "targeted", label: "靶向辅助治疗", icon: Target },
+    { id: "immunotherapy", label: "免疫维持与巩固", icon: ShieldCheck },
+    { id: "pathology", label: "高危病理与浸润特征", icon: Microscope },
+    { id: "imaging", label: "影像实性成分与 CTR", icon: Activity },
   ];
 
   return (

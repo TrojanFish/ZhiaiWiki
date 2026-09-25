@@ -498,10 +498,10 @@ export default function MdtConsultationHub({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base font-bold tracking-tight text-white flex items-center gap-2">
-                  <span>多学科 MDT 就诊与综合决策协同舱</span>
+                  <span>多学科联合会诊 (MDT) 决策协同支持</span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full font-extrabold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 inline-flex items-center gap-1">
                     <Users2 className="w-2.5 h-2.5 text-indigo-300" />
-                    多学科专家联席决策
+                    专家联席研判
                   </span>
                 </h3>
               </div>
@@ -549,7 +549,7 @@ export default function MdtConsultationHub({
             }`}
           >
             <FileSpreadsheet className="w-3.5 h-3.5" />
-            <span>门诊 15 分钟问答小抄</span>
+            <span>专家门诊问诊清单</span>
           </button>
 
           <button
@@ -649,7 +649,7 @@ export default function MdtConsultationHub({
           </div>
         )}
 
-        {/* TAB 2: 门诊 15 分钟问答小抄 (可勾选、可新增、可一键复制) */}
+        {/* TAB 2: 专家门诊问诊清单 (可勾选、可新增、可一键复制) */}
         {activeTab === "pocket" && (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-100">

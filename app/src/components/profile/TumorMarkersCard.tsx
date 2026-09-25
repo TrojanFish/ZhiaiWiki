@@ -298,9 +298,9 @@ export function TumorMarkersCard({
               <div className="text-xs font-bold text-slate-800">暂未录入血液肿瘤标志物快照</div>
               <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
                 {isBreast ? (
-                  <>若您的就诊化验单中包含 <strong>CA15-3 (糖类抗原 15-3)</strong>、<strong>CEA (癌胚抗原)</strong> 或 <strong>CA125</strong>，可点击顶部【修改/校准临床档案】录入，系统将自动进行良性排雷与生理波动定性。</>
+                  <>若您的就诊化验单中包含 <strong>CA15-3 (糖类抗原 15-3)</strong>、<strong>CEA (癌胚抗原)</strong> 或 <strong>CA125</strong>，可点击顶部【修改/校准临床档案】录入，系统将自动进行良性鉴别与生理波动定性。</>
                 ) : (
-                  <>若您的体检或就诊化验单中包含 <strong>CEA (癌胚抗原)</strong>、<strong>CYFRA21-1</strong> 或 <strong>NSE</strong>，可点击顶部【修改/校准临床档案】录入，系统将自动进行良性排雷与生理波动定性。</>
+                  <>若您的体检或就诊化验单中包含 <strong>CEA (癌胚抗原)</strong>、<strong>CYFRA21-1</strong> 或 <strong>NSE</strong>，可点击顶部【修改/校准临床档案】录入，系统将自动进行良性鉴别与生理波动定性。</>
                 )}
               </p>
             </div>

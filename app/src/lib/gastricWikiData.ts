@@ -347,7 +347,7 @@ export const GASTRIC_WIKI_TOPICS: WikiTopic[] = [
     },
     faq: [
       {
-        question: "如果做完手术病理显示 HER2 是 2+，能直接用这种神药吗？",
+        question: "如果做完手术病理显示 HER2 是 2+，能直接用这种靶向药吗？",
         answer: "HER2 IHC 2+ 属于中间灰区，必须由病理科进一步进行 FISH（荧光原位杂交）基因扩增检测；若 FISH 结果为阳性（扩增），则严格归入 HER2 阳性，享有 ADC 药物靶向治疗指征。"
       }
     ]

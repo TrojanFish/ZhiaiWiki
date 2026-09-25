@@ -26,7 +26,7 @@ export function HccInterventionSystemicVisual() {
               TACE / HAIC 介入与靶免联合机制微课
             </h3>
             <p className="text-teal-100/80 text-xs sm:text-sm mt-1">
-              透视正常肝与肝癌的血供差异，揭秘高浓度定点灌注栓塞与胃镜排雷安全防线
+              透视正常肝与肝癌的血供差异，揭秘高浓度定点灌注栓塞与用药前胃镜安全防线
             </p>
           </div>
 
@@ -45,7 +45,7 @@ export function HccInterventionSystemicVisual() {
                 activeTab === "systemic" ? "bg-white text-teal-900 shadow-sm" : "text-white/80 hover:text-white"
               }`}
             >
-              靶免联合与胃镜排雷
+              靶免联合与胃镜筛查
             </button>
           </div>
         </div>
@@ -269,7 +269,7 @@ export function HccInterventionSystemicVisual() {
               <div className="bg-rose-50 p-4 rounded-xl border border-rose-300">
                 <div className="flex items-center gap-2 text-rose-800 font-bold text-xs">
                   <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-                  用药前安全红线：必须胃镜“排雷”！
+                  用药前安全红线：必须先行胃镜排查静脉曲张！
                 </div>
                 <p className="text-xs text-rose-900 mt-2 leading-relaxed">
                   很多病友不理解为什么治肝癌医生非要查胃镜。中国大部分肝癌患者伴随肝硬化，门静脉压力极高，血液被迫倒灌到食管胃底，导致浅表静脉像<strong>“吹到极限随时会炸的气球”</strong>。
