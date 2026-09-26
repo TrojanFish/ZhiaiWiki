@@ -874,30 +874,62 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       <div className="max-w-5xl mx-auto w-full animate-fade-in">
 
         {/* ─── Header ─── */}
-        <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
-              {parsedData?.isManualEntry ? <Edit3 className="w-3 h-3 text-emerald-700" /> : (initialData ? <FileText className="w-3 h-3 text-emerald-700" /> : <Check className="w-3 h-3 text-emerald-700" />)}
-              <span>{parsedData?.isManualEntry ? "手动指标填报模式" : (initialData ? "档案核对与微调模式" : "全模态结构化提取就绪")}</span>
+        <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100 flex-wrap">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
+              parsedData?.isManualEntry 
+                ? "bg-blue-50 text-blue-600 border-blue-200" 
+                : "bg-emerald-50 text-emerald-700 border-emerald-200"
+            }`}>
+              {parsedData?.isManualEntry ? <Edit3 className="w-4 h-4 text-blue-600" /> : <FileText className="w-4 h-4 text-emerald-600" />}
             </div>
-            <h2 className="text-base font-extrabold text-slate-900">
-              {parsedData?.isManualEntry ? "请填写并校准您的关键临床指标" : (initialData ? "核对并校准您的关键临床指标" : "请核对并确认您的医疗特征指标")}
-            </h2>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm sm:text-base font-extrabold text-slate-900">
+                  {parsedData?.isManualEntry ? "手动填报临床指标" : (initialData ? "核对并校准关键指标" : "报告解析要素确认")}
+                </h2>
+                {parsedData?.isManualEntry && (
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
+                    免报告
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                {parsedData?.isManualEntry 
+                  ? "请填写已知关键临床指标，未测项可留空，系统实时推演分期" 
+                  : "系统已完成智能提取，请核对各项关键要素，支持直接修改"}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setParsedData(null);
-                hasInitializedRef.current = null;
-                if (onSwitchToUpload) onSwitchToUpload();
-              }}
-              className="text-xs text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <Camera className="w-3.5 h-3.5 text-blue-600" />
-              <span>返回拍照/文本智能解析</span>
-            </button>
-            {onCancel && (
+          <div className="flex items-center gap-2 shrink-0">
+            {parsedData?.isManualEntry ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setParsedData(null);
+                  hasInitializedRef.current = null;
+                  if (onSwitchToUpload) onSwitchToUpload();
+                }}
+                className="text-xs text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Camera className="w-3.5 h-3.5 text-blue-600" />
+                <span>切换为拍照解析</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setParsedData(null);
+                  hasInitializedRef.current = null;
+                  if (onSwitchToUpload) onSwitchToUpload();
+                }}
+                className="text-xs text-slate-600 hover:text-slate-900 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>重新上传</span>
+              </button>
+            )}
+            {existingProfile && onCancel && (
               <button
                 type="button"
                 onClick={onCancel}
@@ -3263,29 +3295,19 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
 
   return (
     <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-8 border border-slate-200 shadow-sm max-w-3xl mx-auto w-full">
-      {onCancel && (
-        <div className="mb-5 pb-3 border-b border-slate-100 flex items-center justify-between flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200"
-          >
-            <span>取消并返回我的档案看板</span>
-          </button>
-          {existingProfile && (
-            <span className="text-[11px] text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">
-              增量融合模式 · 不抹除已有记录
-            </span>
-          )}
-        </div>
-      )}
-
       <div className="flex items-center gap-3.5 mb-3">
         <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100 flex-shrink-0">
           <FileSearch className="w-6 h-6 text-blue-600" />
         </div>
-        <div>
-          <h2 className="text-lg font-bold text-slate-900">医疗报告多模态结构化解析</h2>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="text-lg font-bold text-slate-900">医疗报告多模态结构化解析</h2>
+            {existingProfile && (
+              <span className="text-[10px] sm:text-xs text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">
+                增量融合模式 · 不抹除已有记录
+              </span>
+            )}
+          </div>
           <p className="text-slate-500 text-xs sm:text-sm mt-0.5">支持上传或拍摄多源临床报告，系统将自动解析核心诊断要素并校准分期</p>
         </div>
       </div>
