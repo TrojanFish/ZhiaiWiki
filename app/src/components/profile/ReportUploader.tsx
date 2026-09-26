@@ -207,14 +207,394 @@ const PRESET_CO_MUTATIONS = [
   }
 ];
 
+const CANCER_DRIVER_GENES_MAP: Record<string, Array<{
+  gene: string;
+  label: string;
+  badge: string;
+  subtypes: Array<{ key: string; name: string; isSensitive?: boolean }>;
+}>> = {
+  lung: PRESET_DRIVER_GENES,
+  breast: [
+    {
+      gene: "ER",
+      label: "ER (雌激素受体)",
+      badge: "内分泌靶点",
+      subtypes: [
+        { key: "ER_pos_high", name: "强阳性 (≥50%)", isSensitive: true },
+        { key: "ER_pos_low", name: "低表达阳性 (1%~10%)", isSensitive: true },
+        { key: "ER_neg", name: "阴性 (<1%)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "PR",
+      label: "PR (孕激素受体)",
+      badge: "预后评估",
+      subtypes: [
+        { key: "PR_pos_high", name: "强阳性 (≥20%)", isSensitive: true },
+        { key: "PR_pos_low", name: "低表达 (1%~19%)", isSensitive: true },
+        { key: "PR_neg", name: "阴性 (<1%)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "HER2",
+      label: "HER2 (人表皮生长因子受体2)",
+      badge: "靶向治疗靶点",
+      subtypes: [
+        { key: "HER2_pos", name: "阳性 (IHC 3+ 或 FISH+ 曲妥珠/帕妥珠)", isSensitive: true },
+        { key: "HER2_low", name: "HER2 低表达 (IHC 1+ 或 2+/FISH- 德曲妥珠单抗)", isSensitive: true },
+        { key: "HER2_zero", name: "HER2 零表达 (IHC 0)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "Ki-67",
+      label: "Ki-67 (细胞增殖指数)",
+      badge: "分子分型核心",
+      subtypes: [
+        { key: "Ki67_high", name: "高增殖指数 (≥20% 或 ≥30%)", isSensitive: false },
+        { key: "Ki67_low", name: "低增殖指数 (<14%~20%)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "BRCA1/2",
+      label: "BRCA1/2 (DNA同源修复)",
+      badge: "PARP抑制剂",
+      subtypes: [
+        { key: "BRCA1_mut", name: "BRCA1 致病突变 (奥拉帕利敏感)", isSensitive: true },
+        { key: "BRCA2_mut", name: "BRCA2 致病突变 (奥拉帕利敏感)", isSensitive: true },
+        { key: "wt", name: "BRCA1/2 野生型", isSensitive: false },
+      ]
+    },
+    {
+      gene: "PIK3CA",
+      label: "PIK3CA (PI3K通路突变)",
+      badge: "阿培利司靶点",
+      subtypes: [
+        { key: "H1047R", name: "外显子 20 H1047R 活化突变", isSensitive: true },
+        { key: "E545K", name: "外显子 9 E545K 活化突变", isSensitive: true },
+        { key: "wt", name: "野生型", isSensitive: false },
+      ]
+    },
+  ],
+  colorectal: [
+    {
+      gene: "KRAS",
+      label: "KRAS (RAS下游效应靶点)",
+      badge: "西妥昔耐药指引",
+      subtypes: [
+        { key: "KRAS_exon2", name: "外显子 2 突变 (12/13密码子 · 西妥昔耐药)", isSensitive: false },
+        { key: "KRAS_G12C", name: "G12C 突变 (特异性抑制剂敏感)", isSensitive: true },
+        { key: "KRAS_wt", name: "野生型 (全阴性 · 西妥昔单抗敏感)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "NRAS",
+      label: "NRAS (RAS家族成员)",
+      badge: "3%~5%突变",
+      subtypes: [
+        { key: "NRAS_mut", name: "外显子 2/3/4 活化突变 (抗EGFR耐药)", isSensitive: false },
+        { key: "NRAS_wt", name: "野生型", isSensitive: true },
+      ]
+    },
+    {
+      gene: "BRAF",
+      label: "BRAF (MAPK通路)",
+      badge: "V600E高危预后",
+      subtypes: [
+        { key: "BRAF_V600E", name: "V600E 突变 (侵袭性强 · 双靶/三靶获益)", isSensitive: true },
+        { key: "BRAF_wt", name: "野生型", isSensitive: true },
+      ]
+    },
+    {
+      gene: "MSI/MMR",
+      label: "MSI / MMR (错配修复)",
+      badge: "免疫治疗黄金靶点",
+      subtypes: [
+        { key: "dMMR_MSIH", name: "dMMR / MSI-H (高微卫星不稳定 · PD-1高度敏感)", isSensitive: true },
+        { key: "pMMR_MSS", name: "pMMR / MSS (微卫星稳定)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "HER2",
+      label: "HER2 (扩增过表达)",
+      badge: "双靶治疗靶点",
+      subtypes: [
+        { key: "HER2_amp", name: "HER2 扩增 / IHC 3+ (RAS野生型抗HER2方案)", isSensitive: true },
+        { key: "HER2_neg", name: "HER2 阴性", isSensitive: false },
+      ]
+    }
+  ],
+  gastric: [
+    {
+      gene: "HER2",
+      label: "HER2 (胃癌一线金标准)",
+      badge: "曲妥珠单抗靶点",
+      subtypes: [
+        { key: "HER2_pos", name: "阳性 (IHC 3+ 或 IHC 2+/FISH+)", isSensitive: true },
+        { key: "HER2_neg", name: "阴性", isSensitive: false },
+      ]
+    },
+    {
+      gene: "Claudin18.2",
+      label: "Claudin 18.2 (紧密连接蛋白)",
+      badge: "佐妥昔单抗靶点",
+      subtypes: [
+        { key: "CLDN_pos_high", name: "强阳性 (≥75% 肿瘤细胞膜中/强染色)", isSensitive: true },
+        { key: "CLDN_pos_low", name: "中低表达 (40%~74%)", isSensitive: false },
+        { key: "CLDN_neg", name: "阴性 (<40%)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "PD-L1",
+      label: "PD-L1 (CPS 综合阳性评分)",
+      badge: "免疫一线获益",
+      subtypes: [
+        { key: "CPS_ge5", name: "CPS ≥ 5 (纳武利尤单抗一线联合方案)", isSensitive: true },
+        { key: "CPS_ge10", name: "CPS ≥ 10 (高免疫敏感度)", isSensitive: true },
+        { key: "CPS_lt5", name: "CPS < 5 (获益有限)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "MSI/MMR",
+      label: "MSI / MMR (错配修复)",
+      badge: "免疫免化疗指引",
+      subtypes: [
+        { key: "dMMR_MSIH", name: "dMMR / MSI-H (围手术期免疫新辅助/一线获益)", isSensitive: true },
+        { key: "pMMR", name: "pMMR / MSS", isSensitive: false },
+      ]
+    }
+  ],
+  liver: [
+    {
+      gene: "AFP",
+      label: "AFP (甲胎蛋白基线)",
+      badge: "肝癌特异性标志物",
+      subtypes: [
+        { key: "AFP_high", name: "显著偏高 (≥400 ng/mL)", isSensitive: false },
+        { key: "AFP_mild", name: "轻度偏高 (20~400 ng/mL)", isSensitive: false },
+        { key: "AFP_normal", name: "正常 (<20 ng/mL)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "HBV/HCV",
+      label: "病毒复制载量 (HBV-DNA)",
+      badge: "抗病毒基础管控",
+      subtypes: [
+        { key: "HBV_pos", name: "HBV-DNA 阳性 (需口服恩替卡韦/TAF抗病毒)", isSensitive: false },
+        { key: "HBV_neg", name: "HBV-DNA 阴性 / 已测不到", isSensitive: true },
+      ]
+    },
+    {
+      gene: "CTNNB1",
+      label: "CTNNB1 (Wnt通路突变)",
+      badge: "免疫耐药潜在标志",
+      subtypes: [
+        { key: "CTNNB1_mut", name: "突变激活 (冷肿瘤 · 单药免疫应答偏低)", isSensitive: false },
+        { key: "wt", name: "野生型", isSensitive: true },
+      ]
+    },
+    {
+      gene: "TP53",
+      label: "TP53 (抑癌基因失活)",
+      badge: "高侵袭预后",
+      subtypes: [
+        { key: "TP53_mut", name: "致病性突变 (提示复发风险偏高)", isSensitive: false },
+      ]
+    }
+  ],
+  thyroid: [
+    {
+      gene: "BRAF",
+      label: "BRAF (V600E 突变)",
+      badge: "乳头状癌 60%~80%",
+      subtypes: [
+        { key: "BRAF_V600E", name: "V600E 阳性 (与侵袭性/包膜外侵相关)", isSensitive: true },
+        { key: "BRAF_wt", name: "野生型 (全阴性)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "TERT",
+      label: "TERT (启动子突变)",
+      badge: "高危复发与去分化",
+      subtypes: [
+        { key: "TERT_promoter", name: "启动子 C228T/C250T 突变 (侵袭高危)", isSensitive: false },
+        { key: "TERT_wt", name: "野生型", isSensitive: true },
+      ]
+    },
+    {
+      gene: "RET",
+      label: "RET (融合/点突变)",
+      badge: "靶向治疗与髓样癌",
+      subtypes: [
+        { key: "RET_PTC", name: "RET 融合 (RET/PTC · 普拉替尼/塞普替尼敏感)", isSensitive: true },
+        { key: "RET_MTC", name: "RET 突变 (MEN2综合征 / 髓样癌)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "RAS",
+      label: "RAS (NRAS / HRAS)",
+      badge: "滤泡型高发",
+      subtypes: [
+        { key: "RAS_mut", name: "RAS 突变阳性", isSensitive: false },
+      ]
+    }
+  ],
+  endometrial: [
+    {
+      gene: "POLE",
+      label: "POLE (外切酶结构域突变)",
+      badge: "超高突变 · 预后极佳",
+      subtypes: [
+        { key: "POLE_mut", name: "致病性突变 (降阶梯治疗免辅助放化疗)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "MMR/MSI",
+      label: "MMR / MSI (错配修复状态)",
+      badge: "高微卫星不稳定型",
+      subtypes: [
+        { key: "dMMR", name: "dMMR (MLH1/MSH2/MSH6/PMS2 缺失 · 免疫敏感)", isSensitive: true },
+        { key: "pMMR", name: "pMMR (错配修复完整)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "p53",
+      label: "p53 (TP53 状态)",
+      badge: "高危浆液性分子型",
+      subtypes: [
+        { key: "p53_abnormal", name: "p53 突变型/过表达 (强化化疗/放疗指征)", isSensitive: false },
+        { key: "p53_wild", name: "p53 野生型/正常", isSensitive: true },
+      ]
+    },
+    {
+      gene: "ER/PR",
+      label: "ER / PR (激素受体)",
+      badge: "内分泌治疗指标",
+      subtypes: [
+        { key: "ER_PR_pos", name: "ER/PR 阳性 (孕激素/芳香化酶抑制剂敏感)", isSensitive: true },
+        { key: "ER_PR_neg", name: "阴性", isSensitive: false },
+      ]
+    }
+  ],
+  cervical: [
+    {
+      gene: "HPV",
+      label: "HPV (人乳头瘤病毒分型)",
+      badge: "宫颈癌病因学核心",
+      subtypes: [
+        { key: "HPV16", name: "HPV 16 型阳性 (最常见高危型)", isSensitive: false },
+        { key: "HPV18", name: "HPV 18 型阳性 (高侵袭/腺癌多见)", isSensitive: false },
+        { key: "HPV_other_hr", name: "其他高危型阳性 (31/33/45/52/58等)", isSensitive: false },
+        { key: "HPV_neg", name: "全阴性", isSensitive: true },
+      ]
+    },
+    {
+      gene: "PD-L1",
+      label: "PD-L1 (CPS 评分)",
+      badge: "一线免疫获益",
+      subtypes: [
+        { key: "CPS_ge1", name: "CPS ≥ 1 (帕博利珠单抗联合方案获益)", isSensitive: true },
+        { key: "CPS_lt1", name: "CPS < 1", isSensitive: false },
+      ]
+    },
+    {
+      gene: "TMB",
+      label: "TMB (肿瘤突变负荷)",
+      badge: "广谱免疫标志物",
+      subtypes: [
+        { key: "TMB_high", name: "TMB-H (≥10 mut/Mb)", isSensitive: true },
+      ]
+    }
+  ],
+  pancreatic: [
+    {
+      gene: "KRAS",
+      label: "KRAS (核心驱动靶点)",
+      badge: "90%~95%极高频",
+      subtypes: [
+        { key: "G12D", name: "KRAS G12D 突变 (最常见亚型)", isSensitive: false },
+        { key: "G12V", name: "KRAS G12V 突变", isSensitive: false },
+        { key: "G12R", name: "KRAS G12R 突变", isSensitive: false },
+        { key: "G12C", name: "KRAS G12C 突变 (靶向获益罕见亚型)", isSensitive: true },
+        { key: "wt", name: "KRAS 野生型 (需排查罕见驱动靶点)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "BRCA1/2",
+      label: "BRCA1/2 (同源重组缺陷)",
+      badge: "POLO奥拉帕利靶点",
+      subtypes: [
+        { key: "gBRCA_mut", name: "gBRCA1/2 致病突变 (含铂化疗与奥拉帕利敏感)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "MSI/dMMR",
+      label: "MSI / dMMR (错配修复)",
+      badge: "罕见免疫敏感型",
+      subtypes: [
+        { key: "dMMR", name: "dMMR / MSI-H (PD-1单抗强效缓解)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "SMAD4",
+      label: "SMAD4 (DPC4 基因缺失)",
+      badge: "远处转移风险评估",
+      subtypes: [
+        { key: "SMAD4_loss", name: "SMAD4 表达缺失 (提示转移倾向高)", isSensitive: false },
+      ]
+    }
+  ],
+  esophageal: [
+    {
+      gene: "PD-L1",
+      label: "PD-L1 (CPS / TAP 表达)",
+      badge: "食管癌一线免疫金标准",
+      subtypes: [
+        { key: "CPS_ge10", name: "CPS ≥ 10 或 TAP ≥ 10% (一线免疫获益确凿)", isSensitive: true },
+        { key: "CPS_1_9", name: "CPS 1~9 (中度获益)", isSensitive: true },
+        { key: "CPS_lt1", name: "CPS < 1 (低表达)", isSensitive: false },
+      ]
+    },
+    {
+      gene: "HER2",
+      label: "HER2 (食管胃结合部/腺癌)",
+      badge: "抗HER2靶向",
+      subtypes: [
+        { key: "HER2_pos", name: "HER2 阳性 (IHC 3+ 或 FISH+)", isSensitive: true },
+      ]
+    },
+    {
+      gene: "TP53",
+      label: "TP53 (抑癌基因突变)",
+      badge: "食管鳞癌高频(>80%)",
+      subtypes: [
+        { key: "TP53_mut", name: "致病性突变", isSensitive: false },
+      ]
+    }
+  ]
+};
+
 export default function ReportUploader({ onParsed, initialData, existingProfile, onCancel, initialManualMode, onSwitchToUpload, cancerType = 'lung' }: ReportUploaderProps) {
+  const [parsedData, setParsedData] = useState<any | null>(initialData || null);
+  const currentCancer: CancerType = (parsedData?.cancerType || cancerType || 'lung') as CancerType;
+  const isBreast = currentCancer === 'breast';
+  const isColon = currentCancer === 'colon';
+  const isRectal = currentCancer === 'rectal';
+  const isColorectal = currentCancer === 'colorectal' || isColon || isRectal;
+  const isGastric = currentCancer === 'gastric';
+  const isLiver = currentCancer === 'liver';
+  const isEsophageal = currentCancer === 'esophageal';
+  const isThyroid = currentCancer === 'thyroid';
+  const isEndometrial = currentCancer === 'endometrial';
+  const isCervical = currentCancer === 'cervical';
+  const isPancreatic = currentCancer === 'pancreatic';
+  const isLung = currentCancer === 'lung';
+
   const [uploadTab, setUploadTab] = useState<'image' | 'text'>('image');
   const [reportText, setReportText] = useState("");
   const [isParsing, setIsParsing] = useState(false);
   const [error, setError] = useState("");
   const [errorInfo, setErrorInfo] = useState<ClinicalErrorInfo | null>(null);
   const [parseCountdown, setParseCountdown] = useState(0);
-  const [parsedData, setParsedData] = useState<any | null>(initialData || null);
   const [images, setImages] = useState<UploadedReportImage[]>([]);
   const [activeSignTooltip, setActiveSignTooltip] = useState<string | null>(null);
   const [newBenignInput, setNewBenignInput] = useState("");
@@ -954,9 +1334,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
           <aside className="w-52 shrink-0 hidden md:flex flex-col gap-4" style={{position:"sticky",top:"1rem"}}>
             <nav className="flex flex-col gap-1">
               {([
-                { step: 1 as const, label: "结节影像与部位" },
-                { step: 2 as const, label: "组织病理与高危" },
-                { step: 3 as const, label: "驱动基因突变" },
+                { step: 1 as const, label: isLung ? "结节影像与部位" : isBreast ? "乳腺影像与原发灶" : isColorectal ? "肠镜与影像原发灶" : "影像诊断与原发灶" },
+                { step: 2 as const, label: isBreast ? "免疫组化与分型" : isLung ? "组织病理与高危" : "组织病理与分期" },
+                { step: 3 as const, label: isLung ? "驱动基因突变" : isBreast ? "受体与基因检测" : isColorectal ? "RAS/BRAF/MSI" : "分子病理与靶点" },
                 { step: 4 as const, label: "全身排查与标志物" },
               ]).map(({ step, label }) => {
                 const isActive = currentStep === step;
@@ -1093,9 +1473,68 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                       className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
                     >
                       <option value="unknown">尚未手术 / 随访观察期</option>
-                      <option value="segmentectomy">解剖性肺段切除 (Segmentectomy)</option>
-                      <option value="lobectomy">标准肺叶切除 (Lobectomy)</option>
-                      <option value="wedge">肺楔形切除 (Wedge Resection)</option>
+                      {isBreast ? (
+                        <>
+                          <option value="bcs">保乳手术 (BCS)</option>
+                          <option value="mastectomy">乳腺全切术 (Mastectomy)</option>
+                          <option value="reconstruction">全切+一期/二期乳房重建</option>
+                        </>
+                      ) : isColorectal ? (
+                        <>
+                          <option value="colectomy">结肠切除术 (Colectomy)</option>
+                          <option value="tme">直肠癌全系膜切除 (TME)</option>
+                          <option value="local_excision">内镜/经肛局部切除</option>
+                        </>
+                      ) : isGastric ? (
+                        <>
+                          <option value="distal_gastrectomy">远端胃大部分切除术 (D2)</option>
+                          <option value="total_gastrectomy">全胃切除术 (D2)</option>
+                          <option value="proximal_gastrectomy">近端胃切除术</option>
+                          <option value="esd">内镜黏膜下剥离术 (ESD)</option>
+                        </>
+                      ) : isLiver ? (
+                        <>
+                          <option value="hepatectomy">肝叶/肝段切除术</option>
+                          <option value="ablation">射频/微波局部消融术</option>
+                          <option value="transplant">肝脏移植术</option>
+                          <option value="tace">经动脉化疗栓塞 (TACE)</option>
+                        </>
+                      ) : isThyroid ? (
+                        <>
+                          <option value="total_thyroidectomy">甲状腺全切术</option>
+                          <option value="lobectomy_isthmus">单侧腺叶+峡部切除</option>
+                          <option value="central_dissection">甲状腺全切+中央区淋巴结清扫</option>
+                        </>
+                      ) : isPancreatic ? (
+                        <>
+                          <option value="whipple">胰十二指肠切除术 (Whipple)</option>
+                          <option value="distal_pancreatectomy">胰体尾切除术 (RAMPS)</option>
+                          <option value="total_pancreatectomy">全胰切除术</option>
+                        </>
+                      ) : isEsophageal ? (
+                        <>
+                          <option value="mckeown">食管癌根治术 (McKeown 三切口)</option>
+                          <option value="ivor_lewis">食管癌根治术 (Ivor Lewis 双切口)</option>
+                          <option value="esd">内镜微创切除 (ESD)</option>
+                        </>
+                      ) : isEndometrial ? (
+                        <>
+                          <option value="hysterectomy_bso">全子宫双附件切除术</option>
+                          <option value="staging_surgery">全面分期手术 (伴淋巴结清扫)</option>
+                        </>
+                      ) : isCervical ? (
+                        <>
+                          <option value="wertheim">广泛性全子宫切除术 (Wertheim / Piver III)</option>
+                          <option value="conization">宫颈锥切术 (LEEP / CKC)</option>
+                          <option value="ccrt">根治性同步化放疗 (CCRT, 免手术)</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="segmentectomy">解剖性肺段切除 (Segmentectomy)</option>
+                          <option value="lobectomy">标准肺叶切除 (Lobectomy)</option>
+                          <option value="wedge">肺楔形切除 (Wedge Resection)</option>
+                        </>
+                      )}
                     </select>
                   )}
                 </div>
@@ -1110,12 +1549,34 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     <Scan className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">结节形态与 CT 实性成分 (CTR 核心分期依据)</h3>
-                    <p className="text-[11px] text-slate-500">薄层 CT 影像原发灶测量，CTR 为临床分期重要依据</p>
+                    <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                      {isBreast ? "乳腺影像与肿块大小 (BI-RADS 评估)" :
+                       isColorectal ? "肠道影像与原发病灶浸润 (T分期)" :
+                       isGastric ? "胃镜与腹盆增强 CT 原发灶 (T分期)" :
+                       isLiver ? "肝脏肿瘤原发灶评估 (最大径 / 数目)" :
+                       isThyroid ? "甲状腺超声与结节评估 (TI-RADS)" :
+                       isEndometrial ? "盆腔 MRI 与肌层浸润深度 (FIGO分期)" :
+                       isCervical ? "宫颈原发灶与盆腔 MRI 浸润 (FIGO分期)" :
+                       isPancreatic ? "胰腺薄层增强 CT 原发灶 (可切除性)" :
+                       isEsophageal ? "食管内镜与增强 CT 原发灶 (T分期)" :
+                       "结节形态与 CT 实性成分 (CTR 核心分期依据)"}
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      {isBreast ? "超声/钼靶测量肿块最大径与钙化" :
+                       isColorectal ? "肠镜病变测量与盆腔核磁评估" :
+                       isGastric ? "胃镜活检病变大小与胃壁浸润深度" :
+                       isLiver ? "增强影像测量肿瘤最大径与血管受累" :
+                       isThyroid ? "高分辨超声测量结节大小与钙化" :
+                       isEndometrial ? "MRI 测定肌层浸润与宫颈间质受累" :
+                       isCervical ? "专科检查与 MRI 判定病灶范围" :
+                       isPancreatic ? "薄层 CT 测定肿瘤最大径与血管间隙" :
+                       isEsophageal ? "内镜与 CT 评估病灶长度与外侵" :
+                       "薄层 CT 影像原发灶测量，CTR 为临床分期重要依据"}
+                    </p>
                   </div>
                 </div>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
-                  当前 CTR: {
+                  {isLung ? `当前 CTR: ${
                     currentCtr === null 
                       ? "待影像测量确认" 
                       : isPureGgo 
@@ -1123,7 +1584,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                       : isPureSolid 
                       ? "1.0 (纯实性)" 
                       : currentCtr
-                  }
+                  }` : (parsedData.tumorSize ? `原发灶大小: ${parsedData.tumorSize} cm` : "待影像测量确认")}
                 </span>
               </div>
 
@@ -1133,12 +1594,12 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   {parsedData.tumorSize !== "" && parsedData.tumorSize != null ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>已录入胸部薄层 CT 影像测量数据</span>
+                      <span>{isLung ? "已录入胸部薄层 CT 影像测量数据" : `已录入【${CancerRegistry.get(currentCancer)?.name || '原发'}】影像测量数据`}</span>
                     </>
                   ) : (
                     <>
                       <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>未提供 CT 报告或结节大小数据（档案将显示待影像学确认）</span>
+                      <span>{isLung ? "未提供 CT 报告或结节大小数据（档案将显示待影像学确认）" : "未提供原发病灶大小数据（档案将显示待影像学确认）"}</span>
                     </>
                   )}
                 </span>
@@ -1154,211 +1615,291 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   ) : (
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, tumorSize: "1.0", solidSize: "0", ctr: 0 })}
+                      onClick={() => setParsedData({ ...parsedData, tumorSize: "1.0", solidSize: isLung ? "0" : "1.0", ctr: isLung ? 0 : 1.0 })}
                       className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-colors cursor-pointer"
                     >
-                      + 录入 CT 结节大小
+                      + 录入病灶大小
                     </button>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">结节形态/类型</label>
-                  <select 
-                    value={parsedData.noduleType || "mixed_ggo"} 
-                    onChange={e => {
-                      const newType = e.target.value;
-                      if (newType === "pure_ggo") {
-                        setParsedData({
-                          ...parsedData,
-                          noduleType: "pure_ggo",
-                          solidSize: "0",
-                          ctr: 0
-                        });
-                      } else if (newType === "pure_solid") {
-                        const curTumor = parsedData.tumorSize !== undefined && parsedData.tumorSize !== "" ? String(parsedData.tumorSize) : "";
-                        setParsedData({
-                          ...parsedData,
-                          noduleType: "pure_solid",
-                          solidSize: curTumor,
-                          ctr: curTumor ? 1.0 : null
-                        });
-                      } else {
-                        setParsedData({
-                          ...parsedData,
-                          noduleType: "mixed_ggo",
-                          solidSize: parsedData.solidSize === "0" ? "" : (parsedData.solidSize || "")
-                        });
-                      }
-                    }}
-                    className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
-                  >
-                    <option value="mixed_ggo">混合磨玻璃结节 (mGGO 部分实性)</option>
-                    <option value="pure_ggo">纯磨玻璃结节 (pGGO 实性=0, CTR=0)</option>
-                    <option value="pure_solid">纯实性结节 (Pure Solid, CTR=1.0)</option>
-                  </select>
-                </div>
+              {isLung ? (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">结节形态/类型</label>
+                      <select 
+                        value={parsedData.noduleType || "mixed_ggo"} 
+                        onChange={e => {
+                          const newType = e.target.value;
+                          if (newType === "pure_ggo") {
+                            setParsedData({
+                              ...parsedData,
+                              noduleType: "pure_ggo",
+                              solidSize: "0",
+                              ctr: 0
+                            });
+                          } else if (newType === "pure_solid") {
+                            const curTumor = parsedData.tumorSize !== undefined && parsedData.tumorSize !== "" ? String(parsedData.tumorSize) : "";
+                            setParsedData({
+                              ...parsedData,
+                              noduleType: "pure_solid",
+                              solidSize: curTumor,
+                              ctr: curTumor ? 1.0 : null
+                            });
+                          } else {
+                            setParsedData({
+                              ...parsedData,
+                              noduleType: "mixed_ggo",
+                              solidSize: parsedData.solidSize === "0" ? "" : (parsedData.solidSize || "")
+                            });
+                          }
+                        }}
+                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
+                      >
+                        <option value="mixed_ggo">混合磨玻璃结节 (mGGO 部分实性)</option>
+                        <option value="pure_ggo">纯磨玻璃结节 (pGGO 实性=0, CTR=0)</option>
+                        <option value="pure_solid">纯实性结节 (Pure Solid, CTR=1.0)</option>
+                      </select>
+                    </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    {isPureSolid ? "实性病灶最大径 (cm)" : "磨玻璃/病灶最大径 (cm)"}
-                  </label>
-                  <input 
-                    type="text" 
-                    inputMode="decimal"
-                    value={parsedData.tumorSize !== undefined && parsedData.tumorSize !== null ? parsedData.tumorSize : ""} 
-                    onChange={e => {
-                      const val = e.target.value;
-                      const tumorNum = parseFloat(val);
-                      const solidNum = parseFloat(String(parsedData.solidSize));
-                      if (parsedData.noduleType === "pure_solid") {
-                        setParsedData({
-                          ...parsedData,
-                          tumorSize: val,
-                          solidSize: val,
-                          ctr: val ? 1.0 : null
-                        });
-                      } else if (parsedData.noduleType === "pure_ggo") {
-                        setParsedData({
-                          ...parsedData,
-                          tumorSize: val,
-                          solidSize: "0",
-                          ctr: 0
-                        });
-                      } else {
-                        const newCtr = !isNaN(tumorNum) && tumorNum > 0 && !isNaN(solidNum) 
-                          ? Math.min(1, Math.round((solidNum / tumorNum) * 100) / 100) 
-                          : parsedData.ctr;
-                        setParsedData({
-                          ...parsedData,
-                          tumorSize: val,
-                          ctr: newCtr
-                        });
-                      }
-                    }}
-                    className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors font-mono"
-                    placeholder="未提供可留空，如: 1.5"
-                  />
-                </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">
+                        {isPureSolid ? "实性病灶最大径 (cm)" : "磨玻璃/病灶最大径 (cm)"}
+                      </label>
+                      <input 
+                        type="text" 
+                        inputMode="decimal"
+                        value={parsedData.tumorSize !== undefined && parsedData.tumorSize !== null ? parsedData.tumorSize : ""} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          const tumorNum = parseFloat(val);
+                          const solidNum = parseFloat(String(parsedData.solidSize));
+                          if (parsedData.noduleType === "pure_solid") {
+                            setParsedData({
+                              ...parsedData,
+                              tumorSize: val,
+                              solidSize: val,
+                              ctr: val ? 1.0 : null
+                            });
+                          } else if (parsedData.noduleType === "pure_ggo") {
+                            setParsedData({
+                              ...parsedData,
+                              tumorSize: val,
+                              solidSize: "0",
+                              ctr: 0
+                            });
+                          } else {
+                            const newCtr = !isNaN(tumorNum) && tumorNum > 0 && !isNaN(solidNum) 
+                              ? Math.min(1, Math.round((solidNum / tumorNum) * 100) / 100) 
+                              : parsedData.ctr;
+                            setParsedData({
+                              ...parsedData,
+                              tumorSize: val,
+                              ctr: newCtr
+                            });
+                          }
+                        }}
+                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors font-mono"
+                        placeholder="未提供可留空，如: 1.5"
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
-                    <span>CT 实性成分最大径 (cm)</span>
-                    {isPureGgo && (
-                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                        纯磨玻璃 (0 cm)
-                      </span>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center justify-between">
+                        <span>CT 实性成分最大径 (cm)</span>
+                        {isPureGgo && (
+                          <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                            纯磨玻璃 (0 cm)
+                          </span>
+                        )}
+                        {isPureSolid && (
+                          <span className="text-[10px] text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                            纯实性 (同全径)
+                          </span>
+                        )}
+                        {!isPureGgo && !isPureSolid && (
+                          <span className="text-[10px] text-teal-700 font-bold bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
+                            部分实性 (可直接修改)
+                          </span>
+                        )}
+                      </label>
+                      <input 
+                        type="text" 
+                        inputMode="decimal"
+                        value={parsedData.solidSize !== undefined && parsedData.solidSize !== null ? parsedData.solidSize : ""} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          const solidNum = parseFloat(val);
+                          const tumorNum = parseFloat(String(parsedData.tumorSize));
+
+                          let newNoduleType = parsedData.noduleType || "mixed_ggo";
+                          let newCtr = parsedData.ctr;
+
+                          if (val === "" || isNaN(solidNum)) {
+                            newCtr = null;
+                          } else if (!isNaN(tumorNum) && tumorNum > 0) {
+                            newCtr = Math.min(1, Math.round((solidNum / tumorNum) * 100) / 100);
+                            if (solidNum >= tumorNum) {
+                              newNoduleType = "pure_solid";
+                              newCtr = 1.0;
+                            } else if (solidNum === 0 && val === "0") {
+                              newNoduleType = "pure_ggo";
+                              newCtr = 0;
+                            } else {
+                              newNoduleType = "mixed_ggo";
+                            }
+                          } else {
+                            if (solidNum === 0 && val === "0") {
+                              newNoduleType = "pure_ggo";
+                              newCtr = 0;
+                            } else if (solidNum > 0) {
+                              newNoduleType = "mixed_ggo";
+                            }
+                          }
+
+                          setParsedData({
+                            ...parsedData,
+                            solidSize: val,
+                            noduleType: newNoduleType,
+                            ctr: newCtr
+                          });
+                        }}
+                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs sm:text-sm font-semibold transition-colors font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                        placeholder="未提供可留空，如: 0.8 (纯磨填0，纯实性填同总径)"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-[11px] text-slate-600 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between flex-wrap gap-2">
+                    <span className="flex items-center gap-1.5">
+                      <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                      {tumorVal === null ? (
+                        <span>
+                          <strong>CT 影像数据待确认</strong>：暂未录入结节全径。如需准确测算实性成分比 (CTR) 与 TNM 临床分期，请根据胸部薄层 CT 报告填写。
+                        </span>
+                      ) : isPureGgo ? (
+                        <span>
+                          <strong>结节性质判定</strong>：纯磨玻璃结节 (pGGO)，实性浸润成分为 0，<strong>CTR = 0%</strong> (惰性极低危， Tis/T1mi 原位级别)
+                        </span>
+                      ) : isPureSolid ? (
+                        <span>
+                          <strong>结节性质判定</strong>：纯实性结节 (Pure Solid)，100% 软组织实性浸润，<strong>CTR = 100% (1.0)</strong> (依据实性总径严格分期)
+                        </span>
+                      ) : (
+                        <span>
+                          <strong>CTR 计算公式</strong>：<strong>CT 实性成分最大径 ({solidVal !== null ? `${solidVal}cm` : '未测'}) ÷ 结节总全径 ({tumorVal}cm) = {currentCtr !== null ? currentCtr : '待输入实性成分'}</strong>
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-teal-700 font-semibold flex items-center gap-1">
+                      {tumorVal === null ? (
+                        <span className="text-slate-400">待影像学补录</span>
+                      ) : isPureGgo ? (
+                        <>
+                          <Check className="w-3 h-3 text-teal-600" />
+                          <span>纯磨玻璃结节 (贴壁生长，5年生存率近 100%)</span>
+                        </>
+                      ) : isPureSolid ? (
+                        <>
+                          <AlertTriangle className="w-3 h-3 text-blue-600" />
+                          <span>纯实性浸润 (依据实性总径确定 T 分期与评估切缘)</span>
+                        </>
+                      ) : currentCtr !== null && currentCtr <= 0.5 ? (
+                        <>
+                          <Check className="w-3 h-3 text-teal-600" />
+                          <span>CTR ≤ 0.5 (惰性浸润，5年无复发率高达99.7%)</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertTriangle className="w-3 h-3 text-amber-600" />
+                          <span>CTR &gt; 0.5 (浸润成分较高，需重点评估切缘)</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">
+                      {isBreast ? "肿块最大径 (cm)" : "原发病灶最大径 (cm)"}
+                    </label>
+                    <input 
+                      type="text" 
+                      inputMode="decimal"
+                      value={parsedData.tumorSize !== undefined && parsedData.tumorSize !== null ? parsedData.tumorSize : ""} 
+                      onChange={e => setParsedData({ ...parsedData, tumorSize: e.target.value, solidSize: e.target.value })}
+                      className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors font-mono"
+                      placeholder="未提供可留空，如: 2.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">
+                      {isBreast ? "BI-RADS 影像分类" : isThyroid ? "C-TIRADS 超声分级" : "原发灶 T 分期参考"}
+                    </label>
+                    {isBreast ? (
+                      <select 
+                        value={parsedData.biRads || ""} 
+                        onChange={e => setParsedData({...parsedData, biRads: e.target.value})}
+                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
+                      >
+                        <option value="">未分类 / 待确认</option>
+                        <option value="2">2 类 (良性病变)</option>
+                        <option value="3">3 类 (良性可能，恶性率&lt;2%)</option>
+                        <option value="4A">4A 类 (低度可疑 2%~10%)</option>
+                        <option value="4B">4B 类 (中度可疑 10%~50%)</option>
+                        <option value="4C">4C 类 (高度可疑 50%~95%)</option>
+                        <option value="5">5 类 (高度提示恶性 ≥95%)</option>
+                        <option value="6">6 类 (病理证实恶性)</option>
+                      </select>
+                    ) : isThyroid ? (
+                      <select 
+                        value={parsedData.tiRads || ""} 
+                        onChange={e => setParsedData({...parsedData, tiRads: e.target.value})}
+                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
+                      >
+                        <option value="">未分级 / 待确认</option>
+                        <option value="3">3 类 (良性可能)</option>
+                        <option value="4A">4A 类 (轻度可疑 2%~10%)</option>
+                        <option value="4B">4B 类 (中度可疑 10%~50%)</option>
+                        <option value="4C">4C 类 (高度可疑 50%~90%)</option>
+                        <option value="5">5 类 (高度恶性 &gt;90%)</option>
+                      </select>
+                    ) : (
+                      <select 
+                        value={parsedData.tStage || "T1"} 
+                        onChange={e => setParsedData({...parsedData, tStage: e.target.value})}
+                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
+                      >
+                        <option value="T1">T1 (原发灶局限 / 早期浸润)</option>
+                        <option value="T2">T2 (局部浸润 / 中等体积)</option>
+                        <option value="T3">T3 (穿透肌层或侵及外膜)</option>
+                        <option value="T4">T4 (侵及邻近脏器/大血管)</option>
+                        <option value="Tx">Tx (原发灶无法评估)</option>
+                      </select>
                     )}
-                    {isPureSolid && (
-                      <span className="text-[10px] text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
-                        纯实性 (同全径)
-                      </span>
-                    )}
-                    {!isPureGgo && !isPureSolid && (
-                      <span className="text-[10px] text-teal-700 font-bold bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
-                        部分实性 (可直接修改)
-                      </span>
-                    )}
-                  </label>
-                  <input 
-                    type="text" 
-                    inputMode="decimal"
-                    value={parsedData.solidSize !== undefined && parsedData.solidSize !== null ? parsedData.solidSize : ""} 
-                    onChange={e => {
-                      const val = e.target.value;
-                      const solidNum = parseFloat(val);
-                      const tumorNum = parseFloat(String(parsedData.tumorSize));
-
-                      let newNoduleType = parsedData.noduleType || "mixed_ggo";
-                      let newCtr = parsedData.ctr;
-
-                      if (val === "" || isNaN(solidNum)) {
-                        newCtr = null;
-                      } else if (!isNaN(tumorNum) && tumorNum > 0) {
-                        newCtr = Math.min(1, Math.round((solidNum / tumorNum) * 100) / 100);
-                        if (solidNum >= tumorNum) {
-                          newNoduleType = "pure_solid";
-                          newCtr = 1.0;
-                        } else if (solidNum === 0 && val === "0") {
-                          newNoduleType = "pure_ggo";
-                          newCtr = 0;
-                        } else {
-                          newNoduleType = "mixed_ggo";
-                        }
-                      } else {
-                        if (solidNum === 0 && val === "0") {
-                          newNoduleType = "pure_ggo";
-                          newCtr = 0;
-                        } else if (solidNum > 0) {
-                          newNoduleType = "mixed_ggo";
-                        }
-                      }
-
-                      setParsedData({
-                        ...parsedData,
-                        solidSize: val,
-                        noduleType: newNoduleType,
-                        ctr: newCtr
-                      });
-                    }}
-                    className="w-full h-10 px-3 py-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs sm:text-sm font-semibold transition-colors font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
-                    placeholder="未提供可留空，如: 0.8 (纯磨填0，纯实性填同总径)"
-                  />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">
+                      原发病灶解剖定位描述
+                    </label>
+                    <input 
+                      type="text" 
+                      value={parsedData.noduleLocation || parsedData.organLocation || ""} 
+                      onChange={e => setParsedData({ ...parsedData, noduleLocation: e.target.value, organLocation: e.target.value })}
+                      className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors"
+                      placeholder={isBreast ? "如: 左乳外上象限 2点钟" : isColorectal ? "如: 乙状结肠距肛缘18cm" : isGastric ? "如: 胃窦小弯侧" : isLiver ? "如: 右后叶 S7/S8 段" : "如: 原发解剖部位"}
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <div className="text-[11px] text-slate-600 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between flex-wrap gap-2">
-                <span className="flex items-center gap-1.5">
-                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  {tumorVal === null ? (
-                    <span>
-                      <strong>CT 影像数据待确认</strong>：暂未录入结节全径。如需准确测算实性成分比 (CTR) 与 TNM 临床分期，请根据胸部薄层 CT 报告填写。
-                    </span>
-                  ) : isPureGgo ? (
-                    <span>
-                      <strong>结节性质判定</strong>：纯磨玻璃结节 (pGGO)，实性浸润成分为 0，<strong>CTR = 0%</strong> (惰性极低危， Tis/T1mi 原位级别)
-                    </span>
-                  ) : isPureSolid ? (
-                    <span>
-                      <strong>结节性质判定</strong>：纯实性结节 (Pure Solid)，100% 软组织实性浸润，<strong>CTR = 100% (1.0)</strong> (依据实性总径严格分期)
-                    </span>
-                  ) : (
-                    <span>
-                      <strong>CTR 计算公式</strong>：<strong>CT 实性成分最大径 ({solidVal !== null ? `${solidVal}cm` : '未测'}) ÷ 结节总全径 ({tumorVal}cm) = {currentCtr !== null ? currentCtr : '待输入实性成分'}</strong>
-                    </span>
-                  )}
-                </span>
-                <span className="text-teal-700 font-semibold flex items-center gap-1">
-                  {tumorVal === null ? (
-                    <span className="text-slate-400">待影像学补录</span>
-                  ) : isPureGgo ? (
-                    <>
-                      <Check className="w-3 h-3 text-teal-600" />
-                      <span>纯磨玻璃结节 (贴壁生长，5年生存率近 100%)</span>
-                    </>
-                  ) : isPureSolid ? (
-                    <>
-                      <AlertTriangle className="w-3 h-3 text-blue-600" />
-                      <span>纯实性浸润 (依据实性总径确定 T 分期与评估切缘)</span>
-                    </>
-                  ) : currentCtr !== null && currentCtr <= 0.5 ? (
-                    <>
-                      <Check className="w-3 h-3 text-teal-600" />
-                      <span>CTR ≤ 0.5 (惰性浸润，5年无复发率高达99.7%)</span>
-                    </>
-                  ) : (
-                    <>
-                      <AlertTriangle className="w-3 h-3 text-amber-600" />
-                      <span>CTR &gt; 0.5 (浸润成分较高，需重点评估切缘)</span>
-                    </>
-                  )}
-                </span>
-              </div>
+              )}
             </div>
 
-            {/* Section 3: CT Malignant Imaging Signs with Plain-Language Definitions */}
+            {/* Section 3: CT Malignant Imaging Signs with Plain-Language Definitions (Lung only) */}
+            {isLung && (
+              <>
             <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft space-y-3.5">
               <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -1644,8 +2185,10 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
               </div>
             </div>
           </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
+    )}
 
       {/* Step 2: Pathology & High-Risk Factors */}
         {currentStep === 2 && (
@@ -1657,28 +2200,33 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   <span>当前处于【术前随访 / 待手术评估】阶段</span>
                 </div>
                 <p className="text-xs leading-relaxed text-sky-800">
-                  组织病理高危特征（如 STAS 气道播散、胸膜浸润 VPI、脉管癌栓 LVI、切缘状态等）需在<strong>胸外科手术切除后由病理科石蜡切片确诊</strong>。若您尚未手术，可直接进行【步骤3：基因突变】或【步骤4：标志物与全身排查】。
+                  {isLung ? (
+                    <>组织病理高危特征（如 STAS 气道播散、胸膜浸润 VPI、脉管癌栓 LVI、切缘状态等）需在<strong>胸外科手术切除后由病理科石蜡切片确诊</strong>。若您尚未手术，可直接进行【步骤3：基因突变】或【步骤4：标志物与全身排查】。</>
+                  ) : (
+                    <>组织病理高危特征（如切缘状态、脉管癌栓 LVI、神经浸润 PNI、组织学分级等）需在<strong>外科根治切除后由病理科石蜡切片确诊</strong>。若您尚未手术，可直接进行【步骤3：分子病理与生物标志物】或【步骤4：全身转移排查】。</>
+                  )}
                 </p>
                 <div className="pt-1 flex items-center gap-2.5 flex-wrap">
                   <button
                     type="button"
-                    onClick={() => setParsedData({ ...parsedData, surgeryType: "segmentectomy" })}
+                    onClick={() => setParsedData({ ...parsedData, surgeryType: isLung ? "segmentectomy" : "resection" })}
                     className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer transition-colors"
                   >
-                    已完成微创手术，录入病理切片报告
+                    {isLung ? "已完成胸外科微创手术，录入病理切片报告" : "已完成根治性手术，录入病理切片报告"}
                   </button>
                   <button
                     type="button"
                     onClick={() => setCurrentStep(3)}
                     className="px-3.5 py-2 bg-white border border-sky-300 hover:bg-sky-100 text-sky-800 font-bold text-xs rounded-xl cursor-pointer transition-colors"
                   >
-                    尚未手术，跳过病理进入【步骤3：基因突变】
+                    尚未手术，跳过病理进入【步骤3：分子与基因】
                   </button>
                 </div>
               </div>
             ) : null}
 
-            {/* Section 2.5: Surgical Pathology Tumor Dimensions & Microscopic Invasive Size (IASLC / AJCC 第 9 版 pT Standard) */}
+            {/* Section 2.5: Surgical Pathology Tumor Dimensions & Microscopic Invasive Size (IASLC / AJCC 第 9 版 pT Standard, Lung only) */}
+            {isLung && (
             <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -2057,6 +2605,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 )}
               </div>
             </div>
+            )}
 
             {/* Section 3: Pathology High-Risk Red/Green Factors & Ki-67 */}
             <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft space-y-4">
@@ -2123,22 +2672,28 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                 </div>
 
-                {/* 2. Lymph Node N-Stage (IASLC 9th Edition: N0, N1, N2a, N2b, Nx) */}
+                {/* 2. Lymph Node N-Stage */}
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between min-h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-bold text-slate-800">淋巴结分期 (N)</div>
                     <div className="text-[10px] text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded font-bold border border-teal-200">
-                      第9版标准
+                      {isLung ? "第9版标准" : "区域淋巴结"}
                     </div>
                   </div>
                   <div className="flex gap-1 h-[34px]">
-                    {[
+                    {(isLung ? [
                       { val: "N0", label: "N0(无)" },
                       { val: "N1", label: "N1(肺门)" },
                       { val: "N2a", label: "N2a(单站)" },
                       { val: "N2b", label: "N2b(多站)" },
                       { val: "Nx", label: "Nx(未查)" },
-                    ].map((opt) => {
+                    ] : [
+                      { val: "N0", label: "N0(无转移)" },
+                      { val: "N1", label: "N1(区域)" },
+                      { val: "N2", label: "N2(多枚/组)" },
+                      { val: "N3", label: "N3(广泛/远处)" },
+                      { val: "Nx", label: "Nx(未查)" },
+                    ]).map((opt) => {
                       const currentN = parsedData.nStage || "N0";
                       const isSelected = currentN === opt.val || (opt.val === "N2a" && currentN === "N2");
                       return (
@@ -2152,19 +2707,13 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                                 ? "bg-emerald-500 text-white shadow-2xs"
                                 : opt.val === "N1"
                                 ? "bg-amber-500 text-white shadow-2xs"
-                                : opt.val === "N2a"
+                                : opt.val === "N2a" || opt.val === "N2"
                                 ? "bg-blue-600 text-white shadow-2xs"
                                 : opt.val === "Nx"
                                 ? "bg-slate-700 text-white shadow-2xs"
                                 : "bg-rose-500 text-white shadow-2xs"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                           }`}
-                          title={
-                            opt.val === "N2a" ? "IASLC第9版：同侧单站纵隔淋巴结转移 (较N2b预后明显更优)" :
-                            opt.val === "N2b" ? "IASLC第9版：同侧多站纵隔淋巴结转移 (局部广泛累及)" :
-                            opt.val === "N1" ? "同侧支气管周或肺门淋巴结转移" :
-                            opt.val === "N0" ? "未发现区域淋巴结转移" : "未行淋巴结清扫或待评估"
-                          }
                         >
                           {opt.label}
                         </button>
@@ -2173,36 +2722,40 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                 </div>
 
-                {/* 3. VPI */}
+                {/* 3. VPI / PNI */}
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs font-bold text-slate-800">胸膜侵犯 (VPI)</div>
-                    <div className="text-[10px] text-slate-400">脏层胸膜 PL1/2</div>
+                    <div className="text-xs font-bold text-slate-800">
+                      {isLung ? "胸膜侵犯 (VPI)" : "神经浸润 (PNI)"}
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      {isLung ? "脏层胸膜 PL1/2" : "神经束周围侵犯"}
+                    </div>
                   </div>
                   <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, vpi: "negative" })}
+                      onClick={() => setParsedData({ ...parsedData, vpi: "negative", pni: "negative" })}
                       className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.vpi === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        parsedData.vpi === "negative" || parsedData.pni === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阴性(PL0)
+                      阴性(无)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, vpi: "positive" })}
+                      onClick={() => setParsedData({ ...parsedData, vpi: "positive", pni: "positive" })}
                       className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        parsedData.vpi === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        parsedData.vpi === "positive" || parsedData.pni === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阳性(PL1/2)
+                      阳性(有)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, vpi: null })}
+                      onClick={() => setParsedData({ ...parsedData, vpi: null, pni: null })}
                       className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        !parsedData.vpi ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                        !parsedData.vpi && !parsedData.pni ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                       }`}
                     >
                       未提及
@@ -2210,16 +2763,20 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                 </div>
 
-                {/* 4. STAS */}
+                {/* 4. STAS / Local Infiltration */}
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs font-bold text-slate-800">气道播散 (STAS)</div>
-                    <div className="text-[10px] text-slate-400">气腔微小巢漂移</div>
+                    <div className="text-xs font-bold text-slate-800">
+                      {isLung ? "气道播散 (STAS)" : "局部外侵/浆膜侵犯"}
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      {isLung ? "气腔微小巢漂移" : "器官外膜或包膜"}
+                    </div>
                   </div>
                   <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, stas: "negative" })}
+                      onClick={() => setParsedData({ ...parsedData, stas: "negative", adjacentLobeInvasion: false })}
                       className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         parsedData.stas === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
@@ -2228,16 +2785,16 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     </button>
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, stas: "positive" })}
+                      onClick={() => setParsedData({ ...parsedData, stas: "positive", adjacentLobeInvasion: true })}
                       className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         parsedData.stas === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
-                      阳性(见播散)
+                      阳性(见外侵)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, stas: null })}
+                      onClick={() => setParsedData({ ...parsedData, stas: null, adjacentLobeInvasion: false })}
                       className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         !parsedData.stas ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                       }`}
@@ -2284,11 +2841,15 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                 </div>
 
-                {/* 6. IASLC Histological Grade */}
+                {/* 6. Histological Grade */}
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[96px] shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs font-bold text-slate-800">IASLC 病理分级</div>
-                    <div className="text-[10px] text-slate-400">高级别成分占比</div>
+                    <div className="text-xs font-bold text-slate-800">
+                      {isBreast ? "Nottingham 分级" : isLung ? "IASLC 病理分级" : "病理分化程度"}
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      {isBreast ? "组织学分级" : isLung ? "高级别成分占比" : "G1/G2/G3"}
+                    </div>
                   </div>
                   <div className="flex gap-1 h-[34px]">
                     {[
@@ -2430,10 +2991,28 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                      分子病理与驱动基因突变谱 (NGS / PCR / 免疫组化)
+                      {isBreast ? "免疫组化分子分型与基因变异 (IHC / FISH / NGS)" :
+                       isColorectal ? "结直肠癌分子标志物与错配修复 (RAS / BRAF / MSI)" :
+                       isGastric ? "胃癌分子标志物与靶向靶点 (HER2 / CLDN18.2 / MSI)" :
+                       isLiver ? "肝癌血清标志物与体细胞突变谱 (AFP / Wnt / TP53)" :
+                       isThyroid ? "甲状腺癌分子标志物与基因突变 (BRAF / TERT / RET)" :
+                       isEndometrial ? "子宫内膜癌分子分型四分法 (POLE / MMR / p53)" :
+                       isCervical ? "宫颈癌生物学特征与免疫靶点 (HPV / PD-L1 / TMB)" :
+                       isPancreatic ? "胰腺癌分子靶点与基因图谱 (KRAS / BRCA / MSI)" :
+                       isEsophageal ? "食管癌免疫组化与分子指标 (PD-L1 / HER2 / TP53)" :
+                       "分子病理与驱动基因突变谱 (NGS / PCR / 免疫组化)"}
                     </h3>
                     <p className="text-[11px] text-slate-500">
-                      录入驱动突变 (EGFR/ALK等)、高危伴随共突变 (TP53等) 与 PD-L1，指导靶向用药与复发监测
+                      {isBreast ? "录入 ER、PR、HER2、Ki-67 与 BRCA1/2，指导靶向、内分泌与化疗决策" :
+                       isColorectal ? "录入 KRAS、NRAS、BRAF、MSI/MMR，指导抗EGFR靶向与免疫获益分流" :
+                       isGastric ? "录入 HER2、Claudin 18.2、PD-L1 (CPS) 与 MSI，指导靶向与免疫联合方案" :
+                       isLiver ? "录入 AFP 基线、HBV 病毒载量与突变谱，指导抗病毒、靶靶联合与免疫治疗" :
+                       isThyroid ? "录入 BRAF V600E、TERT 启动子、RET 融合，评估高危复发与靶向治疗" :
+                       isEndometrial ? "录入 POLE、dMMR、p53、ER/PR 四分法，指导精准降阶梯或强化辅助治疗" :
+                       isCervical ? "录入高危型 HPV、PD-L1 (CPS)、TMB，指导免疫联合系统治疗" :
+                       isPancreatic ? "录入 KRAS 亚型、BRCA1/2 突变、MSI 状态，指导含铂维持与靶向探索" :
+                       isEsophageal ? "录入 PD-L1 (CPS/TAP)、HER2，指导一线免疫与抗HER2联合用药" :
+                       "录入驱动突变 (EGFR/ALK等)、高危伴随共突变 (TP53等) 与 PD-L1，指导靶向用药与复发监测"}
                     </p>
                   </div>
                 </div>
@@ -2482,10 +3061,18 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-600">
-                  {stagingPreview?.stage?.startsWith("IA") || parsedData?.stage?.startsWith("IA") ? (
-                    <span>对于 <strong>IA 期早期肺癌</strong>，指南（CSCO/NCCN）明文确立：彻底手术切除已实现近 100% 根治，常规不强制推荐昂贵的驱动基因大 Panel 检测，无需焦虑。</span>
+                  {isLung ? (
+                    stagingPreview?.stage?.startsWith("IA") || parsedData?.stage?.startsWith("IA") ? (
+                      <span>对于 <strong>IA 期早期肺癌</strong>，指南（CSCO/NCCN）明文确立：彻底手术切除已实现近 100% 根治，常规不强制推荐昂贵的驱动基因大 Panel 检测，无需焦虑。</span>
+                    ) : (
+                      <span>对于 <strong>IB 期以上或具备高危病理因素</strong> 的肺癌患者，若后续考虑辅助靶向（如奥希替尼）治疗，可向主治医生咨询是否送检组织标本或外周血 ctDNA 基因检测。</span>
+                    )
                   ) : (
-                    <span>对于 <strong>IB 期以上或具备高危病理因素</strong> 的患者，若后续考虑辅助靶向（如奥希替尼）治疗，可向主治医生咨询是否送检组织标本或外周血 ctDNA 基因检测。</span>
+                    stagingPreview?.stage?.startsWith("I") || parsedData?.stage?.startsWith("I") ? (
+                      <span>对于 <strong>早期【{CancerRegistry.get(currentCancer)?.name || '原发'}】</strong>，规范根治性手术后复发风险低，若无高危病理指征通常无需过度焦虑大 Panel 盲测。</span>
+                    ) : (
+                      <span>对于具备中高危因素或进展期【{CancerRegistry.get(currentCancer)?.name || '原发'}】患者，建议根据多学科 MDT 意见，遵医嘱按需完善对应分型的分子病理或免疫组化指标。</span>
+                    )
                   )}
                 </p>
               </div>
@@ -2498,12 +3085,23 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 {/* 1. Main Driver Genes */}
                 <div className="space-y-2">
                   <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
-                    <span>经典驱动基因突变（点击选择已检出的基因）：</span>
-                    <span className="text-slate-400 font-normal">支持多选 / 双突变</span>
+                    <span>
+                      {isBreast ? "乳腺癌核心受体与驱动分子指标（点击选择已确诊状态）：" :
+                       isColorectal ? "结直肠癌核心基因与错配修复指标（点击选择）：" :
+                       isGastric ? "胃癌核心分子标志物与靶点（点击选择）：" :
+                       isLiver ? "肝癌核心血清学与分子特征（点击选择）：" :
+                       isThyroid ? "甲状腺癌核心基因突变（点击选择）：" :
+                       isEndometrial ? "子宫内膜癌四分法分子指标（点击选择）：" :
+                       isCervical ? "宫颈癌病原体与免疫标志物（点击选择）：" :
+                       isPancreatic ? "胰腺癌核心驱动与易感基因（点击选择）：" :
+                       isEsophageal ? "食管癌免疫与分子标志物（点击选择）：" :
+                       "经典驱动基因突变（点击选择已检出的基因）："}
+                    </span>
+                    <span className="text-slate-400 font-normal">支持多选</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {PRESET_DRIVER_GENES.map(item => {
+                    {((CANCER_DRIVER_GENES_MAP[currentCancer] || (isColorectal ? CANCER_DRIVER_GENES_MAP.colorectal : PRESET_DRIVER_GENES))).map(item => {
                       const currentMut = (parsedData.geneMutations || []).find((m: any) => 
                         m.gene === item.gene && 
                         m.status !== "negative" && 
@@ -2563,7 +3161,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                 </div>
 
-                {/* 2. High-Risk Co-mutations Panel */}
+                {/* 2. High-Risk Co-mutations Panel (Lung Cancer) */}
+                {isLung && (
                 <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80 space-y-2">
                   <div className="flex items-center justify-between text-[11px] font-bold text-amber-950">
                     <span className="flex items-center gap-1.5">
@@ -2619,6 +3218,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     })}
                   </div>
                 </div>
+                )}
 
                 {/* 3. PD-L1 & Custom Mutation Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -2627,9 +3227,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     <div className="text-xs font-bold text-slate-800 flex items-center justify-between">
                       <span className="flex items-center gap-1">
                         <Activity className="w-3.5 h-3.5 text-indigo-600" />
-                        <span>PD-L1 蛋白表达 (TPS)</span>
+                        <span>{isLung ? "PD-L1 蛋白表达 (TPS)" : (isGastric || isCervical || isEsophageal) ? "PD-L1 表达 (CPS)" : "PD-L1 免疫检查点表达"}</span>
                       </span>
-                      <span className="text-[10px] text-slate-400">免疫治疗评估</span>
+                      <span className="text-[10px] text-slate-400">{isLung ? "TPS 比例" : (isGastric || isCervical || isEsophageal) ? "CPS 评分" : "免疫治疗评估"}</span>
                     </div>
                     <div className="grid grid-cols-4 gap-1">
                       {[
@@ -2783,9 +3383,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
                     <Brain className="w-3.5 h-3.5 text-slate-600" />
-                    <span>脑部增强 MRI</span>
+                    <span>{isBreast ? "脑部增强 MRI" : isColorectal ? "肝脏增强 MRI/CT" : isGastric ? "腹盆增强 CT/MRI" : isThyroid ? "颈部淋巴结超声" : isPancreatic ? "上腹部增强 MRI" : isLiver ? "胸部薄层 CT" : "脑部增强 MRI"}</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">排除中枢脑转移</span>
+                  <span className="text-[11px] text-slate-400">{isBreast ? "排除中枢转移" : isColorectal ? "排除肝转移" : isGastric ? "排除腹膜种植" : isThyroid ? "排查侧颈转移" : isPancreatic ? "排查肝转移" : isLiver ? "排查肺转移" : "排除中枢脑转移"}</span>
                 </div>
                 <div className="flex gap-1.5 h-[34px]">
                   {[
@@ -2818,9 +3418,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
                     <Stethoscope className="w-3.5 h-3.5 text-slate-600" />
-                    <span>腹部与肾上腺超声</span>
+                    <span>{isBreast ? "腹部与肝脏超声" : isColorectal ? "胸部薄层 CT" : isGastric ? "肝脏与腹部超声" : isLiver ? "腹腔/腹膜排查" : isThyroid ? "胸部 CT 肺排查" : isLung ? "腹部与肾上腺超声" : "腹盆腔脏器超声/CT"}</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">排除肝/肾上腺</span>
+                  <span className="text-[11px] text-slate-400">{isBreast ? "排除肝脏转移" : isColorectal ? "排除肺转移" : isGastric ? "排除肝转移" : isLiver ? "排查腹腔淋巴结" : isThyroid ? "排除肺转移" : "排除肝/肾上腺"}</span>
                 </div>
                 <div className="flex gap-1.5 h-[34px]">
                   {[
@@ -2888,9 +3488,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
                     <Stethoscope className="w-3.5 h-3.5 text-slate-600" />
-                    <span>锁骨上淋巴结B超</span>
+                    <span>{isBreast ? "盆腔超声 (内膜)" : isColorectal ? "腹膜与大网膜状态" : isEndometrial ? "盆腔增强 MRI" : isCervical ? "盆腔增强 MRI" : isThyroid ? "甲状腺残余/对侧" : isLung ? "锁骨上淋巴结B超" : "远处区域淋巴结"}</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">排除 N3 远处淋巴</span>
+                  <span className="text-[11px] text-slate-400">{isBreast ? "排查内膜基线" : isColorectal ? "排除腹膜种植" : isEndometrial ? "明确局部浸润" : isCervical ? "明确宫旁浸润" : isThyroid ? "评估术区与对侧" : "排除远处淋巴"}</span>
                 </div>
                 <div className="flex gap-1.5 h-[34px]">
                   {[

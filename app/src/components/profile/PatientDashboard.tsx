@@ -999,6 +999,12 @@ export default function PatientDashboard() {
               ? '基于 NCCN / CSCO 2024 胰腺癌指南 · 胰腺癌个体化动态循证档案'
               : isColorectal
               ? '基于 AJCC 第 8 版与 CSCO/NCCN 2024 指南 · 结直肠癌个体化动态循证档案'
+              : isThyroid
+              ? '基于 AJCC 第 8 版与 ATA/CSCO 2024 甲状腺癌指南 · 个体化动态循证档案'
+              : isEndometrial
+              ? '基于 FIGO 2023 分期与 PORTEC-4a 分子分型循证 · 子宫内膜癌个体化动态档案'
+              : isCervical
+              ? '基于 FIGO 2018 临床分期与 KEYNOTE-826 免疫循证 · 宫颈癌个体化动态档案'
               : '基于 IASLC / AJCC 第 9 版国际分期金标准 · 肺癌动态循证档案'}
           </p>
         </div>
@@ -1082,7 +1088,7 @@ export default function PatientDashboard() {
       />
 
       {/* IASLC 9th Edition Version Bridge Notice Banner */}
-      {profile.versionBridgeNotice && (
+      {isLung && profile.versionBridgeNotice && (
         <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-teal-50/90 via-emerald-50/80 to-sky-50/70 border border-teal-200 shadow-2xs flex items-start gap-3 animate-fade-in">
           <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 mt-0.5">
             <GitBranch className="w-4 h-4" />
@@ -1115,10 +1121,28 @@ export default function PatientDashboard() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                    {isBreast ? '乳腺钼靶 / 超声影像原发灶' : isColorectal ? '肠镜 / 盆腔高分辨核磁原发灶' : '薄层 CT 影像原发灶'}
+                    {isBreast ? '乳腺钼靶 / 超声影像原发灶' :
+                     isColorectal ? '肠镜 / 盆腔高分辨核磁原发灶' :
+                     isGastric ? '胃镜 / 腹盆增强 CT 影像原发灶' :
+                     isLiver ? '腹部增强 CT / MRI 影像原发灶' :
+                     isEsophageal ? '食管内镜 / 钡餐 / 胸腹 CT 原发灶' :
+                     isThyroid ? '甲状腺高分辨超声 / 颈部 CT 原发灶' :
+                     isEndometrial ? '经阴道超声 / 盆腔 MRI 影像原发灶' :
+                     isCervical ? '阴道镜检查 / 盆腔 MRI 影像原发灶' :
+                     isPancreatic ? '胰腺薄层增强 CT / 增强 MRI 原发灶' :
+                     '薄层 CT 影像原发灶'}
                   </h3>
                   <p className="text-[10px] font-medium text-slate-500 mt-0.5 truncate">
-                    {isBreast ? 'BI-RADS 分级与解剖 T 分期评估' : isColorectal ? '肠镜病灶特征与盆腔 CRM 浸润评估' : '病灶形态特征与解剖 T 分期评估'}
+                    {isBreast ? 'BI-RADS 分级与解剖 T 分期评估' :
+                     isColorectal ? '肠镜病灶特征与盆腔 CRM 浸润评估' :
+                     isGastric ? '胃壁浸润深度与局部淋巴结评估' :
+                     isLiver ? '肿块数目大小与门静脉侵犯评估' :
+                     isEsophageal ? '浸润深度与食管周围外侵评估' :
+                     isThyroid ? 'TI-RADS 分级与被膜外侵犯评估' :
+                     isEndometrial ? '肌层浸润深度与宫颈间质受累评估' :
+                     isCervical ? '局部肿瘤大小与宫旁组织浸润评估' :
+                     isPancreatic ? '胰腺病灶大小与血管受累可切除性评估' :
+                     '病灶形态特征与解剖 T 分期评估'}
                   </p>
                 </div>
               </div>
@@ -1133,7 +1157,9 @@ export default function PatientDashboard() {
                   ? (profile.biRads ? `BI-RADS ${profile.biRads} 类` : (profile.tumorSize != null ? `${profile.tumorSize} cm 肿块` : "待影像测量确认"))
                   : isColorectal
                   ? (profile.tumorSize != null ? `${profile.tumorSize} cm 肠道病灶` : (profile.tStage ? `AJCC ${profile.tStage}` : "待内镜/核磁确认"))
-                  : (profile.tumorSize != null ? noduleLabel : "待影像测量确认")
+                  : isLung
+                  ? (profile.tumorSize != null ? noduleLabel : "待影像测量确认")
+                  : (profile.tumorSize != null ? `${profile.tumorSize} cm 原发灶` : (profile.tStage ? `${profile.tStage} 原发灶` : "待影像测量确认"))
                 }
               </span>
             </div>
@@ -1147,13 +1173,36 @@ export default function PatientDashboard() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-xs sm:text-sm font-bold text-slate-800">
-                    {isBreast ? '未提供乳腺超声或钼靶摄片报告' : isColorectal ? '未提供全结肠镜或骨盆核磁报告' : '未提供薄层胸部 CT 报告'}
+                    {isBreast ? '未提供乳腺超声或钼靶摄片报告' :
+                     isColorectal ? '未提供全结肠镜或骨盆核磁报告' :
+                     isGastric ? '未提供胃镜活检或腹盆增强 CT 报告' :
+                     isLiver ? '未提供腹部增强 CT 或肝脏 MRI 报告' :
+                     isEsophageal ? '未提供胃镜或胸腹增强 CT 报告' :
+                     isThyroid ? '未提供甲状腺超声 TI-RADS 报告' :
+                     isEndometrial ? '未提供经阴道超声或盆腔 MRI 报告' :
+                     isCervical ? '未提供阴道镜或盆腔 MRI 报告' :
+                     isPancreatic ? '未提供胰腺薄层增强 CT/MRI 报告' :
+                     '未提供薄层胸部 CT 报告'}
                   </h4>
                   <p className="text-[11px] text-slate-500 leading-relaxed max-w-sm mx-auto">
                     {isBreast 
                       ? '肿块最大径、BI-RADS 分类与钙化形态是乳腺肿瘤临床分期 (cTNM) 与穿刺决策的核心依据。当前档案暂无乳腺影像测量数据。'
                       : isColorectal
                       ? '肠道病灶浸润深度、直肠系膜筋膜环周切缘 (CRM) 与距肛缘距离是制定根治手术或 TNT 新辅助方案的核心依据。'
+                      : isGastric
+                      ? '胃镜明确溃疡与组织学分型，增强 CT 精确判定胃壁浸润深度 (T分期) 与腹腔淋巴结状态。当前暂无影像数据。'
+                      : isLiver
+                      ? '病灶大小、结节数目及有无门静脉系统癌栓是 CNLC / BCLC 临床分期的核心金标准。当前暂无肝脏影像测量数据。'
+                      : isEsophageal
+                      ? '病灶长度、食管壁浸润范围及外侵毗邻大血管关系是评估可切除性与新辅助化放疗指征的核心依据。'
+                      : isThyroid
+                      ? '甲状腺结节大小、纵横比、微钙化及 TI-RADS 分类是评估恶性风险及穿刺活检指征的关键标准。'
+                      : isEndometrial
+                      ? '肌层浸润深度 (<50% vs ≥50%)、宫颈间质侵犯与附件受累是 FIGO 2023 分期的核心依据。'
+                      : isCervical
+                      ? '肿块最大径与宫旁组织是否受累是区分早期手术切除与局部晚期同步放化疗 (CCRT) 的决策红线。'
+                      : isPancreatic
+                      ? '胰腺病灶与腹腔干、肠系膜上动脉 (SMA) 及门静脉的毗邻包裹角度是判定可切除性的绝对金标准。'
                       : '结节全径与实性浸润占比 (CTR) 是肺结节临床分期 (cTNM) 的核心金标准。当前档案暂无 CT 影像测量数据。'
                     }
                   </p>
@@ -1354,8 +1403,8 @@ export default function PatientDashboard() {
                   </div>
                 </div>
               </div>
-            ) : (
-              /* Lung Imaging Details (Existing) */
+            ) : isLung ? (
+              /* Lung Imaging Details */
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs text-slate-600">
@@ -1433,6 +1482,59 @@ export default function PatientDashboard() {
                 </div>
               )}
             </div>
+            ) : (
+              /* Generic Imaging Details for Gastric / Liver / Esophageal / Thyroid / Endometrial / Cervical / Pancreatic */
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs text-slate-600">
+                    <strong>原发部位</strong>: <span className="font-semibold text-slate-900">
+                      {profile.noduleLocation || (profile as any).primaryLocation || (CancerRegistry.get(activeType)?.name || '原发灶')}
+                    </span>
+                  </span>
+                </div>
+
+                {/* Tumor Size & T-Stage Strip */}
+                <div className="bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
+                    <span className="text-slate-900 font-bold flex items-center gap-1.5">
+                      <Ruler className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                      <span>影像肿块: {profile.tumorSize != null ? `${profile.tumorSize} cm` : (profile.tStage ? `T 分期: ${profile.tStage}` : '待影像测量')}</span>
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-md bg-slate-200/90 font-extrabold text-slate-900 text-xs shrink-0">
+                      {profile.tStage || 'cTx'} · {profile.stage ? `${profile.stage} 期` : '分期待定'}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-600 font-medium">
+                    {isGastric ? '依据 AJCC 第 8 版胃癌 TNM 分期，T 分期基于胃壁浸润深度判定' :
+                     isLiver ? '依据 CNLC / BCLC 分期，综合肿瘤数目、大小与肝功能储备评估' :
+                     isEsophageal ? '依据 AJCC 第 8 版食管癌 TNM 分期，浸润深度与组织学类型共同决定分期' :
+                     isThyroid ? '依据 AJCC 第 8 版甲状腺癌分期，结合年龄、组织学与侵犯范围综合评定' :
+                     isEndometrial ? '依据 FIGO 2023 子宫内膜癌分期，结合肌层浸润深度与分子分型评估' :
+                     isCervical ? '依据 FIGO 2018 宫颈癌临床分期，结合宫旁浸润与影像综合评定' :
+                     isPancreatic ? '依据 AJCC 第 8 版胰腺癌 TNM 分期，可切除性与血管关系是核心评估要素' :
+                     '依据国际权威指南 TNM 分期，结合影像与病理进行综合分期评定'}
+                  </div>
+                </div>
+
+                {/* Imaging Features Pills */}
+                {profile.imagingFeatures && profile.imagingFeatures.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      影像特征已排查：
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {profile.imagingFeatures.map((feat, i) => (
+                        <span key={i} className="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs">
+                          <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
+                          <GlossaryTooltip term={feat}>
+                            <span>{feat}</span>
+                          </GlossaryTooltip>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -1473,7 +1575,11 @@ export default function PatientDashboard() {
                 <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
                   {isBreast
                     ? '分子分型 (ER/PR/HER2/Ki-67)、Nottingham 组织学分级及淋巴结状态需由穿刺活检 (CNB) 或手术标本病理出具。建议携带白片至病理科复核免疫组化及 FISH。'
-                    : '切缘状态 (R0)、微血管浸润 (LVI)、气道播散 (STAS) 及 Ki-67 需在手术切除后由病理科出具。当前建议重点参考薄层 CT 随访与全身排查。'
+                    : isColorectal
+                    ? '切缘状态 (CRM)、微卫星状态 (MSI/MMR)、检出淋巴结枚数及脉管神经浸润需在手术或肠镜活检后出具。建议重点关注腹盆增强 CT 与肠镜排查。'
+                    : isLung
+                    ? '切缘状态 (R0)、微血管浸润 (LVI)、气道播散 (STAS) 及 Ki-67 需在手术切除后由病理科出具。当前建议重点参考薄层 CT 随访与全身排查。'
+                    : '切缘状态 (R0)、病理组织学分级、淋巴结清扫数及特异性标志物需由病理科出具。当前建议重点参考影像随访与专科分期评估。'
                   }
                 </p>
               </div>
@@ -1763,8 +1869,8 @@ export default function PatientDashboard() {
                   </div>
                 </div>
               </div>
-            ) : (
-              /* Lung Pathology (Existing) */
+            ) : isLung ? (
+              /* Lung Pathology */
               <div className="space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-600">
                   <span>
@@ -1910,6 +2016,178 @@ export default function PatientDashboard() {
                     </span>
                     <span className="text-[11px] text-purple-700 font-semibold">
                       {(typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) <= 5 ? '低增殖指数 (≤5%) · 预后良好' : '常规增殖水平'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Generic Pathology for Gastric / Liver / Esophageal / Thyroid / Endometrial / Cervical / Pancreatic */
+              <div className="space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-600">
+                  <span>
+                    <strong>手术术式</strong>: {profile.surgeryType || (
+                      isGastric ? '胃切除根治术 (D2 淋巴结清扫)' :
+                      isLiver ? '肝切除术 / 局部消融' :
+                      isEsophageal ? '食管癌根治术 (McKeown / Ivor Lewis)' :
+                      isThyroid ? '甲状腺切除术' :
+                      isEndometrial ? '腹腔镜/机器人全子宫切除术' :
+                      isCervical ? '广泛性子宫切除术 (Wertheim)' :
+                      isPancreatic ? '胰十二指肠切除术 / 胰体尾切除' :
+                      '根治性切除术'
+                    )}
+                  </span>
+                  <span>
+                    <strong>组织学类型</strong>: {profile.histology || (
+                      isGastric ? '胃腺癌 (常见型)' :
+                      isLiver ? '肝细胞肝癌 (HCC)' :
+                      isEsophageal ? '鳞状细胞癌' :
+                      isThyroid ? '乳头状甲状腺癌 (PTC)' :
+                      isEndometrial ? '子宫内膜样腺癌' :
+                      isCervical ? '鳞状细胞癌' :
+                      isPancreatic ? '胰腺导管腺癌 (PDAC)' :
+                      '腺癌'
+                    )}
+                  </span>
+                </div>
+
+                {/* Generic Pathology Strip */}
+                <div className="bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
+                    <span className="text-slate-900 font-bold flex items-center gap-1.5 flex-wrap">
+                      <Layers className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                      <span>病理 T 分期: {profile.tStage || 'pTx (待标注)'}</span>
+                      {profile.nStage && (
+                        <>
+                          <span className="text-slate-300">/</span>
+                          <span className={`font-semibold ${profile.nStage === 'N0' ? 'text-emerald-700' : 'text-rose-700'}`}>
+                            {profile.nStage}
+                          </span>
+                        </>
+                      )}
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-md text-xs font-extrabold shrink-0 ${
+                      profile.marginStatus === 'negative' || profile.margin === 'negative'
+                        ? 'bg-emerald-100 text-emerald-900'
+                        : profile.marginStatus === 'positive' || profile.margin === 'positive'
+                        ? 'bg-rose-100 text-rose-900'
+                        : 'bg-slate-200 text-slate-700'
+                    }`}>
+                      {profile.marginStatus === 'negative' || profile.margin === 'negative' ? 'R0 切缘阴性' :
+                       profile.marginStatus === 'positive' || profile.margin === 'positive' ? 'R1 切缘阳性' : '切缘待确认'}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-600 font-medium">
+                    {isGastric ? '胃癌 D2 根治标准：检出淋巴结≥15枚，切缘距肿瘤≥3cm (近端)/5cm (远端)' :
+                     isLiver ? '肝癌切除标准：解剖性切除优于非解剖性；Child-Pugh A 或 B7 分以下，残肝体积≥40%' :
+                     isEsophageal ? '食管癌根治标准：R0 切除，检出淋巴结≥15枚，两端切缘≥3cm' :
+                     isThyroid ? '甲状腺癌切除标准：全切/腺叶切除依据风险分层；VI 区淋巴结常规清扫' :
+                     isEndometrial ? '子宫内膜癌手术：全子宫双附件切除；高危者行盆腔+腹主动脉旁淋巴结清扫' :
+                     isCervical ? '宫颈癌根治手术：广泛子宫切除+盆腔淋巴结清扫 (Piver III)，切缘≥1cm' :
+                     isPancreatic ? '胰腺癌根治标准：R0 切除，胰周神经清扫，检出淋巴结≥15枚' :
+                     '依据国际指南标准，R0 根治切除是影响局部控制与总生存的核心因素'}
+                  </div>
+                </div>
+
+                {/* Core Risk Badges for non-lung non-breast non-colorectal */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <RiskBadge 
+                    label="切缘状态 (R)" 
+                    status={
+                      profile.marginStatus === 'negative' || profile.margin === 'negative' ? 'good' :
+                      profile.marginStatus === 'positive' || profile.margin === 'positive' ? 'danger' : 'neutral'
+                    } 
+                    text={
+                      profile.marginStatus === 'negative' || profile.margin === 'negative' ? 'R0 (安全)' :
+                      profile.marginStatus === 'positive' || profile.margin === 'positive' ? 'R1 (阳性)' : '未检测 / 待查'
+                    } 
+                  />
+                  <RiskBadge 
+                    label="淋巴结分期" 
+                    status={
+                      profile.nStage === 'N0' || profile.lymphNodes === 'N0' ? 'good' :
+                      profile.nStage === 'N1' ? 'warning' :
+                      profile.nStage === 'N2' || profile.nStage === 'N3' ? 'danger' : 'neutral'
+                    } 
+                    text={
+                      profile.nStage === 'N0' || profile.lymphNodes === 'N0' ? 'N0 (无转移)' :
+                      profile.nStage === 'N1' ? 'N1 (区域转移)' :
+                      profile.nStage === 'N2' ? 'N2 (远处区域)' :
+                      profile.nStage === 'N3' ? 'N3 (广泛转移)' :
+                      (profile.nStage || '待病理评估')
+                    } 
+                  />
+                  <RiskBadge 
+                    label="脉管癌栓 (LVI)" 
+                    status={
+                      profile.lvi === 'negative' || (profile.lvi as any) === false ? 'good' :
+                      profile.lvi === 'positive' || (profile.lvi as any) === true ? 'warning' : 'neutral'
+                    } 
+                    text={
+                      profile.lvi === 'negative' || (profile.lvi as any) === false ? '阴性 (未侵犯)' :
+                      profile.lvi === 'positive' || (profile.lvi as any) === true ? '阳性 (高危)' : '未检测 / 待查'
+                    } 
+                  />
+                  <RiskBadge 
+                    label="神经周围浸润" 
+                    status={
+                      (profile as any).perineuralInvasion === 'negative' ? 'good' :
+                      (profile as any).perineuralInvasion === 'positive' ? 'warning' : 'neutral'
+                    } 
+                    text={
+                      (profile as any).perineuralInvasion === 'negative' ? '阴性 (未侵犯)' :
+                      (profile as any).perineuralInvasion === 'positive' ? '阳性 (高危)' : '未检测 / 待查'
+                    } 
+                  />
+                  <RiskBadge 
+                    label="分化程度" 
+                    status={
+                      profile.grade === '1' ? 'good' :
+                      profile.grade === '2' ? 'warning' :
+                      profile.grade === '3' ? 'danger' : 'neutral'
+                    } 
+                    text={
+                      profile.grade === '1' ? 'G1 (高分化)' :
+                      profile.grade === '2' ? 'G2 (中分化)' :
+                      profile.grade === '3' ? 'G3 (低分化)' : '未分级 / 待确认'
+                    } 
+                  />
+                  {(isGastric || isEndometrial || isCervical) && (
+                    <RiskBadge 
+                      label={isGastric ? 'HER2 状态' : isEndometrial ? 'MSI / MMR' : 'PD-L1 CPS'}
+                      status={
+                        isGastric
+                          ? ((profile as any).cancerSpecificData?.her2Status === 'positive' || (profile as any).cancerSpecificData?.her2Status === '3+' ? 'warning' : 'good')
+                          : isEndometrial
+                          ? ((profile as any).cancerSpecificData?.msiStatus === 'MSI-H' ? 'warning' : 'good')
+                          : ((profile as any).cancerSpecificData?.pdl1Cps != null && Number((profile as any).cancerSpecificData.pdl1Cps) >= 1 ? 'warning' : 'neutral')
+                      } 
+                      text={
+                        isGastric
+                          ? ((profile as any).cancerSpecificData?.her2Status === 'positive' || (profile as any).cancerSpecificData?.her2Status === '3+' ? '阳性 (靶向获益)' : ((profile as any).cancerSpecificData?.her2Status || '待检测'))
+                          : isEndometrial
+                          ? ((profile as any).cancerSpecificData?.msiStatus || (profile as any).cancerSpecificData?.dmmrStatus || '待检测')
+                          : ((profile as any).cancerSpecificData?.pdl1Cps != null ? `CPS ${(profile as any).cancerSpecificData.pdl1Cps}` : '待检测')
+                      } 
+                    />
+                  )}
+                </div>
+
+                {/* Ki-67 */}
+                {profile.ki67 != null && profile.ki67 !== "" && (
+                  <div className="p-2.5 bg-purple-50/80 rounded-xl border border-purple-200 flex items-center justify-between flex-wrap gap-2 text-xs">
+                    <span className="text-purple-900 font-bold flex items-center gap-1.5">
+                      <GlossaryTooltip term="Ki-67">
+                        <span className="flex items-center gap-1">
+                          <Activity className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                          <span>Ki-67 细胞增殖指数:</span>
+                        </span>
+                      </GlossaryTooltip>
+                      <span className="px-2 py-0.5 bg-purple-200/80 rounded-md font-extrabold text-purple-950 shrink-0">
+                        {profile.ki67}%
+                      </span>
+                    </span>
+                    <span className="text-[11px] text-purple-700 font-semibold">
+                      {(typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) < 15 ? '低增殖指数 · 惰性特征' : (typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) >= 30 ? '高增殖指数 · 侵袭性较强' : '中等增殖水平'}
                     </span>
                   </div>
                 )}
@@ -2061,7 +2339,7 @@ export default function PatientDashboard() {
                       </span>
                     </div>
                   </>
-                ) : (
+                ) : isLung ? (
                   <>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
                       <span className="text-slate-500 text-xs flex items-center gap-1">
@@ -2108,6 +2386,68 @@ export default function PatientDashboard() {
                         {profile.petCt === 'negative' ? '无浓聚 (M0)' : profile.petCt === 'positive' ? '高代谢' : '未检查'}
                       </span>
                     </div>
+                  </>
+                ) : (
+                  /* Generic systemic staging for Gastric / Liver / Esophageal / Thyroid / Endometrial / Cervical / Pancreatic */
+                  <>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
+                      <span className="text-slate-500 text-xs flex items-center gap-1">
+                        <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{isLiver ? '增强 CT/MRI (肝脏)' : isThyroid ? '甲状腺超声+增强 CT' : '腹部增强 CT/MRI'}</span>
+                      </span>
+                      <span className={`font-bold mt-1 ${(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings' || profile.mStage === 'M0') ? 'text-emerald-700' : profile.abdominalUltrasound === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings' || profile.mStage === 'M0') ? '阴性 (M0)' : profile.abdominalUltrasound === 'positive' ? '提示可疑' : '未检查'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
+                      <span className="text-slate-500 text-xs flex items-center gap-1">
+                        <Scan className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>胸部薄层 CT</span>
+                      </span>
+                      <span className={`font-bold mt-1 ${profile.chestCt === 'negative' || profile.mStage === 'M0' ? 'text-emerald-700' : 'text-slate-400'}`}>
+                        {profile.chestCt === 'negative' || profile.mStage === 'M0' ? '阴性 (无肺转移)' : '待检查'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
+                      <span className="text-slate-500 text-xs flex items-center gap-1">
+                        <Activity className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>全身骨显像 ECT</span>
+                      </span>
+                      <span className={`font-bold mt-1 ${profile.boneScan === 'negative' || profile.mStage === 'M0' ? 'text-emerald-700' : profile.boneScan === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.boneScan === 'negative' || profile.mStage === 'M0' ? '阴性 (无骨转移)' : profile.boneScan === 'positive' ? '提示可疑' : '未检查'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
+                      <span className="text-slate-500 text-xs flex items-center gap-1">
+                        <Radio className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>全身 PET-CT</span>
+                      </span>
+                      <span className={`font-bold mt-1 ${profile.petCt === 'negative' || profile.mStage === 'M0' ? 'text-emerald-700' : profile.petCt === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.petCt === 'negative' || profile.mStage === 'M0' ? '阴性 (未见高代谢)' : profile.petCt === 'positive' ? '高代谢灶' : '高危/有指征查'}
+                      </span>
+                    </div>
+                    {(isEndometrial || isCervical) && (
+                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
+                        <span className="text-slate-500 text-xs flex items-center gap-1">
+                          <ShieldCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>盆腔高分辨 MRI</span>
+                        </span>
+                        <span className={`font-bold mt-1 ${profile.mStage === 'M0' ? 'text-emerald-700' : 'text-slate-400'}`}>
+                          {profile.mStage === 'M0' ? '局部分期金标准' : '宫旁浸润评估'}
+                        </span>
+                      </div>
+                    )}
+                    {isThyroid && (
+                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
+                        <span className="text-slate-500 text-xs flex items-center gap-1">
+                          <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>颈部淋巴结超声</span>
+                        </span>
+                        <span className={`font-bold mt-1 ${profile.neckLymphNodes === 'negative' ? 'text-emerald-700' : profile.neckLymphNodes === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                          {profile.neckLymphNodes === 'negative' ? '未见转移 (N0)' : profile.neckLymphNodes === 'positive' ? '提示转移' : '未检查'}
+                        </span>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -2197,10 +2537,29 @@ export default function PatientDashboard() {
                         ? '左半结肠全野生型 · 西妥昔单抗联合双药一线转化组'
                         : 'RAS 突变 / 右半结肠 · 贝伐珠单抗联合化疗长程抗血管组')
                     : '结直肠癌规范手术根治与长程随访组'
-                ) : (
+                ) : isLung ? (
                   profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
                     ? (profile.riskLevel === 'high' ? '建议胸外科微创评估' : '建议 3~6 个月随访观察')
                     : (isAllSafe ? '早期低复发风险组' : '需积极辅助随访组')
+                ) : (
+                  /* Generic clinical decision for Gastric / Liver / Esophageal / Thyroid / Endometrial / Cervical / Pancreatic */
+                  profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
+                    ? (isGastric ? '建议胃镜病理活检 + 腹盆增强 CT 精确分期'
+                      : isLiver ? '建议多学科团队 (MDT) 评估可切除性与肝功能储备'
+                      : isEsophageal ? '建议上消化道内镜+胸腹盆增强 CT 明确 TNM 分期'
+                      : isThyroid ? '建议甲状腺超声引导穿刺活检明确病理类型'
+                      : isEndometrial ? '建议宫腔镜/分段诊刮明确病理与分子分型'
+                      : isCervical ? '建议阴道镜+组织活检+盆腔 MRI 精确 FIGO 分期'
+                      : isPancreatic ? '建议胰腺增强 CT + 多学科联合可切除性评估'
+                      : '建议完善病理活检与影像学精确分期评估')
+                    : (isGastric ? (profile.stage?.startsWith('IV') ? '晚期胃癌系统全身治疗组' : '根治术后辅助化疗规范随访组')
+                      : isLiver ? (profile.stage?.startsWith('IV') || (profile as any).cnlcStage === 'IIIb' ? '晚期肝癌靶免系统治疗组' : '根治切除/消融后密切随访组')
+                      : isEsophageal ? (profile.stage?.startsWith('IV') ? '晚期食管癌免疫联合化疗组' : '根治术后同步放化疗/免疫辅助组')
+                      : isThyroid ? '甲状腺癌术后 TSH 抑制与长程随访组'
+                      : isEndometrial ? (profile.stage?.startsWith('III') || profile.stage?.startsWith('IV') ? '高危子宫内膜癌辅助放化疗与免疫治疗组' : '早期子宫内膜癌规范随访与激素治疗组')
+                      : isCervical ? (profile.stage?.startsWith('III') || profile.stage?.startsWith('IV') ? '局部晚期宫颈癌同步放化疗 (CCRT) 组' : '早期宫颈癌规范根治术后长程随访组')
+                      : isPancreatic ? '胰腺癌术后辅助化疗 (吉西他滨/mFOLFIRINOX) 规范管理组'
+                      : `${CancerRegistry.get(activeType)?.name || ''}规范综合治疗组`)
                 )}
               </span>
               <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
@@ -2208,7 +2567,16 @@ export default function PatientDashboard() {
                   ? 'St. Gallen 2023 · NCCN 2024'
                   : isColorectal
                   ? 'CSCO 2024 · IDEA 协作组 · AJCC 第8版'
-                  : (profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' ? 'Fleischner 2024 / JCOG' : 'IASLC 第9版 · 2024')
+                  : isLung
+                  ? (profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' ? 'Fleischner 2024 / JCOG' : 'IASLC 第9版 · 2024')
+                  : isGastric ? 'CSCO/JGCA 2024 · AJCC 第8版'
+                  : isLiver ? 'CNLC 2024 · BCLC 2022 · ESMO'
+                  : isEsophageal ? 'CSCO/NCCN 2024 · ESCORT-1st'
+                  : isThyroid ? 'ATA 2015 · CSCO 2024'
+                  : isEndometrial ? 'FIGO 2023 · PORTEC-4a · ESMO'
+                  : isCervical ? 'FIGO 2018 · CSCO 2024 · EMBRACE-I'
+                  : isPancreatic ? 'NCCN/CSCO 2024 · POLO 研究'
+                  : 'CSCO 2024 · 国际权威循证指南'
                 }
               </span>
             </div>
@@ -2242,7 +2610,7 @@ export default function PatientDashboard() {
                   : profile.stage?.startsWith('IV')
                   ? '晚期结直肠癌需严格基于原发部位（左右半结肠）及 RAS/BRAF/MSI 状态分型：左半全野生型推荐抗 EGFR 西妥昔单抗，右半或 RAS 突变型推荐抗 VEGF 贝伐珠单抗联合化疗。'
                   : '您的手术切缘阴性 (R0) 且完成了规范根治性切除，建议遵循 CSCO 结直肠癌指南，定期复查 CEA、CA19-9 及腹盆胸部 CT。'
-              ) : (
+              ) : isLung ? (
                 profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
                   ? (profile.riskLevel === 'high' 
                       ? 'CT 影像提示伴有实性浸润或高危征象，建议携带影像 DICOM 数据至三甲胸外科门诊进行多学科 (MDT) 会诊评估。'
@@ -2252,6 +2620,25 @@ export default function PatientDashboard() {
                   : (isAllSafe 
                       ? '您的关键优势因素（R0切除、N0淋巴结阴性、无 STAS/VPI/LVI、高/中分化）显著降低了术后复发概率。' 
                       : '存在局部高危病理因素，建议密切关注局部影像与长程管理计划。')
+              ) : (
+                /* Generic description for other cancers */
+                profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
+                  ? (isGastric ? '胃镜活检与腹盆增强 CT 是精确 TNM 分期的金标准。建议携带影像及内镜报告至三甲消化外科或肿瘤科门诊，行多学科综合会诊评估手术可行性。'
+                    : isLiver ? '原发性肝癌（HCC）的治疗决策高度依赖肿瘤数目/大小、门脉受累与 Child-Pugh 肝功能评级。建议由肝胆外科、介入科与肿瘤科共同组成 MDT 联合评估可切除性或 TACE/消融适应证。'
+                    : isEsophageal ? '食管癌须综合内镜超声（EUS）、胸腹盆增强 CT 及 PET-CT 评估浸润深度与淋巴结转移范围，精确判定新辅助化放疗适应证（cT2N+或 cT3-4 者）。'
+                    : isThyroid ? '分化型甲状腺癌（DTC）通常预后良好，分期主要依据年龄（<55 岁/≥55 岁）、组织学与侵犯范围综合判定。建议完善 TI-RADS 超声评估与术前基线 Tg/TSH。'
+                    : isEndometrial ? '依据 FIGO 2023 更新分期与 PORTEC-4a 随机试验，子宫内膜癌的辅助治疗方案（放疗、化疗或联合）已由分子分型（POLEmut / dMMR / p53abn / NSMP）精准驱动，建议行 MMR 免疫组化与分子分型检测。'
+                    : isCervical ? '宫颈癌分期仍以 FIGO 2018 临床分期为准，MRI 提供补充依据。局部进展期（FIGO ≥ IB3/IIA2）首选同步顺铂化放疗 (CCRT)，晚期复发者依据 PD-L1 CPS 评估免疫联合方案。'
+                    : isPancreatic ? '胰腺癌的可切除性评估需严格参照 SMV/PV/SMA/CA 血管关系（可切除/临界可切除/不可切除）。建议完善 BRCA1/2 与 KRAS 等基因检测，指导 FOLFIRINOX 或吉西他滨为基础的新辅助/辅助化疗方案选择。'
+                    : '建议携带全套影像与病理报告至三甲医院专科门诊，由多学科团队 (MDT) 共同制定个体化精准治疗方案。')
+                  : (isGastric ? '依据 CSCO 胃癌指南，D2 根治术后建议规范辅助化疗（SOX/CAPOX 6 个月），HER2 阳性者联合曲妥珠单抗，每 3 个月定期复查胃镜与腹盆增强 CT。'
+                    : isLiver ? '依据 CNLC 肝癌诊疗指南，根治切除/消融后每 3 个月监测 AFP、DCP 及肝脏增强影像；抗病毒治疗（乙肝 HBV）须持续规范维持。'
+                    : isEsophageal ? '依据 ESCORT-1st 与 RATIONALE-306 顶刊证据，完成根治性放化疗或手术后需规范随访，PD-L1 CPS ≥ 10 者可评估卡瑞利珠单抗或替雷利珠单抗维持免疫治疗。'
+                    : isThyroid ? '依据 ATA 指南，DTC 术后根据复发风险分层选择 TSH 抑制强度（高危组 TSH < 0.1 mU/L），RAI 适应证由危险度分层决定，每年定期随访 Tg + 颈部超声。'
+                    : isEndometrial ? '依据 PORTEC-3 与 RUBY 研究，高危子宫内膜癌建议辅助化疗+放疗联合，dMMR/MSI-H 者可评估多斯他利单抗 (Dostarlimab) 免疫治疗；每 3 个月定期随访盆腔超声与 CA125。'
+                    : isCervical ? '依据 KEYNOTE-826 研究，晚期复发宫颈癌 (PD-L1 CPS ≥ 1) 帕博利珠单抗联合化疗（±贝伐珠单抗）显著延长 OS；早期术后定期随访宫颈细胞学与 HPV 检测。'
+                    : isPancreatic ? '依据 PRODIGE 24 研究，可切除胰腺癌 R0 切除后推荐改良 FOLFIRINOX 辅助化疗（6 个月），gBRCA1/2 阳性者维持奥拉帕利（POLO 研究）；每 3 个月监测 CA19-9 与腹部 CT。'
+                    : `遵循${CancerRegistry.get(activeType)?.name || ''}专科规范，定期复查标志物与影像，规范长程综合管理。`)
               )}
             </p>
 
@@ -2270,10 +2657,28 @@ export default function PatientDashboard() {
                     profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
                       ? '遵医嘱完善肠镜病理活检、直肠高分辨率 MRI 及胸腹盆增强 CT 评估。'
                       : '遵医嘱按计划进行辅助化疗/靶向治疗，每 3 个月监测 CEA、CA19-9，每 6 个月行胸腹盆增强 CT 排查。'
-                  ) : (
+                  ) : isLung ? (
                     profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
                       ? '遵医嘱于 3~6 个月后复查胸部薄层 CT（层厚 ≤1mm），对比结节大小与密度。'
                       : '遵医嘱术后 6 个月规律复查胸部 CT 即可，无需过度化疗。'
+                  ) : (
+                    profile.currentStage === 'evaluation' || profile.currentStage === 'discovery'
+                      ? (isGastric ? '遵医嘱完善胃镜活检病理，进行腹盆增强 CT 精确 TNM 分期评估。'
+                        : isLiver ? '遵医嘱携带肝脏增强影像至肝胆外科 MDT 门诊，评估可切除性与肝储备功能。'
+                        : isEsophageal ? '遵医嘱完善内镜超声（EUS）+胸腹盆增强 CT+PET-CT，精确评估分期与新辅助治疗适应证。'
+                        : isThyroid ? '遵医嘱完善甲状腺超声引导穿刺活检，明确病理类型与 BRAF/RET 基因状态。'
+                        : isEndometrial ? '遵医嘱行宫腔镜检查+分段诊刮，送 MMR 免疫组化与分子分型检测（POLEmut/dMMR/p53abn）。'
+                        : isCervical ? '遵医嘱行阴道镜+组织活检+盆腔高分辨 MRI，精确 FIGO 2018 分期评估。'
+                        : isPancreatic ? '遵医嘱行胰腺增强 CT+MRI，完善 CA19-9/CEA，多学科联合评估可切除性分类。'
+                        : '遵医嘱携带全套影像与病理报告，至三甲医院专科 MDT 门诊综合制定治疗方案。')
+                      : (isGastric ? '遵医嘱按计划完成辅助化疗（SOX/CAPOX），每 3 个月复查胃镜与腹盆 CT，每年复查 CEA/CA19-9。'
+                        : isLiver ? '遵医嘱持续规范抗病毒治疗（若 HBV 阳性），每 3 个月监测 AFP + 肝脏增强影像。'
+                        : isEsophageal ? '遵医嘱按计划完成术后放化疗或免疫辅助治疗，每 3~6 个月随访胸腹盆 CT + 上消化道内镜。'
+                        : isThyroid ? '遵医嘱规范 TSH 抑制治疗，每年定期复查 Tg + 颈部超声，高危者行 RAI 131I 治疗。'
+                        : isEndometrial ? '遵医嘱按计划完成辅助放化疗，每 3 个月随访盆腔超声 + CA125，dMMR 者评估免疫治疗。'
+                        : isCervical ? '遵医嘱规范完成同步化放疗（CCRT），每 3 个月随访盆腔 MRI + 宫颈细胞学 + HPV 检测。'
+                        : isPancreatic ? '遵医嘱按计划完成辅助化疗（FOLFIRINOX / 吉西他滨方案），每 3 个月监测 CA19-9 + 腹部 CT。'
+                        : `遵医嘱按照${CancerRegistry.get(activeType)?.name || ''}专科规范定期复查，规范长程管理。`)
                   )
                 )}
               </div>
@@ -2310,7 +2715,7 @@ export default function PatientDashboard() {
       )}
 
       {/* Pulmonary Nodule Growth Dynamic VDT Trajectory (Lung Cancer only) */}
-      {!isBreast && !isColorectal && profile.followUpHistory && profile.followUpHistory.length > 0 && (
+      {isLung && profile.followUpHistory && profile.followUpHistory.length > 0 && (
         <NoduleTimelineChart
           history={profile.followUpHistory}
           profile={profile}
@@ -2326,7 +2731,7 @@ export default function PatientDashboard() {
       />
 
       {/* Molecular Pathology & Driver Genes NGS Panel (Lung Cancer) */}
-      {!isBreast && !isColorectal && ((profile.geneMutations && profile.geneMutations.length > 0) || profile.egfr === 'positive' || profile.molecular) && (
+      {isLung && ((profile.geneMutations && profile.geneMutations.length > 0) || profile.egfr === 'positive' || profile.molecular) && (
         <MolecularProfileCard
           profile={profile}
           onOpenDdiModal={() => setShowDdiModal(true)}
@@ -2412,7 +2817,7 @@ export default function PatientDashboard() {
                     <span className="text-[11px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md">推荐 · 10秒</span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    无需重新拍照，直接在当前已保存的性别、年龄、CTR实性成分、病理指标与全身排查状态上微调修改
+                    无需重新拍照，直接在当前已保存的性别、年龄、肿瘤病灶大小、核心病理指标与全身排查状态上微调修改
                   </p>
                 </div>
               </button>
@@ -2440,7 +2845,7 @@ export default function PatientDashboard() {
                     <span className="text-[11px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md">智能追加 · 保留已有数据</span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    拿到新的术后病理、复查胸部CT、增强MRI或PET-CT？上传后由系统智能结构化融合，不覆盖已有检查记录
+                    拿到新的手术病理、复查影像（CT/MRI/超声/内镜）或全身 PET-CT？上传后由系统智能结构化融合，不覆盖已有检查记录
                   </p>
                 </div>
               </button>
