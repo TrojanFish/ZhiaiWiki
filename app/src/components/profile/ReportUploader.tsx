@@ -28,6 +28,7 @@ import {
   Sparkles,
   RotateCcw,
   FileEdit,
+  Edit3,
 } from "lucide-react";
 import type { SecondaryNodule, FollowUpRecord } from "@/lib/types";
 import { computeClinicalTnmStage } from "@/lib/staging";
@@ -43,6 +44,7 @@ interface ReportUploaderProps {
   existingProfile?: any | null;
   onCancel?: () => void;
   initialManualMode?: boolean;
+  onSwitchToUpload?: () => void;
 }
 
 interface UploadedReportImage {
@@ -202,7 +204,7 @@ const PRESET_CO_MUTATIONS = [
   }
 ];
 
-export default function ReportUploader({ onParsed, initialData, existingProfile, onCancel, initialManualMode }: ReportUploaderProps) {
+export default function ReportUploader({ onParsed, initialData, existingProfile, onCancel, initialManualMode, onSwitchToUpload }: ReportUploaderProps) {
   const [uploadTab, setUploadTab] = useState<'image' | 'text'>('image');
   const [reportText, setReportText] = useState("");
   const [isParsing, setIsParsing] = useState(false);
@@ -292,8 +294,15 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
   };
 
   useEffect(() => {
-    if (initialManualMode && !parsedData && !hasInitializedRef.current) {
-      handleStartManualEntry();
+    if (initialManualMode) {
+      if (!parsedData || !parsedData.isManualEntry) {
+        handleStartManualEntry();
+      }
+    } else {
+      if (parsedData?.isManualEntry) {
+        setParsedData(null);
+        hasInitializedRef.current = null;
+      }
     }
   }, [initialManualMode]);
 
@@ -868,22 +877,32 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2 flex-wrap">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
-              {initialData ? <FileText className="w-3 h-3 text-emerald-700" /> : <Check className="w-3 h-3 text-emerald-700" />}
-              <span>{initialData ? "档案核对与微调模式" : "全模态结构化提取就绪"}</span>
+              {parsedData?.isManualEntry ? <Edit3 className="w-3 h-3 text-emerald-700" /> : (initialData ? <FileText className="w-3 h-3 text-emerald-700" /> : <Check className="w-3 h-3 text-emerald-700" />)}
+              <span>{parsedData?.isManualEntry ? "手动指标填报模式" : (initialData ? "档案核对与微调模式" : "全模态结构化提取就绪")}</span>
             </div>
             <h2 className="text-base font-extrabold text-slate-900">
-              {initialData ? "核对并校准您的关键临床指标" : "请核对并确认您的医疗特征指标"}
+              {parsedData?.isManualEntry ? "请填写并校准您的关键临床指标" : (initialData ? "核对并校准您的关键临床指标" : "请核对并确认您的医疗特征指标")}
             </h2>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <button type="button" onClick={() => { setParsedData(null); hasInitializedRef.current = null; }}
-              className="text-xs text-slate-500 hover:text-purple-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-purple-50 transition-colors cursor-pointer flex items-center gap-1.5">
-              <Camera className="w-3.5 h-3.5 text-slate-500" />
-              <span className="hidden sm:inline">改为拍照上传新报告</span>
+            <button
+              type="button"
+              onClick={() => {
+                setParsedData(null);
+                hasInitializedRef.current = null;
+                if (onSwitchToUpload) onSwitchToUpload();
+              }}
+              className="text-xs text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <Camera className="w-3.5 h-3.5 text-blue-600" />
+              <span>返回拍照/文本智能解析</span>
             </button>
             {onCancel && (
-              <button type="button" onClick={onCancel}
-                className="text-xs text-slate-500 hover:text-slate-800 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="text-xs text-slate-500 hover:text-slate-800 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
                 ‹ 返回看板
               </button>
             )}
@@ -3261,24 +3280,14 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         </div>
       )}
 
-      <div className="flex items-center justify-between gap-3.5 mb-3 flex-wrap">
-        <div className="flex items-center gap-3.5 min-w-0">
-          <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100 flex-shrink-0">
-            <FileSearch className="w-6 h-6 text-blue-600" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">医疗报告多模态结构化解析</h2>
-            <p className="text-slate-500 text-xs sm:text-sm mt-0.5">支持上传或拍摄多源临床报告，系统将自动解析核心诊断要素并校准分期</p>
-          </div>
+      <div className="flex items-center gap-3.5 mb-3">
+        <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100 flex-shrink-0">
+          <FileSearch className="w-6 h-6 text-blue-600" />
         </div>
-        <button
-          type="button"
-          onClick={handleStartManualEntry}
-          className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs hover:shadow-xs active:scale-95"
-        >
-          <FileEdit className="w-3.5 h-3.5 text-blue-600" />
-          <span>直接手动填报 ➔</span>
-        </button>
+        <div>
+          <h2 className="text-lg font-bold text-slate-900">医疗报告多模态结构化解析</h2>
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">支持上传或拍摄多源临床报告，系统将自动解析核心诊断要素并校准分期</p>
+        </div>
       </div>
 
       {/* Supported Modality Strip (Clean & Compact) */}
@@ -3456,32 +3465,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             </div>
           </div>
         )}
-
-        {/* ⚡ Direct Manual Entry Fast-Track Card */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/60 to-indigo-50/70 border border-blue-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-              <FileEdit className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-                <span>手头暂无报告照片或文本？</span>
-                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded font-bold">极速直达</span>
-              </div>
-              <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
-                无需拍照上传，直接手动点选结节大小、分期与基因指标，30秒即时推演
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={handleStartManualEntry}
-            className="px-4 py-2.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white text-blue-700 font-extrabold border border-blue-300 text-xs transition-all shadow-2xs hover:shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer active:scale-95 group"
-          >
-            <span>直接手动填报指标</span>
-            <span className="group-hover:translate-x-0.5 transition-transform">➔</span>
-          </button>
-        </div>
 
         {error && (
           (errorInfo?.isRateLimit || isRateLimitOrQuotaError(error)) ? (

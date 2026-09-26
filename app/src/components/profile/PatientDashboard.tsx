@@ -807,7 +807,11 @@ export default function PatientDashboard() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               {availableSlots.length > 0 ? `建立【${CancerRegistry.get(activeSlot)?.name || '原发'}】原发肿瘤病案` : '建立个人医学档案'}
             </h1>
-            <p className="text-slate-500 text-sm mt-1.5">导入病理诊断与影像报告，系统将自动进行临床要素解析与指南循证对齐</p>
+            <p className="text-slate-500 text-sm mt-1.5">
+              {manualDirectMode 
+                ? '直接手动输入各项关键临床与病理指标，系统将实时推演 IASLC 9th TNM 分期与证据指南'
+                : '导入病理诊断与影像报告，系统将自动进行临床要素解析与指南循证对齐'}
+            </p>
             <div className="flex items-center justify-center gap-2 mt-4">
               <button
                 type="button"
@@ -831,7 +835,7 @@ export default function PatientDashboard() {
                 }`}
               >
                 <Edit3 className="w-3.5 h-3.5 text-blue-600" />
-                <span>⚡ 直接手动填报指标 (无需报告)</span>
+                <span>直接手动填报指标 (无需报告)</span>
               </button>
             </div>
           </div>
@@ -840,6 +844,7 @@ export default function PatientDashboard() {
           initialData={editMode === 'edit_direct' ? profile : null}
           existingProfile={profile}
           initialManualMode={manualDirectMode}
+          onSwitchToUpload={() => setManualDirectMode(false)}
           onParsed={(data) => {
             setManualDirectMode(false);
             handleParsed(data);
