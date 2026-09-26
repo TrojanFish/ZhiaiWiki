@@ -118,7 +118,7 @@ export function PwaInstallBanner() {
             安装 知癌维基 至桌面或手机主屏
           </p>
           <p className="text-2xs text-slate-400 mt-0.5 leading-relaxed">
-            支持无网络离线查阅 11 大高发实体瘤循证知识库与指标速查，享受秒开原生 App 体验。
+            支持无网络离线查阅 12 大实体肿瘤专区循证知识库与指标速查，享受秒开原生 App 体验。
           </p>
 
           <div className="mt-3 flex items-center gap-2">

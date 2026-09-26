@@ -12,6 +12,7 @@ import { THYROID_STUDIES } from "@/lib/thyroidStudiesData";
 import { ENDOMETRIAL_STUDIES } from "@/lib/endometrialStudiesData";
 import { CERVICAL_STUDIES } from "@/lib/cervicalStudiesData";
 import { PANCREATIC_STUDIES } from "@/lib/pancreaticStudiesData";
+import { CancerRegistry } from "@/lib/cancerRegistry";
 
 const RAW_STUDIES = [
   ...FEATURED_STUDIES,
@@ -34,7 +35,7 @@ const defaultRctCount = Math.max(
   UNIQUE_STUDIES.filter((s) => s.studyType === "rct" || s.studyType === "prospective_multicenter").length,
   50
 );
-const TOTAL_SUPPORTED_CANCERS = 9; // 肺癌、乳腺癌、结直肠癌、胃癌、原发性肝癌、食管癌、甲状腺癌、妇科肿瘤、胰腺癌
+const TOTAL_SUPPORTED_CANCERS = CancerRegistry.getAll().length; // 动态对齐 12 大实体肿瘤专区
 
 export default function StatsBanner() {
   const [animated, setAnimated] = useState(false);

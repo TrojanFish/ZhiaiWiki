@@ -351,7 +351,7 @@ export default function AboutPage() {
                 >
                   <div className="flex items-center gap-2">
                     <HeartHandshake className="w-4 h-4 text-teal-700" />
-                    <span>查看全部 {relayItems.length} 位病友的抗癌接力（支持 11 大实体瘤专区筛选）</span>
+                    <span>查看全部 {relayItems.length} 位病友的抗癌接力（支持 12 大实体肿瘤专区筛选）</span>
                   </div>
                   <div className="flex items-center gap-1 text-teal-700 font-semibold group-hover:translate-x-0.5 transition-transform text-xs">
                     <span>进入抗癌爱心接力专区</span>

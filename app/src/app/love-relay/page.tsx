@@ -185,7 +185,7 @@ export default function LoveRelayPage() {
             <div className="col-span-2 sm:col-span-1 p-3 rounded-2xl bg-teal-50/60 border border-teal-200/70">
               <div className="text-[11px] text-teal-800 font-medium">覆盖实体瘤专区</div>
               <div className="text-lg sm:text-xl font-black text-teal-900 mt-0.5 font-mono">
-                11 <span className="text-xs font-normal text-teal-700">大专区</span>
+                12 <span className="text-xs font-normal text-teal-700">大专区</span>
               </div>
             </div>
           </div>

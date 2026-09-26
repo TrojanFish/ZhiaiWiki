@@ -496,8 +496,8 @@ export default function HomePage() {
                   <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-sky-600" />
                 </span>
                 <span suppressHydrationWarning className="truncate sm:whitespace-normal min-w-0">
-                  <span className="sm:hidden">11 大实体瘤前瞻队列 · 160,000+ 例顶刊数据</span>
-                  <span className="hidden sm:inline">覆盖 11 大实体瘤前瞻循证队列 · 160,000+ 例数据 · 顶刊出处可溯</span>
+                  <span className="sm:hidden">12 大实体肿瘤专区前瞻队列 · 160,000+ 例顶刊数据</span>
+                  <span className="hidden sm:inline">覆盖 12 大实体肿瘤专区前瞻循证队列 · 160,000+ 例数据 · 顶刊出处可溯</span>
                 </span>
               </div>
 
@@ -561,7 +561,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-[9px] text-sky-700 font-bold sm:hidden mt-0.5 truncate">国际金标准</div>
                     <div className="text-[11px] text-slate-500 leading-snug mt-0.5 hidden sm:block">
-                      11大实体肿瘤国际分期矩阵
+                      12大实体肿瘤国际分期矩阵
                     </div>
                   </div>
                 </div>
@@ -2185,7 +2185,7 @@ export default function HomePage() {
             />
             <FaqItem
               q="知癌维基目前支持哪些癌种的循证分析与就医导航？"
-              a="本系统已全面支持 11 大高发实体肿瘤的循证决策与前瞻队列导航：① 肺癌（IASLC 第9版全新分期、纯磨/混磨 CTR 实性折算、STAS 气道播散、三代靶向药相互作用）；② 乳腺癌（AJCC 8/9th 双轨病理预后分期、BI-RADS 超声钼靶评级、TAILORx 21 基因免化疗、HER2 双靶与强化）；③ 结肠癌（AJCC 第8版分期、IDEA 协作组 3个月 CAPOX 减毒、dMMR/MSI-H 免疫单药、全 RAS/BRAF 靶向分流）；④ 直肠癌（高/中/低位保肛评估、MRI 壁外血管浸润 EMVI 与直肠系膜筋膜 MRF、TNT 全程新辅助治疗、Watch & Wait 临床完全缓解策略）；⑤ 胃癌（日本规约 JGCA、cT1a 早期内镜 ESD 保胃黄金指征、D2 根治淋巴结质控、Claudin 18.2 与 HER2 双靶、FLOT 围手术期三联）；⑥ 原发性肝癌（国家卫健委 CNLC 2024 分期、Child-Pugh 与 ALBI 肝储备评估、门静脉癌栓系统转化、T+A 双达一线方案）；⑦ 食管癌（NEOCRTEC5010 新辅助同步放化疗、鳞癌浸润深度评估、CheckMate-577 术后辅助免疫）；⑧ 甲状腺癌（中国 C-TIRADS 超声分级、55岁分水岭、PTMC 低危微小癌「主动监测」免手术、免除过度碘131清甲）；⑨ 子宫内膜癌（FIGO 2023 四分子分型、POLE 超突变预后卓越与放化疗降阶梯、dMMR/MSI-H 免疫获益）；⑩ 宫颈癌（高危 HPV 持续感染阶梯管理、FIGO 2018/2023 分期、KEYNOTE-826 靶免联合）；⑪ 胰腺癌（NCCN/CSCO 可切除性四分类、新辅助 FOLFIRINOX 转化、CA19-9 动力学监测、BRCA 突变奥拉帕利维持）。全癌种医学算法物理隔离，确保 0 术语穿模。"
+              a="本系统已全面支持 12 大实体肿瘤专区的循证决策与前瞻队列导航：① 肺癌（IASLC 第9版全新分期、纯磨/混磨 CTR 实性折算、STAS 气道播散、三代靶向药相互作用）；② 乳腺癌（AJCC 8/9th 双轨病理预后分期、BI-RADS 超声钼靶评级、TAILORx 21 基因免化疗、HER2 双靶与强化）；③ 结肠癌（AJCC 第8版分期、IDEA 协作组 3个月 CAPOX 减毒、dMMR/MSI-H 免疫单药、全 RAS/BRAF 靶向分流）；④ 直肠癌（高/中/低位保肛评估、MRI 壁外血管浸润 EMVI 与直肠系膜筋膜 MRF、TNT 全程新辅助治疗、Watch & Wait 临床完全缓解策略）；⑤ 结直肠癌综合专区（左右半结肠与直肠联合靶向分流、MSI/RAS/BRAF 全面梳理）；⑥ 胃癌（日本规约 JGCA、cT1a 早期内镜 ESD 保胃黄金指征、D2 根治淋巴结质控、Claudin 18.2 与 HER2 双靶、FLOT 围手术期三联）；⑦ 原发性肝癌（国家卫健委 CNLC 2024 分期、Child-Pugh 与 ALBI 肝储备评估、门静脉癌栓系统转化、T+A 双达一线方案）；⑧ 食管癌（NEOCRTEC5010 新辅助同步放化疗、鳞癌浸润深度评估、CheckMate-577 术后辅助免疫）；⑨ 甲状腺癌（中国 C-TIRADS 超声分级、55岁分水岭、PTMC 低危微小癌「主动监测」免手术、免除过度碘131清甲）；⑩ 子宫内膜癌（FIGO 2023 四分子分型、POLE 超突变预后卓越与放化疗降阶梯、dMMR/MSI-H 免疫获益）；⑪ 宫颈癌（高危 HPV 持续感染阶梯管理、FIGO 2018/2023 分期、KEYNOTE-826 靶免联合）；⑫ 胰腺癌（NCCN/CSCO 可切除性四分类、新辅助 FOLFIRINOX 转化、CA19-9 动力学监测、BRCA 突变奥拉帕利维持）。全癌种医学算法物理隔离，确保 0 术语穿模。"
             />
           </div>
 

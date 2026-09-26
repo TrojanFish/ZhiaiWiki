@@ -2,7 +2,7 @@ import type { CancerType } from "@/lib/types";
 
 /**
  * ZhiaiWiki Clinical Golden Evaluation Dataset (临床黄金评测基准用例库)
- * 覆盖 11 大实体瘤里程碑、疑难与边界临床场景
+ * 覆盖 12 大实体肿瘤专区里程碑、疑难与边界临床场景
  */
 
 export interface ClinicalGoldenCase {
