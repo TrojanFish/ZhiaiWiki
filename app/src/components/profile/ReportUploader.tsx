@@ -1255,7 +1255,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       parsedData.petCt === 'negative';
 
     return (
-      <div className="max-w-5xl mx-auto w-full animate-fade-in">
+      <div className="max-w-7xl mx-auto w-full animate-fade-in">
 
         {/* ─── Header ─── */}
         <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100 flex-wrap">
@@ -3900,7 +3900,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
   }
 
   return (
-    <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-8 border border-slate-200 shadow-sm max-w-5xl mx-auto w-full">
+    <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-8 border border-slate-200 shadow-sm max-w-7xl mx-auto w-full">
       <div className="flex items-center gap-3.5 mb-3">
         <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100 flex-shrink-0">
           <FileSearch className="w-6 h-6 text-blue-600" />

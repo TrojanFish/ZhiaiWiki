@@ -110,7 +110,19 @@ export function computeCancerStage(
 ): UnifiedStagingResult {
   const normalizedType = normalizeCancerType(cancerType, input?.organ);
   const plugin = CancerRegistry.get(normalizedType);
-  return plugin.staging.computeStage(input);
+  const result = plugin.staging.computeStage(input);
+  if (result) {
+    if (!result.treatmentDirection && (result as any).therapeuticStrategy) {
+      result.treatmentDirection = (result as any).therapeuticStrategy;
+    }
+    if (!(result as any).therapeuticStrategy && result.treatmentDirection) {
+      (result as any).therapeuticStrategy = result.treatmentDirection;
+    }
+    if (!result.description && result.explanation) {
+      (result as any).description = result.explanation;
+    }
+  }
+  return result;
 }
 
 /**

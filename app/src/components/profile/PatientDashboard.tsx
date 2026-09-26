@@ -804,7 +804,7 @@ export default function PatientDashboard() {
 
   if (showUploader || !profile) {
     return (
-      <div className="max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 pb-4 sm:pb-6">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         <ConsentModal />
         {availableSlots.length > 0 && (
           <DualPrimarySwitcher
@@ -827,8 +827,8 @@ export default function PatientDashboard() {
           />
         )}
         {!profile && (
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <div className="text-center mb-6 sm:mb-8 max-w-4xl mx-auto">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
               建立【{CancerRegistry.get(activeSlot)?.name || '原发'}】个人医学档案
             </h1>
             <p className="text-slate-500 text-sm mt-1.5">

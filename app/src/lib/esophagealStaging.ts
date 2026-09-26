@@ -304,6 +304,8 @@ export function computeEsophagealStage(input: EsophagealStagingInput): UnifiedSt
     nStage: n,
     mStage: m,
     explanation,
+    treatmentDirection: guidelines[0] || explanation,
+    therapeuticStrategy: guidelines[0] || explanation,
     confidence: "high",
     evidenceLevel: "Category 1 (CSCO 2024 / AJCC 8th)",
     riskTier: overallStage.startsWith("IV") ? "high_risk" : overallStage.startsWith("III") ? "intermediate_risk" : "standard_low_risk",

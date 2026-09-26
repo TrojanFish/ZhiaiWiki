@@ -54,16 +54,25 @@ export interface CervicalStagingInput {
   [key: string]: any;
 }
 
+function isPositiveFlag(val: any): boolean {
+  if (val === true) return true;
+  if (typeof val === "string") {
+    const s = val.toLowerCase().trim();
+    return s === "positive" || s === "true" || s === "1" || s === "yes" || s === "present";
+  }
+  return false;
+}
+
 /**
  * 依据解剖学与间质深度推导 T 分期 (FIGO 2018 / AJCC 9th)
  */
 export function deriveCervicalTStage(input: CervicalStagingInput): string {
   if (input.tStage) return input.tStage;
 
-  if (input.bladderRectalMucosaInvasion) return "T4";
-  if (input.pelvicSidewallOrHydronephrosis) return "T3b";
+  if (isPositiveFlag(input.bladderRectalMucosaInvasion)) return "T4";
+  if (isPositiveFlag(input.pelvicSidewallOrHydronephrosis)) return "T3b";
   if (input.vaginalInvolvement === "lower_one_third") return "T3a";
-  if (input.parametrialInvasion) return "T2b";
+  if (isPositiveFlag(input.parametrialInvasion)) return "T2b";
 
   const rawSize = input.tumorSize != null ? Number(input.tumorSize) : 2.0;
   const size = Number.isFinite(rawSize) && rawSize > 0 ? rawSize : 2.0;
@@ -101,7 +110,7 @@ export function deriveCervicalNStage(input: CervicalStagingInput): string {
  */
 export function deriveCervicalMStage(input: CervicalStagingInput): string {
   if (input.mStage) return input.mStage;
-  if (input.hasDistantMets || (input.metastasisSites && input.metastasisSites.length > 0)) {
+  if (isPositiveFlag(input.hasDistantMets) || (input.metastasisSites && input.metastasisSites.length > 0)) {
     return "M1";
   }
   return "M0";
@@ -134,7 +143,7 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
     riskFlags.push("存在远处转移 (IVB期)，治疗立足于全身靶免化疗联合与控制症状");
   }
   // 2. 累及膀胱直肠黏膜 (Stage IVA)
-  else if (input.bladderRectalMucosaInvasion || t === "T4") {
+  else if (isPositiveFlag(input.bladderRectalMucosaInvasion) || t === "T4") {
     stage = "IVA";
     stageDescription = "FIGO 2018 宫颈癌 IVA 期 (肿瘤直接穿透并侵犯膀胱或直肠黏膜)";
     therapeuticStrategy = "根治性同步放化疗 (CCRT) 或盆腔脏器廓清术 (需审慎权衡造口生活质量)。";
@@ -153,7 +162,7 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
     riskFlags.push("盆腔淋巴结阳性，直接归入 IIIC1 期，严禁单纯行外科切除");
   }
   // 4. 局部侵及盆壁、下阴道或致肾盂积水 (Stage III)
-  else if (input.pelvicSidewallOrHydronephrosis || t === "T3b") {
+  else if (isPositiveFlag(input.pelvicSidewallOrHydronephrosis) || t === "T3b") {
     stage = "IIIB";
     stageDescription = "FIGO 2018 宫颈癌 IIIB 期 (肿瘤浸润至骨盆壁，和/或引起肾盂积水或无功能肾)";
     therapeuticStrategy = "解除尿路梗阻 (必要时置入输尿管支架或肾造瘘) 后，行根治性同步放化疗 (CCRT) + 近距离后装放疗。";
@@ -164,7 +173,7 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
     therapeuticStrategy = "根治性同步放化疗 (CCRT: 盆腔外照射包括全阴道照射 + 顺铂增敏 + 阴道施源器近距离放疗)。";
   }
   // 5. 宫旁浸润或阴道上段累及 (Stage II)
-  else if (input.parametrialInvasion || t === "T2b") {
+  else if (isPositiveFlag(input.parametrialInvasion) || t === "T2b") {
     stage = "IIB";
     stageDescription = "FIGO 2018 宫颈癌 IIB 期 (肿瘤明确侵犯宫旁组织，但未达骨盆壁)";
     therapeuticStrategy = "【临床红线】绝不可行单纯全子宫切除术！根治性同步放化疗 (CCRT: 顺铂增敏 + 盆腔 IMRT + 三维后装放疗) 是全球公认唯一根治方案。";
@@ -262,6 +271,7 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
     explanation: stageDescription,
     description: stageDescription,
     therapeuticStrategy,
+    treatmentDirection: therapeuticStrategy,
     keyFactors,
     riskFlags,
     guidelineStandard: "FIGO 2018 宫颈癌分期标准 · AJCC 9th · NCCN 2024 · CSCO 2024",
