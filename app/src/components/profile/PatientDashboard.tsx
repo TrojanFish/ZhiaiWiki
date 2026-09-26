@@ -60,6 +60,7 @@ const ReportUploader = dynamic(() => import("./ReportUploader"), {
 import ConsentModal from "@/components/ConsentModal";
 import type { PatientProfile, CancerType } from "@/lib/types";
 import { CancerRegistry } from "@/lib/cancerRegistry";
+import { normalizeCancerType } from "@/lib/stagingRegistry";
 import { getGuestId } from "@/lib/guest";
 import Link from "next/link";
 import { useCancerType } from "@/components/common/CancerSwitch";
@@ -162,22 +163,49 @@ export default function PatientDashboard() {
   useEffect(() => {
     if (profile?.cancerType && !initialProfileSyncedRef.current) {
       initialProfileSyncedRef.current = true;
-      setGlobalCancerType(profile.cancerType);
+      if (!globalCancerType) {
+        setGlobalCancerType(profile.cancerType);
+      }
     }
-  }, [profile?.cancerType, setGlobalCancerType]);
+  }, [profile?.cancerType, globalCancerType, setGlobalCancerType]);
 
-  // 当用户在全局导航栏切换癌种时，若对应卡槽有档案，响应式无缝切换卡槽
+  // 当用户在全局导航栏切换癌种时，无论该卡槽是否已有档案，均响应式切换激活卡槽
   useEffect(() => {
     if (globalCancerType && globalCancerType !== activeSlot) {
       const existing = getProfileBySlot(globalCancerType);
-      if (existing || availableSlots.includes(globalCancerType)) {
-        setActiveSlot(globalCancerType);
-        setActiveCancerSlot(globalCancerType);
-        setProfile(existing);
-        loadProfile(globalCancerType, false);
+      setActiveSlot(globalCancerType);
+      setActiveCancerSlot(globalCancerType);
+      setProfile(existing);
+      if (existing) {
+        setShowUploader(false);
+      } else {
+        setShowUploader(true);
       }
+      loadProfile(globalCancerType, false);
     }
-  }, [globalCancerType]);
+  }, [globalCancerType, activeSlot]);
+
+  // 监听全局自定义事件 cancer-type-changed，确保跨组件即时响应
+  useEffect(() => {
+    const handleGlobalCancerChanged = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.cancerType && detail.cancerType !== activeSlot) {
+        const target = detail.cancerType as CancerType;
+        const existing = getProfileBySlot(target);
+        setActiveSlot(target);
+        setActiveCancerSlot(target);
+        setProfile(existing);
+        if (existing) {
+          setShowUploader(false);
+        } else {
+          setShowUploader(true);
+        }
+        loadProfile(target, false);
+      }
+    };
+    window.addEventListener("cancer-type-changed", handleGlobalCancerChanged);
+    return () => window.removeEventListener("cancer-type-changed", handleGlobalCancerChanged);
+  }, [activeSlot]);
 
   const { recommendedTargetDrugId, matchedGeneLabel } = React.useMemo(() => {
     if (!profile) {
@@ -625,11 +653,7 @@ export default function PatientDashboard() {
 
   const handleParsed = async (parsedData: any) => {
     try {
-      const parsedCancerType: CancerType = (parsedData.cancerType === 'breast' || parsedData.organ === 'breast')
-        ? 'breast'
-        : (parsedData.cancerType === 'colorectal' || parsedData.organ === 'colorectal')
-        ? 'colorectal'
-        : (activeSlot || 'lung');
+      const parsedCancerType: CancerType = normalizeCancerType(parsedData.cancerType || activeSlot, parsedData.organ);
 
       const targetSlot = parsedCancerType;
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -805,12 +829,12 @@ export default function PatientDashboard() {
         {!profile && (
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              {availableSlots.length > 0 ? `建立【${CancerRegistry.get(activeSlot)?.name || '原发'}】原发肿瘤病案` : '建立个人医学档案'}
+              建立【{CancerRegistry.get(activeSlot)?.name || '原发'}】个人医学档案
             </h1>
             <p className="text-slate-500 text-sm mt-1.5">
               {manualDirectMode 
-                ? '直接手动输入各项关键临床与病理指标，系统将实时推演 IASLC 9th TNM 分期与证据指南'
-                : '导入病理诊断与影像报告，系统将自动进行临床要素解析与指南循证对齐'}
+                ? `直接手动输入各项关键临床与病理指标，系统将实时推演 ${CancerRegistry.get(activeSlot)?.guidelineStandard || '最新国际权威临床分期'} 与证据指南`
+                : `导入病理诊断与影像报告，系统将自动进行【${CancerRegistry.get(activeSlot)?.name || '原发'}】临床要素解析与指南循证对齐`}
             </p>
             <div className="flex items-center justify-center gap-2 mt-4">
               <button
@@ -841,6 +865,7 @@ export default function PatientDashboard() {
           </div>
         )}
         <ReportUploader 
+          cancerType={activeSlot}
           initialData={editMode === 'edit_direct' ? profile : null}
           existingProfile={profile}
           initialManualMode={manualDirectMode}
@@ -849,11 +874,11 @@ export default function PatientDashboard() {
             setManualDirectMode(false);
             handleParsed(data);
           }}
-          onCancel={() => {
+          onCancel={profile ? () => {
             setShowUploader(false);
             setEditMode(null);
             setManualDirectMode(false);
-          }}
+          } : undefined}
         />
       </div>
     );
@@ -2498,7 +2523,7 @@ export default function PatientDashboard() {
                       onChange={() => setDeleteOption('single')}
                       className="text-purple-600 focus:ring-purple-500"
                     />
-                    <span>仅注销当前【{activeSlot === 'breast' ? '乳腺癌' : activeSlot === 'colorectal' ? '结直肠癌' : '肺癌'}】档案（保留另一癌种病案）</span>
+                    <span>仅注销当前【{CancerRegistry.get(activeSlot)?.name || '当前癌种'}】档案（保留另一癌种病案）</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer text-rose-700">
                     <input
@@ -2541,7 +2566,7 @@ export default function PatientDashboard() {
                     <span>正在销毁...</span>
                   </>
                 ) : (
-                  <span>{deleteOption === 'single' && availableSlots.length >= 2 ? `仅注销当前【${activeSlot === 'breast' ? '乳腺癌' : activeSlot === 'colorectal' ? '结直肠癌' : '肺癌'}】档案` : '确认彻底销毁并注销'}</span>
+                  <span>{deleteOption === 'single' && availableSlots.length >= 2 ? `仅注销当前【${CancerRegistry.get(activeSlot)?.name || '当前癌种'}】档案` : '确认彻底销毁并注销'}</span>
                 )}
               </button>
             </div>

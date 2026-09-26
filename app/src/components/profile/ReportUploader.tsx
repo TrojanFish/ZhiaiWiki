@@ -30,8 +30,10 @@ import {
   FileEdit,
   Edit3,
 } from "lucide-react";
-import type { SecondaryNodule, FollowUpRecord } from "@/lib/types";
+import type { SecondaryNodule, FollowUpRecord, CancerType } from "@/lib/types";
 import { computeClinicalTnmStage } from "@/lib/staging";
+import { CancerRegistry } from "@/lib/cancerRegistry";
+import { computeCancerStage } from "@/lib/stagingRegistry";
 import { 
   formatClinicalAiError, 
   isRateLimitOrQuotaError, 
@@ -45,6 +47,7 @@ interface ReportUploaderProps {
   onCancel?: () => void;
   initialManualMode?: boolean;
   onSwitchToUpload?: () => void;
+  cancerType?: CancerType;
 }
 
 interface UploadedReportImage {
@@ -204,7 +207,7 @@ const PRESET_CO_MUTATIONS = [
   }
 ];
 
-export default function ReportUploader({ onParsed, initialData, existingProfile, onCancel, initialManualMode, onSwitchToUpload }: ReportUploaderProps) {
+export default function ReportUploader({ onParsed, initialData, existingProfile, onCancel, initialManualMode, onSwitchToUpload, cancerType = 'lung' }: ReportUploaderProps) {
   const [uploadTab, setUploadTab] = useState<'image' | 'text'>('image');
   const [reportText, setReportText] = useState("");
   const [isParsing, setIsParsing] = useState(false);
@@ -252,7 +255,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
 
   const handleStartManualEntry = () => {
     const base = existingProfile || initialData || {};
-    const currentSlot = (base.cancerType || 'lung') as string;
+    const currentSlot = (cancerType || base.cancerType || 'lung') as CancerType;
     hasInitializedRef.current = `manual_${Date.now()}`;
     setParsedData({
       cancerType: currentSlot,
@@ -369,8 +372,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       const pathInvasive = parsedData.pathologyInvasiveSize !== "" && parsedData.pathologyInvasiveSize != null ? parseFloat(String(parsedData.pathologyInvasiveSize)) : null;
       const pathLepidic = parsedData.pathologyLepidicPercent !== "" && parsedData.pathologyLepidicPercent != null ? parseFloat(String(parsedData.pathologyLepidicPercent)) : null;
 
-      const calc = computeClinicalTnmStage({
-        noduleType: parsedData.noduleType || "mixed_ggo",
+      const currentCancer = (parsedData.cancerType || cancerType || 'lung') as CancerType;
+      const calc = computeCancerStage(currentCancer, {
+        ...parsedData,
         tumorSize: tumorVal,
         solidSize: solidVal,
         ctr: parsedData.ctr != null ? parseFloat(String(parsedData.ctr)) : (tumorVal && solidVal !== null && tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : null),
@@ -886,7 +890,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm sm:text-base font-extrabold text-slate-900">
-                  {parsedData?.isManualEntry ? "手动填报临床指标" : (initialData ? "核对并校准关键指标" : "报告解析要素确认")}
+                  {parsedData?.isManualEntry 
+                    ? `手动填报【${CancerRegistry.get(parsedData?.cancerType || cancerType || 'lung')?.name || '临床'}】指标` 
+                    : (initialData ? "核对并校准关键指标" : "报告解析要素确认")}
                 </h2>
                 {parsedData?.isManualEntry && (
                   <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
@@ -896,7 +902,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
               </div>
               <p className="text-[11px] text-slate-500 mt-0.5">
                 {parsedData?.isManualEntry 
-                  ? "请填写已知关键临床指标，未测项可留空，系统实时推演分期" 
+                  ? `请填写已知关键临床指标，未测项可留空，系统实时推演【${CancerRegistry.get(parsedData?.cancerType || cancerType || 'lung')?.guidelineStandard || '国际权威指南'}】分期` 
                   : "系统已完成智能提取，请核对各项关键要素，支持直接修改"}
               </p>
             </div>
@@ -971,8 +977,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             {stagingPreview && (
               <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">IASLC / AJCC 第 9 版</div>
-                  <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">2024新标准</span>
+                  <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">{CancerRegistry.get(parsedData?.cancerType || cancerType || 'lung')?.guidelineStandard || "权威临床分期标准"}</div>
+                  <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">国际标准</span>
                 </div>
                 <div className="text-lg font-extrabold text-emerald-900">
                   {stagingPreview.stage.includes("待定") ? "待完善指标 (Tx)" : (stagingPreview.stage.includes("期") ? stagingPreview.stage : `${stagingPreview.stage} 期`)}
@@ -1009,7 +1015,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             {stagingPreview && (
               <div className="md:hidden mb-4 p-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 flex items-center justify-between gap-2 shadow-2xs">
                 <div>
-                  <div className="text-[10px] font-bold text-emerald-700 uppercase">IASLC 9th 分期实时推演</div>
+                  <div className="text-[10px] font-bold text-emerald-700 uppercase">【{CancerRegistry.get(parsedData?.cancerType || cancerType || 'lung')?.name || "临床"}】分期实时推演</div>
                   <div className="text-sm font-extrabold text-emerald-950 flex items-center gap-1.5 mt-0.5">
                     <span>{stagingPreview.stage.includes("待定") ? "待完善指标 (Tx)" : (stagingPreview.stage.includes("期") ? stagingPreview.stage : `${stagingPreview.stage} 期`)}</span>
                     <span className="text-[11px] font-semibold text-emerald-700 font-mono">({stagingPreview.tStage}{stagingPreview.nStage}{stagingPreview.mStage})</span>
@@ -3294,14 +3300,18 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
   }
 
   return (
-    <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-8 border border-slate-200 shadow-sm max-w-3xl mx-auto w-full">
+    <div className="bg-white rounded-3xl p-3.5 sm:p-6 md:p-8 border border-slate-200 shadow-sm max-w-5xl mx-auto w-full">
       <div className="flex items-center gap-3.5 mb-3">
         <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100 flex-shrink-0">
           <FileSearch className="w-6 h-6 text-blue-600" />
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-lg font-bold text-slate-900">医疗报告多模态结构化解析</h2>
+            <h2 className="text-lg font-bold text-slate-900">
+              {cancerType && cancerType !== 'lung' 
+                ? `【${CancerRegistry.get(cancerType)?.name}】医疗报告多模态结构化解析` 
+                : '医疗报告多模态结构化解析'}
+            </h2>
             {existingProfile && (
               <span className="text-[10px] sm:text-xs text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">
                 增量融合模式 · 不抹除已有记录
