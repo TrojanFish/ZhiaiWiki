@@ -136,13 +136,21 @@ export async function POST(request: Request) {
       ...inputSpecific,
     };
 
+    const solidSizeVal = (data.solidSize !== undefined && data.solidSize !== null && data.solidSize !== "")
+      ? parseFloat(String(data.solidSize))
+      : (data.noduleType === 'pure_ggo' ? 0 : (existingSpecific?.solidSize !== undefined && existingSpecific?.solidSize !== null ? parseFloat(String(existingSpecific.solidSize)) : (tumorSizeVal != null && ctrVal != null ? Math.round(tumorSizeVal * ctrVal * 10) / 10 : null)));
+
+    if (cancerSpecificData && typeof cancerSpecificData === 'object') {
+      (cancerSpecificData as any).solidSize = solidSizeVal;
+    }
+
     const stagingResult = computeCancerStage(detectedCancerType, {
       ...data,
       ...(cancerSpecificData || {}),
       cancerType: detectedCancerType,
       noduleType: data.noduleType || data.morphology || "mixed_ggo",
       tumorSize: tumorSizeVal,
-      solidSize: data.solidSize ? parseFloat(data.solidSize) : null,
+      solidSize: solidSizeVal,
       ctr: ctrVal,
       pathologyTumorSize: data.pathologyTumorSize !== undefined && data.pathologyTumorSize !== null && data.pathologyTumorSize !== "" ? parseFloat(String(data.pathologyTumorSize)) : (existingProfile?.pathologyTumorSize ?? null),
       pathologyInvasiveSize: data.pathologyInvasiveSize !== undefined && data.pathologyInvasiveSize !== null && data.pathologyInvasiveSize !== "" ? parseFloat(String(data.pathologyInvasiveSize)) : (existingProfile?.pathologyInvasiveSize ?? null),
@@ -662,7 +670,7 @@ export async function POST(request: Request) {
       noduleType: profile.noduleType || 'mixed_ggo',
       morphology: profile.noduleType || 'mixed_ggo',
       tumorSize: tumorSizeVal,
-      solidSize: data.solidSize ? parseFloat(data.solidSize) : null,
+      solidSize: solidSizeVal,
       ctr: ctrVal,
       pathologyTumorSize: profile.pathologyTumorSize ?? data.pathologyTumorSize ?? null,
       pathologyInvasiveSize: profile.pathologyInvasiveSize ?? data.pathologyInvasiveSize ?? null,
@@ -838,13 +846,14 @@ export async function GET(request: Request) {
 
     // Recompute accurate Stage based on Cancer Registry and normalize all fields for frontend
     const tumorSize = profile.tumorSize ?? (profile.sizeMm ? profile.sizeMm / 10 : null);
+    const solidSize = (profile as any).solidSize ?? (cancerSpecific?.solidSize !== undefined && cancerSpecific?.solidSize !== null ? Number(cancerSpecific.solidSize) : null) ?? (tumorSize != null && profile.ctr != null ? Math.round(tumorSize * profile.ctr * 10) / 10 : null);
     const stagingResult = computeCancerStage(detectedCancerType, {
       ...profile,
       ...cancerSpecific,
       cancerType: detectedCancerType,
       noduleType: profile.noduleType || "mixed_ggo",
       tumorSize: tumorSize,
-      solidSize: (profile as any).solidSize ?? null,
+      solidSize: solidSize,
       ctr: profile.ctr ?? null,
       pathologyTumorSize: profile.pathologyTumorSize ?? null,
       pathologyInvasiveSize: profile.pathologyInvasiveSize ?? null,
@@ -1004,7 +1013,7 @@ export async function GET(request: Request) {
       noduleType: profile.noduleType || null,
       morphology: profile.noduleType || null,
       tumorSize: tumorSize,
-      solidSize: (profile as any).solidSize ?? null,
+      solidSize: solidSize,
       ctr: profile.ctr ?? null,
       pathologyTumorSize: profile.pathologyTumorSize ?? null,
       pathologyInvasiveSize: profile.pathologyInvasiveSize ?? null,

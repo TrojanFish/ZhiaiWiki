@@ -29,8 +29,11 @@ import {
   CheckCircle2,
   AlertOctagon,
   MinusCircle,
+  User,
+  Cloud,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import AuthModal from "@/components/AuthModal";
 
 import JourneyMap from "./JourneyMap";
 import SimilarCasesCard from "./SimilarCasesCard";
@@ -107,6 +110,7 @@ export default function PatientDashboard() {
   const [showUploader, setShowUploader] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [editMode, setEditMode] = useState<'edit_direct' | 'upload_new' | null>(null);
+  const [manualDirectMode, setManualDirectMode] = useState(false);
 
   // Sync refs to prevent async loadProfile from dismissing active calibration / uploader
   const showUploaderRef = useRef(showUploader);
@@ -121,6 +125,22 @@ export default function PatientDashboard() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [showDdiModal, setShowDdiModal] = useState(false);
   const [initialDdiDrugId, setInitialDdiDrugId] = useState<string | undefined>(undefined);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const email = typeof window !== "undefined" ? localStorage.getItem("email") : null;
+      setUserEmail(email);
+    };
+    checkAuth();
+    window.addEventListener("auth-change", checkAuth);
+    window.addEventListener("storage", checkAuth);
+    return () => {
+      window.removeEventListener("auth-change", checkAuth);
+      window.removeEventListener("storage", checkAuth);
+    };
+  }, []);
 
   // 核心原则：档案渲染严格绑定当前激活档案的真实属性，彻底根除切换导航栏导致的模板穿模
   const activeType: CancerType = (profile?.cancerType || activeSlot || 'lung') as CancerType;
@@ -434,6 +454,10 @@ export default function PatientDashboard() {
         setShowUploader(true);
         showUploaderRef.current = true;
         editModeRef.current = 'edit_direct';
+      } else if (modeParam === "manual") {
+        setManualDirectMode(true);
+        setShowUploader(true);
+        showUploaderRef.current = true;
       }
 
       const templateKey = urlParams.get("template");
@@ -784,15 +808,46 @@ export default function PatientDashboard() {
               {availableSlots.length > 0 ? `建立【${CancerRegistry.get(activeSlot)?.name || '原发'}】原发肿瘤病案` : '建立个人医学档案'}
             </h1>
             <p className="text-slate-500 text-sm mt-1.5">导入病理诊断与影像报告，系统将自动进行临床要素解析与指南循证对齐</p>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <button
+                type="button"
+                onClick={() => setManualDirectMode(false)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  !manualDirectMode
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <span>拍照/文本智能解析</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setManualDirectMode(true)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  manualDirectMode
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-2xs'
+                }`}
+              >
+                <Edit3 className="w-3.5 h-3.5 text-blue-600" />
+                <span>⚡ 直接手动填报指标 (无需报告)</span>
+              </button>
+            </div>
           </div>
         )}
         <ReportUploader 
           initialData={editMode === 'edit_direct' ? profile : null}
           existingProfile={profile}
-          onParsed={handleParsed}
+          initialManualMode={manualDirectMode}
+          onParsed={(data) => {
+            setManualDirectMode(false);
+            handleParsed(data);
+          }}
           onCancel={() => {
             setShowUploader(false);
             setEditMode(null);
+            setManualDirectMode(false);
           }}
         />
       </div>
@@ -860,6 +915,34 @@ export default function PatientDashboard() {
               <X className="w-4 h-4" />
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Guest Mode Cloud Sync Banner (移动端与桌面端通用的访客云端同步提示) */}
+      {!userEmail && profile && !loadedTemplate && (
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50/60 border border-blue-200/80 text-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-fade-in">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 shadow-2xs">
+              <Cloud className="w-4 h-4" />
+            </span>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
+                <span>当前为临时访客档案</span>
+                <span className="text-[10px] text-blue-700 bg-blue-100/80 px-1.5 py-0.5 rounded font-semibold">仅保存在当前设备</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5 truncate sm:whitespace-normal">
+                登录知癌维基账号即可永久保存病历，并在手机与电脑多端无缝实时同步
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAuthModal(true)}
+            className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 self-start sm:self-auto shrink-0 active:scale-95"
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>登录 / 云端同步</span>
+          </button>
         </div>
       )}
 
@@ -2493,6 +2576,19 @@ export default function PatientDashboard() {
             />
           </div>
         </div>
+      )}
+
+      {showAuthModal && (
+        <AuthModal 
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={(token, email) => {
+            localStorage.setItem("token", token);
+            localStorage.setItem("email", email);
+            setUserEmail(email);
+            setShowAuthModal(false);
+            window.dispatchEvent(new Event("auth-change"));
+          }}
+        />
       )}
       
     </div>

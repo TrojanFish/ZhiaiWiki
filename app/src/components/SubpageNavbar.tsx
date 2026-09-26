@@ -230,7 +230,7 @@ export default function SubpageNavbar() {
             </Link>
           </div>
 
-          {/* Mobile Right Action Area (< md): Streamlined [Search -> Coffee -> Menu] */}
+          {/* Mobile Right Action Area (< md): Streamlined [Search -> User/Login -> Coffee -> Menu] */}
           <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
             {/* 1. Mobile Search Trigger (⌘K Command Palette) */}
             <button
@@ -247,7 +247,10 @@ export default function SubpageNavbar() {
               <Search className="w-3.5 h-3.5" />
             </button>
 
-            {/* 2. Prominent Mobile Coffee Sponsorship Button (公益赞助·紧凑圆钮) */}
+            {/* 2. Mobile User Account / Login Trigger */}
+            <UserAvatar mode="compact" />
+
+            {/* 3. Prominent Mobile Coffee Sponsorship Button (公益赞助·紧凑圆钮) */}
             <button
               type="button"
               onClick={() => setCoffeeModalOpen(true)}
@@ -259,7 +262,7 @@ export default function SubpageNavbar() {
               <span className="sr-only">请喝咖啡</span>
             </button>
 
-            {/* 3. Mobile Hamburger Menu Trigger (Anchor at far right) */}
+            {/* 4. Mobile Hamburger Menu Trigger (Anchor at far right) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="w-8 h-8 rounded-full text-slate-700 hover:bg-slate-100 border border-slate-200/90 transition-colors focus:outline-none cursor-pointer flex items-center justify-center shadow-2xs active:scale-95 shrink-0"
@@ -300,6 +303,9 @@ export default function SubpageNavbar() {
                   <X className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Dedicated Account / Login Card */}
+              <UserAvatar mode="drawer" onAction={() => setMobileMenuOpen(false)} />
 
               {/* Patient Profile Quick Card (档案状态与直达入口) */}
               <Link

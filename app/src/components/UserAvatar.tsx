@@ -6,7 +6,12 @@ import { FileText, Calendar, LogOut, User } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { getCurrentUser, logout } from "@/lib/api";
 
-export default function UserAvatar() {
+interface UserAvatarProps {
+  mode?: "navbar" | "drawer" | "compact";
+  onAction?: () => void;
+}
+
+export default function UserAvatar({ mode = "navbar", onAction }: UserAvatarProps) {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -66,7 +71,74 @@ export default function UserAvatar() {
 
   return (
     <>
-      {userEmail ? (
+      {mode === "drawer" ? (
+        userEmail ? (
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/50 border border-slate-200/90 shadow-2xs space-y-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-teal-500 flex items-center justify-center text-white font-bold text-xs shadow-xs shrink-0 ring-2 ring-white">
+                {userEmail.charAt(0).toUpperCase()}
+                <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5 pointer-events-none">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-white"></span>
+                </span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-bold text-slate-900 truncate">{userEmail}</div>
+                <div className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  <span>患者云端账号 · 已连接</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+              <Link
+                href="/profile"
+                prefetch={true}
+                onClick={() => onAction?.()}
+                className="px-2.5 py-2 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-xs font-bold text-slate-700 hover:text-blue-700 flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+              >
+                <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>数字档案</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  handleLogout();
+                  onAction?.();
+                }}
+                className="px-2.5 py-2 rounded-xl bg-white hover:bg-rose-50 border border-slate-200 text-xs font-bold text-rose-600 flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              >
+                <LogOut className="w-3.5 h-3.5 shrink-0" />
+                <span>退出登录</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/90 via-sky-50/60 to-indigo-50/70 border border-blue-200/90 shadow-2xs space-y-2.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <User className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-extrabold text-slate-900 leading-tight">登录 / 注册账号</div>
+                <div className="text-[10px] text-blue-700/80 font-medium mt-0.5">跨设备云端同步 · 永久安全存储</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setShowAuthModal(true);
+                onAction?.();
+              }}
+              className="w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>立即登录 / 注册</span>
+            </button>
+          </div>
+        )
+      ) : userEmail ? (
         /* Logged-in State: Pure Round Avatar with Breathing Green Dot on Top-Right */
         <div className="relative flex items-center" ref={dropdownRef}>
           <button 
@@ -129,6 +201,17 @@ export default function UserAvatar() {
             </div>
           )}
         </div>
+      ) : mode === "compact" ? (
+        <button
+          type="button"
+          onClick={() => setShowAuthModal(true)}
+          className="h-8 px-2 sm:px-2.5 rounded-full bg-blue-50/90 hover:bg-blue-100/90 border border-blue-200/90 text-blue-700 text-xs font-bold transition-all inline-flex items-center gap-1 cursor-pointer active:scale-95 shadow-2xs"
+          title="登录账号"
+          aria-label="登录账号"
+        >
+          <User className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          <span className="text-[11px]">登录</span>
+        </button>
       ) : (
         /* Guest / Unauthenticated State: Clean Ghost Trigger to eliminate pill clutter */
         <button
