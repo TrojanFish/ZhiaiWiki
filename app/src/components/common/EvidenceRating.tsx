@@ -145,3 +145,44 @@ export default function EvidenceRating({
 }
 
 export { EvidenceRating };
+
+export interface DualEvidenceBadgeProps {
+  nccnCategory?: "1" | "2A" | "2B" | "3";
+  cscoLevel?: "I" | "II" | "III";
+  cscoGrade?: "A" | "B" | "C";
+  className?: string;
+}
+
+const NCCN_BADGE_STYLES = {
+  "1":  "bg-blue-600 text-white",
+  "2A": "bg-sky-600 text-white",
+  "2B": "bg-sky-200 text-sky-950",
+  "3":  "bg-slate-200 text-slate-700",
+};
+
+const CSCO_BADGE_STYLES = {
+  "I":   "bg-emerald-600 text-white",
+  "II":  "bg-emerald-500 text-white",
+  "III": "bg-slate-300 text-slate-800",
+};
+
+export function DualEvidenceBadge({
+  nccnCategory = "1",
+  cscoLevel = "I",
+  cscoGrade = "A",
+  className = "",
+}: DualEvidenceBadgeProps) {
+  const nccnClass = NCCN_BADGE_STYLES[nccnCategory] || NCCN_BADGE_STYLES["1"];
+  const cscoClass = CSCO_BADGE_STYLES[cscoLevel] || CSCO_BADGE_STYLES["I"];
+
+  return (
+    <div className={`inline-flex rounded-lg overflow-hidden border border-slate-200 shadow-2xs font-mono text-[10px] select-none font-bold ${className}`}>
+      <span className={`px-2 py-0.5 ${nccnClass}`}>
+        NCCN {nccnCategory}类
+      </span>
+      <span className={`px-2 py-0.5 border-l border-white/20 ${cscoClass}`}>
+        CSCO {cscoLevel}{cscoGrade}
+      </span>
+    </div>
+  );
+}

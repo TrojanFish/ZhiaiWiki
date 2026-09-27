@@ -3,7 +3,7 @@
 import React from "react";
 import { Dna, TrendingDown, Pill, ExternalLink, Check } from "lucide-react";
 import { STUDY_TYPE_LABELS } from "@/lib/evidence-data";
-import { EvidenceRating } from "@/components/common/EvidenceRating";
+import { EvidenceRating, DualEvidenceBadge } from "@/components/common/EvidenceRating";
 
 import type { CancerType } from "@/lib/types";
 
@@ -101,10 +101,15 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
           </div>
         </div>
 
-        {/* Evidence level */}
-        <div className="flex items-center gap-2 mb-4">
+        {/* Evidence level & Guideline Recommendation Badges */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
           <EvidenceRating level={study.evidenceLevel} maxLevel={5} size="sm" />
           <span className="text-slate-500 text-xs font-medium">{evidenceLevelLabels[study.evidenceLevel] || `等级 ${study.evidenceLevel}`}</span>
+          <DualEvidenceBadge
+            nccnCategory={study.evidenceLevel >= 4 ? "1" : study.evidenceLevel === 3 ? "2A" : "2B"}
+            cscoLevel={study.evidenceLevel >= 4 ? "I" : study.evidenceLevel === 3 ? "II" : "III"}
+            cscoGrade={study.evidenceLevel >= 4 ? "A" : "B"}
+          />
         </div>
 
         {/* Frontier Biomarker & Intervention badges if available */}

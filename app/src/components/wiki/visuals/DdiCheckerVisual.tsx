@@ -226,7 +226,7 @@ export function DdiCheckerVisual({
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>
-                  <strong>权威指南提醒</strong>：患者属于 <strong>IA 期极早期低危组</strong>，虽然检出【{geneInfo}】，但 CSCO / NCCN 指南明文规定<strong>术后无需辅助靶向治疗（严禁过度用药）</strong>。以下排查自检仅供常识储备了解。
+                  <strong>权威指南提醒</strong>：患者属于 <strong>IA 期极早期低危组</strong>，虽然检出【{geneInfo}】，但 CSCO / NCCN 指南明文规定<strong>术后无需辅助靶向治疗（指南明确：此期别无需辅助靶向治疗）</strong>。以下排查自检仅供常识储备了解。
                 </span>
               </div>
               <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0 font-bold self-start sm:self-auto inline-flex items-center gap-1">
@@ -420,9 +420,22 @@ export function DdiCheckerVisual({
             <span className="font-bold text-slate-900">第三步：临床相互作用排查报告与服药时钟</span>
           </div>
           <div className="flex items-center gap-2 text-[11px] self-start sm:self-auto">
-            <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 font-bold">禁忌: {analysisResult.severeCount}</span>
-            <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold">需错峰: {analysisResult.cautionCount}</span>
-            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">安全: {analysisResult.safeCount}</span>
+            {analysisResult.severeCount > 0 && (
+              <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 font-bold text-[11px] inline-flex items-center gap-1">
+                <span aria-hidden="true">⚠</span>
+                <span>需告知医生: {analysisResult.severeCount} 项</span>
+              </span>
+            )}
+            {analysisResult.cautionCount > 0 && (
+              <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold text-[11px] inline-flex items-center gap-1">
+                <span aria-hidden="true">⏱</span>
+                <span>需错开时间: {analysisResult.cautionCount} 项</span>
+              </span>
+            )}
+            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold text-[11px] inline-flex items-center gap-1">
+              <span aria-hidden="true">✓</span>
+              <span>可以联用: {analysisResult.safeCount} 项</span>
+            </span>
           </div>
         </div>
 
@@ -484,9 +497,17 @@ export function DdiCheckerVisual({
                       {selectedTarget.brandName.split(" / ")[0]} + {chronicDrug.name}
                     </h4>
                   </div>
-                  <span className="text-[10px] text-slate-500 font-mono self-start sm:self-auto">
-                    证据来源: {rule.evidenceLevel}
-                  </span>
+                  <div className="flex items-center gap-1.5 self-start sm:self-auto">
+                    {rule.riskLevel === 'severe_contraindication' ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-bold bg-blue-600 text-white">
+                        📋 {rule.evidenceLevel}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-bold bg-slate-100 text-slate-700 border-slate-200">
+                        📋 {rule.evidenceLevel}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 text-xs">
@@ -557,17 +578,21 @@ export function DdiCheckerVisual({
         <div className="sticky bottom-0 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 z-20 shrink-0">
           <div className="flex items-center gap-1.5 sm:gap-2 text-xs flex-wrap">
             <span className="text-[11px] text-slate-500 font-medium">排查小结：</span>
-            <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
-              <span>禁忌 {analysisResult.severeCount}</span>
-            </span>
-            <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-              <span>需错峰 {analysisResult.cautionCount}</span>
-            </span>
+            {analysisResult.severeCount > 0 && (
+              <span className="text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                <span>需告知医生 {analysisResult.severeCount}</span>
+              </span>
+            )}
+            {analysisResult.cautionCount > 0 && (
+              <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                <span>需错开时间 {analysisResult.cautionCount}</span>
+              </span>
+            )}
             <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold text-[10px] sm:text-[11px] inline-flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-              <span>安全 {analysisResult.safeCount}</span>
+              <span>可以联用 {analysisResult.safeCount}</span>
             </span>
           </div>
 

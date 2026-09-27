@@ -9,12 +9,23 @@ import {
   ShieldCheck,
   Microscope,
   Activity,
-  Loader2
+  Loader2,
+  TrendingUp,
+  GitBranch,
+  Sparkles
 } from "lucide-react";
 import StudyCard, { StudyItem } from "@/components/StudyCard";
 import Footer from "@/components/Footer";
 import { useCancerType } from "@/components/common/CancerSwitch";
 import { CancerRegistry } from "@/lib/cancerRegistry";
+import { KmCurveChart } from "@/components/common/KmCurveChart";
+import { ForestPlotChart } from "@/components/common/ForestPlotChart";
+import { TrialEligibilityMatrix } from "@/components/common/TrialEligibilityMatrix";
+import { 
+  LANDMARK_KM_DATA, 
+  LANDMARK_FOREST_DATA, 
+  LANDMARK_TRIAL_CRITERIA 
+} from "@/lib/landmarkStudiesData";
 
 export type StudyTopic = "all" | "surgery" | "targeted" | "immunotherapy" | "pathology" | "imaging";
 
@@ -31,6 +42,7 @@ export default function StudiesPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState<StudyTopic>("all");
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"library" | "km" | "forest" | "eligibility">("library");
   const activeRequestIdRef = React.useRef(0);
 
   // 300ms debounce on search input to eliminate request storm and typing stutter
@@ -330,13 +342,97 @@ export default function StudiesPage() {
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
         </p>
+
+        {/* View Mode Switcher: 核心文献库 / KM生存曲线 / HR森林图 / 试验入组筛查 */}
+        <div className="pt-2 flex items-center justify-center gap-1.5 sm:gap-2 overflow-x-auto p-1.5 bg-slate-200/80 rounded-2xl max-w-2xl mx-auto border border-slate-300/70 shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setViewMode("library")}
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              viewMode === "library"
+                ? "bg-white text-slate-900 shadow-xs font-extrabold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>文献库 ({totalCount || filteredStudies.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("km")}
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              viewMode === "km"
+                ? "bg-white text-blue-700 shadow-xs font-extrabold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+            <span>KM 生存曲线</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("forest")}
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              viewMode === "forest"
+                ? "bg-white text-indigo-700 shadow-xs font-extrabold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <GitBranch className="w-3.5 h-3.5 text-indigo-600" />
+            <span>HR 森林图</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("eligibility")}
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              viewMode === "eligibility"
+                ? "bg-white text-emerald-700 shadow-xs font-extrabold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>试验入组筛查</span>
+          </button>
+        </div>
       </header>
 
       {/* Studies Main Area */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         
-        {/* 1. Sticky Segmented Topic Navigation Bar (Capsule Stepper) */}
-        <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
+        {/* Mode 1: Kaplan-Meier Survival Curve */}
+        {viewMode === "km" && (
+          <div className="space-y-6 animate-fade-in">
+            <KmCurveChart
+              {...(LANDMARK_KM_DATA[cancerType] || LANDMARK_KM_DATA.lung)}
+            />
+          </div>
+        )}
+
+        {/* Mode 2: Hazard Ratio Forest Plot */}
+        {viewMode === "forest" && (
+          <div className="space-y-6 animate-fade-in">
+            <ForestPlotChart
+              {...(LANDMARK_FOREST_DATA[cancerType] || LANDMARK_FOREST_DATA.lung)}
+            />
+          </div>
+        )}
+
+        {/* Mode 3: Trial Eligibility Matrix */}
+        {viewMode === "eligibility" && (
+          <div className="space-y-6 animate-fade-in">
+            <TrialEligibilityMatrix
+              trialTitle={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).title}
+              phase={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).phase}
+              criteria={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).criteria}
+            />
+          </div>
+        )}
+
+        {/* Mode 4: Default Full Studies Library */}
+        {viewMode === "library" && (
+          <>
+            {/* 1. Sticky Segmented Topic Navigation Bar (Capsule Stepper) */}
+            <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
           {topicTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = selectedTopic === tab.id;
@@ -424,6 +520,8 @@ export default function StudiesPage() {
             ))}
           </div>
         )}
+        </>
+      )}
       </main>
 
       <Footer maxWidth="max-w-7xl" />

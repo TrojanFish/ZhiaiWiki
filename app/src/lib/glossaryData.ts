@@ -267,6 +267,125 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     summary: "神经内分泌细胞与红细胞内含有的一种酶，正常参考值一般在 0 ~ 16.3 ng/mL。",
     clinicalMeaning: "小细胞肺癌特异性标志物。抽血时如果标本发生轻微溶血（红细胞破裂）会释放大量 NSE 导致假性偏高。",
     plainLanguageReassurance: "抽血样本轻微溶血是造成 NSE 假阳性升高的最常见原因，若胸部 CT 未见异常，通常在 2~4 周后重新空腹复查即可消除误会。"
+  },
+
+  // ================= NHS.UK 专科肿瘤健康素养核心术语 =================
+  "EGFR": {
+    term: "EGFR 基因突变",
+    enName: "EGFR Mutation",
+    category: "biomarker",
+    categoryLabel: "靶向治疗靶点",
+    summary: "肿瘤细胞生长开关发生持续激活故障，是靶向药物（如奥希替尼）的黄金靶点。",
+    clinicalMeaning: "外显子 19 缺失 (19del) 及 21 外显子 L858R 为经典敏感突变，三代 TKI 治疗响应率极高，脑转移保护良好。",
+    plainLanguageReassurance: "检测出 EGFR 突变是明确的积极信号，意味着有极其精准高效的口服靶向药物可用，整体生存期获益显著。"
+  },
+  "HER2": {
+    term: "HER2 基因 / 蛋白状态",
+    enName: "HER2 Status",
+    category: "biomarker",
+    categoryLabel: "靶向治疗靶点",
+    summary: "肿瘤细胞表面的一种受体蛋白，过度表达像天线一样促使癌细胞分裂生长。",
+    clinicalMeaning: "分为 HER2 阳性 (IHC 3+ 或 FISH 扩增)、HER2 低表达 (IHC 1+/2+ 且 FISH 阴性) 及阴性。针对性单抗 (曲妥珠单抗) 及 ADC 药物 (DS-8201) 疗效卓越。",
+    plainLanguageReassurance: "现代肿瘤学已经进入抗 HER2 精准靶向时代，新型 ADC 药物为 HER2 异常患者带来了颠覆性的疗效突破。"
+  },
+  "pCR": {
+    term: "病理完全缓解 (pCR)",
+    enName: "Pathological Complete Response",
+    category: "pathology",
+    categoryLabel: "新辅助治疗结局",
+    summary: "新辅助系统治疗（化疗/免疫/靶向）后行外科手术，切除标本在显微镜下未找到任何存活癌细胞。",
+    clinicalMeaning: "表明原发灶和区域淋巴结内的存活肿瘤细胞均被全身治疗彻底杀灭，是预测长期无事件生存期 (EFS) 的黄金替代终点。",
+    plainLanguageReassurance: "达到 pCR 属于临床新辅助治疗的最佳胜利！多项国际大型 RCT 显示达到 pCR 的患者长期治愈率和无病生存率极高。"
+  },
+  "IHC": {
+    term: "免疫组织化学 (IHC)",
+    enName: "Immunohistochemistry",
+    category: "pathology",
+    categoryLabel: "病理检测技术",
+    summary: "通过抗原抗体反应在病理组织切片上给特定蛋白分子染色定位的检验技术。",
+    clinicalMeaning: "用于明确肿瘤细胞的起源组织学分类（如 TTF-1/P40 区分腺癌或鳞癌）及指导药物靶点（如 PD-L1、HER2 表达程度）。",
+    plainLanguageReassurance: "IHC 结果中的阳性仅代表肿瘤细胞携带某种天然蛋白标签，用于协助医生确诊分类，绝不代表扩散或晚期。"
+  },
+  "CRM": {
+    term: "环周切缘 (CRM)",
+    enName: "Circumferential Resection Margin",
+    category: "pathology",
+    categoryLabel: "直肠癌外科病理",
+    summary: "直肠手术切除标本未被腹膜覆盖的侧面切缘到肿瘤最近浸润点的微观距离。",
+    clinicalMeaning: "CRM 距离 > 1mm 为阴性安全切缘；CRM ≤ 1mm 为阳性，提示局部复发风险升高，通常需术前全程新辅助治疗 (TNT) 强化降期。",
+    plainLanguageReassurance: "术前高分辨率 MRI 可精确预测 CRM 状态。若有威胁，现代规范放化疗可有效缩小病灶，大幅提高安全根治保肛机会。"
+  },
+  "MSI": {
+    term: "微卫星高度不稳定 (MSI-H / dMMR)",
+    enName: "Microsatellite Instability-High",
+    category: "biomarker",
+    categoryLabel: "免疫治疗黄金靶标",
+    summary: "细胞错配修复系统功能缺陷导致 DNA 复制微卫星片段累积突变。",
+    clinicalMeaning: "肿瘤新抗原丰富、免疫原性极强。对 PD-1/PD-L1 单抗等免疫检查点抑制剂极为敏感，部分早期患者新辅助双免可达 60%+ pCR。",
+    plainLanguageReassurance: "MSI-H / dMMR 是目前免疫治疗领域最顶级的'金牌靶点'，意味着免疫系统能强力识别杀灭肿瘤，治疗前景极其光明。"
+  },
+  "ChildPugh": {
+    term: "Child-Pugh 肝功能储备分级",
+    enName: "Child-Pugh Score",
+    category: "staging",
+    categoryLabel: "肝功能分级标准",
+    summary: "综合胆红素、白蛋白、凝血酶原时间、腹水及肝性脑病 5 项指标评估肝脏生理代偿储备的积分系统。",
+    clinicalMeaning: "Child-Pugh A 级 (5-6分) 肝功能良好，可耐受根治性切除、局部介入及系统靶免治疗；B 级需谨慎保肝减量；C 级属于终末失代偿。",
+    plainLanguageReassurance: "对于肝癌患者，'保肝'与'治瘤'同样重要。医生通过 Child-Pugh 分级为您严格把关用药安全性，避免任何肝功能过度损伤。"
+  },
+  "BRAF": {
+    term: "BRAF V600E 突变",
+    enName: "BRAF V600E Mutation",
+    category: "biomarker",
+    categoryLabel: "靶向治疗靶点",
+    summary: "MAPK 信号通路核心激酶发生激活突变，细胞分裂加速。",
+    clinicalMeaning: "常见于甲状腺乳头状癌 (60%+)、结直肠癌 (8%~10%) 及非小细胞肺癌。结直肠癌中提示高侵袭性，但目前有达拉非尼+曲美替尼等双靶/三靶方案破局。",
+    plainLanguageReassurance: "甲状腺癌中单纯 BRAF V600E 并不等同于晚期复发，绝大多数仍处于惰性低危范围；其他癌种中也有明确的双靶联合用药方案。"
+  },
+  "Claudin18.2": {
+    term: "Claudin 18.2 蛋白表达",
+    enName: "Claudin 18.2 Expression",
+    category: "biomarker",
+    categoryLabel: "胃癌前沿靶点",
+    summary: "紧密连接蛋白家族分子，在胃黏膜上皮恶变为胃癌后暴露于细胞表面。",
+    clinicalMeaning: "在胃癌/胃食管结合部腺癌中阳性率约为 35%~40%。SPOTLIGHT / GLOW 大型研究证实佐妥昔单抗 (Zolbetuximab) 联合化疗显著延长生存期。",
+    plainLanguageReassurance: "Claudin 18.2 是近年来胃癌领域最受瞩目的前沿靶点之一，若检测呈高表达，患者拥有专属新型靶向药物治疗机会。"
+  },
+  "DDI": {
+    term: "药物相互作用 (DDI)",
+    enName: "Drug-Drug Interaction",
+    category: "biomarker",
+    categoryLabel: "临床药理学安全",
+    summary: "两种或多种药物同时或先后服用时，通过竞争代谢酶 (如 CYP3A4) 或转运蛋白导致血药浓度剧变或毒性叠加。",
+    clinicalMeaning: "强诱导剂 (如利福平) 会使靶向药浓度暴跌失效；强抑制剂 (或西柚汁) 会导致靶向血药浓度飙升增加严重毒性；某些胃药 (PPI) 改变酸碱度会降低吸收。",
+    plainLanguageReassurance: "大多数 DDI 风险都可以通过错开服药时间 (如间隔 2~4 小时) 或换用同类兼容药物轻松规避，遵医嘱规划即可完全安心。"
+  },
+  "淋巴结转移": {
+    term: "区域淋巴结转移 (N+)",
+    enName: "Regional Lymph Node Metastasis",
+    category: "staging",
+    categoryLabel: "分期与预后关键要素",
+    summary: "原发灶脱落的肿瘤细胞通过淋巴引流通道到达邻近引流区域的淋巴滤泡滤网组织。",
+    clinicalMeaning: "是肿瘤解剖学 TNM 分期的 N 分期决定因素。N1 为同侧支气管/肺门或第 1 站；N2 为纵隔或第 2 站。提示需要系统辅助治疗或围术期综合治疗。",
+    plainLanguageReassurance: "淋巴结是人体的防线哨卡，发现淋巴结转移绝不等于全身失控扩散！现代规范的清扫手术结合术后辅助靶向/免疫能极大阻断转移链条。"
+  },
+  "EMVI": {
+    term: "壁外血管侵犯 (EMVI)",
+    enName: "Extramural Venous Invasion",
+    category: "pathology",
+    categoryLabel: "直肠癌影像/病理指标",
+    summary: "肿瘤浸润并穿破直肠固有肌层，在肌层外的静脉血管管腔内形成癌栓。",
+    clinicalMeaning: "高分辨率 MRI (mrEMVI) 与术后病理是评估远处血行转移风险的关键指标。阳性患者推荐接受全程新辅助治疗 (TNT) 或强化术后辅助化疗。",
+    plainLanguageReassurance: "术前 MRI 早期识别 EMVI 能够使医疗团队提前布局术前靶免化疗，在手术前将微小癌栓彻底杀死转化。"
+  },
+  "Lauren": {
+    term: "Lauren 胃癌组织学分型",
+    enName: "Lauren Classification of Gastric Cancer",
+    category: "pathology",
+    categoryLabel: "胃癌组织学分型",
+    summary: "1965 年由 Lauren 教授提出的经典胃癌病理分类法，将胃癌划分为肠型 (Intestinal) 与弥漫型 (Diffuse) 两大类。",
+    clinicalMeaning: "肠型胃癌多见于中老年、由慢性萎缩性胃炎演进，对常规氟尿嘧啶+铂类化疗敏感；弥漫型印戒细胞癌多见于年轻患者，对围手术期 FLOT 需结合分子靶向评估。",
+    plainLanguageReassurance: "Lauren 分型是肿瘤科医生量身定制手术切缘范围 (弥漫型需切缘更大) 与化疗方案的关键科学参照，指导精细个体化治疗。"
   }
 };
 
@@ -276,12 +395,21 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
 export function findGlossaryTerm(name: string): GlossaryTerm | null {
   if (!name) return null;
   const clean = name.trim();
+  const lower = clean.toLowerCase();
   
   if (CLINICAL_GLOSSARY[clean]) return CLINICAL_GLOSSARY[clean];
 
-  // Direct exact sub-matches
+  // Direct exact sub-matches or case-insensitive key matches
   for (const [key, val] of Object.entries(CLINICAL_GLOSSARY)) {
-    if (clean === key || clean.includes(key) || key.includes(clean)) {
+    const kLower = key.toLowerCase();
+    if (
+      clean === key || 
+      lower === kLower ||
+      clean.includes(key) || 
+      key.includes(clean) ||
+      val.term.toLowerCase().includes(lower) ||
+      val.enName.toLowerCase().includes(lower)
+    ) {
       return val;
     }
   }

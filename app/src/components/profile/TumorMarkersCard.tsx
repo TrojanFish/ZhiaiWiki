@@ -19,6 +19,16 @@ import type { TumorMarkersData } from "@/lib/types";
 import { evaluateTumorMarkers, TUMOR_MARKER_DEFINITIONS } from "@/lib/tumorMarkers";
 import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 
+// Nordhealth A.3: 5级危急值状态体系 (颜色 + 图标 + 文字 三合一)
+const CRITICAL_LEVEL = (value: number, refMax: number, refMin = 0) => {
+  const ratio = value / refMax;
+  if (value < refMin * 0.5 && refMin > 0) return { bg: 'bg-violet-50 border-violet-300 border-dashed', text: 'text-violet-800', icon: '▼', label: '危急低值' };
+  if (value < refMin && refMin > 0) return { bg: 'bg-sky-50 border-sky-200', text: 'text-sky-700', icon: '↓', label: '偏低' };
+  if (ratio <= 1) return { bg: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-700', icon: '✓', label: '正常' };
+  if (ratio <= 2) return { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-800', icon: '↑', label: '偏高' };
+  return { bg: 'bg-rose-50 border-rose-300 border-dashed', text: 'text-rose-800', icon: '▲', label: '危急高值' };
+};
+
 interface TumorMarkersCardProps {
   markers?: TumorMarkersData | null;
   markersHistory?: TumorMarkersData[] | null;
@@ -584,16 +594,22 @@ export function TumorMarkersCard({
                       strokeDasharray="4 4"
                       rx="4"
                     />
-                    <text
-                      x={paddingX + 6}
-                      y={safeBandY + 12}
-                      fill="#059669"
-                      fontSize="10"
-                      fontWeight="bold"
-                      className="select-none"
-                    >
-                      生理代谢安全带 (≤ {ceiling} {activeDef.unit})
-                    </text>
+                    <>
+                      {/* 安全上限参考虚线 */}
+                      <line
+                        x1={paddingX}
+                        y1={safeBandY}
+                        x2={svgWidth - paddingX}
+                        y2={safeBandY}
+                        stroke="#059669"
+                        strokeWidth="1"
+                        strokeDasharray="4 4"
+                        opacity="0.7"
+                      />
+                      <text x={svgWidth - paddingX - 4} y={safeBandY - 4} textAnchor="end" fill="#059669" fontSize="10" fontWeight="bold" className="select-none">
+                        安全上限 ≤{ceiling} {activeDef.unit}
+                      </text>
+                    </>
 
                     {/* Grid Baseline */}
                     <line
@@ -754,11 +770,11 @@ export function TumorMarkersCard({
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="px-4 py-3">随访日期</th>
-                    <th className="px-4 py-3">检测指标</th>
-                    <th className="px-4 py-3">实测数值</th>
-                    <th className="px-4 py-3">生理参考区间</th>
-                    <th className="px-4 py-3">状态评估</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">随访日期</th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">检测指标</th>
+                    <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide tabular-nums">实测数值</th>
+                    <th className="px-3 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">生理参考区间</th>
+                    <th className="px-3 py-2.5 text-center text-xs font-semibold text-slate-500 uppercase tracking-wide">状态评估</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-mono tabular-nums">
@@ -766,23 +782,22 @@ export function TumorMarkersCard({
                     const isSafe = pt.value <= ceiling;
                     return (
                       <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="px-4 py-3 font-semibold text-slate-900">{pt.date}</td>
-                        <td className="px-4 py-3 font-sans text-slate-700">{activeDef.nameZh}</td>
-                        <td className={`px-4 py-3 font-bold font-mono tabular-nums text-sm ${isSafe ? "text-emerald-700" : "text-amber-700"}`}>
+                        <td className="px-3 py-2.5 font-semibold text-slate-900">{pt.date}</td>
+                        <td className="px-3 py-2.5 font-sans text-slate-700">{activeDef.nameZh}</td>
+                        <td className={`px-3 py-2.5 text-right font-bold font-mono tabular-nums text-sm ${isSafe ? "text-emerald-700" : "text-amber-700"}`}>
                           {pt.value} {activeDef.unit}
                         </td>
-                        <td className="px-4 py-3 text-slate-500 font-sans">{activeDef.refRange}</td>
-                        <td className="px-4 py-3 font-sans">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-bold ${
-                            isSafe ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
-                          }`}>
-                            {isSafe ? (
-                              <Check className="w-3 h-3 text-emerald-600 shrink-0" />
-                            ) : (
-                              <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
-                            )}
-                            <span>{isSafe ? "处于安全带" : "建议复查"}</span>
-                          </span>
+                        <td className="px-3 py-2.5 text-right text-slate-500 font-sans font-mono tabular-nums">{activeDef.refRange}</td>
+                        <td className="px-3 py-2.5 text-center font-sans">
+                          {(() => {
+                            const level = CRITICAL_LEVEL(pt.value, activeDef.refMax);
+                            return (
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${level.bg} ${level.text}`}>
+                                <span aria-hidden="true">{level.icon}</span>
+                                <span>{level.label}</span>
+                              </span>
+                            );
+                          })()}
                         </td>
                       </tr>
                     );
