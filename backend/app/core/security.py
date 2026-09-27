@@ -3,7 +3,7 @@ import hmac
 import secrets
 import time
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 import jwt
 from app.core.config import settings
@@ -11,6 +11,13 @@ from app.core.config import settings
 PBKDF2_ITERATIONS = 210000
 DKLEN = 64
 HASH_ALGORITHM = "sha512"
+
+# Minimum accepted PBKDF2 iteration count when VERIFYING stored hashes.
+# Any stored hash with fewer iterations than this threshold is treated as
+# tampered/downgraded and rejected — even if the hash bytes would match.
+# This prevents an attacker who gains write access to the DB from replacing
+# a strong hash with a 1-iteration hash to trivially bypass auth.
+PBKDF2_MIN_ACCEPTED_ITERATIONS = 100_000
 
 # Fallback bcrypt context for backward compatibility with existing databases
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -72,6 +79,12 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
             if len(parts) == 4:
                 _, iter_str, salt, expected_hex = parts
                 iterations = int(iter_str)
+                # BUG-013 GUARD: Reject any stored hash that claims fewer iterations
+                # than our minimum threshold. This prevents a database-level downgrade
+                # attack where the iterations field is tampered to a trivially low
+                # value (e.g. 1) making brute-force trivial.
+                if iterations < PBKDF2_MIN_ACCEPTED_ITERATIONS:
+                    return False
                 computed_key = hashlib.pbkdf2_hmac(
                     HASH_ALGORITHM,
                     plain_password.encode("utf-8"),
@@ -103,9 +116,9 @@ def needs_rehash(hashed_password: str) -> bool:
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt

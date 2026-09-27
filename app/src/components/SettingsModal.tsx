@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   X, 
   Settings, 
@@ -30,10 +31,15 @@ export default function SettingsModal({
   onClose,
   onOpenCoffee,
 }: SettingsModalProps) {
+  const [mounted, setMounted] = useState(false);
   const { cancerType, setCancerType } = useCancerType();
   const { lang, setLang } = useLanguage();
   const [defaultCancer, setDefaultCancer] = useState<CancerType>("lung");
   const [cacheCleared, setCacheCleared] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Read default cancer preference from storage
   useEffect(() => {
@@ -87,7 +93,9 @@ export default function SettingsModal({
     } catch {}
   };
 
-  return (
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
     <div
       onClick={onClose}
       className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 cursor-pointer animate-fade-in overflow-hidden sm:overflow-y-auto"
@@ -98,7 +106,7 @@ export default function SettingsModal({
       <div
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: "440px", width: "100%" }}
-        className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:max-w-md w-full border-t sm:border border-slate-200/90 shadow-2xl flex flex-col space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-5 max-h-[92vh] overflow-y-auto mx-auto"
+        className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:max-w-md w-full border-t sm:border border-slate-200/90 shadow-2xl flex flex-col space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-5 max-h-[92vh] max-h-[92dvh] overflow-y-auto overscroll-contain mx-auto"
       >
         {/* iOS Grabber for Mobile */}
         <div className="sm:hidden -mt-2 mb-1 flex justify-center shrink-0 w-full">
@@ -344,6 +352,7 @@ export default function SettingsModal({
           完成并保存偏好设置
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

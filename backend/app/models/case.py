@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Float, Integer, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from app.core.database import Base
 
 class PatientCase(Base):
@@ -18,7 +18,7 @@ class PatientCase(Base):
     # AI Report Result
     report_json = Column(JSON, nullable=True)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User")

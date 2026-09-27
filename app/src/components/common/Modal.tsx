@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 export interface ModalProps {
@@ -21,6 +22,7 @@ export interface ModalProps {
  * 1. 顶部 Header (固定吸顶)
  * 2. 中间 Body (flex-1 弹性滚动)
  * 3. 底部 Footer (实体纯白吸底操作栏)
+ * 采用 createPortal 挂载到 document.body，彻底逃逸局部层叠上下文陷阱
  */
 export default function Modal({
   isOpen,
@@ -34,6 +36,12 @@ export default function Modal({
   className = "",
   hideHeader = false,
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // 监听 Escape 键自动关闭
   useEffect(() => {
     if (!isOpen) return;
@@ -59,9 +67,9 @@ export default function Modal({
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -78,7 +86,7 @@ export default function Modal({
       {/* 弹窗主体卡片 (3-Tier Structure) */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${maxWidth} bg-white rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col overflow-hidden pb-safe sm:pb-0 ${className}`}
+        className={`relative w-full ${maxWidth} bg-white rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] max-h-[92dvh] flex flex-col overflow-hidden pb-safe sm:pb-0 ${className}`}
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
@@ -115,7 +123,7 @@ export default function Modal({
         )}
 
         {/* Tier 2: 弹窗中间内容区域 (弹性滚动) */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 sm:p-6">
+        <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar p-5 sm:p-6">
           {children}
         </div>
 
@@ -126,6 +134,7 @@ export default function Modal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

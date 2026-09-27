@@ -204,14 +204,17 @@ async def generate_analysis(
         raise
     except Exception as e:
         logger.error("Analysis generation error [trace_id=%s]: %s", trace_id, e, exc_info=True)
-        if "Incorrect API key provided" in str(e) or "sk-mock-key" in str(e):
-            return {
-                "risk_level": "Mock LLM Error - Configure API Key",
-                "key_findings": ["System detected STAS: " + str(profile.stas)],
-                "evidence_summary": "Please add a real OPENAI_API_KEY to your .env file to unlock the full AI analysis.",
-                "recommendations": ["Check backend logs"]
-            }
+        # Return 503 when the LLM API key is missing or invalid — no patient data in response
+        if "Incorrect API key provided" in str(e) or "sk-mock-key" in str(e) or "AuthenticationError" in type(e).__name__:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "AI 分析服务当前不可用：后端未配置有效的 LLM API Key。"
+                    "请联系系统管理员在服务器环境中设置 OPENAI_API_KEY。"
+                    f" (Request ID: {trace_id})"
+                ),
+            )
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail=f"智能循证分析服务暂时遇到内部处理异常，请稍后重试 (Request ID: {trace_id})"
         )

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { 
   Search, 
   X, 
@@ -259,9 +260,14 @@ export function WikiSpotlightSearchModal({
     }
   }, [cancerType]);
 
+  const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
   const [cursorIndex, setCursorIndex] = useState(-1);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -467,12 +473,12 @@ export function WikiSpotlightSearchModal({
     }
   }, [searchResults, cursorIndex, handleSelect]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const hasQuery = query.trim().length > 0;
   const hasResults = searchResults.length > 0;
 
-  return (
+  return createPortal(
     <div 
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-fade-in overflow-hidden sm:overflow-y-auto print:hidden"
@@ -669,7 +675,8 @@ export function WikiSpotlightSearchModal({
           <span>知癌维基 · 【{plugin.name}】临床词条检索系统</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

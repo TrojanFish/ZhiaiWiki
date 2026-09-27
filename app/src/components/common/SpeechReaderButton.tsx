@@ -95,7 +95,7 @@ export default function SpeechReaderButton({
       <button
         type="button"
         onClick={handleToggle}
-        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all active:scale(0.96) ${
+        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all active:scale-[0.96] ${
           isPlaying
             ? isPaused
               ? "bg-amber-50 text-amber-700 border border-amber-300"

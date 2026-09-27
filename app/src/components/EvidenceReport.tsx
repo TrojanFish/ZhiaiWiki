@@ -321,7 +321,7 @@ export default function EvidenceReport({
               key={tab}
               id={`report-tab-${tab}`}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale(0.98) ${
+              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-[0.98] ${
                 activeTab === tab
                   ? "btn-primary text-white shadow-xs"
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
@@ -574,7 +574,7 @@ function StudiesTab({ result, onInspectStudy }: { result: PatientMatchResult; on
                   ...study,
                   sampleSize: study.patientN,
                 })}
-                className="absolute top-4 right-4 sm:right-6 px-2.5 py-1 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 transition-all shadow-2xs active:scale(0.96) inline-flex items-center gap-1"
+                className="absolute top-4 right-4 sm:right-6 px-2.5 py-1 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 transition-all shadow-2xs active:scale-[0.96] inline-flex items-center gap-1"
               >
                 <Microscope className="w-3.5 h-3.5 shrink-0" />
                 <span>证据检视</span>

@@ -18,6 +18,13 @@ class CancerRegistryManager {
 
   /**
    * 获取指定癌种插件，若未找到则安全回退至默认癌种 (lung)
+   *
+   * ⚠️  FALLBACK BEHAVIOUR: When `type` is supplied but not registered, this
+   * method logs a console.warn and returns the lung plugin. This fallback
+   * exists only for backward compatibility with components that were written
+   * before the full 12-cancer-type plugin system was in place. New code should
+   * use `getSafe()` which returns `null` for unknown types so the caller can
+   * surface an explicit error instead of silently applying lung logic.
    */
   public get(type?: CancerType | string | null): CancerPluginSpec {
     if (type && this.plugins.has(type as CancerType)) {
@@ -27,7 +34,25 @@ class CancerRegistryManager {
     if (!defaultPlugin) {
       throw new Error(`CancerRegistry: Default cancer plugin '${this.defaultType}' not registered yet.`);
     }
+    // BUG-014 GUARD: Emit a visible warning when an explicit unknown type is
+    // silently downgraded to the lung plugin — makes cross-cancer contamination
+    // detectable in server logs / browser console.
+    if (type) {
+      console.warn(
+        `[CancerRegistry] Unknown cancer type "${type}" requested. Falling back to "${this.defaultType}". ` +
+        `If this occurs in a production flow, the caller should use getSafe() instead.`
+      );
+    }
     return defaultPlugin;
+  }
+
+  /**
+   * 安全获取指定癌种插件，若癌种未注册则返回 null（不回退至 lung）。
+   * 在对癌种类型不确定的场景下，应优先使用此方法，避免静默的癌种逻辑污染。
+   */
+  public getSafe(type?: CancerType | string | null): CancerPluginSpec | null {
+    if (!type) return null;
+    return this.plugins.get(type as CancerType) ?? null;
   }
 
   /**

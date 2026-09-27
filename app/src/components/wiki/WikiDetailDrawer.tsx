@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   X,
@@ -57,6 +58,7 @@ export function WikiDetailDrawer({
   onNavigate,
   cancerType = "lung",
 }: WikiDetailDrawerProps) {
+  const [mounted, setMounted] = useState(false);
   const [expandedFaq, setExpandedFaq]         = useState<number | null>(null);
   const [showPosterModal, setShowPosterModal]   = useState(false);
   const [toastMessage, setToastMessage]        = useState<string | null>(null);
@@ -66,6 +68,10 @@ export function WikiDetailDrawer({
   const [isMaximized, setIsMaximized]          = useState(false);  // PC端全景/最大化状态
   const drawerRef                              = useRef<HTMLDivElement>(null);
   const visualContainerRef                     = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 当 topic 变化时重置展开状态、触发入场动效
   useEffect(() => {
@@ -150,13 +156,13 @@ export function WikiDetailDrawer({
     }
   };
 
-  // 若 topic 为 null 且已不可见，渲染 null（完成退出动效后）
-  if (!topic && !isVisible) return null;
+  // 若 topic 为 null 且已不可见，或尚未挂载，渲染 null
+  if ((!topic && !isVisible) || !mounted) return null;
 
   const riskCfg = topic ? RISK_LEVEL_CONFIG[topic.riskLevel] : null;
   const catCfg  = topic ? getWikiCategories(cancerType)[topic.category] : null;
 
-  return (
+  return createPortal(
     <>
       {/* ── 背景遮罩 ──────────────────────────────────────────────────────── */}
       <div
@@ -593,6 +599,7 @@ export function WikiDetailDrawer({
           <span>{toastMessage}</span>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 }

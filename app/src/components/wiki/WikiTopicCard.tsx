@@ -495,7 +495,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
 
       {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] left-1/2 -translate-x-1/2 z-[10000] bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
           <Check className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>

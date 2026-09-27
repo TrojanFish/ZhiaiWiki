@@ -1,14 +1,17 @@
 import json
+import logging
 import math
 from typing import List, Optional
 import httpx
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.models.evidence import Evidence
 from openai import AsyncOpenAI
+
+logger = logging.getLogger(__name__)
 
 # Embedding dimension for text-embedding-ada-002. Kept as a constant so the
 # zero-vector fallback and downstream similarity math agree on dimensionality.
@@ -56,7 +59,7 @@ class VectorSearchService:
             )
             return response.data[0].embedding
         except Exception as e:
-            print(f"[VectorSearch] embedding request failed: {e}")
+            logger.warning("[VectorSearch] embedding request failed: %s", e)
             return [0.0] * EMBEDDING_DIM
 
     @staticmethod
@@ -90,7 +93,10 @@ class VectorSearchService:
           2. Load all evidence rows that have a non-empty embedding.
           3. Rank by cosine similarity, return top-k.
           4. If no embeddings exist OR the query embedding is all zeros (no API
-             key), fall back to keyword ILIKE search so the system still works.
+             key), fall back to keyword OR search so the system still works.
+             Each keyword generates a set of OR conditions (title/summary/keywords);
+             rows are ranked by how many keywords they match so the most relevant
+             results still surface first.
         """
         query_embedding = await self.get_embedding(query)
         query_is_zero = all(v == 0.0 for v in query_embedding)
@@ -114,15 +120,46 @@ class VectorSearchService:
                 scored.sort(key=lambda x: x[0], reverse=True)
                 return [ev for _, ev in scored[:limit]]
 
-        # Fallback: keyword search across title / summary / keywords.
-        print("[VectorSearch] no usable embeddings, falling back to keyword search")
-        words = [w for w in query.split() if w]
-        base_query = select(Evidence)
+        # Fallback: keyword OR search across title / summary / keywords.
+        # Each word is treated as an independent OR-condition so that a query
+        # like "stage IIA STAS lung adenocarcinoma" still finds rows that match
+        # ANY of those terms — previously all terms were AND-chained which
+        # almost always returned 0 results (BUG-009).
+        logger.info("[VectorSearch] no usable embeddings, falling back to keyword search")
+        words = [w.strip() for w in query.split() if len(w.strip()) >= 3]
+
+        if not words:
+            # Empty query or all short tokens — return all evidence up to limit
+            stmt = select(Evidence).limit(limit)
+            result = await self.db.execute(stmt)
+            return result.scalars().all()
+
+        # Build one giant OR across all (word, field) combinations
+        per_word_conditions = []
         for w in words:
-            base_query = base_query.where(
-                (Evidence.keywords.ilike(f"%{w}%"))
-                | (Evidence.title.ilike(f"%{w}%"))
-                | (Evidence.summary.ilike(f"%{w}%"))
+            per_word_conditions.append(
+                or_(
+                    Evidence.keywords.ilike(f"%{w}%"),
+                    Evidence.title.ilike(f"%{w}%"),
+                    Evidence.summary.ilike(f"%{w}%"),
+                )
             )
-        result = await self.db.execute(base_query.limit(limit))
-        return result.scalars().all()
+
+        # Fetch all rows matching ANY keyword
+        stmt = select(Evidence).where(or_(*per_word_conditions)).limit(limit * 4)
+        result = await self.db.execute(stmt)
+        rows = result.scalars().all()
+
+        if not rows:
+            # Last resort: return most recent evidence
+            stmt = select(Evidence).order_by(Evidence.year.desc()).limit(limit)
+            result = await self.db.execute(stmt)
+            return result.scalars().all()
+
+        # Rank rows by number of matching keywords (higher = more relevant)
+        def count_matches(ev: Evidence) -> int:
+            combined = " ".join(filter(None, [ev.title or "", ev.summary or "", ev.keywords or ""])).lower()
+            return sum(1 for w in words if w.lower() in combined)
+
+        rows_ranked = sorted(rows, key=count_matches, reverse=True)
+        return rows_ranked[:limit]

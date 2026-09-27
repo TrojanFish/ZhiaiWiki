@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   X, 
   Heart, 
@@ -45,7 +46,12 @@ export default function LoveRelaySubmitModal({
   onClose,
   onSuccess,
 }: LoveRelaySubmitModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [donorName, setDonorName] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [selectedCancer, setSelectedCancer] = useState(CANCER_OPTIONS[0]);
   const [selectedAmount, setSelectedAmount] = useState(AMOUNT_PRESETS[0].value);
   const [customAmount, setCustomAmount] = useState("");
@@ -122,14 +128,16 @@ export default function LoveRelaySubmitModal({
     }
   };
 
-  return (
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
     <div
       onClick={onClose}
       className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 cursor-pointer animate-fade-in overflow-hidden sm:overflow-y-auto"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-7 max-w-lg w-full border-t sm:border border-slate-200 shadow-2xl flex flex-col space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-7 max-h-[92vh] overflow-y-auto mx-auto"
+        className="bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-7 max-w-lg w-full border-t sm:border border-slate-200 shadow-2xl flex flex-col space-y-4 animate-slide-up-drawer sm:animate-fade-in-up cursor-default pb-safe sm:pb-7 max-h-[92vh] max-h-[92dvh] overflow-y-auto overscroll-contain mx-auto"
       >
         {/* Mobile Sheet Grabber */}
         <div className="sm:hidden -mt-2 mb-1 flex justify-center shrink-0 w-full">
@@ -367,6 +375,7 @@ export default function LoveRelaySubmitModal({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

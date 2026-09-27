@@ -44,7 +44,7 @@ export default function MobileStickyActionBar({
       <button
         type="button"
         onClick={handleShare}
-        className="flex-1 btn-primary py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale(0.97)"
+        className="flex-1 btn-primary py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.97]"
       >
         <Share2 className="w-3.5 h-3.5" />
         <span>分享报告</span>
@@ -55,7 +55,7 @@ export default function MobileStickyActionBar({
         <button
           type="button"
           onClick={onTriggerSpeech}
-          className={`px-3 py-2 rounded-xl text-xs font-semibold border flex items-center gap-1.5 active:scale(0.97) ${
+          className={`px-3 py-2 rounded-xl text-xs font-semibold border flex items-center gap-1.5 active:scale-[0.97] ${
             isSpeaking
               ? "bg-sky-50 text-sky-700 border-sky-300"
               : "bg-white text-slate-700 border-slate-200"
@@ -63,7 +63,7 @@ export default function MobileStickyActionBar({
           title="语音朗读报告"
         >
           <Volume2 className="w-3.5 h-3.5 text-sky-600" />
-          <span className="hidden xs:inline">{isSpeaking ? "播报中" : "朗读"}</span>
+          <span className="hidden sm:inline">{isSpeaking ? "播报中" : "朗读"}</span>
         </button>
       )}
 
@@ -71,7 +71,7 @@ export default function MobileStickyActionBar({
       <button
         type="button"
         onClick={scrollToTop}
-        className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-800 active:scale(0.97)"
+        className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-800 active:scale-[0.97]"
         title="返回顶部"
         aria-label="返回顶部"
       >

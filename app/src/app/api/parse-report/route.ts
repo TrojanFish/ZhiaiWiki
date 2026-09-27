@@ -335,14 +335,23 @@ export async function POST(request: Request) {
     // Support multiple images
     if (Array.isArray(images) && images.length > 0) {
       const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+      // Max decoded size per image: 10MB. Base64 encodes 3 bytes → 4 chars,
+      // so 10MB decoded ≈ 13,333,333 Base64 chars. We use this conversion
+      // instead of a raw character-count limit to avoid rejecting valid images
+      // that are within the byte limit but whose Base64 length looks large.
+      const MAX_DECODED_BYTES = 10 * 1024 * 1024; // 10 MB
+      const MAX_B64_CHARS = Math.ceil(MAX_DECODED_BYTES * (4 / 3));
       if (images.length > 8) {
         return NextResponse.json({ success: false, error: "最多一次上传 8 张报告图片。", code: "TOO_MANY_IMAGES" }, { status: 413 });
       }
       for (const img of images) {
         if (img.base64) {
           const mimeType = img.mimeType || "image/jpeg";
-          if (!allowedImageTypes.has(mimeType) || typeof img.base64 !== "string" || img.base64.length > 12_000_000) {
-            return NextResponse.json({ success: false, error: "报告图片格式或大小不符合要求。", code: "INVALID_REPORT_IMAGE" }, { status: 413 });
+          if (!allowedImageTypes.has(mimeType) || typeof img.base64 !== "string") {
+            return NextResponse.json({ success: false, error: "报告图片格式不受支持。", code: "INVALID_REPORT_IMAGE" }, { status: 413 });
+          }
+          if (img.base64.length > MAX_B64_CHARS) {
+            return NextResponse.json({ success: false, error: "单张报告图片超过 10MB 限制，请压缩后重试。", code: "IMAGE_TOO_LARGE" }, { status: 413 });
           }
           contents.push({
             inlineData: {
@@ -353,7 +362,7 @@ export async function POST(request: Request) {
         }
       }
     } else if (imageBase64) {
-      // Backward compatibility for single image
+      // Backward compatibility for single image (12MB base64 ≈ 9MB raw image)
       const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
       if (typeof imageBase64 !== "string" || imageBase64.length > 12_000_000 || !allowedImageTypes.has(imageMimeType || "image/jpeg")) {
         return NextResponse.json({ success: false, error: "报告图片格式或大小不符合要求。", code: "INVALID_REPORT_IMAGE" }, { status: 413 });

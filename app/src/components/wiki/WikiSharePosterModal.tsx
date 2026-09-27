@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-
-import { X, Download, Check, Lightbulb, Scan, Image as ImageIcon, HeartPulse, ShieldCheck, BookOpen, HelpCircle, Info } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, Download, Check, Lightbulb, Scan, Image as ImageIcon, HeartPulse, ShieldCheck, BookOpen, HelpCircle, Info, Loader2 } from "lucide-react";
 import { toPng } from "html-to-image";
 import type { WikiTopic } from "@/lib/wikiData";
 import { RISK_LEVEL_CONFIG, WIKI_CATEGORIES } from "@/lib/wikiData";
@@ -18,11 +18,16 @@ interface WikiSharePosterModalProps {
 }
 
 export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: WikiSharePosterModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportedImageUrl, setExportedImageUrl] = useState<string | null>(null);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const offscreenPosterRef = useRef<HTMLDivElement>(null);
   const [generationError, setGenerationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const riskCfg = RISK_LEVEL_CONFIG[topic.riskLevel];
   const catCfg = WIKI_CATEGORIES[topic.category];
@@ -135,7 +140,9 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div 
       onClick={onClose}
       className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-hidden sm:overflow-y-auto animate-fade-in"
@@ -321,7 +328,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
       {/* 2. Interactive Modal Dialog for User Inspection & Download */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-t-3xl sm:rounded-3xl max-w-xl w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up max-h-[92vh] pb-safe sm:pb-0"
+        className="bg-white rounded-t-3xl sm:rounded-3xl max-w-xl w-full border-t sm:border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up max-h-[92vh] max-h-[92dvh] pb-safe sm:pb-0"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
@@ -358,7 +365,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
         <div className="p-4 sm:p-6 max-h-[65vh] overflow-y-auto bg-slate-950 flex flex-col items-center">
           {isExporting && (
             <div className="py-16 flex flex-col items-center justify-center text-slate-300 space-y-3">
-              <span className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
               <p className="text-xs font-bold">正在全量渲染高清长图，请稍候...</p>
             </div>
           )}
@@ -420,7 +427,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
               </>
             ) : isExporting ? (
               <>
-                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
                 <span>正在渲染高清长图...</span>
               </>
             ) : (
@@ -432,6 +439,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

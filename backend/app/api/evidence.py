@@ -1,10 +1,14 @@
 import json
+import hmac
+import secrets
 
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List
 
+from app.core.config import settings
 from app.core.database import get_db, AsyncSessionLocal
 from app.models.evidence import Evidence
 from app.schemas.evidence import EvidenceCreate, EvidenceResponse
@@ -14,6 +18,39 @@ from app.services.vector_search import VectorSearchService
 from app.services.seeding import seed_real_evidence, DATA_FILE
 
 router = APIRouter()
+_basic_security = HTTPBasic(auto_error=False)
+
+
+def require_admin(credentials: HTTPBasicCredentials = Depends(_basic_security)) -> None:
+    """Dependency that enforces HTTP Basic admin authentication for write endpoints.
+
+    Uses constant-time comparison to prevent timing-based credential enumeration.
+    The admin username and password are read from ADMIN_USERNAME / ADMIN_PASSWORD
+    environment variables (via Settings).
+    """
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin credentials required for this operation",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    admin_username = settings.ADMIN_USERNAME if hasattr(settings, "ADMIN_USERNAME") else "admin"
+    admin_password = settings.ADMIN_PASSWORD if hasattr(settings, "ADMIN_PASSWORD") else ""
+
+    username_ok = hmac.compare_digest(
+        credentials.username.encode("utf-8"),
+        admin_username.encode("utf-8"),
+    )
+    password_ok = hmac.compare_digest(
+        credentials.password.encode("utf-8"),
+        admin_password.encode("utf-8"),
+    )
+    if not (username_ok and password_ok):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid admin credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
 
 @router.get("/search", response_model=List[EvidenceResponse])
 async def search_evidence(q: str, db: AsyncSession = Depends(get_db)):
@@ -50,9 +87,10 @@ async def get_factors():
     ]
 
 @router.post("/seed", response_model=List[EvidenceResponse])
-async def seed_evidence(db: AsyncSession = Depends(get_db)):
+async def seed_evidence(db: AsyncSession = Depends(get_db), _: None = Depends(require_admin)):
     """
-    Internal endpoint to quickly seed the database with mock mGGO/STAS medical papers.
+    [Admin only] Seed the database with mock mGGO/STAS medical papers.
+    Requires HTTP Basic admin credentials.
     """
     mock_papers = [
         Evidence(
@@ -124,10 +162,14 @@ async def process_pubmed_pipeline(query: str):
         await db.commit()
 
 @router.post("/fetch-pubmed")
-async def trigger_pubmed_fetch(background_tasks: BackgroundTasks, query: str = '("stage IA" OR "T1N0") AND "non-small cell lung cancer"'):
+async def trigger_pubmed_fetch(
+    background_tasks: BackgroundTasks,
+    query: str = '("stage IA" OR "T1N0") AND "non-small cell lung cancer"',
+    _: None = Depends(require_admin),
+):
     """
-    Triggers an automated pipeline to fetch new studies from PubMed.
-    Runs asynchronously in the background.
+    [Admin only] Triggers an automated pipeline to fetch new studies from PubMed.
+    Runs asynchronously in the background. Requires HTTP Basic admin credentials.
     """
     background_tasks.add_task(process_pubmed_pipeline, query)
     return {"message": "PubMed fetch pipeline started in the background", "query": query}
@@ -158,21 +200,25 @@ async def process_europe_pmc_pipeline(query: str):
         await db.commit()
 
 @router.post("/fetch-europe-pmc")
-async def trigger_europe_pmc_fetch(background_tasks: BackgroundTasks, query: str = '("stage IA" OR "T1N0") AND "non-small cell lung cancer"'):
+async def trigger_europe_pmc_fetch(
+    background_tasks: BackgroundTasks,
+    query: str = '("stage IA" OR "T1N0") AND "non-small cell lung cancer"',
+    _: None = Depends(require_admin),
+):
     """
-    Triggers an automated pipeline to fetch new studies from Europe PMC.
-    Runs asynchronously in the background.
+    [Admin only] Triggers an automated pipeline to fetch new studies from Europe PMC.
+    Runs asynchronously in the background. Requires HTTP Basic admin credentials.
     """
     background_tasks.add_task(process_europe_pmc_pipeline, query)
     return {"message": "Europe PMC fetch pipeline started in the background", "query": query}
 
 @router.post("/seed-real")
-async def seed_real_evidence_endpoint(db: AsyncSession = Depends(get_db)):
+async def seed_real_evidence_endpoint(db: AsyncSession = Depends(get_db), _: None = Depends(require_admin)):
     """
-    Seed the database with real studies from data/evidence_database.json.
+    [Admin only] Seed the database with real studies from data/evidence_database.json.
     Idempotent: skips already-present studies. Generates embeddings when an
     OpenAI key is configured, otherwise stores zero-vectors (search degrades to
-    keyword matching automatically).
+    keyword matching automatically). Requires HTTP Basic admin credentials.
     """
     result = await seed_real_evidence(db)
     return {"message": "Real evidence seeded", **result}

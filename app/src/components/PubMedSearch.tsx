@@ -116,7 +116,7 @@ export default function PubMedSearch() {
             <button
               onClick={handleSearch}
               disabled={isLoading}
-              className="btn-primary px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 active:scale(0.97)"
+              className="btn-primary px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 active:scale-[0.97]"
             >
               <Search className="w-4 h-4" />
               <span>本地检索</span>
@@ -124,7 +124,7 @@ export default function PubMedSearch() {
             <button
               onClick={handleFetchExternal}
               disabled={isLoading}
-              className="btn-secondary px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 active:scale(0.97)"
+              className="btn-secondary px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 active:scale-[0.97]"
             >
               <DownloadCloud className="w-4 h-4 text-sky-600" />
               <span>从外部抓取</span>

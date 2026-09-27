@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { 
   X, 
   Download, 
@@ -23,7 +24,8 @@ import {
   FileText,
   Stethoscope,
   Info,
-  Star
+  Star,
+  Loader2
 } from "lucide-react";
 import { toPng } from "html-to-image";
 import type { PatientProfile } from "@/lib/types";
@@ -45,6 +47,7 @@ interface QuestionItem {
 }
 
 export default function ProfileExportModal({ profile, onClose }: ProfileExportModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [activeMode, setActiveMode] = useState<"poster" | "consultation">("poster");
   const [isExporting, setIsExporting] = useState(false);
   const [exportedImageUrl, setExportedImageUrl] = useState<string | null>(null);
@@ -53,6 +56,10 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
   const [copySuccess, setCopySuccess] = useState(false);
   const [checkedQuestionIds, setCheckedQuestionIds] = useState<string[]>([]);
   const offscreenPosterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const cohort = getClinicalCohortUnified(profile);
 
@@ -372,7 +379,9 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <>
       <div 
         onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
@@ -455,7 +464,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50/80 flex flex-col items-center justify-center min-h-[360px]">
               {isExporting && (
                 <div className="flex flex-col items-center justify-center py-16 space-y-3">
-                  <div className="w-10 h-10 border-3 border-blue-500/30 border-t-blue-600 rounded-full animate-spin" />
+                  <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
                   <div className="text-xs font-bold text-slate-700">
                     正在高保真渲染患者数字档案长图...
                   </div>
@@ -523,7 +532,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
                   </>
                 ) : isExporting ? (
                   <>
-                    <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                    <Loader2 className="w-3.5 h-3.5 text-white animate-spin shrink-0" />
                     <span>正在渲染高清长图...</span>
                   </>
                 ) : (
@@ -1226,6 +1235,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
         <span>严格保护个人就诊隐私 · 请遵医嘱</span>
       </div>
     </div>
-  </>
+  </>,
+  document.body
   );
 }

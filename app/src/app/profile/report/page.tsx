@@ -2166,7 +2166,7 @@ export default function EvidenceReportPage() {
             setUserScrolledUp(false);
             contentEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
           }}
-          className="fixed bottom-6 right-6 z-40 bg-blue-600/95 hover:bg-blue-700 text-white px-4 py-2.5 rounded-full shadow-2xl text-xs font-bold flex items-center gap-2 backdrop-blur-md animate-bounce cursor-pointer print:hidden transition-all border border-white/20"
+          className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0.75rem))] right-4 md:bottom-6 md:right-6 z-40 bg-blue-600/95 hover:bg-blue-700 text-white px-4 py-2.5 rounded-full shadow-2xl text-xs font-bold flex items-center gap-2 backdrop-blur-md animate-bounce cursor-pointer print:hidden transition-all border border-white/20"
         >
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
           <span>正在生成中 · 点击回到底部 ↓</span>
