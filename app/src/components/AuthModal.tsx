@@ -80,14 +80,13 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
 
   const modalContent = (
     <div 
-      onClick={onClose}
-      className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-fade-in overflow-hidden sm:overflow-y-auto"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-fade-in overflow-hidden sm:overflow-y-auto print:hidden"
     >
       {/* 3-Tier Modal Card (iOS Bottom Sheet on Mobile, Centered Card on Desktop) */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "448px", width: "100%" }}
-        className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl relative z-10 animate-slide-up-drawer sm:animate-fade-in-up text-slate-900 max-h-[92vh] flex flex-col overflow-hidden pb-safe sm:pb-0 mx-auto"
+        className="relative w-full sm:max-w-md bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
@@ -97,14 +96,14 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         {/* Tier 1: Fixed Sticky Header */}
         <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
-              {isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
+            <div className="w-9 h-9 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
+              {isLogin ? <LogIn className="w-4.5 h-4.5" /> : <UserPlus className="w-4.5 h-4.5" />}
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
                 {isLogin ? "登录 知癌维基 患者账号" : "免费创建个人循证档案库"}
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                 {isLogin ? "安全同步您的临床数字档案与随访生命线" : "支持多设备云端安全同步与隐私加密"}
               </p>
             </div>
@@ -113,16 +112,16 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           <button 
             type="button"
             onClick={onClose}
-            className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors flex items-center justify-center cursor-pointer shrink-0"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer shrink-0"
             aria-label="关闭窗口 (Esc)"
             title="关闭窗口 (Esc)"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tier 2: Scrollable Body (Form) */}
-        <form id="auth-modal-form" onSubmit={handleSubmit} className="p-5 sm:p-6 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+        <form id="auth-modal-form" onSubmit={handleSubmit} className="p-5 sm:p-6 flex-1 overflow-y-auto overscroll-contain custom-scrollbar space-y-4">
           {error && (
             <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3.5 rounded-xl flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
@@ -160,15 +159,19 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
               placeholder="••••••••"
             />
           </div>
+
+          <div className="pt-2 text-[11px] text-slate-400 leading-relaxed">
+            * 平台遵循国家健康医疗大数据隐私合规规范，对患者病历与脱敏生化指标进行全程端到端加密防护。
+          </div>
         </form>
 
-        {/* Tier 3: Fixed Sticky Footer Actions */}
-        <div className="px-5 sm:px-6 py-4 border-t border-slate-200 bg-white shrink-0 rounded-b-2xl shadow-[0_-6px_20px_rgba(0,0,0,0.05)] space-y-2.5">
+        {/* Tier 3: Bottom Fixed Actions */}
+        <div className="p-5 sm:p-6 pt-3 bg-white border-t border-slate-100 flex flex-col gap-2 shrink-0">
           <button
             type="submit"
             form="auth-modal-form"
             disabled={loading}
-            className="w-full btn-primary py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm shadow-md disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 text-white active:scale-98 transition-all"
+            className="w-full py-2.5 px-4 btn-primary rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 disabled:opacity-50"
           >
             {loading ? (
               <>

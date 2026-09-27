@@ -270,20 +270,25 @@ export default function CommandPalette() {
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-start justify-center pt-[calc(4.5rem+env(safe-area-inset-top,0px))] sm:pt-24 px-3 sm:px-4 bg-slate-900/50 backdrop-blur-md animate-fade-in print:hidden"
-      onClick={() => setIsOpen(false)}
+      onClick={(e) => { if (e.target === e.currentTarget) setIsOpen(false); }}
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-fade-in overflow-hidden sm:overflow-y-auto print:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="全局医学快捷搜索"
     >
       <div 
-        className="w-full max-w-2xl bg-white/95 rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden flex flex-col transition-all duration-200"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleItemKeyDown}
+        className="relative w-full max-w-2xl bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200"
       >
+        {/* iOS HIG Sheet Grabber for Mobile */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
+          <div className="sheet-grabber !my-0" />
+        </div>
+
         {/* Spotlight Search Header */}
-        <div className="flex items-center px-4 py-3 border-b border-slate-100 gap-3">
-          <Search className="w-5 h-5 text-slate-400 flex-shrink-0" />
+        <div className="flex items-center px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100 gap-3 shrink-0 bg-white">
+          <Search className="w-5 h-5 text-blue-500 flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -299,8 +304,9 @@ export default function CommandPalette() {
           {query && (
             <button 
               type="button" 
-              onClick={() => setQuery("")}
-              className="text-slate-400 hover:text-slate-600 p-1"
+              onClick={() => { setQuery(""); inputRef.current?.focus(); }}
+              className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+              title="清空"
             >
               <X className="w-4 h-4" />
             </button>
@@ -308,12 +314,21 @@ export default function CommandPalette() {
           <kbd className="hidden sm:flex items-center gap-0.5 px-2 py-0.5 text-[11px] font-mono text-slate-400 bg-slate-100 rounded border border-slate-200 select-none">
             ESC
           </kbd>
+          <button 
+            type="button" 
+            onClick={() => setIsOpen(false)} 
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center cursor-pointer transition-colors shrink-0" 
+            aria-label="关闭搜索 (Esc)"
+            title="关闭搜索 (Esc)"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Results List */}
         <div 
           ref={listRef}
-          className="max-h-[60vh] overflow-y-auto p-2 space-y-1 custom-scrollbar"
+          className="flex-1 max-h-[60vh] sm:max-h-[65vh] overflow-y-auto overscroll-contain p-2 space-y-1 custom-scrollbar"
         >
           {filtered.length === 0 ? (
             <div className="text-center py-12 px-4">
@@ -372,15 +387,15 @@ export default function CommandPalette() {
         </div>
 
         {/* Command Palette Footer */}
-        <div className="px-4 py-2 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 select-none">
+        <div className="hidden sm:flex px-5 py-2.5 bg-slate-50/90 border-t border-slate-100 items-center justify-between text-[11px] text-slate-500 select-none shrink-0">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <kbd className="px-1 py-0.5 bg-white rounded border border-slate-200 shadow-2xs">↑</kbd>
-              <kbd className="px-1 py-0.5 bg-white rounded border border-slate-200 shadow-2xs">↓</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 shadow-2xs font-mono">↑</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 shadow-2xs font-mono">↓</kbd>
               <span>导航</span>
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 shadow-2xs">↵</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 shadow-2xs font-mono">↵</kbd>
               <span>打开</span>
             </span>
           </div>
