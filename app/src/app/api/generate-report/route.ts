@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { EVIDENCE_ONLY_MODEL_INSTRUCTION, PRODUCT_SCOPE_NOTICE, REPORT_ORGANIZATION_NOTICE } from '@/lib/productBoundary';
 import { ai } from '@/lib/gemini';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { sanitizePatientProfile } from '@/lib/privacy';
@@ -1039,7 +1040,7 @@ export async function POST(request: Request) {
                       ? BREAST_REPORT_PROMPT 
                       : (isCtReport ? PRE_OP_CT_PROMPT : POST_OP_PROMPT)))))))));
 
-    const finalPrompt = templatePrompt
+    const finalPrompt = EVIDENCE_ONLY_MODEL_INSTRUCTION + "\n" + templatePrompt
       .replace("{PROFILE_JSON}", JSON.stringify(profile, null, 2))
       .replace("{EVIDENCE_BASE}", evidence);
 
@@ -1061,7 +1062,7 @@ export async function POST(request: Request) {
           }
 
           // Safety Appendix
-          const safetyFooter = `\n\n---\n\n> **【知癌维基 循证医学与安全免责声明】**：\n> 本报告由 知癌维基 (ZhiaiWiki) 循证 AI 引擎根据您提供的病理/影像档案特征与国际已发表临床研究文献（NCCN/CSCO 指南、Fleischner 学会指南、IASLC、JCOG 系列研究等）汇总生成，仅供患者健康科普与就医参考，**绝不构成任何个性化临床诊断结论或处方指令**。具体的随访检查安排及辅助治疗方案，请务必携带完整影像/病理报告以主管医师或多学科会诊 (MDT) 团队的综合意见为准。\n`;
+          const safetyFooter = `\n\n---\n\n> **【知癌维基 使用边界】**：\n> ${PRODUCT_SCOPE_NOTICE}\n> ${REPORT_ORGANIZATION_NOTICE}\n> 文献中的治疗、分期或预后内容仅作为一般医学背景，不代表对您的判断或建议；请携带完整原始报告向持证医务人员咨询。\n`;
           controller.enqueue(new TextEncoder().encode(safetyFooter));
 
           controller.close();

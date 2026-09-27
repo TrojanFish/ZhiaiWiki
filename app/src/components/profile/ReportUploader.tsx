@@ -1349,7 +1349,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 );
               })}
             </nav>
-            {stagingPreview && (
+            {false && stagingPreview && (
               <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">{CancerRegistry.get(parsedData?.cancerType || cancerType || 'lung')?.guidelineStandard || "权威临床分期标准"}</div>
@@ -1387,7 +1387,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             </div>
 
             {/* Mobile Staging Preview Banner */}
-            {stagingPreview && (
+            {false && stagingPreview && (
               <div className="md:hidden mb-4 p-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 flex items-center justify-between gap-2 shadow-2xs">
                 <div>
                   <div className="text-[10px] font-bold text-emerald-700 uppercase">【{CancerRegistry.get(parsedData?.cancerType || cancerType || 'lung')?.name || "临床"}】分期实时推演</div>
@@ -3913,7 +3913,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
               </span>
             )}
           </div>
-          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">支持上传或拍摄多源临床报告，系统将自动解析核心诊断要素并校准分期</p>
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">支持上传或拍摄多源报告，系统仅整理报告中明确出现的字段并检索通用循证资料</p>
+          <p className="mt-2 text-[11px] leading-relaxed text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">本平台仅用于健康科普、报告字段整理和循证资料检索，不提供诊断、分期、治疗方案或在线诊疗。</p>
         </div>
       </div>
 

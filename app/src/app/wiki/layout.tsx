@@ -3,14 +3,14 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "循证知识库",
   description:
-    "知癌维基循证知识库：覆盖肺癌、乳腺癌、结肠癌、直肠癌、结直肠癌、胃癌、肝癌、食管癌、甲状腺癌、子宫内膜癌、宫颈癌、胰腺癌等12大实体肿瘤专区，整合NCCN、CSCO、ESMO权威指南，提供从诊断、分期、治疗到随访的全病程循证导航。每一条结论均标注证据等级与来源文献。",
+    "知癌维基循证知识库：覆盖12大实体肿瘤专区，提供健康科普、报告字段整理与可追溯的循证资料检索。平台不提供诊断、分期、治疗方案或在线诊疗，每一条资料均标注来源文献。",
   alternates: {
     canonical: "/wiki",
   },
   openGraph: {
     title: "循证知识库 | 知癌维基 ZhiaiWiki",
     description:
-      "12大实体肿瘤专区全病程循证知识库。整合NCCN、CSCO、ESMO国际权威指南，每一条结论都有来源，每一个解释都可追溯。",
+      "12大实体肿瘤专区循证知识库，提供健康科普、报告字段整理与来源可追溯的资料检索。",
     url: "https://zhiaiwiki.org/wiki",
     images: [{ url: "/logo.png", width: 1024, height: 1024, alt: "知癌维基 循证知识库" }],
   },
