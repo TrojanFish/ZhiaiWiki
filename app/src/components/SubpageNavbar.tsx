@@ -304,9 +304,6 @@ export default function SubpageNavbar() {
                 </button>
               </div>
 
-              {/* Dedicated Account / Login Card */}
-              <UserAvatar mode="drawer" onAction={() => setMobileMenuOpen(false)} />
-
               {/* Patient Profile Quick Card (档案状态与直达入口) */}
               <Link
                 href="/profile"

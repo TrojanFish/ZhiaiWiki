@@ -18,7 +18,7 @@ npm run dev
 
 ### 3. 执行自动化测试套件
 ```bash
-# 执行单元测试套件 (30 Suites, 446 Tests)
+# 执行单元测试套件 (32 Suites, 466 Tests)
 npm run test:unit
 
 # 执行全量生产与红线仿真测试

@@ -114,30 +114,7 @@ export default function UserAvatar({ mode = "navbar", onAction }: UserAvatarProp
               </button>
             </div>
           </div>
-        ) : (
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/90 via-sky-50/60 to-indigo-50/70 border border-blue-200/90 shadow-2xs space-y-2.5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <User className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-extrabold text-slate-900 leading-tight">登录 / 注册账号</div>
-                <div className="text-[10px] text-blue-700/80 font-medium mt-0.5">跨设备云端同步 · 永久安全存储</div>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setShowAuthModal(true);
-                onAction?.();
-              }}
-              className="w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-            >
-              <User className="w-3.5 h-3.5" />
-              <span>立即登录 / 注册</span>
-            </button>
-          </div>
-        )
+        ) : null
       ) : userEmail ? (
         /* Logged-in State: Pure Round Avatar with Breathing Green Dot on Top-Right */
         <div className="relative flex items-center" ref={dropdownRef}>
@@ -205,12 +182,11 @@ export default function UserAvatar({ mode = "navbar", onAction }: UserAvatarProp
         <button
           type="button"
           onClick={() => setShowAuthModal(true)}
-          className="h-8 px-2 sm:px-2.5 rounded-full bg-blue-50/90 hover:bg-blue-100/90 border border-blue-200/90 text-blue-700 text-xs font-bold transition-all inline-flex items-center gap-1 cursor-pointer active:scale-95 shadow-2xs"
+          className="w-8 h-8 rounded-full bg-slate-100/90 hover:bg-slate-200/80 border border-slate-200/80 text-slate-600 hover:text-blue-600 flex items-center justify-center transition-colors cursor-pointer active:scale-95 shrink-0 shadow-2xs"
           title="登录账号"
           aria-label="登录账号"
         >
-          <User className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-          <span className="text-[11px]">登录</span>
+          <User className="w-3.5 h-3.5 shrink-0" />
         </button>
       ) : (
         /* Guest / Unauthenticated State: Clean Ghost Trigger to eliminate pill clutter */
