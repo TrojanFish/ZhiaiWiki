@@ -14,11 +14,15 @@ import {
 import StudyCard, { StudyItem } from "@/components/StudyCard";
 import Footer from "@/components/Footer";
 import { useCancerType } from "@/components/common/CancerSwitch";
+import { CancerRegistry } from "@/lib/cancerRegistry";
 
 export type StudyTopic = "all" | "surgery" | "targeted" | "immunotherapy" | "pathology" | "imaging";
 
 export default function StudiesPage() {
   const { cancerType } = useCancerType();
+  const activeCancerName = useMemo(() => {
+    return CancerRegistry.get(cancerType)?.name || "实体瘤";
+  }, [cancerType]);
   const [studies, setStudies] = useState<StudyItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -375,7 +379,7 @@ export default function StudiesPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={cancerType === "breast" ? "搜索标题、期刊、因子 (如 TAILORx, HER2, 21-基因)..." : "搜索标题、期刊、因子 (如 STAS, ADAURA)..."}
+                placeholder={`搜索【${activeCancerName}】文献、期刊、临床试验或靶点...`}
                 className="w-full pl-3.5 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all"
               />
               {isSearching && (

@@ -21,8 +21,10 @@ import type { WikiTopic, RiskLevel, WikiCategory } from "@/lib/wikiData";
 import { WIKI_TOPICS, WIKI_CATEGORIES } from "@/lib/wikiData";
 import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
 import type { PatientProfile, CancerType } from "@/lib/types";
+import { useCancerType } from "@/components/common/CancerSwitch";
+import { CancerRegistry } from "@/lib/cancerRegistry";
 
-// ── 建议 #1: 风险层级配置（按恶性概率排序，红/黄/绿视觉警示） ──────────────────
+// ── 风险层级配置（按恶性概率排序，红/黄/绿视觉警示） ──────────────────
 const RISK_CONFIG: Record<
   RiskLevel,
   { label: string; groupLabel: string; dot: string; badge: string; priority: number }
@@ -57,26 +59,107 @@ const RISK_CONFIG: Record<
   },
 };
 
-// ── 建议 #4: 临床高频速查热词 ────────────────────────────────────────────────
-const HOT_KEYWORDS: { text: string; topicId: string; riskLevel: RiskLevel }[] = [
-  { text: "纯磨玻璃结节 (pGGO)", topicId: "pure_ggo", riskLevel: "low" },
-  { text: "混合磨玻璃结节 (mGGO)", topicId: "mixed_ggo", riskLevel: "moderate" },
-  { text: "气道播散 (STAS)", topicId: "stas", riskLevel: "high" },
-  { text: "胸膜牵拉 / 凹陷征", topicId: "pleural_indentation", riskLevel: "moderate" },
-  { text: "分叶与短毛刺", topicId: "lobulation_spiculation", riskLevel: "moderate" },
-  { text: "第7组隆突下淋巴结", topicId: "ln_subcarinal_7", riskLevel: "high" },
-];
+// ── 12 大实体肿瘤专区临床高频速查热词库 ─────────────────────────────────
+const CANCER_HOT_KEYWORDS: Record<CancerType, Array<{ text: string; topicId: string; riskLevel: RiskLevel }>> = {
+  lung: [
+    { text: "气道播散 (STAS)", topicId: "stas", riskLevel: "high" },
+    { text: "混合磨玻璃结节 (mGGO)", topicId: "mixed_ggo", riskLevel: "moderate" },
+    { text: "纯磨玻璃结节 (pGGO)", topicId: "pure_ggo", riskLevel: "low" },
+    { text: "胸膜侵犯 (VPI)", topicId: "vpi", riskLevel: "high" },
+    { text: "胸膜牵拉 / 凹陷征", topicId: "pleural_indentation", riskLevel: "moderate" },
+    { text: "第7组隆突下淋巴结", topicId: "ln_subcarinal_7", riskLevel: "high" },
+  ],
+  breast: [
+    { text: "微浸润性导管癌 (MIC)", topicId: "microinvasive_dcis", riskLevel: "moderate" },
+    { text: "HER2 低表达 (HER2-Low)", topicId: "her2_low", riskLevel: "moderate" },
+    { text: "阴性切缘标准 (No Ink)", topicId: "no_ink_on_tumor", riskLevel: "low" },
+    { text: "21基因复发评分 (RS)", topicId: "oncotype_dx_rs", riskLevel: "low" },
+    { text: "前哨淋巴结微转移", topicId: "sentinel_ln_macro_micro", riskLevel: "high" },
+    { text: "脉管癌栓 (LVI)", topicId: "breast_lvi", riskLevel: "high" },
+  ],
+  colorectal: [
+    { text: "环周切缘 (CRM) 评估", topicId: "t_depth_submucosa", riskLevel: "high" },
+    { text: "dMMR / MSI-H 免疫获益", topicId: "msi_dmmr_immunotherapy", riskLevel: "low" },
+    { text: "RAS / BRAF 突变靶向", topicId: "ras_braf_precision", riskLevel: "moderate" },
+    { text: "左半 vs 右半结肠癌", topicId: "left_vs_right_colon", riskLevel: "moderate" },
+    { text: "IDEA 3个月 CAPOX 减毒", topicId: "idea_chemo_duration", riskLevel: "safe" },
+    { text: "12枚淋巴结与癌结节 (TD)", topicId: "lymph_node_12_and_td", riskLevel: "high" },
+  ],
+  colon: [
+    { text: "完整结肠系膜切除 (CME)", topicId: "colon_cme_surgery_lymphnodes", riskLevel: "moderate" },
+    { text: "dMMR / MSI-H 免疫敏感", topicId: "colon_dmmr_msih", riskLevel: "safe" },
+    { text: "结肠左右半生物学分型", topicId: "colon_sidedness_biology", riskLevel: "moderate" },
+    { text: "IDEA 3个月 CAPOX 化疗", topicId: "colon_idea_3months_capox", riskLevel: "low" },
+    { text: "结肠癌肝转移 MDT 转化", topicId: "colon_liver_metastasis_mdt", riskLevel: "high" },
+    { text: "结肠息肉癌变预防", topicId: "colon_screening_polyps", riskLevel: "safe" },
+  ],
+  rectal: [
+    { text: "全直肠系膜切除 (TME)", topicId: "rectal_tme_sacred_plane", riskLevel: "safe" },
+    { text: "盆腔高分辨 MRI 与 CRM", topicId: "rectal_pelvic_hr_mri", riskLevel: "high" },
+    { text: "全程新辅助治疗 (TNT)", topicId: "rectal_tnt_rapido_prodige23", riskLevel: "moderate" },
+    { text: "守望等待 (Watch & Wait)", topicId: "rectal_watch_and_wait", riskLevel: "safe" },
+    { text: "低位直肠前切除综合征 (LARS)", topicId: "rectal_lars_rehabilitation", riskLevel: "moderate" },
+    { text: "预防性回肠造口护理", topicId: "rectal_protective_stoma_care", riskLevel: "low" },
+  ],
+  gastric: [
+    { text: "D2 淋巴结清扫根治度", topicId: "gastric_d2_lymphadenectomy", riskLevel: "safe" },
+    { text: "Lauren 弥漫型印戒细胞癌", topicId: "gastric_lauren_signet_ring", riskLevel: "high" },
+    { text: "Claudin 18.2 靶向治疗", topicId: "gastric_claudin18_zolbetuximab", riskLevel: "moderate" },
+    { text: "ESD 早期内镜下粘膜剥离", topicId: "gastric_esd_early_preservation", riskLevel: "safe" },
+    { text: "FLOT 围手术期新辅助化疗", topicId: "gastric_flot_neoadjuvant", riskLevel: "moderate" },
+    { text: "HER2 阳性一线曲妥珠单抗", topicId: "gastric_her2_toga_trastuzumab", riskLevel: "low" },
+  ],
+  liver: [
+    { text: "CNLC 临床分期决策树", topicId: "liver_cnlc_staging_pathway", riskLevel: "safe" },
+    { text: "Child-Pugh 肝功能储备", topicId: "liver_child_pugh_reserve", riskLevel: "moderate" },
+    { text: "微血管侵犯 (MVI) 早期预警", topicId: "liver_mvi_microvascular_invasion", riskLevel: "high" },
+    { text: "T+A 靶免一线联合方案", topicId: "liver_atezo_bev_imbrave150", riskLevel: "low" },
+    { text: "门静脉癌栓 (PVTT) 降期转化", topicId: "liver_pvtt_portal_vein_thrombosis", riskLevel: "high" },
+    { text: "HAIC 肝动脉灌注化疗", topicId: "liver_haic_hepatic_artery_infusion", riskLevel: "moderate" },
+  ],
+  pancreatic: [
+    { text: "CA19-9 术后动态敏感监测", topicId: "pancreas_ca199_kinetics", riskLevel: "high" },
+    { text: "Whipple 胰十二指肠切除术", topicId: "pancreas_whipple_r0_resection", riskLevel: "safe" },
+    { text: "交界可切除 (BRPC) 评估", topicId: "pancreas_borderline_resectable", riskLevel: "moderate" },
+    { text: "mFOLFIRINOX 强化化疗", topicId: "pancreas_mfolfirinox_prodige", riskLevel: "moderate" },
+    { text: "胰酶替代治疗 (PERT)", topicId: "pancreas_pert_enzyme_replacement", riskLevel: "safe" },
+    { text: "术后胰瘘 (POPF) 预警防御", topicId: "pancreas_popf_fistula_prevention", riskLevel: "high" },
+  ],
+  thyroid: [
+    { text: "超声 TI-RADS 分级微钙化", topicId: "thyroid_rads_active_surveillance", riskLevel: "moderate" },
+    { text: "细针穿刺 (FNA) Bethesda 报告", topicId: "thyroid_fna_bethesda_cytology", riskLevel: "safe" },
+    { text: "微小癌 (PTMC) 主动监测", topicId: "thyroid_ptmc_active_surveillance", riskLevel: "safe" },
+    { text: "BRAF V600E 突变预后解读", topicId: "thyroid_braf_tert_molecular", riskLevel: "moderate" },
+    { text: "碘-131 清甲与低碘饮食", topicId: "thyroid_rai_131_ablation", riskLevel: "low" },
+    { text: "TSH 抑制治疗目标与低钙血症", topicId: "thyroid_tsh_suppression_calcium", riskLevel: "high" },
+  ],
+  esophageal: [
+    { text: "胸腹腔镜微创三切口根治", topicId: "esophageal_mie_minimally_invasive", riskLevel: "safe" },
+    { text: "食管鳞癌黏膜下层浸润深度", topicId: "esophageal_staging_anatomy_incisors", riskLevel: "high" },
+    { text: "新辅助放化疗 (NEOCRTEC5010)", topicId: "esophageal_neocrtec5010_cross_chemorad", riskLevel: "moderate" },
+    { text: "术后纳武利尤单抗免疫辅助", topicId: "esophageal_immunotherapy_escort_checkmate", riskLevel: "low" },
+    { text: "吻合口瘘早期识别与引流", topicId: "esophageal_anastomotic_leak_prevention", riskLevel: "high" },
+    { text: "两野 vs 三野淋巴结清扫", topicId: "esophageal_two_three_field_dissection", riskLevel: "moderate" },
+  ],
+  cervical: [
+    { text: "高危型 HPV 16/18 与 CIN 3", topicId: "cervical_hpv_cin_evolution", riskLevel: "moderate" },
+    { text: "宫颈冷刀锥切 (CKC) 切缘评估", topicId: "cervical_ckc_leep_cone_margin", riskLevel: "safe" },
+    { text: "同步放化疗 (CCRT) 根治标准", topicId: "cervical_ccrt_radiochemotherapy", riskLevel: "high" },
+    { text: "KEYNOTE-826 免疫联合靶向", topicId: "cervical_keynote826_immunotherapy", riskLevel: "low" },
+    { text: "广泛全子宫切除与神经保留", topicId: "cervical_radical_hysterectomy_nerve_sparing", riskLevel: "safe" },
+    { text: "卵巢移位术保护内分泌功能", topicId: "cervical_ovarian_transposition", riskLevel: "safe" },
+  ],
+  endometrial: [
+    { text: "TCGA 分子分型 (POLE/dMMR)", topicId: "endometrial_figo2023_molecular_tcga", riskLevel: "safe" },
+    { text: "绝经后异常子宫出血排查", topicId: "endometrial_early_abnormal_bleeding", riskLevel: "moderate" },
+    { text: "深肌层浸润 (MI >= 50%) 判定", topicId: "endometrial_myometrial_invasion_50", riskLevel: "high" },
+    { text: "淋巴脉管浸润 (LVSI) 风险", topicId: "endometrial_lvsi_lymphovascular_space", riskLevel: "high" },
+    { text: "PORTEC-3 辅助放化疗分层", topicId: "endometrial_portec_radiotherapy", riskLevel: "moderate" },
+    { text: "前哨淋巴结活检 (SLNB) 示踪", topicId: "endometrial_sentinel_lymph_node_slnb", riskLevel: "safe" },
+  ],
+};
 
-const BREAST_HOT_KEYWORDS: { text: string; topicId: string; riskLevel: RiskLevel }[] = [
-  { text: "微浸润性导管癌 (MIC)", topicId: "microinvasive_dcis", riskLevel: "moderate" },
-  { text: "HER2 低表达 (HER2-Low)", topicId: "her2_low", riskLevel: "moderate" },
-  { text: "阴性切缘标准 (No Ink)", topicId: "no_ink_on_tumor", riskLevel: "low" },
-  { text: "21基因复发评分 (RS)", topicId: "oncotype_dx_rs", riskLevel: "low" },
-  { text: "前哨淋巴结微转移", topicId: "sentinel_ln_macro_micro", riskLevel: "high" },
-  { text: "脉管癌栓 (LVI)", topicId: "breast_lvi", riskLevel: "high" },
-];
-
-// ── 建议 #7: 关键词命中高亮组件 ──────────────────────────────────────────────
+// ── 关键词命中高亮组件 ──────────────────────────────────────────────
 function HighlightText({ text, query, maxLen }: { text: string; query: string; maxLen?: number }) {
   if (!query.trim()) {
     const disp = maxLen && text.length > maxLen ? text.slice(0, maxLen) + "…" : text;
@@ -118,11 +201,63 @@ export function WikiSpotlightSearchModal({
   userProfile, 
   onSelectTopic, 
   topics, 
-  cancerType = "lung" 
+  cancerType: propCancerType 
 }: WikiSpotlightSearchModalProps) {
-  const currentTopics: WikiTopic[] = topics || (cancerType === "breast" ? BREAST_WIKI_TOPICS : WIKI_TOPICS);
-  const isBreast = cancerType === "breast";
-  const hotKeywords = isBreast ? BREAST_HOT_KEYWORDS : HOT_KEYWORDS;
+  const { cancerType: contextCancerType } = useCancerType();
+  const cancerType = propCancerType || contextCancerType || "lung";
+  const plugin = useMemo(() => CancerRegistry.get(cancerType), [cancerType]);
+
+  // Dynamic Topic List: from props or active cancer plugin registry
+  const currentTopics: WikiTopic[] = useMemo(() => {
+    if (topics && topics.length > 0) return topics;
+    try {
+      if (plugin?.content?.wikiTopics && plugin.content.wikiTopics.length > 0) {
+        return plugin.content.wikiTopics as WikiTopic[];
+      }
+    } catch {}
+    return cancerType === "breast" ? BREAST_WIKI_TOPICS : WIKI_TOPICS;
+  }, [topics, plugin, cancerType]);
+
+  // Dynamic Hot Keywords tailored to current cancer zone
+  const hotKeywords = useMemo(() => {
+    if (CANCER_HOT_KEYWORDS[cancerType]) {
+      return CANCER_HOT_KEYWORDS[cancerType];
+    }
+    // Fallback: take top 6 topics from currentTopics
+    return currentTopics.slice(0, 6).map((t) => ({
+      text: t.title,
+      topicId: t.id,
+      riskLevel: t.riskLevel,
+    }));
+  }, [cancerType, currentTopics]);
+
+  // Dynamic Placeholder tailored to current cancer zone
+  const placeholder = useMemo(() => {
+    switch (cancerType) {
+      case "breast":
+        return "搜索【乳腺癌】词条、指标或分型…如 BI-RADS、HER2、21基因、微钙化…";
+      case "colorectal":
+      case "colon":
+      case "rectal":
+        return "搜索【结直肠癌】词条、指标或治疗…如 CRM切缘、dMMR、IDEA减毒、新辅助…";
+      case "gastric":
+        return "搜索【胃癌】词条、指标或病理…如 D2清扫、Lauren印戒、Claudin 18.2、ESD…";
+      case "liver":
+        return "搜索【肝癌】词条、指标或分期…如 CNLC分期、Child-Pugh、门脉癌栓、微血管侵犯…";
+      case "pancreatic":
+        return "搜索【胰腺癌】词条、指标或方案…如 CA19-9、Whipple、mFOLFIRINOX、交界可切…";
+      case "thyroid":
+        return "搜索【甲状腺癌】词条、超声或指标…如 C-TIRADS、PTMC监测、BRAF、清甲评估…";
+      case "esophageal":
+        return "搜索【食管癌】词条、分期或方案…如 鳞癌浸润、微创三切口、NEOCRTEC5010、吻合口…";
+      case "cervical":
+        return "搜索【宫颈癌】词条、病理或放化疗…如 HPV16/18、CIN、锥切切缘、同步放化疗…";
+      case "endometrial":
+        return "搜索【子宫内膜癌】词条、分子分型…如 TCGA分型、POLE突变、肌层浸润、PORTEC…";
+      default:
+        return "搜索【肺癌】词条、指标或症状…如 STAS、磨玻璃、EGFR、7组淋巴结…";
+    }
+  }, [cancerType]);
 
   const [query, setQuery] = useState("");
   const [cursorIndex, setCursorIndex] = useState(-1);
@@ -134,7 +269,7 @@ export function WikiSpotlightSearchModal({
   const loadSearchHistory = useCallback(() => {
     try {
       if (typeof window === "undefined") return;
-      const raw = localStorage.getItem("oncopath_wiki_search_history");
+      const raw = localStorage.getItem(`oncopath_wiki_search_history_${cancerType}`) || localStorage.getItem("oncopath_wiki_search_history");
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
@@ -143,12 +278,13 @@ export function WikiSpotlightSearchModal({
         }
       }
     } catch {}
-  }, [currentTopics]);
+  }, [cancerType, currentTopics]);
 
   const saveToHistory = useCallback((topic: WikiTopic) => {
     try {
       if (typeof window === "undefined") return;
-      const raw = localStorage.getItem("oncopath_wiki_search_history");
+      const key = `oncopath_wiki_search_history_${cancerType}`;
+      const raw = localStorage.getItem(key);
       let list: SearchHistoryItem[] = raw ? JSON.parse(raw) : [];
       list = list.filter((item) => item.topicId !== topic.id);
       list.unshift({
@@ -157,106 +293,106 @@ export function WikiSpotlightSearchModal({
         riskLevel: topic.riskLevel,
         timestamp: Date.now(),
       });
-      localStorage.setItem("oncopath_wiki_search_history", JSON.stringify(list.slice(0, 10)));
+      localStorage.setItem(key, JSON.stringify(list.slice(0, 10)));
       setSearchHistory(list.slice(0, 5));
     } catch {}
-  }, []);
+  }, [cancerType]);
 
   const clearHistory = useCallback(() => {
     try {
-      localStorage.removeItem("oncopath_wiki_search_history");
+      localStorage.removeItem(`oncopath_wiki_search_history_${cancerType}`);
       setSearchHistory([]);
     } catch {}
-  }, []);
+  }, [cancerType]);
 
-  // ── 建议 #6: 档案专属关联推荐 ──────────────────────────────────────────────
+  // ── 建议 #3: 基于用户病历档案的个性化置顶推荐 ────────────────────────────
   const profileMatches = useMemo<WikiTopic[]>(() => {
     if (!userProfile) return [];
-    const matches: WikiTopic[] = [];
+    return currentTopics.filter((t) => {
+      // 肺癌特征匹配
+      if (userProfile.stas === "positive" && t.id.includes("stas")) return true;
+      if (userProfile.vpi === "positive" && t.id.includes("vpi")) return true;
+      if (userProfile.lvi === "positive" && (t.id.includes("lvi") || t.id.includes("vascular"))) return true;
+      if (userProfile.morphology === "mixed_ggo" && t.id.includes("mixed_ggo")) return true;
+      if (userProfile.morphology === "pure_ggo" && t.id.includes("pure_ggo")) return true;
+      if ((userProfile as any).pleuralIndentation && t.id.includes("pleural")) return true;
+      if (userProfile.stage && t.id.includes("stage")) return true;
+      // 实体瘤通用匹配
+      if ((userProfile as any).her2Status && t.id.includes("her2")) return true;
+      if ((userProfile as any).msiStatus && t.id.includes("msi")) return true;
+      if ((userProfile as any).brafStatus && t.id.includes("braf")) return true;
+      return false;
+    }).slice(0, 3);
+  }, [userProfile, currentTopics]);
 
-    if (isBreast) {
-      if (userProfile.her2Status && currentTopics.some((t) => t.id === "her2_low")) {
-        const her2 = currentTopics.find((t) => t.id === "her2_low");
-        if (her2) matches.push(her2);
-      }
-      if (userProfile.lvi === "positive" || (userProfile as any).lvi === true) {
-        const lvi = currentTopics.find((t) => t.id === "breast_lvi");
-        if (lvi) matches.push(lvi);
-      }
-      if (userProfile.margin === "positive" || userProfile.marginStatus === "positive") {
-        const margin = currentTopics.find((t) => t.id === "no_ink_on_tumor");
-        if (margin) matches.push(margin);
-      }
-      if (userProfile.lymphNodes === "N1" || userProfile.nStage === "N1") {
-        const sln = currentTopics.find((t) => t.id === "sentinel_ln_macro_micro");
-        if (sln) matches.push(sln);
-      }
-      if (!userProfile.surgeryType && currentTopics.some((t) => t.id === "core_needle_biopsy")) {
-        const cnb = currentTopics.find((t) => t.id === "core_needle_biopsy");
-        if (cnb) matches.push(cnb);
-      }
-    } else {
-      if (userProfile.noduleType === "pure_ggo") {
-        const t = currentTopics.find((x) => x.id === "pure_ggo");
-        if (t) matches.push(t);
-      } else if (userProfile.noduleType === "mixed_ggo") {
-        const t = currentTopics.find((x) => x.id === "mixed_ggo");
-        if (t) matches.push(t);
-      }
-      if (userProfile.stas === "positive" || (userProfile as any).stas === true) {
-        const t = currentTopics.find((x) => x.id === "stas");
-        if (t) matches.push(t);
-      }
-      if ((userProfile as any).pleuralInvasion === "positive" || userProfile.vpi === "positive" || (userProfile as any).vpi === true) {
-        const t = currentTopics.find((x) => x.id === "pleural_indentation");
-        if (t) matches.push(t);
-      }
-      if (userProfile.lymphNodes === "N2" || userProfile.nStage === "N2") {
-        const t = currentTopics.find((x) => x.id === "ln_subcarinal_7");
-        if (t) matches.push(t);
-      }
-    }
-
-    return matches.slice(0, 3);
-  }, [userProfile, currentTopics, isBreast]);
-
-  // ── 建议 #7: 模糊拼音 & 拼音首字母检索增强 ──────────────────────────────────
-  const searchResults = useMemo(() => {
+  // ── 建议 #2: 智能模糊搜索（多字段加权 + 拼音首字母 + 别名） ───────────────
+  const searchResults = useMemo<WikiTopic[]>(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
 
-    return currentTopics.filter((t) => {
-      if (t.title.toLowerCase().includes(q)) return true;
-      if (t.subtitle && t.subtitle.toLowerCase().includes(q)) return true;
-      if (t.metaphor.toLowerCase().includes(q)) return true;
-      if (t.clinicalTruth.toLowerCase().includes(q)) return true;
-      if (t.searchKeywords.some((kw) => kw.toLowerCase().includes(q))) return true;
-      return false;
-    });
+    const scored: { topic: WikiTopic; score: number }[] = [];
+
+    for (const topic of currentTopics) {
+      let score = 0;
+      const titleLower = topic.title.toLowerCase();
+      const defLower   = (topic.clinicalTruth || (topic as any).summary || (topic as any).definition || topic.subtitle || "").toLowerCase();
+
+      // 1. 标题完全匹配或前缀匹配（权重最高）
+      if (titleLower === q) score += 100;
+      else if (titleLower.startsWith(q)) score += 50;
+      else if (titleLower.includes(q)) score += 30;
+
+      // 2. 搜索关键词 / 缩写 / 别名匹配（权重次高）
+      const allKws = [...(topic.searchKeywords || []), ...(((topic as any).synonyms as string[]) || [])];
+      for (const kw of allKws) {
+        const kwLower = kw.toLowerCase();
+        if (kwLower === q) score += 80;
+        else if (kwLower.startsWith(q)) score += 40;
+        else if (kwLower.includes(q)) score += 20;
+      }
+
+      // 3. 临床释义文本命中（补充匹配）
+      if (defLower.includes(q)) score += 10;
+
+      // 4. 拼音首字母匹配（由 searchKeywords 携带）
+      const pinyinHits = (topic.searchKeywords || []).filter((kw) => kw.toLowerCase().startsWith(q));
+      if (pinyinHits.length > 0) score += 25;
+
+      if (score > 0) {
+        // 建议 #1 恶性风险级别加权：高危病理词条适度前置
+        const riskWeight = RISK_CONFIG[topic.riskLevel]?.priority || 1;
+        scored.push({ topic, score: score + riskWeight * 2 });
+      }
+    }
+
+    return scored.sort((a, b) => b.score - a.score).map((s) => s.topic);
   }, [query, currentTopics]);
 
-  // ── 建议 #3: 结果按风险分组并排序 ──────────────────────────────────────────
+  // ── 建议 #1: 搜索结果按风险等级分组 ─────────────────────────────────────────
   const groupedResults = useMemo(() => {
-    const groups: { level: RiskLevel; items: WikiTopic[] }[] = [
-      { level: "high", items: [] },
-      { level: "moderate", items: [] },
-      { level: "low", items: [] },
-      { level: "safe", items: [] },
-    ];
-    searchResults.forEach((topic) => {
-      const g = groups.find((grp) => grp.level === topic.riskLevel);
-      if (g) g.items.push(topic);
-    });
-    return groups.filter((g) => g.items.length > 0);
-  }, [searchResults]);
+    if (!query.trim()) return [];
+    const groups: { level: RiskLevel; items: WikiTopic[] }[] = [];
+    const order: RiskLevel[] = ["high", "moderate", "low", "safe"];
 
-  // ── 埋点事件记录 ────────────────────────────────────────────────────────────
-  const logSearchEvent = (action: string, detail?: Record<string, unknown>) => {
+    for (const level of order) {
+      const items = searchResults.filter((t) => t.riskLevel === level);
+      if (items.length > 0) {
+        groups.push({ level, items });
+      }
+    }
+    return groups;
+  }, [searchResults, query]);
+
+  // ── 建议 #8: 搜索行为审计日志 ────────────────────────────────────────────────
+  const logSearchEvent = (action: string, detail: Record<string, any>) => {
     try {
+      if (typeof window === "undefined") return;
       const payload = {
         action,
-        timestamp: Date.now(),
+        cancerType,
         ...detail,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
       };
       const key = "oncopath_wiki_search_audit";
       const exist = JSON.parse(localStorage.getItem(key) || "[]");
@@ -296,11 +432,24 @@ export function WikiSpotlightSearchModal({
     onSelectTopic(topic.id, topic.category);
   }, [onClose, onSelectTopic, saveToHistory, query]);
 
-  const handleHotKeyword = useCallback((topicId: string) => {
-    const topic = currentTopics.find((t) => t.id === topicId);
+  const handleHotKeyword = useCallback((topicId: string, kwText?: string) => {
+    // 1. Direct ID match
+    let topic = currentTopics.find((t) => t.id === topicId);
+    // 2. Partial ID match
+    if (!topic) {
+      topic = currentTopics.find((t) => t.id.includes(topicId) || topicId.includes(t.id));
+    }
+    // 3. Keyword / title fallback match
+    if (!topic && kwText) {
+      topic = currentTopics.find((t) => t.title.includes(kwText) || (t.searchKeywords || []).some((k: string) => k.includes(kwText)));
+    }
     if (topic) {
-      logSearchEvent("hot_click", { topicId });
+      logSearchEvent("hot_click", { topicId: topic.id });
       handleSelect(topic);
+    } else {
+      if (kwText) {
+        setQuery(kwText);
+      }
     }
   }, [handleSelect, currentTopics]);
 
@@ -339,8 +488,15 @@ export function WikiSpotlightSearchModal({
         </div>
 
         {/* 1. Header (Search Bar & Close Controls) */}
-        <div className="flex items-center gap-3 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100 shrink-0 bg-white">
+        <div className="flex items-center gap-2.5 sm:gap-3 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100 shrink-0 bg-white">
           <Search className="w-5 h-5 text-blue-500 shrink-0" />
+          
+          {/* Active Cancer Zone Badge */}
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 border border-blue-200/80 text-blue-700 text-[11px] sm:text-xs font-bold shrink-0 select-none">
+            <span>{plugin.icon}</span>
+            <span>{plugin.name}专区</span>
+          </span>
+
           <input
             ref={inputRef}
             type="text"
@@ -354,15 +510,15 @@ export function WikiSpotlightSearchModal({
               }
             }}
             onKeyDown={handleKeyDown}
-            placeholder="搜索词条、指标或症状…如 STAS、磨玻璃、EGFR、7组…"
-            className="flex-1 text-base sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 bg-transparent border-none outline-none"
+            placeholder={placeholder}
+            className="flex-1 text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 bg-transparent border-none outline-none min-w-0"
             autoComplete="off"
             spellCheck={false}
           />
           {query && (
             <button 
               type="button" 
-              onClick={() => { setQuery(""); setCursorIndex(-1); inputRef.current?.focus(); }}
+              onClick={() => { setQuery(""); setCursorIndex(-1); inputRef.current?.focus({ preventScroll: true }); }}
               className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
               title="清空"
             >
@@ -393,7 +549,7 @@ export function WikiSpotlightSearchModal({
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>最近查阅记录</span>
+                      <span>【{plugin.name}】最近查阅记录</span>
                     </p>
                     <button
                       type="button"
@@ -409,7 +565,7 @@ export function WikiSpotlightSearchModal({
                       <button
                         key={item.topicId}
                         type="button"
-                        onClick={() => handleHotKeyword(item.topicId)}
+                        onClick={() => handleHotKeyword(item.topicId, item.title)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-xs font-semibold transition-all cursor-pointer"
                       >
                         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${RISK_CONFIG[item.riskLevel]?.dot || 'bg-slate-400'}`} />
@@ -425,7 +581,7 @@ export function WikiSpotlightSearchModal({
                 <div>
                   <p className="text-[11px] font-extrabold text-teal-600 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
                     <Target className="w-3.5 h-3.5 shrink-0" />
-                    <span>基于您的病历档案——专属关联词条</span>
+                    <span>基于您的【{plugin.name}】病历档案——专属关联词条</span>
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {profileMatches.map((t) => (
@@ -442,18 +598,18 @@ export function WikiSpotlightSearchModal({
               <div>
                 <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>临床高频速查</span>
+                  <span>【{plugin.name}】临床高频速查</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {hotKeywords.map((hw) => (
-                    <button key={hw.topicId} type="button" onClick={() => handleHotKeyword(hw.topicId)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer">
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${RISK_CONFIG[hw.riskLevel].dot}`} />
+                    <button key={hw.topicId} type="button" onClick={() => handleHotKeyword(hw.topicId, hw.text)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${RISK_CONFIG[hw.riskLevel]?.dot || 'bg-slate-400'}`} />
                       <span>{hw.text}</span>
                     </button>
                   ))}
                 </div>
               </div>
-              <p className="text-[11px] text-slate-400 text-center pb-1">输入关键词即时联想全部 {currentTopics.length} 个词条 · 支持中文 / 英文 / 拼音首字母</p>
+              <p className="text-[11px] text-slate-400 text-center pb-1">输入关键词即时联想【{plugin.name}】全部 {currentTopics.length} 个词条 · 支持中文 / 英文 / 拼音首字母</p>
             </div>
           )}
 
@@ -481,74 +637,104 @@ export function WikiSpotlightSearchModal({
             </div>
           )}
 
+          {/* 无结果兜底 */}
           {hasQuery && !hasResults && (
-            <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
-                <Search className="w-5 h-5 text-slate-400" />
+            <div className="p-8 sm:p-12 text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                <Command className="w-6 h-6 stroke-[1.5]" />
               </div>
-              <p className="text-sm font-bold text-slate-700 mb-1">未找到与「{query}」相关的词条</p>
-              <p className="text-xs text-slate-400 leading-relaxed max-w-xs">请尝试近义词，如「气道播散」代替「STAS」，或使用英文缩写如「VPI」「EGFR」</p>
+              <div>
+                <p className="text-sm font-bold text-slate-700">未找到与 &quot;{query}&quot; 相关的【{plugin.name}】百科词条</p>
+                <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                  建议尝试搜索标准医学简称（如 {hotKeywords.slice(0, 3).map(k => k.text.split(' ')[0]).join('、')}）、拼音首字母或关键临床指标
+                </p>
+              </div>
             </div>
           )}
         </div>
 
-        {/* 3. Footer（桌面键盘提示） */}
-        <div className="hidden sm:flex items-center justify-between px-5 py-2.5 border-t border-slate-100 shrink-0 bg-slate-50/80">
-          <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 font-bold text-[10px] font-mono">↑↓</kbd><span>选择</span></span>
-            <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 font-bold text-[10px] font-mono">↵</kbd><span>跳转</span></span>
-            <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 font-bold text-[10px] font-mono">Esc</kbd><span>关闭</span></span>
+        {/* 3. Footer (Hotkeys Tip) */}
+        <div className="hidden sm:flex items-center justify-between px-5 py-2.5 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-400 select-none shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono shadow-2xs">↑</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono shadow-2xs">↓</kbd>
+              <span>导航切换</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono shadow-2xs">↵</kbd>
+              <span>直达深度抽屉</span>
+            </span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-slate-400">
-            <Command className="w-3 h-3" /><span className="font-mono">K</span><span className="ml-1">/ Ctrl+K 随时呼出</span>
-          </div>
+          <span>知癌维基 · 【{plugin.name}】临床词条检索系统</span>
         </div>
       </div>
     </div>
   );
 }
 
-function ResultItem({ topic, query, isActive, onHover, onSelect }: { topic: WikiTopic; query: string; isActive: boolean; onHover: () => void; onSelect: () => void }) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const risk = RISK_CONFIG[topic.riskLevel];
-  const catLabel = WIKI_CATEGORIES[topic.category]?.label ?? "";
+// ── 单条搜索结果项组件 ────────────────────────────────────────────────────────
+interface ResultItemProps {
+  topic: WikiTopic;
+  query: string;
+  isActive: boolean;
+  onHover: () => void;
+  onSelect: () => void;
+}
 
-  useEffect(() => { 
-    if (isActive) ref.current?.scrollIntoView({ block: "nearest" }); 
-  }, [isActive]);
+const CATEGORY_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
+  imaging:    { label: "影像学",   icon: Layers },
+  pathology:  { label: "病理学",   icon: Microscope },
+  molecular:  { label: "分子变异", icon: Dna },
+  staging:    { label: "分期与治疗", icon: ClipboardList },
+  rehab:      { label: "康复随访", icon: Heart },
+  default:    { label: "临床词条", icon: Wind },
+};
+
+function ResultItem({ topic, query, isActive, onHover, onSelect }: ResultItemProps) {
+  const meta = CATEGORY_META[topic.category] || CATEGORY_META.default;
+  const CategoryIcon = meta.icon;
+  const risk = RISK_CONFIG[topic.riskLevel] || RISK_CONFIG.low;
 
   return (
-    <button 
-      ref={ref} 
-      type="button" 
-      role="option" 
-      onClick={onSelect} 
+    <div
+      onClick={onSelect}
       onMouseEnter={onHover}
-      className={`w-full flex items-start gap-3 px-4 sm:px-5 py-3 transition-colors cursor-pointer text-left border-l-2 ${isActive ? "bg-blue-50 border-blue-400" : "border-transparent hover:bg-slate-50"}`}
-      aria-selected={isActive}
+      role="button"
+      tabIndex={0}
+      className={`px-4 sm:px-5 py-3 flex items-start gap-3 cursor-pointer transition-colors duration-150 ${
+        isActive ? "bg-blue-50/90 text-blue-900 border-l-3 border-blue-600" : "hover:bg-slate-50 text-slate-800"
+      }`}
     >
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0 mt-0.5 ${isActive ? "bg-blue-100" : "bg-slate-100"}`}>
-        {topic.icon === "wind" ? <Wind className="w-4 h-4 text-sky-600" /> :
-         topic.icon === "layers" ? <Layers className="w-4 h-4 text-indigo-600" /> :
-         topic.icon === "dna" ? <Dna className="w-4 h-4 text-purple-600" /> :
-         topic.icon === "microscope" ? <Microscope className="w-4 h-4 text-teal-600" /> :
-         topic.icon === "heart" ? <Heart className="w-4 h-4 text-rose-600" /> :
-         <ClipboardList className="w-4 h-4 text-slate-600" />}
+      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+        isActive ? "bg-blue-600 text-white shadow-xs" : "bg-slate-100 text-slate-500"
+      }`}>
+        <CategoryIcon className="w-4 h-4" />
       </div>
+
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm font-extrabold text-slate-900"><HighlightText text={topic.title} query={query} maxLen={40} /></span>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${risk.badge}`}>{risk.label}</span>
+          <span className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
+            <HighlightText text={topic.title} query={query} />
+          </span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${risk.badge}`}>
+            {risk.label.split(" · ")[0]}
+          </span>
+          <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+            {(topic as any).categoryLabel || meta.label}
+          </span>
         </div>
-        <p className="text-xs text-slate-500 mt-0.5 leading-relaxed line-clamp-1"><HighlightText text={topic.metaphor} query={query} maxLen={55} /></p>
-        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-          <span className="text-[10px] text-slate-400 font-medium">{catLabel}</span>
-          {topic.searchKeywords.slice(0, 3).map((kw) => (
-            <span key={kw} className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500">{kw}</span>
-          ))}
-        </div>
+        <p className="text-xs text-slate-500 mt-1 line-clamp-1 leading-relaxed">
+          <HighlightText text={topic.clinicalTruth || (topic as any).summary || (topic as any).definition || topic.subtitle || ""} query={query} maxLen={80} />
+        </p>
       </div>
-      <CornerDownLeft className={`w-4 h-4 shrink-0 mt-1 transition-opacity ${isActive ? "text-blue-400 opacity-100" : "opacity-0"}`} />
-    </button>
+
+      <div className={`shrink-0 flex items-center gap-1 text-[11px] self-center transition-opacity ${
+        isActive ? "opacity-100 text-blue-600 font-bold" : "opacity-0"
+      }`}>
+        <span className="hidden sm:inline">阅读</span>
+        <CornerDownLeft className="w-3.5 h-3.5" />
+      </div>
+    </div>
   );
 }
