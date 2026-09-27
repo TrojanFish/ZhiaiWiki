@@ -1062,7 +1062,7 @@ export async function POST(request: Request) {
           }
 
           // Safety Appendix
-          const safetyFooter = `\n\n---\n\n> **【知癌维基 使用边界】**：\n> ${PRODUCT_SCOPE_NOTICE}\n> ${REPORT_ORGANIZATION_NOTICE}\n> 文献中的治疗、分期或预后内容仅作为一般医学背景，不代表对您的判断或建议；请携带完整原始报告向持证医务人员咨询。\n`;
+          const safetyFooter = `\n\n---\n\n> **【知癌维基 医疗免责声明与使用边界】**：\n> ${PRODUCT_SCOPE_NOTICE}\n> ${REPORT_ORGANIZATION_NOTICE}\n> 文献中的治疗、分期或预后内容仅作为一般医学背景，不代表对您的判断或建议；请携带完整原始报告向持证医务人员咨询。\n`;
           controller.enqueue(new TextEncoder().encode(safetyFooter));
 
           controller.close();
