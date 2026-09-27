@@ -295,10 +295,16 @@ select:focus-visible {
   50% { opacity: 1; transform: scale(1.03); }
 }
 
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 .animate-fade-in-up {
   animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@utility animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -332,14 +338,23 @@ select:focus-visible {
 }
 
 /* Step wizard slide-in animation — triggered by key={`step-${currentStep}`} re-mount */
+@utility animate-slide-in {
+  animation: slideInFromRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 .animate-slide-in {
   animation: slideInFromRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@utility animate-slide-up-drawer {
+  animation: slideUpDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 .animate-slide-up-drawer {
-  animation: slideUpDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUpDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@utility animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
 .animate-pulse-glow {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }

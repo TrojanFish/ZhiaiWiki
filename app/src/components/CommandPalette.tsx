@@ -69,7 +69,7 @@ export default function CommandPalette() {
   // Focus input when opened
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
+      setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 50);
     } else {
       setQuery("");
       setActiveIndex(0);
@@ -279,7 +279,7 @@ export default function CommandPalette() {
       <div 
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleItemKeyDown}
-        className="relative w-full max-w-2xl bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200"
+        className="relative w-full max-w-2xl bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">

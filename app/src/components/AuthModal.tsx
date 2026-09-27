@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { AlertCircle, X, LogIn, UserPlus, Lock, Mail } from "lucide-react";
 import { login, register } from "@/lib/api";
@@ -17,10 +17,14 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
     document.body.style.overflow = "hidden";
+    const timer = setTimeout(() => {
+      emailInputRef.current?.focus({ preventScroll: true });
+    }, 150);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
@@ -28,6 +32,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
+      clearTimeout(timer);
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -86,7 +91,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
       {/* 3-Tier Modal Card (iOS Bottom Sheet on Mobile, Centered Card on Desktop) */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full sm:max-w-md bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200"
+        className="relative w-full sm:max-w-md bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
@@ -135,13 +140,13 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
               <span>账号 / 邮箱地址 *</span>
             </label>
             <input
+              ref={emailInputRef}
               type="text"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono"
               placeholder="patient@example.com"
-              autoFocus
             />
           </div>
 

@@ -383,7 +383,7 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
         onClick={(e) => e.stopPropagation()}
         className={`relative w-full ${
           activeMode === "consultation" ? "max-w-2xl" : "max-w-lg"
-        } bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200`}
+        } bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-[max-width] duration-200`}
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">

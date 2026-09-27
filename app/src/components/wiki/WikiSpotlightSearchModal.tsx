@@ -270,7 +270,7 @@ export function WikiSpotlightSearchModal({
     if (isOpen) {
       loadSearchHistory();
       setCursorIndex(-1);
-      setTimeout(() => inputRef.current?.focus(), 80);
+      setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 80);
     } else {
       setQuery("");
       setCursorIndex(-1);
@@ -331,7 +331,7 @@ export function WikiSpotlightSearchModal({
       {/* 3-Tier Modal Container (HIG Sheet on Mobile, Centered Card on Desktop) */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0 transition-all duration-200"
+        className="relative w-full max-w-2xl bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] max-h-[92dvh] text-slate-900 animate-slide-up-drawer sm:animate-fade-in-up pb-safe sm:pb-0"
       >
         {/* iOS HIG Sheet Grabber for Mobile */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0">
