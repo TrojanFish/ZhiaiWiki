@@ -9,7 +9,6 @@ import {
   ChevronDown,
   ChevronUp,
   Check,
-  Share2,
   BookOpen,
   ShieldCheck,
   HelpCircle,
@@ -39,32 +38,6 @@ const WikiSharePosterModal = dynamic(() => import("./WikiSharePosterModal"), {
   loading: () => null,
 });
 
-// ── 工具函数 ────────────────────────────────────────────────────────────────
-function copyTextSafe(text: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const fallback = () => {
-      try {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(ta);
-        resolve(ok);
-      } catch {
-        resolve(false);
-      }
-    };
-    if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => resolve(true)).catch(() => fallback());
-    } else {
-      fallback();
-    }
-  });
-}
-
 // ── 类型与 Props ─────────────────────────────────────────────────────────────
 interface WikiDetailDrawerProps {
   topic: WikiTopic | null;
@@ -85,7 +58,6 @@ export function WikiDetailDrawer({
   cancerType = "lung",
 }: WikiDetailDrawerProps) {
   const [expandedFaq, setExpandedFaq]         = useState<number | null>(null);
-  const [copied, setCopied]                    = useState(false);
   const [showPosterModal, setShowPosterModal]   = useState(false);
   const [toastMessage, setToastMessage]        = useState<string | null>(null);
   const [savedQuestions, setSavedQuestions]    = useState<Record<string, boolean>>({});
@@ -98,7 +70,6 @@ export function WikiDetailDrawer({
   useEffect(() => {
     if (topic) {
       setExpandedFaq(null);
-      setCopied(false);
       setSavedQuestions({});
       setShowVisual(true);
       // 次一帧触发动效（确保 CSS transition 生效）
@@ -152,16 +123,6 @@ export function WikiDetailDrawer({
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const handleCopyReassurance = async () => {
-    if (!topic) return;
-    const text = `【${topic.title} · 临床指引与定心丸】\n[生活比喻] ${topic.metaphor}\n[循证定心丸] ${topic.reassurance}\n— 来源：知癌维基 (ZhiaiWiki) ${cancerType === "breast" ? "乳腺癌" : cancerType === "colorectal" ? "结直肠癌" : "肺结节与肺癌"}循证视觉百科`;
-    const ok = await copyTextSafe(text);
-    if (ok) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   const handleAddToClinicQuestions = (questionText: string, customTitle?: string) => {
@@ -243,14 +204,14 @@ export function WikiDetailDrawer({
           )}
 
           {/* ── 顶部标题栏 ────────────────────────────────────────────────── */}
-          <div className="flex-shrink-0 flex items-center justify-between gap-3 px-5 sm:px-6 lg:px-7 py-3.5 sm:py-4 border-b border-slate-100 bg-white/95 backdrop-blur-sm z-10">
+          <div className="flex-shrink-0 flex items-start sm:items-center justify-between gap-2.5 sm:gap-3 px-4 sm:px-6 lg:px-7 py-3 sm:py-4 border-b border-slate-100 bg-white/95 backdrop-blur-sm z-10">
             {topic && riskCfg && catCfg ? (
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 shadow-xs">
+              <div className="flex items-start gap-2.5 sm:gap-3 min-w-0 flex-1">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 shadow-xs mt-0.5 sm:mt-0">
                   <WikiTopicIcon icon={topic.icon} topicId={topic.id} size={22} />
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                     <span className={`text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border ${catCfg.badgeBg}`}>
                       {topic.subcategory || catCfg.label}
                     </span>
@@ -261,7 +222,7 @@ export function WikiDetailDrawer({
                       · 知癌维基权威循证词典
                     </span>
                   </div>
-                  <h2 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 tracking-tight truncate">
+                  <h2 className="text-[15px] sm:text-lg lg:text-xl font-black text-slate-900 tracking-tight leading-snug break-words">
                     {topic.title}
                   </h2>
                 </div>
@@ -270,8 +231,8 @@ export function WikiDetailDrawer({
               <div className="h-10 w-48 rounded-xl bg-slate-100 animate-pulse" />
             )}
 
-            {/* 工具栏：最大化 + 海报 + 复制 + 关闭 */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            {/* 工具栏：最大化 + 海报 + 关闭 */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 pt-0.5 sm:pt-0">
               {topic && (
                 <>
                   {/* 桌面端画幅切换按钮 */}
@@ -291,19 +252,6 @@ export function WikiDetailDrawer({
                     className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-blue-200 bg-blue-50/80 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all cursor-pointer active:scale-95 shadow-xs"
                   >
                     <ImageIcon className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleCopyReassurance}
-                    title={copied ? "已复制" : "一键复制定心丸金句"}
-                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-xs ${
-                      copied
-                        ? "bg-emerald-600 border-emerald-600 text-white"
-                        : "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
-                    }`}
-                  >
-                    {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
                   </button>
                 </>
               )}
