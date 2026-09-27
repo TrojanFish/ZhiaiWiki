@@ -261,24 +261,12 @@ export function MediastinalLNMapVisual() {
       {/* SVG Anatomical Diagram Canvas */}
       <div className="relative bg-[#070d19] rounded-2xl p-2 border border-slate-800/80 overflow-hidden">
         <svg viewBox="0 0 240 145" className="w-full h-auto max-h-[300px]">
-          <defs>
-            <linearGradient id="tracheaGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#334155" />
-              <stop offset="50%" stopColor="#475569" />
-              <stop offset="100%" stopColor="#334155" />
-            </linearGradient>
-            <radialGradient id="subcarinalGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#e11d48" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#e11d48" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
           {/* Background Grid Accent */}
           <line x1="120" y1="0" x2="120" y2="145" stroke="#1e293b" strokeDasharray="3,3" strokeWidth="0.8" />
           <line x1="0" y1="68" x2="240" y2="68" stroke="#1e293b" strokeDasharray="3,3" strokeWidth="0.8" />
 
           {/* Subcarinal Ambience Glow */}
-          <circle cx="120" cy="68" r="28" fill="url(#subcarinalGlow)" pointerEvents="none" />
+          <circle cx="120" cy="68" r="28" fill="#e11d48" opacity="0.18" pointerEvents="none" />
 
           {/* Anatomical Labels */}
           <text x="12" y="14" fill="#64748b" fontSize="3.2" fontWeight="bold">右侧 (Right)</text>
@@ -286,7 +274,7 @@ export function MediastinalLNMapVisual() {
           <text x="120" y="8" textAnchor="middle" fill="#94a3b8" fontSize="3.2" fontWeight="bold">气管 (Trachea)</text>
 
           {/* Trachea and Bronchial Tree Framework */}
-          <g stroke="url(#tracheaGrad)" strokeLinecap="round" fill="none">
+          <g stroke="#475569" strokeLinecap="round" fill="none">
             {/* Trachea */}
             <line x1="120" y1="10" x2="120" y2="55" strokeWidth="7" />
             

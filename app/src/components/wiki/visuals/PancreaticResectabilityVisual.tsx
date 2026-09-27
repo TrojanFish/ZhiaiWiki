@@ -79,33 +79,18 @@ export function PancreaticResectabilityVisual() {
       {/* SVG 纯矢量解剖示意图 (零外部库, 响应式 viewBox) */}
       <div className="relative w-full aspect-[16/9] sm:aspect-[2.2/1] bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex items-center justify-center p-2">
         <svg viewBox="0 0 460 200" className="w-full h-full select-none" role="img" aria-label="胰腺解剖与血管切除性示意图">
-          <defs>
-            <linearGradient id="pancreasGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#fed7aa" />
-              <stop offset="100%" stopColor="#fdba74" />
-            </linearGradient>
-            <linearGradient id="veinGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="100%" stopColor="#0284c7" />
-            </linearGradient>
-            <linearGradient id="arteryGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f87171" />
-              <stop offset="100%" stopColor="#dc2626" />
-            </linearGradient>
-          </defs>
-
           {/* 1. 动脉管道 (SMA) */}
-          <path d="M 280 20 Q 280 100 290 180" fill="none" stroke="url(#arteryGrad)" strokeWidth="14" strokeLinecap="round" opacity="0.85" />
+          <path d="M 280 20 Q 280 100 290 180" fill="none" stroke="#dc2626" strokeWidth="14" strokeLinecap="round" opacity="0.85" />
           <text x="295" y="40" fill="#dc2626" fontSize="10" fontWeight="bold">SMA 肠系膜上动脉</text>
 
           {/* 2. 静脉管道 (SMV / 门静脉) */}
-          <path d="M 230 20 Q 240 100 240 180" fill="none" stroke="url(#veinGrad)" strokeWidth="18" strokeLinecap="round" opacity="0.9" />
+          <path d="M 230 20 Q 240 100 240 180" fill="none" stroke="#0284c7" strokeWidth="18" strokeLinecap="round" opacity="0.9" />
           <text x="170" y="40" fill="#0284c7" fontSize="10" fontWeight="bold">SMV 门静脉主干</text>
 
           {/* 3. 胰腺主体轮廓 */}
           <path
             d="M 60 110 C 90 80, 160 85, 230 95 C 290 105, 360 80, 410 95 C 430 100, 420 130, 380 135 C 300 145, 180 140, 120 150 C 70 160, 45 130, 60 110 Z"
-            fill="url(#pancreasGrad)"
+            fill="#fed7aa"
             stroke="#fb923c"
             strokeWidth="1.5"
             opacity="0.8"

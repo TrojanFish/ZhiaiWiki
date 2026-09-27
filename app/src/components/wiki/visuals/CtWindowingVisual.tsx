@@ -191,23 +191,6 @@ export function CtWindowingVisual({
           className="w-full h-full"
           onMouseLeave={() => setHoveredProbe(null)}
         >
-          <defs>
-            {/* GGO Cloudy Halo Gradient */}
-            <radialGradient id={`ggo-grad-${type}`} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#e2e8f0" stopOpacity="0.75" />
-              <stop offset="45%" stopColor="#cbd5e1" stopOpacity="0.55" />
-              <stop offset="85%" stopColor="#94a3b8" stopOpacity="0.30" />
-              <stop offset="100%" stopColor="#64748b" stopOpacity="0.05" />
-            </radialGradient>
-
-            {/* Solid Core Gradient */}
-            <radialGradient id={`solid-grad-${type}`} cx="45%" cy="40%" r="55%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="70%" stopColor="#e2e8f0" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.9" />
-            </radialGradient>
-          </defs>
-
           {/* 1. Outer Thoracic Body Wall & Subcutaneous Contour */}
           <ellipse
             cx="200"
@@ -346,7 +329,8 @@ export function CtWindowingVisual({
                 cx={noduleCx}
                 cy={noduleCy}
                 r={totalRadius}
-                fill={`url(#ggo-grad-${type})`}
+                fill="#94a3b8"
+                fillOpacity={0.4}
                 stroke="#94a3b8"
                 strokeWidth="0.8"
                 strokeDasharray="3,2"
@@ -393,11 +377,11 @@ export function CtWindowingVisual({
                 cx={noduleCx}
                 cy={noduleCy}
                 r={solidRadius}
-                fill={isLung ? `url(#solid-grad-${type})` : "#cbd5e1"}
+                fill={isLung ? "#ffffff" : "#cbd5e1"}
+                fillOpacity={isLung ? 0.95 : 1}
                 stroke={isLung ? "#ffffff" : "#f1f5f9"}
                 strokeWidth={isLung ? 1.5 : 1.2}
                 className="cursor-crosshair transition-all duration-300"
-                filter={isLung ? "drop-shadow(0 0 4px rgba(255,255,255,0.4))" : undefined}
                 onMouseEnter={() =>
                   setHoveredProbe({
                     hu: 38,

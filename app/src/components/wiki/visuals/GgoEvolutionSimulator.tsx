@@ -97,33 +97,15 @@ export function GgoEvolutionSimulator() {
           <div className="absolute top-1.5 left-2 text-[9px] font-mono text-slate-400">CT模拟剖面</div>
           
           <svg viewBox="0 0 140 140" className="w-28 h-28 sm:w-32 sm:h-32 my-1 select-none">
-            {/* Background Lung Parenchyma Texture */}
-            <defs>
-              <radialGradient id="ggo-glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#94a3b8" stopOpacity={haloOpacity} />
-                <stop offset="70%" stopColor="#64748b" stopOpacity={haloOpacity * 0.7} />
-                <stop offset="100%" stopColor="#334155" stopOpacity="0" />
-              </radialGradient>
-              <radialGradient id="solid-core" cx="48%" cy="46%" r="50%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity={solidOpacity} />
-                <stop offset="65%" stopColor="#e2e8f0" stopOpacity={solidOpacity * 0.95} />
-                <stop offset="100%" stopColor="#cbd5e1" stopOpacity={solidOpacity * 0.85} />
-              </radialGradient>
-              <pattern id="lung-mesh" width="8" height="8" patternUnits="userSpaceOnUse">
-                <circle cx="4" cy="4" r="0.6" fill="#1e293b" />
-              </pattern>
-            </defs>
-
             {/* Dark Lung Background */}
             <rect width="140" height="140" fill="#090d16" />
-            <rect width="140" height="140" fill="url(#lung-mesh)" />
 
             {/* Micro Pulmonary Vessels (Normal lung background) */}
             <path d="M 15 30 Q 50 60 70 70 T 120 115" stroke="#1e293b" strokeWidth="1.2" fill="none" />
             <path d="M 110 20 Q 80 50 70 70 T 30 120" stroke="#1e293b" strokeWidth="0.9" fill="none" />
 
             {/* Outer GGO Halo (Ground-Glass Opacity) */}
-            <circle cx="70" cy="70" r={outerR} fill="url(#ggo-glow)" />
+            <circle cx="70" cy="70" r={outerR} fill="#94a3b8" opacity={haloOpacity} />
             <circle cx="70" cy="70" r={outerR} stroke="#94a3b8" strokeWidth="0.5" strokeDasharray="2,2" fill="none" opacity="0.4" />
 
             {/* Inner Solid Core (Consolidation) */}
@@ -132,10 +114,11 @@ export function GgoEvolutionSimulator() {
                 cx="70"
                 cy="70"
                 r={innerR}
-                fill="url(#solid-core)"
+                fill="#ffffff"
+                opacity={solidOpacity}
                 stroke="#ffffff"
                 strokeWidth="0.8"
-                style={{ filter: "drop-shadow(0 0 6px rgba(255,255,255,0.4))", transition: "all 0.15s ease-out" }}
+                style={{ transition: "all 0.15s ease-out" }}
               />
             )}
 

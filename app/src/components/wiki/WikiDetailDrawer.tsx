@@ -65,6 +65,7 @@ export function WikiDetailDrawer({
   const [showVisual, setShowVisual]            = useState(true);   // 控制微观模拟器折叠展开
   const [isMaximized, setIsMaximized]          = useState(false);  // PC端全景/最大化状态
   const drawerRef                              = useRef<HTMLDivElement>(null);
+  const visualContainerRef                     = useRef<HTMLDivElement>(null);
 
   // 当 topic 变化时重置展开状态、触发入场动效
   useEffect(() => {
@@ -303,7 +304,10 @@ export function WikiDetailDrawer({
                         </button>
                       </div>
                       {showVisual && (
-                        <div className="p-1 sm:p-2 max-h-[320px] sm:max-h-[360px] lg:max-h-[460px] overflow-y-auto overscroll-contain custom-scrollbar">
+                        <div 
+                          ref={visualContainerRef}
+                          className="p-1 sm:p-2 max-h-[320px] sm:max-h-[360px] lg:max-h-[460px] overflow-y-auto overscroll-contain custom-scrollbar"
+                        >
                           <WikiVisualRenderer visualComponent={topic.visualComponent} />
                         </div>
                       )}
@@ -374,7 +378,7 @@ export function WikiDetailDrawer({
                 </div>
 
                 {/* 👉 右栏：临床真相与权威循证决策区 (55%~58% 宽) */}
-                <div className="space-y-5 lg:col-span-7 lg:h-full lg:overflow-y-auto lg:p-6 custom-scrollbar bg-white">
+                <div className="mt-8 pt-7 border-t border-slate-200/90 space-y-5 lg:mt-0 lg:pt-6 lg:border-t-0 lg:col-span-7 lg:h-full lg:overflow-y-auto lg:p-6 custom-scrollbar bg-white">
                   {/* Section 1: 临床真相 */}
                   <div className="space-y-2.5">
                     <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -577,7 +581,7 @@ export function WikiDetailDrawer({
       {showPosterModal && topic && (
         <WikiSharePosterModal
           topic={topic}
-          visualDomHtml={undefined}
+          visualDomHtml={visualContainerRef.current?.innerHTML || undefined}
           onClose={() => setShowPosterModal(false)}
         />
       )}

@@ -104,7 +104,7 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
   useEffect(() => {
     const timer = setTimeout(() => {
       handleGenerateImage();
-    }, 250);
+    }, 350);
     return () => clearTimeout(timer);
   }, []);
 
@@ -364,8 +364,15 @@ export default function WikiSharePosterModal({ topic, visualDomHtml, onClose }: 
           )}
 
           {generationError && (
-            <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-600/50 text-xs text-rose-200 text-center">
-              {generationError}
+            <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-600/50 text-xs text-rose-200 text-center space-y-2.5">
+              <p>{generationError}</p>
+              <button
+                type="button"
+                onClick={handleGenerateImage}
+                className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs cursor-pointer shadow-xs active:scale-95 transition-all"
+              >
+                重新生成长图
+              </button>
             </div>
           )}
 
