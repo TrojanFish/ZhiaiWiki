@@ -2,7 +2,6 @@ import { WIKI_TOPICS } from '../src/lib/wikiData';
 import { BREAST_WIKI_TOPICS } from '../src/lib/breastWikiData';
 import { COLON_WIKI_TOPICS } from '../src/lib/colonWikiData';
 import { RECTAL_WIKI_TOPICS } from '../src/lib/rectalWikiData';
-import { COLORECTAL_WIKI_TOPICS } from '../src/lib/colorectalWikiData';
 import { GASTRIC_WIKI_TOPICS } from '../src/lib/gastricWikiData';
 import { LIVER_WIKI_TOPICS } from '../src/lib/liverWikiData';
 import { ESOPHAGEAL_WIKI_TOPICS } from '../src/lib/esophagealWikiData';

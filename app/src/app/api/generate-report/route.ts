@@ -799,6 +799,29 @@ export async function POST(request: Request) {
     // 2. Patient Privacy & PII Sanitization (HIPAA / PIPL compliance)
     const profile = sanitizePatientProfile(rawProfile);
 
+    if (profile.reportReviewStatus && profile.reportReviewStatus !== "confirmed") {
+      return NextResponse.json({
+        success: false,
+        error: "请先核对并确认报告解析出的关键临床字段，再生成循证结果。",
+        code: "REPORT_REVIEW_REQUIRED",
+        requiresReview: true,
+      }, { status: 409 });
+    }
+
+    const supportedCancerTypes = new Set([
+      "lung", "breast", "colon", "rectal", "colorectal", "gastric", "liver",
+      "esophageal", "thyroid", "endometrial", "cervical", "pancreatic",
+    ]);
+    const requestedType = String(profile.cancerType || profile.organ || "").toLowerCase().trim();
+    if (!supportedCancerTypes.has(requestedType)) {
+      return NextResponse.json({
+        success: false,
+        error: "循证报告需要先确认患者癌种，未知或缺失癌种不会自动按肺癌生成。",
+        code: "CANCER_TYPE_UNCERTAIN",
+        requiresReview: true,
+      }, { status: 422 });
+    }
+
     const isThyroid = profile.cancerType === "thyroid" || profile.organ === "thyroid";
     const isEsophageal = profile.cancerType === "esophageal" || profile.organ === "esophageal" || profile.organ === "esophagus" || profile.organ === "escc";
     const isLiver = profile.cancerType === "liver" || profile.organ === "liver" || profile.organ === "hcc";
@@ -808,7 +831,7 @@ export async function POST(request: Request) {
     const isEndometrial = profile.cancerType === "endometrial" || profile.organ === "endometrial" || profile.organ === "uterine" || profile.cancerType === "uterine";
     const isCervical = profile.cancerType === "cervical" || profile.organ === "cervical" || profile.organ === "cervix";
     const isPancreatic = profile.cancerType === "pancreatic" || profile.organ === "pancreatic" || profile.organ === "pancreas";
-    const isLung = !isThyroid && !isEsophageal && !isLiver && !isGastric && !isBreast && !isColorectal && !isEndometrial && !isCervical && !isPancreatic;
+    const isLung = profile.cancerType === "lung" || profile.organ === "lung";
 
     const isCtReport = isLung && (profile.reportType === "ct_imaging" || profile.currentStage === "evaluation" || profile.currentStage === "discovery");
 

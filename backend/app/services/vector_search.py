@@ -1,6 +1,7 @@
 import json
 import math
 from typing import List, Optional
+import httpx
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,6 +31,7 @@ class VectorSearchService:
         self._client = AsyncOpenAI(
             api_key=settings.OPENAI_API_KEY,
             base_url=settings.OPENAI_BASE_URL,
+            http_client=httpx.AsyncClient(),
         )
 
     @staticmethod

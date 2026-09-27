@@ -9,9 +9,7 @@ import {
   evaluatePancreaticResectability 
 } from "../src/lib/pancreaticStaging";
 import { 
-  checkPancreaticDrugInteractions, 
-  PANCREATIC_TARGETED_DRUGS, 
-  PANCREATIC_DDI_RULES 
+  checkPancreaticDrugInteractions 
 } from "../src/lib/pancreaticDdiData";
 import { PANCREATIC_STUDIES } from "../src/lib/pancreaticStudiesData";
 import { PANCREATIC_WIKI_TOPICS } from "../src/lib/pancreaticWikiData";

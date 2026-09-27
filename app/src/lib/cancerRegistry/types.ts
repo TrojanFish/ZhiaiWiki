@@ -1,7 +1,7 @@
 import type { CancerType, PatientProfile } from "@/lib/types";
 import type { UnifiedStagingResult } from "@/lib/stagingRegistry";
 import type { ClinicalCohortResult } from "@/lib/staging";
-import type { TargetedDrug, TargetedDrugItem, DdiAnalysisResult } from "@/lib/ddiData";
+import type { TargetedDrugItem, DdiAnalysisResult } from "@/lib/ddiData";
 
 export interface CancerTypeOption {
   type: CancerType;
@@ -17,7 +17,7 @@ export interface CancerTypeOption {
  * 标准癌种插件规范契约接口 (Cancer Plugin Specification)
  * 任何新接入的癌种（如结直肠癌 CRC、胃癌等）只需实现该规范即可无缝插入系统
  */
-export interface CancerPluginSpec<TSpecificData = any, TStagingInput = any> {
+export interface CancerPluginSpec<_TSpecificData = any, TStagingInput = any> {
   // 1. 基础元数据
   id: CancerType;
   name: string;             // 如 "肺癌" / "乳腺癌" / "结直肠癌"

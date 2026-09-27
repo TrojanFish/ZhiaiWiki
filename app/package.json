@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint src scripts",
     "test:unit": "vitest run",
     "test:guardrails": "tsx scripts/test-guardrails.ts",
     "test:simulation": "tsx scripts/comprehensive-simulation.ts",

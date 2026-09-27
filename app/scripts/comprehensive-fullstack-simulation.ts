@@ -13,7 +13,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { normalizeCancerType, computeCancerStage, getClinicalCohortUnified } from '../src/lib/stagingRegistry';
+import { computeCancerStage, getClinicalCohortUnified } from '../src/lib/stagingRegistry';
 import { CancerRegistry } from '../src/lib/cancerRegistry';
 import { checkDrugInteractionsUnified } from '../src/lib/ddiRegistry';
 import { sanitizeClinicalText, sanitizePatientProfile } from '../src/lib/privacy';

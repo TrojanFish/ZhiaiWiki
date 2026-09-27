@@ -8,7 +8,6 @@
  * 4. KEYNOTE-177 试验 (NEJM 2020 - dMMR/MSI-H 一线免疫治疗基石)
  */
 
-import type { CancerType } from "./types";
 import type { UnifiedStagingResult } from "./stagingRegistry";
 import type { ClinicalCohortResult } from "./staging";
 
@@ -330,9 +329,6 @@ export function computeRectalStage(input: ColorectalStagingInput): UnifiedStagin
   if (stage === "0" || stage === "I") {
     treatmentDirection = "cT1-2 N0 早期直肠癌：评估经肛门内镜微创手术 (TEM/TAMIS) 局部切除，或行腹腔镜高质量全直肠系膜切除术 (TME)。术前无需放化疗，术后无需辅助治疗，预后良好，保肛率高。";
   } else if (stage.startsWith("II") || stage.startsWith("III")) {
-    const hasCrmRisk = input.crmStatus === "positive" || (input.crmDistance != null && Number(input.crmDistance) <= 1.0);
-    const isLowRectal = input.distanceFromAnalVerge != null && Number(input.distanceFromAnalVerge) < 5.0;
-
     treatmentDirection = "【局部进展期直肠癌首选全程新辅助 TNT (RAPIDO / PRODIGE 23 模式)】：短程放疗 (SCRT 5×5Gy) 或长程同步放化疗 (LCRT 50.4Gy) + 诱导/巩固化疗 (CAPOX/FOLFOX)。\n" +
       "① 评估 cCR (临床完全缓解)：经直肠指诊、HR-MRI 与肠镜证实肿瘤完全消退者，强烈推荐采纳「Watch & Wait (观察等待)」器官保留策略，免除开刀手术，完好保留控便与排尿生殖功能！\n" +
       "② 未达 cCR 者：行高质量全直肠系膜切除术 (TME) + 保护性回肠预防造口；术后依据病理分期评估巩固化疗，规范开展造口护理与预防吻合口漏管理。";

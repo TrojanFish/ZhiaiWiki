@@ -1,7 +1,6 @@
 import type { KmCurveChartProps } from "@/components/common/KmCurveChart";
 import type { ForestPlotChartProps } from "@/components/common/ForestPlotChart";
 import type { TrialCriterion } from "@/components/common/TrialEligibilityMatrix";
-import type { CancerType } from "@/lib/types";
 
 // ================= 1. LANDMARK KM SURVIVAL CURVE DATA =================
 export const LANDMARK_KM_DATA: Record<string, KmCurveChartProps> = {

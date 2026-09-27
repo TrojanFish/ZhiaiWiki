@@ -12,12 +12,9 @@
  * 7. 国际化简繁转换 (OpenCC) 与前端多癌种状态机持久化仿真
  */
 
-import { computeClinicalTnmStage, getClinicalCohortForProfile } from '../src/lib/staging';
+import { computeClinicalTnmStage } from '../src/lib/staging';
 import {
   computeBreastClinicalStage,
-  computeBreastTStage,
-  computeBreastNStage,
-  computeBreastAnatomicalStage,
   deriveMolecularSubtype,
   deriveHer2StatusCategory,
 } from '../src/lib/breastStaging';
@@ -25,9 +22,9 @@ import { evaluateBiRads } from '../src/lib/biRadsCalculator';
 import { computeCancerStage, getClinicalCohortUnified } from '../src/lib/stagingRegistry';
 import { checkDrugInteractions } from '../src/lib/ddiData';
 import { checkBreastDdi, BREAST_TARGETED_DRUGS, BREAST_DDI_RULES } from '../src/lib/breastDdiData';
-import { checkDrugInteractionsUnified, getTargetedDrugsForCancer } from '../src/lib/ddiRegistry';
+import { checkDrugInteractionsUnified } from '../src/lib/ddiRegistry';
 import { calculateVdtAndGrowth } from '../src/lib/vdtCalculator';
-import { evaluateTumorMarkers, TUMOR_MARKER_DEFINITIONS } from '../src/lib/tumorMarkers';
+import { evaluateTumorMarkers } from '../src/lib/tumorMarkers';
 import { sanitizeClinicalText } from '../src/lib/privacy';
 import { hashPassword, verifyPassword, generateUserToken, verifyUserToken } from '../src/lib/userAuth';
 import { checkRateLimit } from '../src/lib/rateLimit';
@@ -36,8 +33,8 @@ import { BREAST_GRAPH_NODES, BREAST_EDGE_EVIDENCE_MAP } from '../src/lib/breastK
 import { FEATURED_STUDIES } from '../src/lib/evidence-data';
 import { BREAST_STUDIES } from '../src/lib/breastStudiesData';
 import { BREAST_RESOURCE_CATEGORIES } from '../src/lib/breastResourcesData';
-import { WIKI_TOPICS, WIKI_CATEGORIES, getWikiCategories } from '../src/lib/wikiData';
-import { BREAST_WIKI_TOPICS, BREAST_WIKI_CATEGORIES } from '../src/lib/breastWikiData';
+import { WIKI_TOPICS } from '../src/lib/wikiData';
+import { BREAST_WIKI_TOPICS } from '../src/lib/breastWikiData';
 import * as OpenCC from 'opencc-js';
 
 interface TestStepResult {

@@ -58,7 +58,7 @@ function isPositiveFlag(val: any): boolean {
   if (val === true) return true;
   if (typeof val === "string") {
     const s = val.toLowerCase().trim();
-    return s === "positive" || s === "true" || s === "1" || s === "yes" || s === "present";
+    return s === "positive" || s === "true" || s === "1" || s === "yes" || s === "present" || s === "bilateral" || s === "unilateral";
   }
   return false;
 }
@@ -74,11 +74,12 @@ export function deriveCervicalTStage(input: CervicalStagingInput): string {
   if (input.vaginalInvolvement === "lower_one_third") return "T3a";
   if (isPositiveFlag(input.parametrialInvasion)) return "T2b";
 
-  const rawSize = input.tumorSize != null ? Number(input.tumorSize) : 2.0;
-  const size = Number.isFinite(rawSize) && rawSize > 0 ? rawSize : 2.0;
+  const rawSize = input.tumorSize != null ? Number(input.tumorSize) : null;
+  const hasValidSize = rawSize != null && Number.isFinite(rawSize) && rawSize > 0;
 
   if (input.vaginalInvolvement === "upper_two_thirds") {
-    return size > 4.0 ? "T2a2" : "T2a1";
+    if (!hasValidSize) return "T2a";
+    return rawSize > 4.0 ? "T2a2" : "T2a1";
   }
 
   const depth = input.stromalInvasionMm != null ? Number(input.stromalInvasionMm) : null;
@@ -86,8 +87,12 @@ export function deriveCervicalTStage(input: CervicalStagingInput): string {
     return depth <= 3.0 ? "T1a1" : "T1a2";
   }
 
-  if (size > 4.0) return "T1b3";
-  if (size > 2.0) return "T1b2";
+  if (!hasValidSize) {
+    return "Tx";
+  }
+
+  if (rawSize > 4.0) return "T1b3";
+  if (rawSize > 2.0) return "T1b2";
   return "T1b1";
 }
 
@@ -124,8 +129,9 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
   const n = deriveCervicalNStage(input);
   const m = deriveCervicalMStage(input);
 
-  const rawSize = input.tumorSize != null ? Number(input.tumorSize) : 2.0;
-  const size = Number.isFinite(rawSize) && rawSize > 0 ? rawSize : 2.0;
+  const rawSize = input.tumorSize != null ? Number(input.tumorSize) : null;
+  const hasValidSize = rawSize != null && Number.isFinite(rawSize) && rawSize > 0;
+  const size = hasValidSize ? rawSize : 0;
   const depth = input.stromalInvasionMm != null ? Number(input.stromalInvasionMm) : null;
   const methodPrefix = input.nodalStagingMethod === "pathologic_p" ? "p" : "r";
 
@@ -179,14 +185,18 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
     therapeuticStrategy = "【临床红线】绝不可行单纯全子宫切除术！根治性同步放化疗 (CCRT: 顺铂增敏 + 盆腔 IMRT + 三维后装放疗) 是全球公认唯一根治方案。";
     keyFactors.push("存在宫旁浸润 (IIB期): 属于根治性同步放化疗 (CCRT) 绝对适应证");
   } else if (input.vaginalInvolvement === "upper_two_thirds" || t.startsWith("T2a")) {
-    if (size > 4.0 || t === "T2a2") {
+    if ((hasValidSize && size > 4.0) || t === "T2a2") {
       stage = "IIA2";
       stageDescription = "FIGO 2018 宫颈癌 IIA2 期 (累及阴道上 2/3，病灶最大长径 > 4.0 cm)";
       therapeuticStrategy = "首选根治性同步放化疗 (CCRT: 盆腔 IMRT + 顺铂 + 腔内/组织间插植后装放疗)。";
-    } else {
+    } else if (hasValidSize || t === "T2a1") {
       stage = "IIA1";
       stageDescription = "FIGO 2018 宫颈癌 IIA1 期 (累及阴道上 2/3，病灶最大长径 $\\le$ 4.0 cm)";
       therapeuticStrategy = "广泛全子宫切除术 (开腹) + 盆腔淋巴结清扫术，或行根治性放疗。";
+    } else {
+      stage = "IIA";
+      stageDescription = "FIGO 2018 宫颈癌 IIA 期 (累及阴道上 2/3，病灶长径未明确，需进一步测量区分 IIA1/IIA2)";
+      therapeuticStrategy = "建议结合 MRI 明确病灶长径：≤4cm 可评估广泛全子宫切除；>4cm 推荐根治性同步放化疗 (CCRT)。";
     }
   }
   // 6. 局限于宫颈 (Stage I)
@@ -204,7 +214,11 @@ export function computeCervicalStage(input: CervicalStagingInput): UnifiedStagin
       }
     } else {
       // 浸润深度 > 5mm 或肉眼可见局限于宫颈
-      if (size > 4.0 || t === "T1b3") {
+      if (t === "Tx" || (!hasValidSize && depth == null)) {
+        stage = "未知分期 (TxN0M0 需补充肿瘤大小或浸润深度)";
+        stageDescription = "FIGO 2018 宫颈癌：肿瘤长径及间质浸润深度未知 (Tx)，无法明确属于微小浸润 (IA) 还是肉眼浸润 (IB1/IB2/IB3)，需补充病理切片或影像长径。";
+        therapeuticStrategy = "建议结合宫颈锥切病理报告或盆腔高分辨率 MRI，明确肿瘤最大长径与浸润深度后再制定手术或放疗策略。";
+      } else if (size > 4.0 || t === "T1b3") {
         stage = "IB3";
         stageDescription = "FIGO 2018 宫颈癌 IB3 期 (肿瘤局限于宫颈，最大长径 > 4.0 cm · 局部巨块型)";
         therapeuticStrategy = "【局部进展期】首选根治性同步放化疗 (CCRT: 顺铂 + 盆腔 IMRT + 三维近距离放疗)；直接手术术后多需补充放疗，双重损伤且生存无额外获益。";

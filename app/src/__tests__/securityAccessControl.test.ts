@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { GET as getTimeline, DELETE as deleteTimeline } from '../app/api/timeline/route';
-import { GET as getProfile, DELETE as deleteProfile } from '../app/api/profile/route';
+import { GET as getProfile, PUT as putProfile, DELETE as deleteProfile } from '../app/api/profile/route';
 import { isCookieSecure } from '../lib/userAuth';
 import { validateAdminCredentials } from '../lib/adminAuth';
 
@@ -38,6 +38,22 @@ describe('Production Security & Access Control Guardrails (P0 & P1)', () => {
         method: 'DELETE'
       });
       const response = await deleteProfile(mockReq);
+      const json = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(json.success).toBe(false);
+    });
+
+    it('should reject unauthenticated PUT without a valid guestId or user session', async () => {
+      const mockReq = new Request('http://localhost:3000/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'malicious_non_guest_id',
+          reportMarkdown: 'Tampered Report'
+        })
+      });
+      const response = await putProfile(mockReq);
       const json = await response.json();
 
       expect(response.status).toBe(401);

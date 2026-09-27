@@ -235,7 +235,6 @@ export function computeCnlcStage(rawInput: LiverStagingInput): LiverStagingResul
   const cpRes = computeChildPughScore(input);
   const albiRes = computeAlbiScore(input.totalBilirubin, input.serumAlbumin);
 
-  const isChildPughAorB = cpRes.grade === "A" || cpRes.grade === "B";
   const isChildPughC = cpRes.grade === "C";
 
   // 4. 米兰标准判定
@@ -243,7 +242,7 @@ export function computeCnlcStage(rawInput: LiverStagingInput): LiverStagingResul
 
   // 5. CNLC 分期严格映射 (中国指南 2024)
   let cnlcStage = "Ia";
-  let explanationParts: string[] = [];
+  const explanationParts: string[] = [];
 
   // 直接手动指定分期优先
   if (input.cnlcStage || input.stage) {

@@ -331,8 +331,6 @@ export function computeEsophagealClinicalCohort(profile: any): ClinicalCohortRes
     else if (t.startsWith("T3") || t.startsWith("T4")) stage = "II";
     else stage = "I";
   }
-  const pdl1Cps = profile?.clinicalData?.pdl1Cps ?? profile?.pdl1Cps;
-
   const rawData = profile?.clinicalData || profile?.cancerSpecificData || profile || {};
   const isNeoadjuvant = Boolean(
     rawData.neoadjuvantTherapy === true ||
@@ -518,7 +516,6 @@ export function computeEsophagealClinicalCohort(profile: any): ClinicalCohortRes
       };
     }
 
-    const cpsHigh = pdl1Cps != null && Number(pdl1Cps) >= 10;
     return {
       name: "晚期食管鳞癌中国原研卡瑞利珠单抗联合化疗 (ESCORT-1st) 队列",
       stage: "Stage IV期 (晚期或远处转移性食管鳞癌)",

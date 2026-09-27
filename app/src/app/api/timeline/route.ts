@@ -109,7 +109,8 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error('Error creating timeline event:', error);
-    return NextResponse.json({ success: false, error: error.message || '保存时间线事件失败' }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '保存时间线事件失败，请稍后重试' : (error.message || '保存时间线事件失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -186,7 +187,8 @@ export async function PUT(request: Request) {
     });
   } catch (error: any) {
     console.error('Error updating timeline event:', error);
-    return NextResponse.json({ success: false, error: error.message || '更新时间线事件失败' }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '更新时间线事件失败，请稍后重试' : (error.message || '更新时间线事件失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -241,7 +243,8 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true, message: '事件已成功删除' });
   } catch (error: any) {
     console.error('Error deleting timeline event:', error);
-    return NextResponse.json({ success: false, error: error.message || '删除事件失败' }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '删除事件失败，请稍后重试' : (error.message || '删除事件失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 

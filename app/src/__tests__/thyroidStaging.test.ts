@@ -293,5 +293,18 @@ describe("Thyroid Cancer (AJCC 8th & C-TIRADS & ATA 2015) Staging Engine", () =>
       expect(cohort.name).toContain("Kuma 医院");
       expect(cohort.rfs5Year).toContain("98.5%");
     });
+
+    it("should return Tx and unknown stage when tumor size is missing/NaN in elderly patient", () => {
+      const res = computeThyroidStage({
+        patientAge: 60,
+        tumorSize: NaN as any,
+        centralNodesPositive: 0,
+        lateralNodesPositive: 0,
+        hasDistantMets: false,
+      });
+      expect(res.tStage).toBe("Tx");
+      expect(res.stage).toContain("未知分期");
+      expect(res.explanation).toContain("需结合影像或病理补充病灶长径");
+    });
   });
 });

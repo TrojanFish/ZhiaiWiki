@@ -159,6 +159,10 @@ model PatientProfile {
   // Generated Evidence Report Persistence
   reportMarkdown      String?
   reportGeneratedAt   DateTime?
+  reportDate          DateTime?
+  reportSourceType    String?  // pathology | imaging | systemic_staging | comprehensive
+  reportReviewStatus  String?  @default("needs_review") // needs_review | confirmed | rejected
+  reportEvidenceSpans Json?    // source excerpts/page references for extracted fields
 }
 
 model ClinicalCohort {

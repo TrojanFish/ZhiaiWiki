@@ -491,7 +491,6 @@ export function getEndometrialNodeActivation(nodeId: string, profile: PatientPro
 export function getCervicalNodeActivation(nodeId: string, profile: PatientProfile | null): "primary" | "active" | "warning" | "dim" | "normal" {
   if (!profile) return "normal";
 
-  const raw = (profile as any).cancerSpecificData || (profile as any).cervicalData || profile;
   const isEarly = profile.stage === "Ia" || profile.stage === "Ia1" || profile.stage === "Ia2" || profile.stage === "Ib1" || profile.stage === "Ib2";
   const isLocallyAdvanced = profile.stage?.startsWith("IIb") || profile.stage?.startsWith("III") || profile.stage === "IIA2" || profile.stage === "IB3";
   const isMetastatic = profile.stage?.startsWith("IV");

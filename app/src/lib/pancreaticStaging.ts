@@ -78,7 +78,6 @@ export function computePancreaticStage(input: PancreaticStagingInput): UnifiedSt
   // 若传入已确诊分期且未传入细化 TNM 参数，直接解析该分期
   if (input.stage && !input.tStage && !input.nStage && !input.mStage && input.tumorSize === undefined && !input.celiacInvolvement && !input.smaInvolvement && !input.hasDistantMets) {
     const cleanStage = String(input.stage).toUpperCase().replace(/期/g, "").trim();
-    const resectability = evaluatePancreaticResectability(input);
     return {
       cancerType: "pancreatic",
       stage: cleanStage,
@@ -95,20 +94,24 @@ export function computePancreaticStage(input: PancreaticStagingInput): UnifiedSt
     };
   }
 
-  const rawSize = Number(input.tumorSize);
-  const safeSize = Number.isFinite(rawSize) && rawSize > 0 ? rawSize : 2.5;
+  const rawSize = input.tumorSize != null ? Number(input.tumorSize) : null;
+  const hasValidSize = rawSize != null && Number.isFinite(rawSize) && rawSize > 0;
 
   // 1. T 分期逻辑 (AJCC 8th: T1 <= 2cm, T2 >2且<=4cm, T3 >4cm, T4 侵犯腹腔干或SMA)
   let t = input.tStage;
   if (!t) {
     if (input.celiacInvolvement || input.smaInvolvement) {
       t = "T4";
-    } else if (safeSize <= 2.0) {
-      t = "T1";
-    } else if (safeSize <= 4.0) {
-      t = "T2";
+    } else if (hasValidSize) {
+      if (rawSize <= 2.0) {
+        t = "T1";
+      } else if (rawSize <= 4.0) {
+        t = "T2";
+      } else {
+        t = "T3";
+      }
     } else {
-      t = "T3";
+      t = "Tx";
     }
   }
 
@@ -121,12 +124,12 @@ export function computePancreaticStage(input: PancreaticStagingInput): UnifiedSt
       else if (nodes <= 3) n = "N1";
       else n = "N2";
     } else {
-      n = "N0";
+      n = "Nx";
     }
   }
 
   // 3. M 分期逻辑
-  let m = input.hasDistantMets || (input.mStage && input.mStage.toUpperCase().startsWith("M1")) ? "M1" : "M0";
+  const m = input.hasDistantMets || (input.mStage && input.mStage.toUpperCase().startsWith("M1")) ? "M1" : "M0";
 
   // 4. 复合分期判定
   let stage = "I";
@@ -140,15 +143,21 @@ export function computePancreaticStage(input: PancreaticStagingInput): UnifiedSt
     // N0
     if (t.startsWith("T3")) stage = "IIA";
     else if (t.startsWith("T2")) stage = "IB";
-    else stage = "IA";
+    else if (t.startsWith("T1")) stage = "IA";
+    else stage = "未知分期 (TxN0M0 需补充肿瘤大小)";
   }
 
   const resectability = evaluatePancreaticResectability(input);
 
-  const explanation = `依据 AJCC 第 8 版与 NCCN 2024 标准：${t}${n}${m}，综合临床病理分期判定为 ${stage} 期；解剖学评估为【${resectability.statusLabel}】。${resectability.rationale}`;
+  const isTxUnknown = t === "Tx" && stage.startsWith("未知分期");
+  const explanation = isTxUnknown
+    ? `依据 AJCC 第 8 版与 NCCN 2024 标准：${t}${n}${m}。由于缺少原发肿瘤最大长径 (cm) 或血管受累范围描述，T 分期标记为 Tx，暂无法给出确切的早期解剖分期 (IA/IB/IIA)；解剖学评估为【${resectability.statusLabel}】。${resectability.rationale}`
+    : `依据 AJCC 第 8 版与 NCCN 2024 标准：${t}${n}${m}，综合临床病理分期判定为 ${stage} 期；解剖学评估为【${resectability.statusLabel}】。${resectability.rationale}`;
 
   let treatmentDirection = `${stage} 期胰腺癌多学科综合诊疗 (MDT)。`;
-  if (stage === "IV") {
+  if (isTxUnknown) {
+    treatmentDirection = "建议先完善胰腺薄层增强 CT 或增强 MRI 检查，以明确肿瘤最大长径及腹腔大血管关系后再确定后续根治性手术或新辅助方案。";
+  } else if (stage === "IV") {
     treatmentDirection = "IV 期晚期一线强效系统化疗 (mFOLFIRINOX 或 AG 方案)；若携带胚系 BRCA 突变，化疗稳态后推荐奥拉帕利靶向维持。";
   } else if (stage === "III" || resectability.status === "borderline_resectable") {
     treatmentDirection = "局部晚期或交界可切除：强烈推荐 4~6 周期新辅助转化化疗 (mFOLFIRINOX/AG)，复查 CT/MRI 评估肿瘤退缩后再行 R0 根治术。";

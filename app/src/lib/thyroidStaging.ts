@@ -45,16 +45,17 @@ export function deriveThyroidTStage(input: ThyroidStagingInput): string {
   if (input.tStage) return input.tStage;
 
   const ext = input.extrathyroidalExtension;
-  const rawSize = input.tumorSize != null ? Number(input.tumorSize) : 1.5;
-  const size = Number.isFinite(rawSize) && rawSize > 0 ? rawSize : 1.5;
-
   if (ext === "prevertebral_carotid_t4b") return "T4b";
   if (ext === "gross_organs_t4a") return "T4a";
   if (ext === "strap_muscles_t3b") return "T3b";
 
-  if (size > 4.0) return "T3a";
-  if (size > 2.0) return "T2";
-  if (size > 1.0) return "T1b";
+  if (input.tumorSize == null) return "Tx";
+  const rawSize = Number(input.tumorSize);
+  if (!Number.isFinite(rawSize) || rawSize <= 0) return "Tx";
+
+  if (rawSize > 4.0) return "T3a";
+  if (rawSize > 2.0) return "T2";
+  if (rawSize > 1.0) return "T1b";
   return "T1a";
 }
 
@@ -108,7 +109,8 @@ export function evaluateTirads(input: ThyroidStagingInput): {
     else if (count >= 5) tiradsClass = "5";
   }
 
-  const size = input.tumorSize ?? 1.0;
+  const hasValidSize = input.tumorSize != null && Number.isFinite(Number(input.tumorSize)) && Number(input.tumorSize) > 0;
+  const size = hasValidSize ? Number(input.tumorSize) : 0;
   let malignancyRisk = "<2% 恶性概率";
   let fnaRecommendation = "建议 6~12 个月复查颈部超声";
 
@@ -120,19 +122,27 @@ export function evaluateTirads(input: ThyroidStagingInput): {
       break;
     case "3":
       malignancyRisk = "<2% (大概率良性)";
-      fnaRecommendation = size >= 2.0 ? "结节 >=2.0cm 可考虑 FNA 穿刺排查，否则继续超声随访" : "结节 <2.0cm 建议每年超声复查";
+      fnaRecommendation = hasValidSize 
+        ? (size >= 2.0 ? "结节 >=2.0cm 可考虑 FNA 穿刺排查，否则继续超声随访" : "结节 <2.0cm 建议每年超声复查")
+        : "结节 >=2.0cm 可考虑 FNA 穿刺排查，<2.0cm 建议常规随访 (需结合超声长径)";
       break;
     case "4A":
       malignancyRisk = "2% ~ 10% (低度可疑恶性)";
-      fnaRecommendation = size >= 1.5 ? "结节 >=1.5cm 推荐超声引导下细针穿刺 (FNA)" : "结节 <1.5cm 建议 6 个月复查超声观察动态变化";
+      fnaRecommendation = hasValidSize
+        ? (size >= 1.5 ? "结节 >=1.5cm 推荐超声引导下细针穿刺 (FNA)" : "结节 <1.5cm 建议 6 个月复查超声观察动态变化")
+        : "结节 >=1.5cm 推荐超声引导下细针穿刺 (FNA)，<1.5cm 建议 6 个月随访复查 (需结合超声长径)";
       break;
     case "4B":
       malignancyRisk = "10% ~ 50% (中度可疑恶性)";
-      fnaRecommendation = size >= 1.0 ? "结节 >=1.0cm 强烈推荐细针穿刺 (FNA) 及 BRAF 基因检测" : "结节 0.5~1.0cm 若紧邻背侧被膜或气管推荐穿刺";
+      fnaRecommendation = hasValidSize
+        ? (size >= 1.0 ? "结节 >=1.0cm 强烈推荐细针穿刺 (FNA) 及 BRAF 基因检测" : "结节 0.5~1.0cm 若紧邻背侧被膜或气管推荐穿刺")
+        : "结节 >=1.0cm 强烈推荐细针穿刺 (FNA) 及 BRAF 检测，0.5~1.0cm 邻近被膜亦推荐穿刺 (需结合超声长径)";
       break;
     case "4C":
       malignancyRisk = "50% ~ 85% (高度可疑恶性)";
-      fnaRecommendation = size >= 0.5 ? "结节 >=0.5cm 明确推荐穿刺活检，评估手术指征" : "结节 <0.5cm 严密主动监测或多学科 MDT 评估";
+      fnaRecommendation = hasValidSize
+        ? (size >= 0.5 ? "结节 >=0.5cm 明确推荐穿刺活检，评估手术指征" : "结节 <0.5cm 严密主动监测或多学科 MDT 评估")
+        : "结节 >=0.5cm 明确推荐穿刺活检，<0.5cm 严密主动监测 (需结合超声长径)";
       break;
     case "5":
       malignancyRisk = ">85% (极高危恶性指征)";
@@ -359,6 +369,10 @@ export function computeThyroidStage(input: ThyroidStagingInput): UnifiedStagingR
       overallStage = "II";
       stageDescription = "AJCC 8th 分化型甲状腺癌 II 期 (>=55岁伴淋巴结转移或肿块>4cm/侵犯带状肌)";
       therapeuticStrategy = "甲状腺全切术 + 规范淋巴结清扫；术后建议碘-131 辅助清甲 (30~100 mCi)，TSH 抑制目标 0.1~0.5 mIU/L。";
+    } else if (t === "Tx") {
+      overallStage = "未知分期 (TxN0M0 需补充肿瘤大小)";
+      stageDescription = "AJCC 8th 分化型甲状腺癌：肿瘤大小未知 (Tx)，无法确定属于 I 期还是 II 期，需结合影像或病理补充病灶长径";
+      therapeuticStrategy = "建议先通过高频颈部超声或增强 CT 明确原发灶长径及包膜外关系，再确定手术及后续清甲策略。";
     } else {
       overallStage = "I";
       stageDescription = "AJCC 8th 分化型甲状腺癌 I 期 (>=55岁局限于腺体内 T1/T2N0M0)";

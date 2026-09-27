@@ -31,7 +31,6 @@ import {
   Edit3,
 } from "lucide-react";
 import type { SecondaryNodule, FollowUpRecord, CancerType } from "@/lib/types";
-import { computeClinicalTnmStage } from "@/lib/staging";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { computeCancerStage } from "@/lib/stagingRegistry";
 import { 
@@ -594,6 +593,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
   const [isParsing, setIsParsing] = useState(false);
   const [error, setError] = useState("");
   const [errorInfo, setErrorInfo] = useState<ClinicalErrorInfo | null>(null);
+  const [privacyConfirmed, setPrivacyConfirmed] = useState(false);
   const [parseCountdown, setParseCountdown] = useState(0);
   const [images, setImages] = useState<UploadedReportImage[]>([]);
   const [activeSignTooltip, setActiveSignTooltip] = useState<string | null>(null);
@@ -659,8 +659,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       stas: base.stas || "negative",
       lvi: base.lvi || "negative",
       marginStatus: base.marginStatus || "negative",
-      nStage: base.nStage || "N0",
-      mStage: base.mStage || "M0",
+      nStage: base.nStage || "unknown",
+      mStage: base.mStage || "unknown",
       brainMri: base.brainMri || "not_performed",
       abdominalUltrasound: base.abdominalUltrasound || "not_performed",
       boneScan: base.boneScan || "not_performed",
@@ -763,8 +763,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         pathologyLepidicPercent: pathLepidic,
         pathologyReportMode: parsedData.pathologyReportMode,
         tStage: parsedData.tStage,
-        nStage: parsedData.nStage || "N0",
-        mStage: parsedData.mStage || "M0",
+        nStage: parsedData.nStage || "unknown",
+        mStage: parsedData.mStage || "unknown",
         adjacentLobeInvasion: Boolean(parsedData.adjacentLobeInvasion),
         vpi: parsedData.vpi,
         stas: parsedData.stas,
@@ -942,14 +942,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       const solidVal = parsedSolid !== null && !isNaN(parsedSolid) ? parsedSolid : null;
       const calculatedCtr = tumorVal && solidVal !== null && tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : null;
 
-      // Systemic M0 confirmation logic
-      const isM0Confirmed = 
-        parsedData.brainMri === 'negative' || 
-        parsedData.abdominalUltrasound === 'negative' || 
-        parsedData.abdominalUltrasound === 'benign_findings' || 
-        parsedData.boneScan === 'negative' || 
-        parsedData.petCt === 'negative';
-
       // Clean Ki-67 value
       const base = existingProfile || initialData || {};
       const cleanKi67 = parsedData.ki67 !== undefined && parsedData.ki67 !== null && parsedData.ki67 !== ""
@@ -993,11 +985,11 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         pathologyInvasiveSize: parsedData.pathologyInvasiveSize !== "" && parsedData.pathologyInvasiveSize != null ? parseFloat(String(parsedData.pathologyInvasiveSize)) : (base.pathologyInvasiveSize ?? null),
         pathologyLepidicPercent: parsedData.pathologyLepidicPercent !== "" && parsedData.pathologyLepidicPercent != null ? parseFloat(String(parsedData.pathologyLepidicPercent)) : (base.pathologyLepidicPercent ?? null),
         pathologyReportMode: parsedData.pathologyReportMode || base.pathologyReportMode || null,
-        stage: stagingPreview?.stage || parsedData.stage || base.stage || (tumorVal == null ? "待定 (Tx)" : "IA1"),
-        tStage: stagingPreview?.tStage || parsedData.tStage || base.tStage || (tumorVal == null ? "Tx" : "T1a"),
+        stage: stagingPreview?.stage || parsedData.stage || base.stage || "unknown",
+        tStage: stagingPreview?.tStage || parsedData.tStage || base.tStage || "unknown",
         noduleType: parsedData.noduleType || base.noduleType || "mixed_ggo",
-        nStage: stagingPreview?.nStage || parsedData.nStage || base.nStage || "N0",
-        mStage: stagingPreview?.mStage || parsedData.mStage || base.mStage || "M0",
+        nStage: stagingPreview?.nStage || parsedData.nStage || base.nStage || "unknown",
+        mStage: stagingPreview?.mStage || parsedData.mStage || base.mStage || "unknown",
         adjacentLobeInvasion: Boolean(parsedData.adjacentLobeInvasion ?? base.adjacentLobeInvasion),
         versionBridgeNotice: stagingPreview?.versionBridgeNotice,
         stas: parsedData.stas !== undefined ? parsedData.stas : (base.stas ?? null),
@@ -1057,7 +1049,10 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         neckLymphNodes: parsedData.neckLymphNodes || base.neckLymphNodes || "not_performed",
         petCt: parsedData.petCt || base.petCt || "not_performed",
         benignFindings: Array.isArray(parsedData.benignFindings) ? parsedData.benignFindings : (base.benignFindings || []),
-        systemicStagingConfirmed: Boolean(parsedData.systemicStagingConfirmed ?? isM0Confirmed ?? base.systemicStagingConfirmed),
+        systemicStagingConfirmed: Boolean(parsedData.systemicStagingConfirmed === true || base.systemicStagingConfirmed === true),
+        reportDate,
+        reportReviewStatus: "confirmed",
+        reportEvidenceSpans: Array.isArray(parsedData.reportEvidenceSpans) ? parsedData.reportEvidenceSpans : [],
       };
 
       onParsed(finalData);
@@ -3963,6 +3958,16 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
           </div>
         </div>
 
+        <label className="flex items-start gap-2.5 p-3 rounded-xl border border-amber-200 bg-amber-50 text-xs text-amber-950 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={privacyConfirmed}
+            onChange={(event) => setPrivacyConfirmed(event.target.checked)}
+            className="mt-0.5 accent-amber-600"
+          />
+          <span>我已确认上传图片中不含未脱敏的姓名、身份证号、住院号、条形码或二维码。</span>
+        </label>
+
         {/* Two-Stage Capsule Switch: Photo/Image vs Paste Text */}
         <div className="flex p-1 bg-slate-100/90 rounded-2xl border border-slate-200/90 max-w-sm sm:max-w-md mx-auto mb-2 shadow-2xs">
           <button
@@ -4204,9 +4209,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
 
         <button
           onClick={handleParse}
-          disabled={isParsing || (!reportText.trim() && images.length === 0)}
+          disabled={isParsing || (!reportText.trim() && images.length === 0) || !privacyConfirmed}
           className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
-            isParsing || (!reportText.trim() && images.length === 0)
+            isParsing || (!reportText.trim() && images.length === 0) || !privacyConfirmed
               ? "bg-slate-200 cursor-not-allowed text-slate-400 shadow-none"
               : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20 active:scale-[0.99]"
           }`}
@@ -4215,6 +4220,11 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>正在多模态跨报告解析与 CTR 实性成分校准...</span>
+            </>
+          ) : !privacyConfirmed ? (
+            <>
+              <ShieldCheck className="w-4 h-4 text-slate-400" />
+              <span>请先确认报告已完成隐私遮挡</span>
             </>
           ) : (!reportText.trim() && images.length === 0) ? (
             <>

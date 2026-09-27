@@ -23,7 +23,7 @@ try {
     .split('\n')
     .map(f => f.trim())
     .filter(Boolean);
-} catch (err) {
+} catch {
   console.warn('\x1b[33m[Warn]\x1b[0m 无法获取 git 暂存区文件，将检查本地工作区状态。');
 }
 

@@ -1,20 +1,19 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { FEATURED_STUDIES } from '@/lib/evidence-data';
-import { BREAST_STUDIES } from '@/lib/breastStudiesData';
-import { COLORECTAL_STUDIES } from '@/lib/colorectalStudiesData';
-import { GASTRIC_STUDIES } from '@/lib/gastricStudiesData';
-import { LIVER_STUDIES } from '@/lib/liverStudiesData';
-import { ESOPHAGEAL_STUDIES } from '@/lib/esophagealStudiesData';
-import { THYROID_STUDIES } from '@/lib/thyroidStudiesData';
 import { CancerRegistry } from '@/lib/cancerRegistry';
+import { isSupportedCancerType } from '@/lib/stagingRegistry';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get('q')?.toLowerCase() || '';
     const level = searchParams.get('level') || 'all';
-    const cancerType = searchParams.get('cancerType') || 'lung';
+    const requestedCancerType = searchParams.get('cancerType');
+    const cancerType = requestedCancerType || 'all';
+    if (cancerType !== 'all' && !isSupportedCancerType(cancerType)) {
+      return NextResponse.json({ success: false, error: '不支持的癌种类型', code: 'UNSUPPORTED_CANCER_TYPE' }, { status: 400 });
+    }
 
     // 1. Fetch Ingested Studies from Database
     let dbStudies: any[] = [];
@@ -138,6 +137,7 @@ export async function GET(request: Request) {
 
   } catch (error: any) {
     console.error("Error in /api/studies:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '获取医学临床研究文献失败，请稍后重试' : (error.message || '获取医学临床研究文献失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

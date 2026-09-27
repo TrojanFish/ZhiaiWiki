@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { computeCancerStage, normalizeCancerType } from '@/lib/stagingRegistry';
-import { computeClinicalTnmStage } from '@/lib/staging';
+import { computeCancerStage, normalizeCancerType, isSupportedCancerType } from '@/lib/stagingRegistry';
 import { getAuthenticatedUser } from '@/lib/userAuth';
 import { extractVerifiedGuestId, setGuestCookie, GUEST_COOKIE_NAME } from '@/lib/guestAuth';
 
@@ -25,6 +24,14 @@ export async function POST(request: Request) {
     const targetUserId = authenticatedUserId || targetGuestId;
 
     const detectedCancerType = normalizeCancerType(data.cancerType, data.organ);
+    if (!isSupportedCancerType(data.cancerType) && !isSupportedCancerType(data.organ)) {
+      return NextResponse.json({
+        success: false,
+        error: "无法确认患者癌种，档案不会自动按肺癌保存。",
+        code: "CANCER_TYPE_UNCERTAIN",
+        requiresReview: true,
+      }, { status: 422 });
+    }
 
     // 1. Fetch Existing Patient Profile strictly isolated by { targetUserId, cancerType }
     let existingProfile: any = null;
@@ -240,6 +247,10 @@ export async function POST(request: Request) {
       // Report persistence if provided
       reportMarkdown: data.reportMarkdown || null,
       reportGeneratedAt: data.reportMarkdown ? new Date() : null,
+      reportDate: data.reportDate ? new Date(data.reportDate) : null,
+      reportSourceType: data.reportType || null,
+      reportReviewStatus: data.reportReviewStatus === 'confirmed' ? 'confirmed' : 'needs_review',
+      reportEvidenceSpans: data.reportEvidenceSpans || null,
     };
 
     let profile: any;
@@ -722,7 +733,8 @@ export async function POST(request: Request) {
     return response;
   } catch (error: any) {
     console.error('Error saving profile:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '保存病理档案失败，请稍后重试' : (error.message || '保存病理档案失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -730,7 +742,24 @@ export async function PUT(request: Request) {
   try {
     const { userId, profileId, reportMarkdown, cancerType } = await request.json();
     const authenticatedUserId = getAuthenticatedUserId(request);
-    const targetUserId = authenticatedUserId || userId;
+    const verifiedGuestId = extractVerifiedGuestId(request);
+
+    // Security check: Must either be an authenticated user or possess a valid guest identity
+    if (!authenticatedUserId) {
+      if (!verifiedGuestId && (!userId || typeof userId !== 'string' || !userId.startsWith('guest-'))) {
+        return NextResponse.json({ success: false, error: "未授权：请先登录或提供合法的访客会话标识" }, { status: 401 });
+      }
+      // Cross-guest modification prevention
+      if (verifiedGuestId && userId && userId !== verifiedGuestId) {
+        return NextResponse.json({ success: false, error: "无权修改其他访客的病理档案" }, { status: 403 });
+      }
+    }
+
+    const effectiveUserId = authenticatedUserId || verifiedGuestId || (userId?.startsWith('guest-') ? userId : null);
+
+    if (!effectiveUserId) {
+      return NextResponse.json({ success: false, error: "未授权：无效的用户身份" }, { status: 401 });
+    }
 
     if (!reportMarkdown) {
       return NextResponse.json({ success: false, error: "缺少报告内容" }, { status: 400 });
@@ -739,12 +768,15 @@ export async function PUT(request: Request) {
     let targetProfile = null;
     if (profileId) {
       targetProfile = await prisma.patientProfile.findUnique({ where: { id: profileId } });
+      if (targetProfile && targetProfile.userId !== effectiveUserId) {
+        return NextResponse.json({ success: false, error: "越权操作：无权修改不属于当前用户的病理档案" }, { status: 403 });
+      }
     }
 
-    if (!targetProfile && targetUserId) {
+    if (!targetProfile) {
       targetProfile = await prisma.patientProfile.findFirst({
         where: {
-          userId: targetUserId,
+          userId: effectiveUserId,
           ...(cancerType ? (cancerType === 'lung' ? { OR: [{ cancerType: 'lung' }, { cancerType: null }] } : { cancerType }) : {})
         },
         orderBy: { createdAt: 'desc' }
@@ -766,7 +798,8 @@ export async function PUT(request: Request) {
     return NextResponse.json({ success: true, profile: updated });
   } catch (error: any) {
     console.error('Error updating report in profile:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '更新病理报告失败，请稍后重试' : (error.message || '更新病理报告失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -816,6 +849,9 @@ export async function GET(request: Request) {
     let profile: any = null;
     try {
       if (requestedCancerType) {
+        if (!isSupportedCancerType(requestedCancerType)) {
+          return NextResponse.json({ profile: null, availableSlots }, { status: 422 });
+        }
         const normalizedReq = normalizeCancerType(requestedCancerType);
         const cancerTypeFilter = normalizedReq === 'lung'
           ? { OR: [{ cancerType: 'lung' }, { cancerType: null }, { organ: 'lung' }] }
@@ -1052,7 +1088,9 @@ export async function GET(request: Request) {
     }
     return response;
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error fetching profile:', error);
+    const safeError = process.env.NODE_ENV === 'production' ? '获取病理档案失败，请稍后重试' : (error.message || '获取病理档案失败');
+    return NextResponse.json({ error: safeError }, { status: 500 });
   }
 }
 
@@ -1114,6 +1152,8 @@ export async function DELETE(request: Request) {
     }
     return response;
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error('Error deleting profile:', error);
+    const safeError = process.env.NODE_ENV === 'production' ? '删除病理档案失败，请稍后重试' : (error.message || '删除病理档案失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

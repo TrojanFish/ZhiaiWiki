@@ -14,20 +14,15 @@
  * 维度七：真实妇科病理隐私脱敏 (PII) 与极端边界矛盾输入模糊容灾测试
  */
 
-import { computeEndometrialStage, computeEndometrialClinicalCohort } from "../src/lib/endometrialStaging";
-import { computeCervicalStage, computeCervicalClinicalCohort } from "../src/lib/cervicalStaging";
 import { computeCancerStage, getClinicalCohortUnified, normalizeCancerType } from "../src/lib/stagingRegistry";
-import { ENDOMETRIAL_TARGETED_DRUGS, ENDOMETRIAL_DDI_RULES, checkEndometrialDrugInteractions } from "../src/lib/endometrialDdiData";
-import { CERVICAL_TARGETED_DRUGS, CERVICAL_DDI_RULES, checkCervicalDrugInteractions } from "../src/lib/cervicalDdiData";
-import { checkDrugInteractionsUnified, getTargetedDrugsForCancer, getDefaultTargetDrugId } from "../src/lib/ddiRegistry";
+import { checkEndometrialDrugInteractions } from "../src/lib/endometrialDdiData";
+import { checkCervicalDrugInteractions } from "../src/lib/cervicalDdiData";
+import { checkDrugInteractionsUnified } from "../src/lib/ddiRegistry";
 import { ENDOMETRIAL_WIKI_TOPICS } from "../src/lib/endometrialWikiData";
 import { CERVICAL_WIKI_TOPICS } from "../src/lib/cervicalWikiData";
 import { ENDOMETRIAL_DRUG_POLICIES } from "../src/lib/endometrialReimbursementData";
 import { CERVICAL_DRUG_POLICIES } from "../src/lib/cervicalReimbursementData";
-import { ENDOMETRIAL_STUDIES } from "../src/lib/endometrialStudiesData";
-import { CERVICAL_STUDIES } from "../src/lib/cervicalStudiesData";
 import { sanitizeClinicalText } from "../src/lib/privacy";
-import { CancerRegistry } from "../src/lib/cancerRegistry";
 
 interface SimStepResult {
   dimension: string;
@@ -465,7 +460,7 @@ recordSim(
   "Cross-Cancer",
   "SIM-GYN-DDI-POLY",
   "多态统一调度中心 checkDrugInteractionsUnified 精准分发与无癌种参数自动探测",
-  `内膜显式: ${unifiedEc.overallStatus} | 宫颈显式: ${unifiedCc.overallStatus} | 自动推导: ${autoDetectEc.overallStatus}`,
+  `内膜显式: ${unifiedEc.overallStatus} | 宫颈显式: ${unifiedCc.overallStatus} | 自动推导: ${autoDetectEc.overallStatus}/${autoDetectCc.overallStatus}`,
   `多态 DDI 调度分发异常`
 );
 
@@ -648,7 +643,7 @@ try {
   const giantTumor = computeCancerStage("cervical", { tumorSize: 20, pelvicSidewallOrHydronephrosis: true });
 
   fuzzSuccess = Boolean(emptyRes.stage && oldAgeFertility.stage && metsFertility.stage && giantTumor.stage === "IIIB");
-} catch (err) {
+} catch {
   fuzzSuccess = false;
 }
 recordSim(

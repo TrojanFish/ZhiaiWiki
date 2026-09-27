@@ -18,7 +18,6 @@ export function getOrGenerateKmArms(cohort: ClinicalCohortResult): KmCurveArm[] 
 
   // 2. 否则基于 5 年生存率、风险比 (HR) 及样本量进行生物统计学数学建模拟合
   const osRateNum = parsePercent(cohort.os5Year, 75);
-  const rfsRateNum = parsePercent(cohort.rfs5Year, Math.max(osRateNum - 10, 50));
   const sampleSize = cohort.sampleSize || cohort.cohortSize || 500;
   
   // 解析风险比 HR (例如 "0.63" 或 "0.69")

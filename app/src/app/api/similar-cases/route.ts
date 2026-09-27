@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, data: matchedCohort });
   } catch (error: any) {
     console.error('Error fetching similar cases:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '获取相似病理队列数据失败，请稍后重试' : (error.message || '获取相似病理队列数据失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

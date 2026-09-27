@@ -124,7 +124,6 @@ export function computeEndometrialStage(input: EndometrialStagingInput): Unified
     input.histologyType === "clear_cell" ||
     input.histologyType === "carcinosarcoma";
 
-  const isG3 = input.differentiation === "poor_G3" || input.histologyType === "endometrioid_G3";
   const myo = input.myometrialInvasion || "less_than_50";
   const cerv = input.cervicalInvolvement || "none";
   const serosaAdnexa = input.serosaAdnexaInvolvement || "none";

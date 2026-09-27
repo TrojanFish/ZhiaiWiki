@@ -13,7 +13,7 @@ console.log('\x1b[1m\x1b[35m====================================================
 console.log('\x1b[1m\x1b[35m    OncoPath 临床黄金评测基准套件 (Clinical Golden Evals Benchmark - Superpowers)     \x1b[0m');
 console.log('\x1b[1m\x1b[35m========================================================================================\x1b[0m\n');
 
-let totalCases = CLINICAL_GOLDEN_CASES.length;
+const totalCases = CLINICAL_GOLDEN_CASES.length;
 let stagingPassCount = 0;
 let cohortPassCount = 0;
 let ddiPassCount = 0;

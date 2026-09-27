@@ -9,8 +9,6 @@
  */
 
 import { execSync } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
 
 interface ReviewFinding {
   stage: 'Stage 1 (架构/性能/安全)' | 'Stage 2 (临床/循证/解耦)';
@@ -35,7 +33,7 @@ try {
     targetDescription = '工作区差异 (Working Directory vs HEAD)';
     diffText = execSync('git diff HEAD -U3', { encoding: 'utf-8' });
   }
-} catch (err) {
+} catch {
   console.warn('获取 git diff 失败，将对近期修改的核心文件做全量扫描。');
 }
 

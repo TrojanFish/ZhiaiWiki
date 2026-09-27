@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Bug Hunter"
+  short_description: "Bounded bug hunting, regression, medical safety, and release-gate auditing"
+  default_prompt: "Use $project-bug-hunter in audit mode first. Inspect the project, establish a baseline, audit all applicable user journeys and cancer types, reproduce findings, and report exact verification status before making scoped fixes."

@@ -136,5 +136,18 @@ describe("Cervical Cancer (FIGO 2018 & AJCC 9th) Staging Engine", () => {
       expect(res.cancerType).toBe("cervical");
       expect(res.stage).toBe("IA1");
     });
+
+    it("should return Tx and unknown stage when tumor size and stromal invasion are missing/NaN", () => {
+      const res = computeCervicalStage({
+        tumorSize: NaN as any,
+        stromalInvasionMm: null,
+        pelvicNodesPositive: 0,
+        paraAorticNodesPositive: 0,
+        hasDistantMets: false,
+      });
+      expect(res.tStage).toBe("Tx");
+      expect(res.stage).toContain("未知分期");
+      expect(res.explanation).toContain("需补充病理切片或影像长径");
+    });
   });
 });

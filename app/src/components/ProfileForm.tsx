@@ -71,7 +71,7 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
     const profile: PatientProfile = {
       age: form.age || 50,
       gender: form.gender || "female",
-      stage: form.stage || "IA1",
+      stage: form.stage || "unknown",
       tumorSize: (form.tumorSize ?? 15) / 10,
       solidSize: (form.solidSize ?? (form.morphology === "pure_ggo" ? 0 : 6)) / 10,
       ctr: form.ctr ?? (form.solidSize != null && form.tumorSize ? (form.tumorSize > 0 ? form.solidSize / form.tumorSize : 0) : (form.morphology === "pure_ggo" ? 0 : 0.4)),
@@ -82,7 +82,7 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
       iaslcGrade: form.iaslcGrade || "unknown",
       histology: form.histology || [],
       egfr: form.egfr || "unknown",
-      lymphNodes: form.lymphNodes || "N0",
+      lymphNodes: form.lymphNodes || "unknown",
       margin: form.margin || "negative",
       surgeryType: form.surgeryType || "unknown",
       notes: form.notes,

@@ -7,11 +7,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { computeCancerStage, getClinicalCohortUnified } from "../src/lib/stagingRegistry";
 import { checkDrugInteractionsUnified, getTargetedDrugsForCancer } from "../src/lib/ddiRegistry";
-import { evaluateBiRads } from "../src/lib/biRadsCalculator";
-import { calculateVdtAndGrowth } from "../src/lib/vdtCalculator";
-import { evaluateTumorMarkers } from "../src/lib/tumorMarkers";
-import { sanitizeClinicalText } from "../src/lib/privacy";
-import { hashPassword, verifyPassword, generateUserToken, verifyUserToken } from "../src/lib/userAuth";
 import { WIKI_TOPICS } from "../src/lib/wikiData";
 import { BREAST_WIKI_TOPICS } from "../src/lib/breastWikiData";
 import { COLON_WIKI_TOPICS } from "../src/lib/colonWikiData";
@@ -55,9 +50,9 @@ console.log("  OncoPath 生产就绪与 UI/UX 跨端本地全景仿真基准套�
 console.log("=".repeat(85) + "\n");
 
 // =========================================================================
-// 1. 8 大癌种临床分期与决策树仿真 (8-Cancer Clinical Staging & Decision Trees)
+// 1. 12 大癌种临床分期与决策树仿真 (12-Cancer Clinical Staging & Decision Trees)
 // =========================================================================
-console.log("\x1b[36m▶ 维度一：8 大癌种临床分期引擎与证据库仿真\x1b[0m");
+console.log("\x1b[36m▶ 维度一：12 大癌种临床分期引擎与证据库仿真\x1b[0m");
 
 // 1.1 肺癌 (Lung)
 const lungRes = computeCancerStage("lung", {
@@ -236,6 +231,86 @@ record(
   `计算分期: ${ccRes?.stage} | 首选顺铂同步放化疗 + 后装放疗`
 );
 
+// 1.11/1.12 上传报告 -> 结构化字段 -> 分期 -> 临床队列/循证资源
+// 这组夹具模拟 ReportUploader 已完成隐私确认且医生确认了 AI 抽取结果。
+// 它不调用外部 OCR/LLM，因此可在本地和 CI 中稳定复现真实的后端业务链路。
+const uploadRouteCode = fs.readFileSync(path.join(process.cwd(), "src/app/api/parse-report/route.ts"), "utf8");
+const evidenceRouteCode = fs.readFileSync(path.join(process.cwd(), "src/app/api/generate-report/route.ts"), "utf8");
+const twelveCancerTypes = [
+  "lung", "breast", "colon", "rectal", "gastric", "liver", "esophageal",
+  "colorectal", "thyroid", "endometrial", "cervical", "pancreatic",
+] as const;
+const uploadEvidenceContractPassed = twelveCancerTypes.every(
+  (cancerType) => uploadRouteCode.includes(`"${cancerType}"`) && evidenceRouteCode.includes(`"${cancerType}"`)
+) && uploadRouteCode.includes('reportReviewStatus: "needs_review"')
+  && uploadRouteCode.includes("reportEvidenceSpans")
+  && evidenceRouteCode.includes("REPORT_REVIEW_REQUIRED");
+record(
+  "Upload → Evidence",
+  "All 12 cancers",
+  "UPL-EVD-CONTRACT-01",
+  "上传/解析/复核/循证接口契约覆盖全部 12 个癌种",
+  uploadEvidenceContractPassed,
+  uploadEvidenceContractPassed
+    ? "parse-report 与 generate-report 均包含 12 癌种白名单，并强制报告复核和证据定位"
+    : "缺少癌种白名单、报告复核状态或证据定位字段",
+  { cancerTypes: twelveCancerTypes }
+);
+
+type UploadEvidenceFixture = {
+  cancerType: (typeof twelveCancerTypes)[number];
+  label: string;
+  report: Record<string, unknown>;
+};
+
+const uploadEvidenceFixtures: UploadEvidenceFixture[] = [
+  { cancerType: "lung", label: "肺腺癌病理 + 胸部影像", report: { tumorSize: 1.2, solidSize: 0.3, ctr: 0.25, nStage: "N0", mStage: "M0", histology: "adenocarcinoma" } },
+  { cancerType: "breast", label: "乳腺浸润性癌病理 + 免疫组化", report: { tumorSizeMm: 18, lymphNodes: "N0", metastasis: "M0", erStatus: "positive", prStatus: "positive", her2Status: "negative", ki67Percent: 10 } },
+  { cancerType: "colon", label: "结肠癌术后病理", report: { tStage: "T3", nStage: "N1a", mStage: "M0", msiStatus: "MSS", lymphNodesExamined: 18, lymphNodesPositive: 1 } },
+  { cancerType: "rectal", label: "直肠癌 MRI + 病理", report: { tStage: "T3", nStage: "N2", mStage: "M0", crmStatus: "threatened_or_positive", emviStatus: "positive", distanceFromAnalVergeCm: 4 } },
+  { cancerType: "gastric", label: "胃癌胃镜病理 + HER2/CLDN18.2", report: { tStage: "T3", nStage: "N2", mStage: "M0", laurenType: "intestinal", her2Status: "positive", claudin18_2Status: "high_positive" } },
+  { cancerType: "liver", label: "肝细胞癌增强 CT + 肝功能", report: { tumorCount: "single", maxTumorSizeCm: 8, vascularInvasion: "portal_vein_main_VP3_VP4", childPughClass: "A", ecogScore: 0 } },
+  { cancerType: "esophageal", label: "食管鳞癌内镜病理 + 分期影像", report: { clinicalTStage: "cT3", clinicalNStage: "cN1", clinicalMStage: "cM0", histology: "ESCC_squamous", tumorLocation: "middle_thoracic" } },
+  { cancerType: "colorectal", label: "结直肠癌分子病理 + 术后病理", report: { tStage: "T3", nStage: "N1b", mStage: "M0", primaryLocation: "left_colon", lymphNodesExamined: 18, lymphNodesPositive: 2, msiStatus: "MSS", dmmrStatus: "pMMR", krasMutation: "wildtype", nrasMutation: "wildtype", brafMutation: "wildtype" } },
+  { cancerType: "thyroid", label: "甲状腺乳头状癌病理 + 超声", report: { histologyType: "PTC_classic", patientAge: 42, tStage: "T1b", nStage: "N0", mStage: "M0", ataRecurrenceRisk: "low" } },
+  { cancerType: "endometrial", label: "子宫内膜癌病理 + 分子分型", report: { histologyType: "endometrioid_G1", molecularSubtype: "POLEmut", poleMutationStatus: "mutant", myometrialInvasion: "less_than_50", pelvicNodesPositive: 0 } },
+  { cancerType: "cervical", label: "宫颈癌病理 + 盆腔影像", report: { histologyType: "squamous_cell", tumorSize: 4.5, parametrialInvasion: "bilateral", pelvicNodesPositive: 2, nodalStagingMethod: "radiologic" } },
+  { cancerType: "pancreatic", label: "胰腺导管腺癌病理 + 可切除性评估", report: { tumorSize: 3.6, regionalNodesPositive: 1, hasDistantMets: false, resectabilityStatus: "borderline_resectable", smvInvolvement: true, smaInvolvement: false, celiacInvolvement: false, histologyType: "ductal_adenocarcinoma", brca2: "negative" } },
+];
+
+for (const fixture of uploadEvidenceFixtures) {
+  const report = {
+    ...fixture.report,
+    cancerType: fixture.cancerType,
+    reportType: "pathology_and_imaging",
+    reportDate: "2026-09-27",
+    reportReviewStatus: "confirmed",
+    reportEvidenceSpans: [{ field: "stage", quote: "structured fixture evidence", page: 1 }],
+  };
+  try {
+    const stage = computeCancerStage(fixture.cancerType, report);
+    const cohort = getClinicalCohortUnified({ ...report, stage: stage?.stage });
+    const targetedDrugs = getTargetedDrugsForCancer(fixture.cancerType);
+    const passed = stage?.cancerType === fixture.cancerType
+      && Boolean(stage?.stage && stage.stage !== "unknown")
+      && Boolean(cohort)
+      && targetedDrugs.length > 0
+      && report.reportReviewStatus === "confirmed"
+      && Array.isArray(report.reportEvidenceSpans);
+    record(
+      "Upload → Evidence",
+      fixture.cancerType,
+      `UPL-EVD-${fixture.cancerType.toUpperCase()}`,
+      fixture.label,
+      passed,
+      `结构化报告 → ${stage?.stage ?? "unknown"} → ${cohort ? "临床队列已命中" : "队列缺失"} → ${targetedDrugs.length} 个循证药物资源`,
+      { stage: stage?.stage, cohort: Boolean(cohort), targetedDrugCount: targetedDrugs.length }
+    );
+  } catch (error) {
+    record("Upload → Evidence", fixture.cancerType, `UPL-EVD-${fixture.cancerType.toUpperCase()}`, fixture.label, false, `链路异常: ${String(error)}`);
+  }
+}
+
 // =========================================================================
 // 2. 10 大恶性肿瘤 DDI 药理相互作用与配伍禁忌拦截仿真
 // =========================================================================
@@ -379,7 +454,7 @@ record(
 // =========================================================================
 // 3. AI 报告生成管道跨癌种穿模与提示词解耦仿真
 // =========================================================================
-console.log("\n\x1b[36m▶ 维度三：AI 临床报告生成管道专科解耦与防穿模仿真\x1b[0m");
+console.log("\n\x1b[36m▶ 维度三：12 癌种 AI 临床报告生成管道专科解耦与防穿模仿真\x1b[0m");
 
 const reportRoutePath = path.resolve(__dirname, "../src/app/api/generate-report/route.ts");
 const reportRouteCode = fs.readFileSync(reportRoutePath, "utf8");
@@ -394,7 +469,7 @@ record(
   "AI Pipeline",
   "Prompt Decoupling",
   "AI-DECOUPLE-01",
-  "8 大癌种专科报告生成提示词体系完备性",
+  "12 癌种专科报告生成提示词体系完备性",
   hasGastricPrompt && hasLiverPrompt && hasEsophagealPrompt && hasThyroidPrompt && hasPromptDispatch,
   "已验证胃癌(D2/Claudin)、肝癌(CNLC/HBV)、食管癌(CROSS/TEF)、甲状腺癌(ATA/TSH)独立系统提示词"
 );
@@ -425,7 +500,6 @@ const srcDir = path.resolve(__dirname, "../src");
 const mobileNavPath = path.join(srcDir, "components/MobileBottomNav.tsx");
 const mobileNavCode = fs.readFileSync(mobileNavPath, "utf8");
 const hasMobileSafeArea = mobileNavCode.includes("safe-area-inset-bottom");
-const hasTouchTarget = mobileNavCode.includes("min-h-[48px]") || mobileNavCode.includes("py-2");
 record(
   "UI/UX Responsive",
   "Mobile Nav",
@@ -587,7 +661,7 @@ record(
 // =========================================================================
 // 7. 8 大癌种百科词条资产与学术严谨性全量核查
 // =========================================================================
-console.log("\n\x1b[36m▶ 维度七：8 大癌种百科资产与学术循证审计 (总计 180+ 词条)\x1b[0m");
+console.log("\n\x1b[36m▶ 维度七：多癌种百科资产与学术循证审计 (总计 180+ 词条)\x1b[0m");
 
 const wikiDatasets = [
   { name: "肺癌 (Lung)", topics: WIKI_TOPICS },
@@ -617,9 +691,9 @@ record(
   "Asset Integrity",
   "Wiki Topics",
   "AST-WIKI-01",
-  `8 大癌种循证百科词条库学术结构完备性 (总计 ${totalWikiCount} 篇词条)`,
+  `多癌种循证百科词条库学术结构完备性 (总计 ${totalWikiCount} 篇词条)`,
   allWikiValid && totalWikiCount >= 180,
-  `已逐条校验 8 大癌种 ${totalWikiCount} 篇词条的标题、临床真相、医学战术、定心丸与搜索关键词，无一残缺！`
+  `已逐条校验多癌种 ${totalWikiCount} 篇词条的标题、临床真相、医学战术、定心丸与搜索关键词，无一残缺！`
 );
 
 // =========================================================================
@@ -636,7 +710,7 @@ console.log("-".repeat(85) + "\n");
 
 if (failedChecks === 0) {
   console.log("🎉 恭喜！全景 7 大维度生产就绪与跨端 UI/UX 仿真测试 100% 全量通过！");
-  console.log("系统在 8 大癌种分期、DDI禁忌、Prompt解耦、移动端安全区、PC端排印及离线PWA上均达到生产投放标准。\n");
+  console.log("系统在 12 癌种上传→循证、分期、DDI禁忌、Prompt解耦、移动端安全区、PC端排印及离线PWA上均达到本地仿真验收标准。\n");
 } else {
   console.error(`⚠️ 发现 ${failedChecks} 项测试未通过，请检查日志并修复后重试！\n`);
   process.exit(1);

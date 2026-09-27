@@ -138,7 +138,7 @@ const SYSTEM_PROMPT = `
 
 请严格遵守以下 JSON 结构输出，不要包含任何 Markdown 标记或多余的文字：
 {
-  "cancerType": "lung" | "breast" | "colorectal",
+  "cancerType": "lung" | "breast" | "colon" | "rectal" | "colorectal" | "gastric" | "liver" | "esophageal" | "thyroid" | "endometrial" | "cervical" | "pancreatic",
   "reportType": "ct_imaging" | "pathology" | "systemic_staging" | "comprehensive",
   "primaryLocation": "right_colon" | "left_colon" | "rectum" | null,
   "distanceFromAnalVerge": Number | null,
@@ -159,6 +159,7 @@ const SYSTEM_PROMPT = `
   "bowelPerforation": Boolean | null,
   "differentiation": String | null,
   "reportDate": String | null,
+  "reportEvidenceSpans": [{"field": String, "quote": String, "page": Number | null}] | [],
   "noduleLocation": String | null,
   "noduleType": "mixed_ggo" | "pure_ggo" | "pure_solid" | "unknown" | null,
   "tumorSize": Number | null (若未提供CT或报告未提及结节全径，必须返回 null，严禁假造),
@@ -333,18 +334,30 @@ export async function POST(request: Request) {
     
     // Support multiple images
     if (Array.isArray(images) && images.length > 0) {
+      const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+      if (images.length > 8) {
+        return NextResponse.json({ success: false, error: "最多一次上传 8 张报告图片。", code: "TOO_MANY_IMAGES" }, { status: 413 });
+      }
       for (const img of images) {
         if (img.base64) {
+          const mimeType = img.mimeType || "image/jpeg";
+          if (!allowedImageTypes.has(mimeType) || typeof img.base64 !== "string" || img.base64.length > 12_000_000) {
+            return NextResponse.json({ success: false, error: "报告图片格式或大小不符合要求。", code: "INVALID_REPORT_IMAGE" }, { status: 413 });
+          }
           contents.push({
             inlineData: {
               data: img.base64,
-              mimeType: img.mimeType || "image/jpeg"
+              mimeType
             }
           });
         }
       }
     } else if (imageBase64) {
       // Backward compatibility for single image
+      const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+      if (typeof imageBase64 !== "string" || imageBase64.length > 12_000_000 || !allowedImageTypes.has(imageMimeType || "image/jpeg")) {
+        return NextResponse.json({ success: false, error: "报告图片格式或大小不符合要求。", code: "INVALID_REPORT_IMAGE" }, { status: 413 });
+      }
       contents.push({
         inlineData: {
           data: imageBase64,
@@ -411,6 +424,24 @@ export async function POST(request: Request) {
       requestedCancerType || extracted.cancerType || extracted.organ,
       isBreastHint ? "breast" : (isColorectalHint ? "colorectal" : sanitizedReportText)
     );
+
+    // Never silently downgrade an unknown or missing cancer type to lung cancer.
+    // The staging and evidence engines are cancer-specific; an ambiguous report
+    // must be reviewed instead of receiving a plausible-looking lung result.
+    const supportedCancerTypes = new Set([
+      "lung", "breast", "colon", "rectal", "colorectal", "gastric", "liver",
+      "esophageal", "thyroid", "endometrial", "cervical", "pancreatic",
+    ]);
+    const rawCancerType = String(requestedCancerType || extracted.cancerType || extracted.organ || "").toLowerCase().trim();
+    const hasCancerHint = isBreastHint || isColorectalHint || rawCancerType.length > 0;
+    if (!hasCancerHint || (rawCancerType.length > 0 && !supportedCancerTypes.has(rawCancerType) && detectedCancerType === "lung")) {
+      return NextResponse.json({
+        success: false,
+        error: "无法可靠确认报告癌种，系统不会自动按肺癌处理，请重新上传或手动选择癌种后确认。",
+        code: "CANCER_TYPE_UNCERTAIN",
+        requiresReview: true,
+      }, { status: 422 });
+    }
 
     // Compute Breast Staging if breast cancer
     const rawTumorSize = extracted.tumorSize != null && !isNaN(Number(extracted.tumorSize)) 
@@ -636,7 +667,7 @@ export async function POST(request: Request) {
       location: sec.location || "伴随结节",
       sizeMm: sec.sizeMm != null && !isNaN(Number(sec.sizeMm)) ? parseFloat(String(sec.sizeMm)) : null,
       type: sec.type || "pure_ggo",
-      isBenignTendency: sec.isBenignTendency ?? true,
+      isBenignTendency: typeof sec.isBenignTendency === "boolean" ? sec.isBenignTendency : undefined,
       imagingFeatures: Array.isArray(sec.imagingFeatures) ? sec.imagingFeatures : [],
       note: sec.note || "微小结节，考虑良性或随访"
     })) : [];
@@ -672,6 +703,11 @@ export async function POST(request: Request) {
     const safeData = {
       reportType: extracted.reportType || "ct_imaging",
       reportDate: extracted.reportDate || null,
+      // Parsed clinical data must be reviewed before it can drive treatment
+      // evidence. The parser currently does not have reliable source spans,
+      // so expose an explicit review state instead of implying confirmation.
+      reportReviewStatus: "needs_review",
+      reportEvidenceSpans: Array.isArray(extracted.reportEvidenceSpans) ? extracted.reportEvidenceSpans : [],
       noduleLocation: extracted.noduleLocation || "肺叶结节",
       imagingFeatures: Array.isArray(extracted.imagingFeatures) ? extracted.imagingFeatures : [],
       lungRads: extracted.lungRads || null,
@@ -785,14 +821,14 @@ export async function POST(request: Request) {
       cancerType: detectedCancerType,
       organ: detectedCancerType,
       histology: extracted.histology || extracted.histologyType || null,
-      stage: unifiedStaging?.stage || (detectedCancerType === "breast" ? (breastStaging?.stage || "IA") : (detectedCancerType === "colorectal" ? (colorectalStaging?.stage || "I") : (stagingCalc?.stage || "IA1"))),
+      stage: unifiedStaging?.stage || breastStaging?.stage || colorectalStaging?.stage || stagingCalc?.stage || "unknown",
       prognosticStage: unifiedStaging?.prognosticStage || breastStaging?.prognosticStage,
       anatomicalStage: unifiedStaging?.anatomicalStage || breastStaging?.anatomicalStage,
       molecularSubtype: unifiedStaging?.molecularSubtype || breastStaging?.molecularSubtype,
       stageExplanation: unifiedStaging?.explanation || (detectedCancerType === "breast" ? (breastStaging?.explanation || "") : (detectedCancerType === "colorectal" ? (colorectalStaging?.explanation || "") : (stagingCalc?.explanation || ""))),
-      tStage: unifiedStaging?.tStage || (detectedCancerType === "breast" ? (breastStaging?.tStage || "T1c") : (detectedCancerType === "colorectal" ? (colorectalStaging?.tStage || "T1") : (stagingCalc?.tStage || "T1a"))),
-      nStage: unifiedStaging?.nStage || (detectedCancerType === "breast" ? (breastStaging?.nStage || "N0") : (detectedCancerType === "colorectal" ? (colorectalStaging?.nStage || "N0") : (stagingCalc?.nStage || "N0"))),
-      mStage: unifiedStaging?.mStage || (detectedCancerType === "breast" ? (breastStaging?.mStage || "M0") : (detectedCancerType === "colorectal" ? (colorectalStaging?.mStage || "M0") : (stagingCalc?.mStage || "M0"))),
+      tStage: unifiedStaging?.tStage || breastStaging?.tStage || colorectalStaging?.tStage || stagingCalc?.tStage || "unknown",
+      nStage: unifiedStaging?.nStage || breastStaging?.nStage || colorectalStaging?.nStage || stagingCalc?.nStage || "unknown",
+      mStage: unifiedStaging?.mStage || breastStaging?.mStage || colorectalStaging?.mStage || stagingCalc?.mStage || "unknown",
 
       // Breast Cancer Specific Fields
       biRads: extracted.biRads || null,
@@ -843,11 +879,70 @@ export async function POST(request: Request) {
         bowelObstruction: extracted.bowelObstruction ?? null,
         bowelPerforation: extracted.bowelPerforation ?? null,
       } : {
-        breastLaterality: null,
-        pcrStatus: null,
-        neoadjuvantChemo: null,
-        pelvicUltrasound: null,
-        dxaScan: null,
+        // Preserve cancer-specific fields for the remaining registered plugins.
+        // Previously these reports were parsed but their values were discarded
+        // before persistence, making downstream staging/evidence non-reproducible.
+        primaryLocation: extracted.primaryLocation || null,
+        histologyType: extracted.histologyType || null,
+        differentiation: extracted.differentiation || null,
+        tumorSize: extracted.tumorSize ?? null,
+        tumorDepth: extracted.tumorDepth ?? null,
+        lymphNodesExamined: extracted.lymphNodesExamined ?? null,
+        lymphNodesPositive: extracted.lymphNodesPositive ?? null,
+        hasDistantMets: extracted.hasDistantMets ?? null,
+        metastasisSites: extracted.metastasisSites || null,
+        msiStatus: extracted.msiStatus || null,
+        dmmrStatus: extracted.dmmrStatus || null,
+        krasMutation: extracted.krasMutation || null,
+        nrasMutation: extracted.nrasMutation || null,
+        brafMutation: extracted.brafMutation || null,
+        her2Status: extracted.her2Status || null,
+        claudin182Status: extracted.claudin182Status || null,
+        pdl1Cps: extracted.pdl1Cps ?? null,
+        ebvStatus: extracted.ebvStatus || null,
+        peritonealCytology: extracted.peritonealCytology || null,
+        crmStatus: extracted.crmStatus || null,
+        crmDistance: extracted.crmDistance ?? null,
+        emviStatus: extracted.emviStatus || null,
+        tumorDeposits: extracted.tumorDeposits || null,
+        distanceFromAnalVerge: extracted.distanceFromAnalVerge ?? null,
+        childPughGrade: extracted.childPughGrade || null,
+        childPughScore: extracted.childPughScore ?? null,
+        albiGrade: extracted.albiGrade || null,
+        vascularInvasion: extracted.vascularInvasion || null,
+        portalVeinTumorThrombus: extracted.portalVeinTumorThrombus || null,
+        hbvStatus: extracted.hbvStatus || null,
+        hbvDnaLoad: extracted.hbvDnaLoad ?? null,
+        extrathyroidalExtension: extracted.extrathyroidalExtension || null,
+        centralNodesPositive: extracted.centralNodesPositive ?? null,
+        lateralNodesPositive: extracted.lateralNodesPositive ?? null,
+        brafV600e: extracted.brafV600e || null,
+        tgLevel: extracted.tgLevel ?? null,
+        tgAbLevel: extracted.tgAbLevel ?? null,
+        calcitoninLevel: extracted.calcitoninLevel ?? null,
+        molecularSubtype: extracted.molecularSubtype || null,
+        poleMutationStatus: extracted.poleMutationStatus || null,
+        mmrStatus: extracted.mmrStatus || null,
+        p53Status: extracted.p53Status || null,
+        myometrialInvasion: extracted.myometrialInvasion || null,
+        myometrialDepthPercent: extracted.myometrialDepthPercent ?? null,
+        lvsiStatus: extracted.lvsiStatus || null,
+        cervicalInvolvement: extracted.cervicalInvolvement || null,
+        serosaAdnexaInvolvement: extracted.serosaAdnexaInvolvement || null,
+        vaginalParametrialInvolvement: extracted.vaginalParametrialInvolvement || null,
+        pelvicNodesPositive: extracted.pelvicNodesPositive ?? null,
+        paraAorticNodesPositive: extracted.paraAorticNodesPositive ?? null,
+        hpvStatus: extracted.hpvStatus || null,
+        stromalInvasionMm: extracted.stromalInvasionMm ?? null,
+        parametrialInvasion: extracted.parametrialInvasion ?? null,
+        resectabilityStatus: extracted.resectabilityStatus || null,
+        smaInvolvement: extracted.smaInvolvement ?? null,
+        smvInvolvement: extracted.smvInvolvement ?? null,
+        celiacInvolvement: extracted.celiacInvolvement ?? null,
+        brca1: extracted.brca1 || null,
+        brca2: extracted.brca2 || null,
+        neoadjuvantTherapy: extracted.neoadjuvantTherapy ?? null,
+        pcrStatus: extracted.pcrStatus || null,
       },
 
       // Lung & Colorectal Specific Fields
@@ -878,10 +973,9 @@ export async function POST(request: Request) {
       neckLymphNodes: extracted.neckLymphNodes || "not_performed",
       petCt: extracted.petCt || "not_performed",
       benignFindings: Array.isArray(extracted.benignFindings) ? extracted.benignFindings : [],
-      systemicStagingConfirmed: Boolean(
-        extracted.systemicStagingConfirmed || 
-        (extracted.brainMri === 'negative' || extracted.abdominalUltrasound === 'negative' || extracted.abdominalUltrasound === 'benign_findings' || extracted.boneScan === 'negative' || extracted.petCt === 'negative')
-      ),
+      // A single negative study cannot establish M0. Keep this explicit only
+      // when the report itself documents a complete systemic staging review.
+      systemicStagingConfirmed: extracted.systemicStagingConfirmed === true,
 
       // State Engine
       currentStage: currentStage,

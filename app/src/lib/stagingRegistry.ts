@@ -100,6 +100,14 @@ export function normalizeCancerType(cancerType?: string | null, organ?: string |
   return "lung";
 }
 
+export function isSupportedCancerType(value?: string | null): value is CancerType {
+  const raw = (value || "").toLowerCase().trim();
+  return [
+    "lung", "breast", "colon", "rectal", "gastric", "liver", "esophageal",
+    "colorectal", "thyroid", "endometrial", "cervical", "pancreatic",
+  ].includes(raw);
+}
+
 /**
  * 统一分期计算入口
  * 委托至 CancerRegistry 对应的癌种插件

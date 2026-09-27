@@ -8,6 +8,8 @@ export interface LoveRelayRecord extends LoveRelayItem {
   createdAt?: string;
 }
 
+type PublicLoveRelayItem = LoveRelayItem & { createdAt?: string };
+
 const DATA_DIR = path.join(process.cwd(), "data");
 const STORAGE_FILE = path.join(DATA_DIR, "love_relay.json");
 
@@ -67,13 +69,12 @@ function saveStorage(records: LoveRelayRecord[]): boolean {
 /**
  * 获取公开可见的爱心接力列表 (按最新时间倒序，且已脱敏 txLast4)
  */
-export function getPublicRelayRecords(): LoveRelayItem[] {
+export function getPublicRelayRecords(): PublicLoveRelayItem[] {
   const records = ensureStorage();
   return records
     .filter((r) => r.status !== "hidden")
     .map((r) => {
-      const { txLast4, ...safePublic } = r;
-      return safePublic;
+      return Object.fromEntries(Object.entries(r).filter(([key]) => key !== "txLast4")) as PublicLoveRelayItem;
     })
     .sort((a, b) => {
       const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;

@@ -1,4 +1,5 @@
 import json
+import httpx
 from openai import AsyncOpenAI
 from app.core.config import settings
 from app.schemas.evidence import EvidenceResponse
@@ -6,10 +7,11 @@ from typing import List, Dict, Any
 
 class AnalysisAgent:
     def __init__(self):
-        # We initialize the OpenAI client with the provided config
+        # We initialize the OpenAI client with explicit httpx client for compatibility
         self.client = AsyncOpenAI(
             api_key=settings.OPENAI_API_KEY,
-            base_url=settings.OPENAI_BASE_URL
+            base_url=settings.OPENAI_BASE_URL,
+            http_client=httpx.AsyncClient()
         )
 
     def _build_system_prompt(self) -> str:

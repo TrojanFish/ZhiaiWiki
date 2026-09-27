@@ -6,12 +6,12 @@
 import fs from 'fs';
 import path from 'path';
 import { CancerRegistry } from '../src/lib/cancerRegistry';
-import { computeCancerStage, getClinicalCohortUnified, normalizeCancerType } from '../src/lib/stagingRegistry';
-import { checkDrugInteractionsUnified, getTargetedDrugsForCancer } from '../src/lib/ddiRegistry';
+import { computeCancerStage, getClinicalCohortUnified } from '../src/lib/stagingRegistry';
+import { checkDrugInteractionsUnified } from '../src/lib/ddiRegistry';
 import { evaluateBiRads } from '../src/lib/biRadsCalculator';
 import { calculateVdtAndGrowth } from '../src/lib/vdtCalculator';
-import { evaluateTumorMarkers, TUMOR_MARKER_DEFINITIONS } from '../src/lib/tumorMarkers';
-import { sanitizeClinicalText, sanitizePatientProfile } from '../src/lib/privacy';
+import { evaluateTumorMarkers } from '../src/lib/tumorMarkers';
+import { sanitizeClinicalText } from '../src/lib/privacy';
 import { hashPassword, verifyPassword, generateUserToken, verifyUserToken } from '../src/lib/userAuth';
 import { checkRateLimit } from '../src/lib/rateLimit';
 import { FEATURED_STUDIES } from '../src/lib/evidence-data';

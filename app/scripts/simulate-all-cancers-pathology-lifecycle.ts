@@ -3,9 +3,9 @@
  * 严格按照医学事实性，对 11 大实体瘤执行“上传-校对-修改-循证”四步闭环仿真验证
  */
 
-import { computeCancerStage, getClinicalCohortUnified, normalizeCancerType } from '../src/lib/stagingRegistry';
-import { checkDrugInteractionsUnified, getTargetedDrugsForCancer } from '../src/lib/ddiRegistry';
-import { sanitizePatientProfile, sanitizeClinicalText } from '../src/lib/privacy';
+import { computeCancerStage, getClinicalCohortUnified } from '../src/lib/stagingRegistry';
+import { checkDrugInteractionsUnified } from '../src/lib/ddiRegistry';
+import { sanitizeClinicalText } from '../src/lib/privacy';
 
 interface CancerSimulationCase {
   id: string;
@@ -715,7 +715,7 @@ async function runComprehensiveSimulation() {
   console.log('================================================================================\n');
 
   let passedCases = 0;
-  let totalCases = CANCER_SIMULATION_CASES.length;
+  const totalCases = CANCER_SIMULATION_CASES.length;
 
   for (let i = 0; i < totalCases; i++) {
     const testCase = CANCER_SIMULATION_CASES[i];

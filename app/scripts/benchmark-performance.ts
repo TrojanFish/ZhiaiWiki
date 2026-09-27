@@ -53,8 +53,6 @@ function scanDir(dir: string) {
 
 scanDir(staticDir);
 
-const totalJsSize = jsFiles.reduce((acc, f) => acc + f.sizeKb, 0);
-const totalJsGzip = jsFiles.reduce((acc, f) => acc + f.gzipKb, 0);
 const totalCssSize = cssFiles.reduce((acc, f) => acc + f.sizeKb, 0);
 const totalCssGzip = cssFiles.reduce((acc, f) => acc + f.gzipKb, 0);
 

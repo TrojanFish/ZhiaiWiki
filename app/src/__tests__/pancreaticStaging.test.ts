@@ -98,14 +98,18 @@ describe("胰腺癌 (Pancreatic Cancer) 专科分期与循证引擎深度测试"
     expect(r4.status).toBe("metastatic");
   });
 
-  it("应正确防御 NaN 与非法非数值输入，安全回退不崩溃", () => {
+  it("应正确防御 NaN 与非法非数值输入，安全回退不崩溃并返回 Tx 而非捏造默认值", () => {
     const res = computePancreaticStage({
       tumorSize: NaN as any,
       regionalNodesPositive: null,
       mStage: undefined,
     });
     expect(res.stage).toBeDefined();
+    expect(res.tStage).toBe("Tx");
+    expect(res.stage).toContain("需补充肿瘤大小");
     expect(res.explanation).not.toContain("NaN");
+    expect(res.explanation).toContain("缺少原发肿瘤最大长径");
+    expect(res.treatmentDirection).toContain("建议先完善胰腺薄层增强 CT");
   });
 
   it("应匹配顶刊前瞻临床队列及其真实 PMID 和 DOI (PRODIGE 24 / PREOPANC / MPACT)", () => {

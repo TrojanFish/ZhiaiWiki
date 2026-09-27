@@ -1,5 +1,4 @@
 import { spawn } from 'child_process';
-import http from 'http';
 
 const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const tempProfile = 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\edge_cdp_profile_' + Math.floor(Math.random() * 10000);
@@ -23,7 +22,7 @@ async function getWsUrl() {
       const res = await fetch('http://localhost:9222/json/new?http://localhost:3000/?consent=1', { method: 'PUT' });
       const data = await res.json();
       if (data && data.webSocketDebuggerUrl) return data.webSocketDebuggerUrl;
-    } catch (e) {
+    } catch {
       await wait(300);
     }
   }
