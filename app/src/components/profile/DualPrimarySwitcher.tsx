@@ -447,8 +447,9 @@ export default function DualPrimarySwitcher({
   // 2. 单癌种患者轻量提示条 (Single Cancer Mode with option to add second)
   if (effectiveSlots.length === 1) {
     const currentCancer = effectiveSlots[0];
-    const cancerName = currentCancer === "esophageal" ? "原发性食管鳞癌" : currentCancer === "liver" ? "原发性肝癌" : currentCancer === "gastric" ? "胃癌" : currentCancer === "breast" ? "乳腺癌" : currentCancer === "colon" ? "结肠癌" : currentCancer === "rectal" ? "直肠癌" : currentCancer === "colorectal" ? "结直肠癌" : "肺癌";
-    const currentSummary = currentCancer === "esophageal" ? esophagealSummary : currentCancer === "liver" ? liverSummary : currentCancer === "gastric" ? gastricSummary : currentCancer === "breast" ? breastSummary : currentCancer === "colon" ? colonSummary : currentCancer === "rectal" ? rectalSummary : currentCancer === "colorectal" ? colorectalSummary : lungSummary;
+    const cfg = slotConfigs[currentCancer] || slotConfigs.lung;
+    const cancerName = cfg.title.replace(/^原发性/, "");
+    const currentSummary = cfg.summary;
 
     return (
       <div className={`p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-6 ${className}`}>

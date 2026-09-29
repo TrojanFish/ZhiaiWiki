@@ -148,7 +148,8 @@ export default function PatientDashboard() {
   }, []);
 
   // 核心原则：档案渲染严格绑定当前激活档案的真实属性，彻底根除切换导航栏导致的模板穿模
-  const activeType: CancerType = (profile?.cancerType || activeSlot || 'lung') as CancerType;
+  const isProfileForActiveSlot = Boolean(profile && profile.cancerType === activeSlot);
+  const activeType: CancerType = (isProfileForActiveSlot ? profile!.cancerType : activeSlot || 'lung') as CancerType;
   const isBreast = activeType === 'breast';
   const isColon = activeType === 'colon';
   const isRectal = activeType === 'rectal';
@@ -843,7 +844,7 @@ export default function PatientDashboard() {
     );
   }
 
-  if (showUploader || !profile) {
+  if (showUploader || !profile || profile.cancerType !== activeSlot) {
     return (
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         <ConsentModal />
@@ -851,23 +852,23 @@ export default function PatientDashboard() {
           <DualPrimarySwitcher
             activeSlot={activeSlot}
             availableSlots={availableSlots}
-            lungProfile={dualSummary.lungProfile || (activeSlot === 'lung' ? profile : getProfileBySlot('lung'))}
-            breastProfile={dualSummary.breastProfile || (activeSlot === 'breast' ? profile : getProfileBySlot('breast'))}
-            colonProfile={dualSummary.colonProfile || (activeSlot === 'colon' ? profile : getProfileBySlot('colon'))}
-            rectalProfile={dualSummary.rectalProfile || (activeSlot === 'rectal' ? profile : getProfileBySlot('rectal'))}
-            colorectalProfile={dualSummary.colorectalProfile || (activeSlot === 'colorectal' ? profile : getProfileBySlot('colorectal'))}
-            gastricProfile={dualSummary.gastricProfile || (activeSlot === 'gastric' ? profile : getProfileBySlot('gastric'))}
-            liverProfile={dualSummary.liverProfile || (activeSlot === 'liver' ? profile : getProfileBySlot('liver'))}
-            esophagealProfile={dualSummary.esophagealProfile || (activeSlot === 'esophageal' ? profile : getProfileBySlot('esophageal'))}
-            thyroidProfile={dualSummary.thyroidProfile || (activeSlot === 'thyroid' ? profile : getProfileBySlot('thyroid'))}
-            endometrialProfile={dualSummary.endometrialProfile || (activeSlot === 'endometrial' ? profile : getProfileBySlot('endometrial'))}
-            cervicalProfile={dualSummary.cervicalProfile || (activeSlot === 'cervical' ? profile : getProfileBySlot('cervical'))}
-            pancreaticProfile={dualSummary.pancreaticProfile || (activeSlot === 'pancreatic' ? profile : getProfileBySlot('pancreatic'))}
+            lungProfile={dualSummary.lungProfile || (profile?.cancerType === 'lung' ? profile : getProfileBySlot('lung'))}
+            breastProfile={dualSummary.breastProfile || (profile?.cancerType === 'breast' ? profile : getProfileBySlot('breast'))}
+            colonProfile={dualSummary.colonProfile || (profile?.cancerType === 'colon' ? profile : getProfileBySlot('colon'))}
+            rectalProfile={dualSummary.rectalProfile || (profile?.cancerType === 'rectal' ? profile : getProfileBySlot('rectal'))}
+            colorectalProfile={dualSummary.colorectalProfile || (profile?.cancerType === 'colorectal' ? profile : getProfileBySlot('colorectal'))}
+            gastricProfile={dualSummary.gastricProfile || (profile?.cancerType === 'gastric' ? profile : getProfileBySlot('gastric'))}
+            liverProfile={dualSummary.liverProfile || (profile?.cancerType === 'liver' ? profile : getProfileBySlot('liver'))}
+            esophagealProfile={dualSummary.esophagealProfile || (profile?.cancerType === 'esophageal' ? profile : getProfileBySlot('esophageal'))}
+            thyroidProfile={dualSummary.thyroidProfile || (profile?.cancerType === 'thyroid' ? profile : getProfileBySlot('thyroid'))}
+            endometrialProfile={dualSummary.endometrialProfile || (profile?.cancerType === 'endometrial' ? profile : getProfileBySlot('endometrial'))}
+            cervicalProfile={dualSummary.cervicalProfile || (profile?.cancerType === 'cervical' ? profile : getProfileBySlot('cervical'))}
+            pancreaticProfile={dualSummary.pancreaticProfile || (profile?.cancerType === 'pancreatic' ? profile : getProfileBySlot('pancreatic'))}
             onSelectSlot={handleSelectSlot}
             onAddSecondCancer={handleAddSecondCancer}
           />
         )}
-        {!profile && (
+        {(!profile || profile.cancerType !== activeSlot) && (
           <div className="text-center mb-6 sm:mb-8 max-w-4xl mx-auto">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
               建立【{CancerRegistry.get(activeSlot)?.name || '原发'}】个人医学档案
