@@ -5,8 +5,6 @@ import {
   Lightbulb,
   BookOpen,
   Sun,
-  Apple,
-  HeartPulse,
   ShieldCheck,
   Star,
   Users,
@@ -419,64 +417,23 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
       </div>
 
       {/* Warm Compassionate & Empowerment Banner */}
-      <div className="mt-6 p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-amber-50/90 via-orange-50/40 to-teal-50/60 border border-amber-200/80 shadow-xs relative z-10">
-        {/* Title Row with Compact Inline Sun Badge */}
-        <div className="flex items-center gap-2.5 mb-2.5">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-100/90 text-amber-600 flex items-center justify-center text-sm sm:text-base shadow-2xs flex-shrink-0 border border-amber-300/70">
-            <Sun className="w-4 h-4 text-amber-600" />
-          </div>
-          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-            给每一位勇敢抗癌伙伴的温暖寄语：数据是群体的历史，而奇迹由您亲自书写
-          </h4>
+      <div className="mt-5 p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-amber-50/90 via-orange-50/40 to-teal-50/60 border border-amber-200/80 shadow-2xs relative z-10 flex items-start gap-3">
+        <div className="w-8 h-8 rounded-xl bg-amber-100/90 text-amber-600 flex items-center justify-center shrink-0 border border-amber-300/70 shadow-2xs mt-0.5">
+          <Sun className="w-4 h-4 text-amber-600" />
         </div>
-
-        {/* 100% Full-Width Description Paragraph */}
-        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3.5">
-          医学文献中的生存率是基于成千上万名患者大样本的历史统计概率，但<strong>落到您身上只有 0% 和 100%</strong>。现代医学已全面进入靶向、免疫、微创与分子分型的精准诊疗时代，把专业治疗交给医生，把信心与热爱留给生活：
-        </p>
-
-        {/* 3 Full-Width Pillars Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          <div className="bg-white/90 p-3.5 rounded-xl border border-amber-200/70 shadow-2xs">
-            <div className="text-xs font-bold text-amber-900 mb-1 flex items-center gap-1.5">
-              <Apple className="w-3.5 h-3.5 text-amber-700" />
-              <span>营养与强健体魄</span>
-            </div>
-            <div className="text-xs text-slate-600 leading-relaxed">
-              保证优质蛋白摄入，温和散步或太极八段锦，激活机体杀伤性 T 细胞活力。
-            </div>
-          </div>
-
-          <div className="bg-white/90 p-3.5 rounded-xl border border-teal-200/70 shadow-2xs">
-            <div className="text-xs font-bold text-teal-900 mb-1 flex items-center gap-1.5">
-              <HeartPulse className="w-3.5 h-3.5 text-teal-700" />
-              <span>乐观心境与神经免疫</span>
-            </div>
-            <div className="text-xs text-slate-600 leading-relaxed">
-              研究证实良好情绪能显著降低皮质醇压力激素，为机体细胞修复创造最佳微环境。
-            </div>
-          </div>
-
-          <div className="bg-white/90 p-3.5 rounded-xl border border-blue-200/70 shadow-2xs">
-            <div className="text-xs font-bold text-blue-900 mb-1 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-700" />
-              <span>规律随访，坦然从容</span>
-            </div>
-            <div className="text-xs text-slate-600 leading-relaxed">
-              按时完成专科影像超声与血液复查，把担忧托付给科学规律，每一天都充满生机与希望。
-            </div>
-          </div>
+        <div className="space-y-1 min-w-0">
+          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+            温暖寄语：数据是群体的历史，而奇迹由您亲自书写
+          </h4>
+          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+            医学文献中的生存率是基于成千上万名患者大样本的历史统计概率，现代医学已全面进入靶向、免疫、微创与分子精准诊疗时代。把规范治疗交给专业医生，把信心、优质营养与热爱留给生活。
+          </p>
         </div>
       </div>
 
       {/* Public Welfare Love-Relay & Donation Banner */}
       <div className="mt-5">
         <PublicWelfareBanner sourceContext="profile" />
-      </div>
-
-      {/* Legal Disclaimer Guardrail Card */}
-      <div className="mt-5">
-        <LegalDisclaimerBadge variant="card" />
       </div>
 
     </div>

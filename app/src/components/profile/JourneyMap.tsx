@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Compass, Stethoscope, Heart, Check } from "lucide-react";
+import React, { useState } from "react";
+import { Compass, Stethoscope, Heart, Check, ChevronDown, ChevronUp } from "lucide-react";
 
 interface JourneyMapProps {
   currentStage?: string; // 'discovery' | 'evaluation' | 'post_op' | 'follow_up'
@@ -12,6 +12,8 @@ export default function JourneyMap({
   currentStage = "post_op", 
   psychologicalState = "understanding" 
 }: JourneyMapProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const medicalStages = [
     { id: "discovery", label: "发现异常", desc: "体检初筛排查" },
     { id: "evaluation", label: "术前评估/诊断", desc: "CT与恶性风险" },
@@ -47,53 +49,68 @@ export default function JourneyMap({
   const medIndex = Math.max(0, medicalStages.findIndex(s => s.id === normalizeMedicalStage(currentStage)));
   const psychIndex = Math.max(0, psychStages.findIndex(s => s.id === normalizePsychState(psychologicalState)));
 
+  const currentMed = medicalStages[medIndex] || medicalStages[2];
+  const currentPsych = psychStages[psychIndex] || psychStages[1];
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-3.5 sm:p-4 shadow-sm transition-all">
       
-      {/* Header */}
-      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-4 border-b border-slate-100">
-        <div className="flex items-start gap-2.5 min-w-0 flex-1">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 self-start aspect-square mt-0.5 shadow-2xs">
+      {/* Compact Header & Status Row */}
+      <div className={`flex items-center justify-between gap-3 flex-wrap ${isExpanded ? "pb-4 mb-5 border-b border-slate-100" : ""}`}>
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-2xs">
             <Compass className="w-4 h-4" />
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-bold text-slate-900 leading-snug">
-              诊疗旅程定位与阶段指引
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-              全程医疗规范与心理支持协同指引
-            </p>
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <span className="text-xs sm:text-sm font-extrabold text-slate-900">
+              诊疗旅程定位
+            </span>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                <Stethoscope className="w-3 h-3 text-blue-600" />
+                <span>阶段: {currentMed.label}</span>
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                <Heart className="w-3 h-3 text-teal-600" />
+                <span>心境: {currentPsych.label}</span>
+              </span>
+            </div>
           </div>
         </div>
 
-        <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 shrink-0 self-start sm:self-center whitespace-nowrap">
-          双轨全流程管理
-        </span>
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-blue-600 bg-slate-50 hover:bg-blue-50/80 px-2.5 py-1 rounded-xl border border-slate-200 transition-all cursor-pointer shrink-0"
+        >
+          <span>{isExpanded ? "收起双轨路线" : "展开全程路线"}</span>
+          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
       </div>
 
-      <div className="space-y-8">
-        
-        {/* Track 1: Medical Intervention Track (医学干预轨迹) */}
-        <TrackRow
-          title="医学干预轨迹"
-          icon={<Stethoscope className="w-4 h-4 text-blue-600 shrink-0" />}
-          themeColor="blue"
-          stages={medicalStages}
-          currentIndex={medIndex}
-          activeTag="当前医疗阶段"
-        />
+      {isExpanded && (
+        <div className="space-y-7 pt-2 animate-fade-in">
+          {/* Track 1: Medical Intervention Track (医学干预轨迹) */}
+          <TrackRow
+            title="医学干预轨迹"
+            icon={<Stethoscope className="w-4 h-4 text-blue-600 shrink-0" />}
+            themeColor="blue"
+            stages={medicalStages}
+            currentIndex={medIndex}
+            activeTag="当前医疗阶段"
+          />
 
-        {/* Track 2: Psychological Reconstruction Track (心理重建轨迹) */}
-        <TrackRow
-          title="心理重建轨迹"
-          icon={<Heart className="w-4 h-4 text-teal-600 shrink-0" />}
-          themeColor="teal"
-          stages={psychStages}
-          currentIndex={psychIndex}
-          activeTag="当前心理状态"
-        />
-
-      </div>
+          {/* Track 2: Psychological Reconstruction Track (心理重建轨迹) */}
+          <TrackRow
+            title="心理重建轨迹"
+            icon={<Heart className="w-4 h-4 text-teal-600 shrink-0" />}
+            themeColor="teal"
+            stages={psychStages}
+            currentIndex={psychIndex}
+            activeTag="当前心理状态"
+          />
+        </div>
+      )}
     </div>
   );
 }

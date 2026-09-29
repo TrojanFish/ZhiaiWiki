@@ -199,13 +199,13 @@ export default function ProfileExportModal({ profile, onClose }: ProfileExportMo
             id: "q_l_trend",
             category: "影像对比",
             text: "对比往年体检 CT 老片，当前结节全径与实性成分 (CTR) 是否有明显增大或密度增高？",
-            rationale: "评估病灶生长动力学（体积倍增时间 VDT）。",
+            rationale: "评估病灶微观浸润演变与实性成分发展速度。",
             priority: "high"
           },
           {
             id: "q_l_interval",
             category: "随访间隔",
-            text: "根据 Fleischner 结节指南与结节体积倍增时间 (VDT)，建议下次复查薄层 HRCT 的间隔时间是 3 个月还是 6 个月？",
+            text: "根据国家与国际权威结节管理指南，建议下次复查薄层 HRCT 的间隔时间是 3 个月还是 6 个月？",
             rationale: "明确复查节奏，避免过频辐射暴露或延误干预时机。",
             priority: "high"
           },

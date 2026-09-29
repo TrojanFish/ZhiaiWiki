@@ -139,7 +139,7 @@ export default function MdtConsultationHub({
       { name: "胸外科", role: "微创亚肺叶/肺叶切除", focus: "胸腔镜单孔微创保肺切除、切缘安全距离与系统性纵隔淋巴结清扫", iconBg: "bg-sky-100", iconText: "text-sky-600" },
       { name: "呼吸与危重症医学科", role: "气道评估与术后肺康复", focus: "术前通气功能测定 (FEV1/DLCO)、气道廓清与肺功能锻炼阶梯指引", iconBg: "bg-teal-100", iconText: "text-teal-600" },
       { name: "胸部肿瘤内科", role: "靶向驱动基因与免疫", focus: "指导三代 EGFR-TKI (奥希替尼) 术后辅助与晚期一线靶向/免疫联合", iconBg: "bg-indigo-100", iconText: "text-indigo-600" },
-      { name: "胸部影像与 PET-CT 科", role: "薄层 CT 结节演进与随访", focus: "纯磨玻璃 (pGGO) 与混杂磨玻璃 (mGGO) 体积倍增时间 (VDT) 动态比对", iconBg: "bg-blue-100", iconText: "text-blue-600" },
+      { name: "胸部影像与 PET-CT 科", role: "薄层 CT 病灶浸润与随访", focus: "纯磨玻璃 (pGGO) 与混杂磨玻璃 (mGGO) 微观浸润与实性演变比对", iconBg: "bg-blue-100", iconText: "text-blue-600" },
       { name: "病理诊断与基因中心", role: "浸润高危征象与突变丰度", focus: "病理复核 STAS（气腔播散）、VPI（胸膜侵犯）、脉管癌栓与二代测序 NGS", iconBg: "bg-purple-100", iconText: "text-purple-600" },
       { name: "胸部放疗科", role: "立体定向 SBRT 根治", focus: "心肺功能极差无法耐受全麻手术患者的立体定向消融放疗 (SBRT)", iconBg: "bg-amber-100", iconText: "text-amber-600" },
     ];
@@ -170,12 +170,12 @@ export default function MdtConsultationHub({
     // Check 3: 驱动基因测序与生物标志物
     const hasBiomarkers = Boolean(
       (profile.geneMutations && profile.geneMutations.length > 0) ||
+      profile.egfr === "positive" ||
       rawData.pdl1Cps != null ||
-      rawData.sccAntigen != null ||
-      rawData.afp != null ||
       rawData.claudin182Status ||
       rawData.her2Status ||
-      rawData.krasMutation
+      rawData.krasMutation ||
+      rawData.msiStatus
     );
     checks.push({
       id: "molecular_biomarkers",
@@ -417,7 +417,7 @@ export default function MdtConsultationHub({
       { title: "亚肺叶切除与保留肺功能", content: "根据薄层 CT 的磨玻璃成分占比 (CTR)，是否达到 JCOG0802/CALGB140503 标准支持微创肺段或楔形切除，最大程度保留肺通气功能？", priority: "essential" },
       { title: "病理 STAS 与微浸润高危征象", content: "大病理报告是否详细排查了气腔播散 (STAS)、胸膜侵犯 (VPI) 或微血管癌栓？如果存在高危因素，术后是否需要追加辅助治疗？", priority: "high" },
       { title: "EGFR 驱动基因与靶向辅助", content: "基因检测确定的突变亚型（如 19del 或 L858R）丰度如何？是否符合 ADAURA 方案口服第三代靶向药物（奥希替尼）辅助降复发？", priority: "high" },
-      { title: "复查随访与薄层 CT 时间节点", content: "第一次胸部薄层 CT 推荐在术后第几个月复查？随访期间若出现残存微小结节，体积倍增时间 (VDT) 如何科学比对？", priority: "followup" },
+      { title: "复查随访与薄层 CT 时间节点", content: "第一次胸部薄层 CT 推荐在术后第几个月复查？随访期间若出现微小病灶变化，薄层 CT 随访节点与征象如何科学比对？", priority: "followup" },
     ];
   }, [isEsophageal, isLiver, isGastric, isRectal, isColon, isBreast]);
 

@@ -933,6 +933,24 @@ export default function PatientDashboard() {
   const isN0Safe = profile.nStage === 'N0' || profile.lymphNodes === 'N0';
   const isGrade3 = profile.iaslcGrade === '3' || profile.grade === '3';
   const isAllSafe = isStasSafe && isLviSafe && isVpiSafe && isN0Safe && isMarginSafe && !isGrade3;
+
+  const isPostOp = Boolean(
+    (profile.surgeryType && profile.surgeryType !== 'unknown') ||
+    profile.pathologyTumorSize != null ||
+    profile.pathologyInvasiveSize != null ||
+    profile.marginStatus != null ||
+    (profile.currentStage && profile.currentStage !== 'evaluation' && profile.currentStage !== 'discovery')
+  );
+
+  const isEarlyLowRisk = Boolean(
+    profile.mStage === 'M0' ||
+    profile.stage === 'Tis' ||
+    profile.stage === '0' ||
+    profile.stage?.startsWith('IA') ||
+    profile.stage?.startsWith('IA1') ||
+    profile.stage?.startsWith('IA2') ||
+    (isLung && (profile.noduleType === 'pure_ggo' || (profile.ctr != null && profile.ctr <= 0.5)))
+  );
   const isFemale = (profile.gender as string) === 'female' || (profile.sex as string) === 'female' || (profile.gender as string) === '女' || (profile.sex as string) === '女';
   const isMale = (profile.gender as string) === 'male' || (profile.sex as string) === 'male' || (profile.gender as string) === '男' || (profile.sex as string) === '男';
   const _genderText = isFemale ? '女性' : isMale ? '男性' : '性别待确认';
@@ -1507,7 +1525,7 @@ export default function PatientDashboard() {
                     <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
                       <span className="text-teal-950 font-bold flex items-center gap-1.5">
                         <Ruler className="w-3.5 h-3.5 text-teal-700 shrink-0" />
-                        <span>CT 实性浸润: {profile.solidSize} cm</span>
+                        <span>{isPostOp ? '术前基线 CT 实性浸润' : 'CT 实性浸润'}: {profile.solidSize} cm</span>
                         <span className="text-slate-400">/</span>
                         <span>全径: {profile.tumorSize != null ? `${profile.tumorSize} cm` : '待测'}</span>
                       </span>
@@ -1516,7 +1534,11 @@ export default function PatientDashboard() {
                       </span>
                     </div>
                     <div className="text-[11px] text-teal-700 font-medium">
-                      依据 IASLC / AJCC 第 9 版 规则以实性成分精准校准为 <strong>{profile.stage || '待定'} 期 ({profile.tStage || 'Tx'})</strong>
+                      {isPostOp ? (
+                        '术前影像基线参考 · 术后分期以病理浸润径金标准 (pT) 为准'
+                      ) : (
+                        <>依据 IASLC / AJCC 第 9 版规则以实性成分精准校准为 <strong>{profile.stage || '待定'} 期 ({profile.tStage || 'Tx'})</strong></>
+                      )}
                     </div>
                   </div>
                 )}
@@ -1547,22 +1569,14 @@ export default function PatientDashboard() {
 
               {/* Multiple Nodules Sub-Panel (P0-1) */}
               {(profile.isMultipleNodules || (profile.secondaryNodules && profile.secondaryNodules.length > 0)) && (
-                <div className="p-3 bg-teal-50/80 rounded-2xl border border-teal-200/80 space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] font-bold text-teal-950">
-                    <span className="flex items-center gap-1.5">
-                      <CircleDot className="w-3.5 h-3.5 text-teal-700 shrink-0" />
-                      <span>双肺伴随微小结节（已排查良性）：</span>
+                <div className="pt-1 flex items-center gap-1.5 flex-wrap text-xs text-slate-600">
+                  <span className="font-semibold text-slate-500 text-[11px]">伴随微小病灶:</span>
+                  {(profile.secondaryNodules || []).map((sec, idx) => (
+                    <span key={sec.id || idx} className="px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[11px] font-medium flex items-center gap-1">
+                      <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <span>{sec.location} ({sec.sizeMm}mm · {sec.type === 'pure_ggo' ? '纯磨玻璃' : '微小灶'})</span>
                     </span>
-                    <span className="text-[10px] text-teal-700 font-normal shrink-0">多为陈旧良性病灶</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(profile.secondaryNodules || []).map((sec, idx) => (
-                      <span key={sec.id || idx} className="px-2 py-0.5 bg-white text-teal-900 border border-teal-200 rounded-lg text-[11px] font-semibold flex items-center gap-1">
-                        <Check className="w-3 h-3 text-emerald-600 shrink-0" />
-                        <span>{sec.location} ({sec.sizeMm}mm · {sec.type === 'pure_ggo' ? '纯磨玻璃' : '微小灶'})</span>
-                      </span>
-                    ))}
-                  </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -1649,23 +1663,21 @@ export default function PatientDashboard() {
             </div>
 
             {profile.currentStage === 'evaluation' || profile.currentStage === 'discovery' || (!isBreast && profile.surgeryType === 'unknown') ? (
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-center my-auto">
-                <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-6 h-6 shrink-0" />
+              <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center gap-3 my-auto">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                  <ShieldCheck className="w-5 h-5 shrink-0" />
                 </div>
-                <h4 className="text-sm font-bold text-slate-800">
-                  {isBreast ? '尚未录入穿刺活检或手术大病理' : '尚未接受手术切除'}
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
-                  {isBreast
-                    ? '分子分型 (ER/PR/HER2/Ki-67)、Nottingham 组织学分级及淋巴结状态需由穿刺活检 (CNB) 或手术标本病理出具。建议携带白片至病理科复核免疫组化及 FISH。'
-                    : isColorectal
-                    ? '切缘状态 (CRM)、微卫星状态 (MSI/MMR)、检出淋巴结枚数及脉管神经浸润需在手术或肠镜活检后出具。建议重点关注腹盆增强 CT 与肠镜排查。'
-                    : isLung
-                    ? '切缘状态 (R0)、微血管浸润 (LVI)、气道播散 (STAS) 及 Ki-67 需在手术切除后由病理科出具。当前建议重点参考薄层 CT 随访与全身排查。'
-                    : '切缘状态 (R0)、病理组织学分级、淋巴结清扫数及特异性标志物需由病理科出具。当前建议重点参考影像随访与专科分期评估。'
-                  }
-                </p>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-800">
+                    {isBreast ? '未录入穿刺活检或手术病理' : '尚未接受手术切除（术前评估阶段）'}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate sm:whitespace-normal">
+                    {isBreast
+                      ? '分子受体 (ER/PR/HER2/Ki-67) 待穿刺活检或术后大病理报告出具'
+                      : '切缘状态、微血管/气道浸润及 Ki-67 待术后病理报告确认，当前重点参考薄层 CT 影像分期'
+                    }
+                  </p>
+                </div>
               </div>
             ) : isBreast ? (
               /* Breast Pathology & Molecular IHC */
@@ -1829,8 +1841,11 @@ export default function PatientDashboard() {
                       </span>
                     </div>
                     {((typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) >= 14 && (typeof profile.ki67 === 'number' ? profile.ki67 : parseFloat(String(profile.ki67))) < 20) && (
-                      <div className="text-[11px] text-amber-900 bg-amber-100/60 p-2 rounded-lg border border-amber-200/80 leading-snug">
-                        <strong>临床灰区释疑与建议</strong>：Ki-67 在 14%~20% 处于国际 St. Gallen 共识的争议临界区间。单凭免疫组化难以绝对区分 Luminal A 与 Luminal B (HER2-)，<strong>强烈推荐结合多基因表达谱（如 21 基因 Oncotype DX 或 70 基因 MammaPrint）做最终危险度鉴别与化疗豁免决策</strong>。
+                      <div className="text-[11px] text-amber-800 bg-amber-100/60 px-2.5 py-1 rounded-lg border border-amber-200/70 flex items-center justify-between">
+                        <span>临界灰区 (14%~20%) · 结合 21 基因 RS 评分决策化疗获益</span>
+                        <GlossaryTooltip term="Ki-67">
+                          <span className="text-[10px] text-amber-700 underline cursor-pointer">查看释疑</span>
+                        </GlossaryTooltip>
                       </div>
                     )}
                   </div>
@@ -2103,6 +2118,37 @@ export default function PatientDashboard() {
                     </span>
                   </div>
                 )}
+
+                {/* Lung Driver Gene & Molecular Status Strip */}
+                {(profile.egfr || (profile.geneMutations && profile.geneMutations.length > 0) || profile.pdl1Tps != null || profile.molecular) && (
+                  <div className="p-2.5 rounded-xl bg-indigo-50/80 border border-indigo-200/80 flex items-center justify-between flex-wrap gap-2 text-xs">
+                    <span className="text-indigo-950 font-bold flex items-center gap-1.5">
+                      <Dna className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                      <span>驱动基因与分子靶点:</span>
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {profile.egfr === 'positive' || (profile.geneMutations && profile.geneMutations.some(m => m.gene === 'EGFR')) ? (
+                        <span className="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 font-extrabold text-[11px] border border-indigo-200">
+                          EGFR 敏感突变 {profile.geneMutations?.find(m => m.gene === 'EGFR')?.subtype || ''}
+                        </span>
+                      ) : profile.egfr === 'negative' ? (
+                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[11px] border border-slate-200">
+                          EGFR 野生型
+                        </span>
+                      ) : null}
+                      {profile.geneMutations && profile.geneMutations.filter(m => m.gene !== 'EGFR').map((gm, idx) => (
+                        <span key={idx} className="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 font-bold text-[11px] border border-indigo-200">
+                          {gm.gene} {gm.subtype || '突变'}
+                        </span>
+                      ))}
+                      {profile.pdl1Tps != null && (
+                        <span className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-900 font-bold text-[11px] border border-purple-200">
+                          PD-L1 TPS: {profile.pdl1Tps}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               /* Generic Pathology for Gastric / Liver / Esophageal / Thyroid / Endometrial / Cervical / Pancreatic */
@@ -2298,11 +2344,15 @@ export default function PatientDashboard() {
                 </div>
               </div>
               <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${
-                profile.systemicStagingConfirmed || profile.mStage === 'M0'
+                profile.systemicStagingConfirmed || profile.mStage === 'M0' || isEarlyLowRisk
                   ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
                   : 'text-slate-600 bg-slate-100 border-slate-200'
               }`}>
-                {profile.systemicStagingConfirmed || profile.mStage === 'M0' ? 'M0 根治窗口确立' : 'M 分期待排查'}
+                {profile.systemicStagingConfirmed || profile.mStage === 'M0' 
+                  ? 'M0 根治窗口确立' 
+                  : isEarlyLowRisk 
+                  ? '早期豁免常规过度排查 · M0 确立' 
+                  : 'M 分期待排查'}
               </span>
             </div>
 
@@ -2430,8 +2480,8 @@ export default function PatientDashboard() {
                         <Brain className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>脑部增强 MRI</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.brainMri === 'negative' ? 'text-emerald-700' : profile.brainMri === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.brainMri === 'negative' ? '阴性 (M0)' : profile.brainMri === 'positive' ? '提示可疑' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.brainMri === 'negative' || (isEarlyLowRisk && !profile.brainMri) ? 'text-emerald-700' : profile.brainMri === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.brainMri === 'negative' ? '阴性 (M0)' : profile.brainMri === 'positive' ? '提示可疑' : isEarlyLowRisk ? '早期免查 (M0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2439,8 +2489,8 @@ export default function PatientDashboard() {
                         <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>腹部与肾上腺</span>
                       </span>
-                      <span className={`font-bold mt-1 ${(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings') ? 'text-emerald-700' : profile.abdominalUltrasound === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings') ? '阴性/良性' : profile.abdominalUltrasound === 'positive' ? '提示可疑' : '未检查'}
+                      <span className={`font-bold mt-1 ${(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings' || isEarlyLowRisk) ? 'text-emerald-700' : profile.abdominalUltrasound === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings') ? '阴性/良性' : profile.abdominalUltrasound === 'positive' ? '提示可疑' : isEarlyLowRisk ? '常规正常 (M0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2448,8 +2498,8 @@ export default function PatientDashboard() {
                         <Activity className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>全身骨显像 ECT</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.boneScan === 'negative' ? 'text-emerald-700' : profile.boneScan === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.boneScan === 'negative' ? '阴性 (M0)' : profile.boneScan === 'positive' ? '提示可疑' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.boneScan === 'negative' || (isEarlyLowRisk && !profile.boneScan) ? 'text-emerald-700' : profile.boneScan === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.boneScan === 'negative' ? '阴性 (M0)' : profile.boneScan === 'positive' ? '提示可疑' : isEarlyLowRisk ? '早期免查 (M0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2457,8 +2507,8 @@ export default function PatientDashboard() {
                         <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>颈部/锁骨上淋巴结</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.neckLymphNodes === 'negative' ? 'text-emerald-700' : profile.neckLymphNodes === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.neckLymphNodes === 'negative' ? '未见肿大 (阴性)' : profile.neckLymphNodes === 'positive' ? '提示肿大 (需活检)' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.neckLymphNodes === 'negative' || (isEarlyLowRisk && !profile.neckLymphNodes) ? 'text-emerald-700' : profile.neckLymphNodes === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.neckLymphNodes === 'negative' ? '未见肿大 (阴性)' : profile.neckLymphNodes === 'positive' ? '提示肿大 (需活检)' : isEarlyLowRisk ? '触诊阴性 (N0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2466,8 +2516,8 @@ export default function PatientDashboard() {
                         <Scan className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>全身 PET-CT</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.petCt === 'negative' ? 'text-emerald-700' : profile.petCt === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.petCt === 'negative' ? '无浓聚 (M0)' : profile.petCt === 'positive' ? '高代谢' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.petCt === 'negative' || (isEarlyLowRisk && !profile.petCt) ? 'text-emerald-700' : profile.petCt === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.petCt === 'negative' ? '无浓聚 (M0)' : profile.petCt === 'positive' ? '高代谢' : isEarlyLowRisk ? '早期免查 (M0)' : '未检查'}
                       </span>
                     </div>
                   </>
@@ -2535,6 +2585,14 @@ export default function PatientDashboard() {
                   </>
                 )}
               </div>
+
+              {/* Early-stage Low Risk Exemption Notice */}
+              {isEarlyLowRisk && (
+                <div className="p-2.5 bg-emerald-50/80 rounded-xl border border-emerald-200/80 text-[11px] text-emerald-800 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>依据 NCCN / CSCO 指南，Tis / IA 期病灶远处转移概率极低，术前胸腹常规影像正常即确立 M0，豁免常规骨扫描与脑 MRI 等过度排查。</span>
+                </div>
+              )}
 
               {/* Benign Findings Strip with GlossaryTooltip & Reassurance */}
               {profile.benignFindings && profile.benignFindings.length > 0 && (
