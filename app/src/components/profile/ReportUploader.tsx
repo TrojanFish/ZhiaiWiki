@@ -36,6 +36,7 @@ import {
   isRateLimitOrQuotaError, 
   type ClinicalErrorInfo 
 } from "@/lib/clinicalErrors";
+import CancerSpecificPathologyForm from "./CancerSpecificPathologyForm";
 
 interface ReportUploaderProps {
   onParsed: (data: any) => void;
@@ -630,7 +631,10 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
     const base = existingProfile || initialData || {};
     const currentSlot = (cancerType || base.cancerType || 'lung') as CancerType;
     hasInitializedRef.current = `manual_${Date.now()}`;
+    const baseSpecific = (base.cancerSpecificData as any) || {};
     setParsedData({
+      ...baseSpecific,
+      ...base,
       cancerType: currentSlot,
       organ: base.organ || currentSlot,
       sex: base.sex || "unknown",
@@ -779,22 +783,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
       setStagingPreview(calc);
     }
   }, [
-    parsedData?.noduleType,
-    parsedData?.tumorSize,
-    parsedData?.solidSize,
-    parsedData?.ctr,
-    parsedData?.pathologyTumorSize,
-    parsedData?.pathologyInvasiveSize,
-    parsedData?.pathologyLepidicPercent,
-    parsedData?.pathologyReportMode,
-    parsedData?.tStage,
-    parsedData?.nStage,
-    parsedData?.mStage,
-    parsedData?.adjacentLobeInvasion,
-    parsedData?.vpi,
-    parsedData?.stas,
-    parsedData?.lvi,
-    parsedData?.marginStatus,
+    parsedData,
+    cancerType,
   ]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -954,8 +944,20 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         ? String(parsedData.ki67).replace(/%/g, "").trim()
         : (base.ki67 || null);
 
+      const cancerSpecificData = {
+        ...(base.cancerSpecificData || {}),
+        ...(parsedData.cancerSpecificData || {}),
+        ...(parsedData || {}),
+      };
+      delete cancerSpecificData.stagingCalc;
+      delete cancerSpecificData.stagingPreview;
+
       const finalData = {
         ...base,
+        ...cancerSpecificData,
+        cancerSpecificData,
+        cancerType: currentCancer,
+        organ: currentCancer,
         id: base.id,
         userId: base.userId,
         age: parsedData.age !== "" && parsedData.age != null && !isNaN(parseInt(String(parsedData.age))) ? parseInt(String(parsedData.age)) : (base.age || undefined),
@@ -967,6 +969,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         pathologyLepidicPercent: parsedData.pathologyLepidicPercent !== "" && parsedData.pathologyLepidicPercent != null ? parseFloat(String(parsedData.pathologyLepidicPercent)) : (base.pathologyLepidicPercent ?? null),
         pathologyReportMode: parsedData.pathologyReportMode || base.pathologyReportMode || null,
         stage: stagingPreview?.stage || parsedData.stage || base.stage || "unknown",
+        prognosticStage: stagingPreview?.prognosticStage || parsedData.prognosticStage || base.prognosticStage,
+        anatomicalStage: stagingPreview?.anatomicalStage || parsedData.anatomicalStage || base.anatomicalStage,
+        molecularSubtype: stagingPreview?.molecularSubtype || parsedData.molecularSubtype || base.molecularSubtype,
         tStage: stagingPreview?.tStage || parsedData.tStage || base.tStage || "unknown",
         noduleType: parsedData.noduleType || base.noduleType || "mixed_ggo",
         nStage: stagingPreview?.nStage || parsedData.nStage || base.nStage || "unknown",
@@ -2602,7 +2607,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   <div className="flex gap-1 h-[34px]">
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, stas: "negative", adjacentLobeInvasion: false })}
+                      onClick={() => setParsedData({ ...parsedData, stas: "negative", ...(isLung ? { adjacentLobeInvasion: false } : {}) })}
                       className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         parsedData.stas === "negative" ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
@@ -2611,7 +2616,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     </button>
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, stas: "positive", adjacentLobeInvasion: true })}
+                      onClick={() => setParsedData({ ...parsedData, stas: "positive", ...(isLung ? { adjacentLobeInvasion: true } : {}) })}
                       className={`flex-1 text-[11px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         parsedData.stas === "positive" ? "bg-rose-500 text-white shadow-2xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
@@ -2620,7 +2625,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     </button>
                     <button
                       type="button"
-                      onClick={() => setParsedData({ ...parsedData, stas: null, adjacentLobeInvasion: false })}
+                      onClick={() => setParsedData({ ...parsedData, stas: null, ...(isLung ? { adjacentLobeInvasion: false } : {}) })}
                       className={`flex-1 text-[10px] rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
                         !parsedData.stas ? "bg-slate-700 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                       }`}
@@ -2766,42 +2771,53 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 </div>
               </div>
 
-              {/* IASLC 9th Special Invasive Factor: Adjacent Lobe Invasion (跨叶直接侵犯) */}
-              <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-800">跨叶直接侵犯 (Adjacent Lobe Invasion)</span>
-                    <span className="text-[10px] text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded font-bold border border-teal-200">
-                      第9版明确归入 T2a
-                    </span>
+              {/* IASLC 9th Special Invasive Factor: Adjacent Lobe Invasion (跨叶直接侵犯, Lung only) */}
+              {isLung && (
+                <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-800">跨叶直接侵犯 (Adjacent Lobe Invasion)</span>
+                      <span className="text-[10px] text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded font-bold border border-teal-200">
+                        第9版明确归入 T2a
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-snug">
+                      原发肿瘤经叶间裂直接跨叶浸润至相邻肺叶（非独立副结节），依据 IASLC 第9版金标准，T 分期自动定为 T2a。
+                    </p>
                   </div>
-                  <p className="text-[11px] text-slate-500 leading-snug">
-                    原发肿瘤经叶间裂直接跨叶浸润至相邻肺叶（非独立副结节），依据 IASLC 第9版金标准，T 分期自动定为 T2a。
-                  </p>
+                  <div className="flex gap-1.5 h-[34px] sm:w-48 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, adjacentLobeInvasion: false })}
+                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        !parsedData.adjacentLobeInvasion ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      无跨叶侵犯
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, adjacentLobeInvasion: true })}
+                      className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                        parsedData.adjacentLobeInvasion ? "bg-amber-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      见跨叶侵犯
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-1.5 h-[34px] sm:w-48 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setParsedData({ ...parsedData, adjacentLobeInvasion: false })}
-                    className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                      !parsedData.adjacentLobeInvasion ? "bg-emerald-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                    }`}
-                  >
-                    无跨叶侵犯
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setParsedData({ ...parsedData, adjacentLobeInvasion: true })}
-                    className={`flex-1 text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
-                      parsedData.adjacentLobeInvasion ? "bg-amber-500 text-white shadow-2xs" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                    }`}
-                  >
-                    见跨叶侵犯
-                  </button>
-                </div>
-              </div>
+              )}
 
             </div>
+
+            {/* Section: Cancer-Specific Specialized Pathology Parameters Form (for 11 non-lung cancers) */}
+            {!isLung && (
+              <CancerSpecificPathologyForm
+                cancerType={currentCancer}
+                data={parsedData}
+                onChange={(updates) => setParsedData((prev: any) => ({ ...prev, ...updates }))}
+              />
+            )}
           </div>
         )}
 
@@ -3127,7 +3143,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   const hasTargetable = mutations.some((m: any) => ["EGFR", "ALK", "ROS1", "RET", "MET", "BRAF"].includes(m.gene));
                   const hasTp53 = mutations.some((m: any) => m.gene === "TP53");
 
-                  if (isStageIA && hasTargetable) {
+                  if (isLung && isStageIA && hasTargetable) {
                     return (
                       <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-950 flex items-start gap-2">
                         <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -3139,7 +3155,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                         </div>
                       </div>
                     );
-                  } else if (!isStageIA && hasTargetable) {
+                  } else if (isLung && !isStageIA && hasTargetable) {
                     return (
                       <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 flex items-start gap-2">
                         <Award className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
@@ -3151,7 +3167,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                         </div>
                       </div>
                     );
-                  } else if (hasTp53) {
+                  } else if (isLung && hasTp53) {
                     return (
                       <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2">
                         <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
