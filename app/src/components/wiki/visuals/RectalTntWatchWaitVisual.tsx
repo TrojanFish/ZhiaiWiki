@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { GitBranch, ShieldCheck, AlertCircle, HeartPulse, Eye, Activity, CheckCircle2, ChevronRight, Key } from "lucide-react";
+import { GitBranch, HeartPulse, Eye, Activity, Key } from "lucide-react";
 
 type TntPathway = "tnt_rapido" | "tnt_prodige" | "watch_wait";
 

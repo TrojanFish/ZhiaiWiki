@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   ESOPHAGEAL_TARGETED_DRUGS,
-  ESOPHAGEAL_DDI_RULES,
   checkEsophagealDrugInteractions,
 } from "@/lib/esophagealDdiData";
 import { checkDrugInteractionsUnified } from "@/lib/ddiRegistry";

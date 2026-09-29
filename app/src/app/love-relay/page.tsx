@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { 
   HeartHandshake, 
-  ChevronLeft, 
   Search, 
   PenLine, 
   Check, 
@@ -12,8 +11,6 @@ import {
   ArrowRight, 
   Coffee,
   Heart,
-  MessageSquareHeart,
-  Sparkles,
   MapPin,
   Calendar
 } from "lucide-react";

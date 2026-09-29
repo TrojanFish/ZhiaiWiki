@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Dna, AlertTriangle, ShieldCheck, Activity, Target, Zap } from "lucide-react";
+import { Dna, Target, Zap } from "lucide-react";
 
 type SubtypeId = "luminalA" | "luminalB" | "her2" | "tnbc";
 

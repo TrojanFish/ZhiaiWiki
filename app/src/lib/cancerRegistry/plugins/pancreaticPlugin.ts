@@ -21,9 +21,9 @@ export const pancreaticPlugin: CancerPluginSpec = {
   guidelineStandard: "NCCN 2024 · AJCC 第 8 版 · CSCO 胰腺癌诊疗指南 2024",
   theme: {
     // 严格遵循 Playbook §9.2 独立色阶，选用活力暖橙色，杜绝撞色
-    primaryColor: "text-orange-600 dark:text-orange-400",
-    badgeColor: "bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400",
-    bgColor: "bg-orange-50 dark:bg-orange-950/20",
+    primaryColor: "text-orange-600",
+    badgeColor: "bg-white text-orange-600",
+    bgColor: "bg-orange-50",
   },
   staging: {
     computeStage: (input: any) => {

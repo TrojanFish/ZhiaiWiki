@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useHydrated } from "@/lib/useHydrated";
-import { Info, HelpCircle } from "lucide-react";
 
 export interface KMDataPoint {
   time: number;           // 随访时间（月，Month）

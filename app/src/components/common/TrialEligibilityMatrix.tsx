@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Check, X, HelpCircle, AlertCircle, Sparkles, Filter } from "lucide-react";
+import { Check, X, HelpCircle, Sparkles } from "lucide-react";
 
 export type CriterionMatchStatus = "met" | "not_met" | "partial" | "unknown";
 

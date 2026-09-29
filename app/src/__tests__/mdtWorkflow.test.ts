@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { PatientProfile, CancerType } from '../lib/types';
-import { getDualPrimarySummary, saveProfileToSlot } from '../lib/profileStorage';
+import type { CancerType } from '../lib/types';
+import { getDualPrimarySummary } from '../lib/profileStorage';
 
 describe('Multidisciplinary Team (MDT) Consultation Workflow & 7-Cancer UX Suite', () => {
   it('verifies 7-slot multi-primary profile summary retrieval in profileStorage', () => {

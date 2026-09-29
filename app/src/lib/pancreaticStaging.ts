@@ -213,6 +213,16 @@ export function getPancreaticClinicalCohort(profile: any): ClinicalCohortResult 
         pmid: "31157963",
         journal: "New England Journal of Medicine",
         publicationYear: 2019,
+        displayMode: "median_survival",
+        timeHorizonMonths: 36,
+        timeHorizonLabel: "中位生存获益模型 (POLO)",
+        metricLabel1: "中位无进展生存 (mPFS)",
+        metricSubLabel1: "PARP靶向维持",
+        metricLabel2: "中位总生存期 (Median OS)",
+        metricSubLabel2: "含铂一线应答",
+        medianOsMonths: 18.9,
+        medianPfsMonths: 7.4,
+        hazardRatio: "0.53",
       };
     }
 
@@ -234,6 +244,16 @@ export function getPancreaticClinicalCohort(profile: any): ClinicalCohortResult 
       pmid: "24131140",
       journal: "New England Journal of Medicine",
       publicationYear: 2013,
+      displayMode: "median_survival",
+      timeHorizonMonths: 36,
+      timeHorizonLabel: "中位生存获益模型 (MPACT/ACCORD)",
+      metricLabel1: "中位无进展生存 (mPFS)",
+      metricSubLabel1: "一线强效联合化疗",
+      metricLabel2: "中位总生存期 (Median OS)",
+      metricSubLabel2: "一线硬终点",
+      medianOsMonths: 11.1,
+      medianPfsMonths: 6.4,
+      hazardRatio: "0.72",
     };
   }
 
@@ -256,6 +276,14 @@ export function getPancreaticClinicalCohort(profile: any): ClinicalCohortResult 
       pmid: "35640799",
       journal: "Journal of Clinical Oncology",
       publicationYear: 2022,
+      displayMode: "intermediate_3yr",
+      timeHorizonMonths: 60,
+      timeHorizonLabel: "新辅助转化3年/5年里程碑",
+      metricLabel1: "中位无病生存 (DFS)",
+      metricSubLabel1: "新辅助降期获益",
+      metricLabel2: "5年总生存率 (OS)",
+      metricSubLabel2: "提升3倍以上",
+      hazardRatio: "0.73",
     };
   }
 
@@ -278,5 +306,14 @@ export function getPancreaticClinicalCohort(profile: any): ClinicalCohortResult 
     pmid: "30575490",
     journal: "New England Journal of Medicine",
     publicationYear: 2018,
+    displayMode: "intermediate_3yr",
+    timeHorizonMonths: 60,
+    timeHorizonLabel: "3年无病生存与中位OS (PRODIGE 24)",
+    metricLabel1: "3年无病生存率 (DFS)",
+    metricSubLabel1: "辅助化疗金标准",
+    metricLabel2: "中位总生存期 (mOS 54.4月)",
+    metricSubLabel2: "长达4.5年生存中位",
+    medianOsMonths: 54.4,
+    hazardRatio: "0.64",
   };
 }

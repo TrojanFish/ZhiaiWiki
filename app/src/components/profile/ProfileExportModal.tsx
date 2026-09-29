@@ -20,8 +20,6 @@ import {
   Printer,
   CheckSquare,
   Square,
-  HelpCircle,
-  FileText,
   Stethoscope,
   Info,
   Star,

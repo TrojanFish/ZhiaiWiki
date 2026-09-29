@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   checkColorectalDdi,
   COLORECTAL_TARGETED_DRUGS,
-  COLORECTAL_DDI_RULES,
 } from '../lib/colorectalDdiData';
 import { getTargetedDrugsForCancer, checkDrugInteractionsUnified } from '../lib/ddiRegistry';
 

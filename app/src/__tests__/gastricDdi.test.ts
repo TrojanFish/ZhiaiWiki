@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { 
   GASTRIC_TARGETED_DRUGS, 
-  GASTRIC_DDI_RULES, 
   checkGastricDrugInteractions 
 } from "@/lib/gastricDdiData";
 import { checkDrugInteractionsUnified } from "@/lib/ddiRegistry";

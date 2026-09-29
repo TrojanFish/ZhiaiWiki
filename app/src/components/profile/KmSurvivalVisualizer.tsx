@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { ExternalLink, Info, Activity, ShieldCheck } from "lucide-react";
+import { ExternalLink, Info, Activity } from "lucide-react";
 import type { ClinicalCohortResult, KmCurveArm } from "@/lib/staging";
-import { getOrGenerateKmArms } from "@/lib/kmCurveHelper";
+import { getOrGenerateKmArms, getCohortTimeHorizon } from "@/lib/kmCurveHelper";
 
 interface KmSurvivalVisualizerProps {
   cohort: ClinicalCohortResult;
@@ -11,9 +11,11 @@ interface KmSurvivalVisualizerProps {
 
 export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerProps) {
   const [hoveredMonth, setHoveredMonth] = useState<number | null>(null);
-  const [activeMetric, setActiveMetric] = useState<"OS" | "RFS">("OS");
 
   const arms: KmCurveArm[] = getOrGenerateKmArms(cohort);
+  const timeHorizon = getCohortTimeHorizon(cohort);
+  const { maxMonth, months, isMedian, isExtended, medianMonths } = timeHorizon;
+
   const intervArm = arms.find((a) => a.isIntervention) || arms[0];
   const controlArm = arms.find((a) => !a.isIntervention) || arms[1];
 
@@ -28,8 +30,8 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
   const plotWidth = width - padLeft - padRight;
   const plotHeight = height - padTop - padBottom;
 
-  // 坐标映射辅助函数
-  const getX = (month: number) => padLeft + (month / 60) * plotWidth;
+  // 坐标映射辅助函数（自适应时间轴跨度 maxMonth）
+  const getX = (month: number) => padLeft + (Math.min(month, maxMonth) / maxMonth) * plotWidth;
   const getY = (rate: number) => padTop + (1 - rate / 100) * plotHeight;
 
   // 生成 Kaplan-Meier 阶梯折线 (Step Function Path)
@@ -62,14 +64,23 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
     return `${upperPath} ${lowerPath} Z`;
   }
 
-  // 选中的点
-  const activeMonth = hoveredMonth ?? 60;
+  // 选中的点（默认取最大随访时间节点）
+  const activeMonth = hoveredMonth ?? maxMonth;
   const activeIntervPoint = intervArm.points.find((p) => p.month === activeMonth) || intervArm.points[intervArm.points.length - 1];
   const activeCtrlPoint = controlArm?.points.find((p) => p.month === activeMonth) || controlArm?.points[controlArm.points.length - 1];
 
   // PubMed / DOI 链接构造
   const pubmedUrl = cohort.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${cohort.pmid}/` : null;
   const doiUrl = cohort.doi ? `https://doi.org/${cohort.doi}` : null;
+
+  // 模型说明徽章文案
+  const modelBadgeText = (() => {
+    if (isExtended) return "10~20年超长随访模型 (TAILORx/Kuma)";
+    if (isMedian) return "中位生存获益模型 (Lancet/NEJM规范)";
+    if (cohort.displayMode === "intermediate_3yr") return "3年金标准替代终点模型 (IDEA/RESOLVE)";
+    if (cohort.displayMode === "organ_preservation") return "器官保留与保肛模型 (OPRA/RAPIDO)";
+    return "双臂随机对照模型 (5年随访)";
+  })();
 
   return (
     <div className="bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs mt-5 transition-all">
@@ -83,7 +94,7 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
             <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-2 flex-wrap">
               <span>Kaplan-Meier 学术级生存随访曲线</span>
               <span className="text-[10px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
-                双臂随机对照模型
+                {modelBadgeText}
               </span>
             </h4>
           </div>
@@ -182,8 +193,8 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
             );
           })}
 
-          {/* X 轴月份刻度线 */}
-          {[0, 12, 24, 36, 48, 60].map((m) => {
+          {/* X 轴动态月份刻度线 */}
+          {months.map((m) => {
             const x = getX(m);
             return (
               <g key={m}>
@@ -210,7 +221,7 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
             );
           })}
 
-          {/* X 轴轴名 */}
+          {/* X 轴轴名（体现时间跨度） */}
           <text
             x={padLeft + plotWidth / 2}
             y={height - 2}
@@ -219,7 +230,11 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
             fill="#475569"
             fontWeight="bold"
           >
-            随访时间 (Time in Months)
+            {maxMonth >= 120 
+              ? "随访时间 (Time in Months · 10年长期随访)" 
+              : maxMonth <= 36 
+              ? "随访时间 (Time in Months · 3年中位生存窗口)" 
+              : "随访时间 (Time in Months · 5年标准随访)"}
           </text>
 
           {/* 95% 置信区间透明浅色填充带 */}
@@ -249,6 +264,59 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
             strokeWidth="2.5"
             strokeLinecap="round"
           />
+
+          {/* 中位生存截距虚线与交点 (Lancet/NEJM 顶刊标准) */}
+          {isMedian && medianMonths && medianMonths <= maxMonth && (
+            <g>
+              <line
+                x1={padLeft}
+                y1={getY(50)}
+                x2={getX(medianMonths)}
+                y2={getY(50)}
+                stroke="#d97706"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
+              />
+              <line
+                x1={getX(medianMonths)}
+                y1={getY(50)}
+                x2={getX(medianMonths)}
+                y2={height - padBottom}
+                stroke="#d97706"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
+              />
+              <circle
+                cx={getX(medianMonths)}
+                cy={getY(50)}
+                r="3.5"
+                fill="#d97706"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+              />
+              <rect
+                x={getX(medianMonths) - 26}
+                y={getY(50) - 18}
+                width={52}
+                height={14}
+                rx={3}
+                fill="#fffbeb"
+                stroke="#fcd34d"
+                strokeWidth="0.8"
+              />
+              <text
+                x={getX(medianMonths)}
+                y={getY(50) - 7}
+                textAnchor="middle"
+                fontSize="8.5"
+                fill="#b45309"
+                fontFamily="monospace"
+                fontWeight="bold"
+              >
+                mOS {medianMonths}m
+              </text>
+            </g>
+          )}
 
           {/* 交互探针高亮竖线 */}
           {hoveredMonth != null && (
@@ -284,7 +352,7 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
           )}
 
           {/* 交互热区触发器 (透明竖直矩形) */}
-          {[0, 12, 24, 36, 48, 60].map((m) => {
+          {months.map((m) => {
             const x = getX(m);
             return (
               <rect
@@ -318,7 +386,7 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
                 <td className="py-1 text-sky-800 font-bold whitespace-nowrap pr-2">
                   试验组
                 </td>
-                {[0, 12, 24, 36, 48, 60].map((m) => {
+                {months.map((m) => {
                   const pt = intervArm.points.find((p) => p.month === m);
                   const isCur = m === activeMonth;
                   return (
@@ -341,7 +409,7 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
                   <td className="py-1 text-slate-500 font-medium whitespace-nowrap pr-2">
                     对照组
                   </td>
-                  {[0, 12, 24, 36, 48, 60].map((m) => {
+                  {months.map((m) => {
                     const pt = controlArm.points.find((p) => p.month === m);
                     const isCur = m === activeMonth;
                     return (

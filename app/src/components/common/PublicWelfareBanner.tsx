@@ -7,8 +7,7 @@ import {
   Heart, 
   Receipt, 
   MessageSquareHeart, 
-  ChevronRight, 
-  ShieldCheck 
+  ChevronRight 
 } from "lucide-react";
 import { LOVE_RELAY_ITEMS } from "@/lib/loveRelayData";
 import PublicWelfareDonationModal from "./PublicWelfareDonationModal";

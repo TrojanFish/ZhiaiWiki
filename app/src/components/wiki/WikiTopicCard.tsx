@@ -12,7 +12,6 @@ import {
   HelpCircle,
   HeartPulse,
   Crosshair,
-  ArrowRight,
   Lightbulb,
   PlusCircle,
   Image as ImageIcon,

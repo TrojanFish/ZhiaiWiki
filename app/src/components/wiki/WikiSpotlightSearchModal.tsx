@@ -19,7 +19,7 @@ import {
   Trash2 
 } from "lucide-react";
 import type { WikiTopic, RiskLevel, WikiCategory } from "@/lib/wikiData";
-import { WIKI_TOPICS, WIKI_CATEGORIES } from "@/lib/wikiData";
+import { WIKI_TOPICS } from "@/lib/wikiData";
 import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
 import type { PatientProfile, CancerType } from "@/lib/types";
 import { useCancerType } from "@/components/common/CancerSwitch";

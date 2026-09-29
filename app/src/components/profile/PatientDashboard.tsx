@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Scan,
   Ruler,
@@ -13,7 +13,6 @@ import {
   Layers,
   Brain,
   Stethoscope,
-  ArrowRight,
   FileText,
   X,
   Edit3,
@@ -31,16 +30,18 @@ import {
   MinusCircle,
   User,
   Cloud,
+  ShieldAlert,
+  FileEdit,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import AuthModal from "@/components/AuthModal";
+import { showToast } from "@/components/common/Toast";
 
 import JourneyMap from "./JourneyMap";
 import SimilarCasesCard from "./SimilarCasesCard";
 import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 import ProfileExportModal from "./ProfileExportModal";
 import { DdiCheckerVisual } from "@/components/wiki/visuals/DdiCheckerVisual";
-import { TumorMarkersCard } from "./TumorMarkersCard";
 import { NoduleTimelineChart } from "./NoduleTimelineChart";
 import { MolecularProfileCard } from "./MolecularProfileCard";
 
@@ -115,11 +116,15 @@ export default function PatientDashboard() {
 
   // Sync refs to prevent async loadProfile from dismissing active calibration / uploader
   const showUploaderRef = useRef(showUploader);
-  showUploaderRef.current = showUploader;
   const showUpdateModalRef = useRef(showUpdateModal);
-  showUpdateModalRef.current = showUpdateModal;
   const editModeRef = useRef(editMode);
-  editModeRef.current = editMode;
+
+  useEffect(() => {
+    showUploaderRef.current = showUploader;
+    showUpdateModalRef.current = showUpdateModal;
+    editModeRef.current = editMode;
+  }, [showUploader, showUpdateModal, editMode]);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteOption, setDeleteOption] = useState<'single' | 'all'>('single');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -168,6 +173,65 @@ export default function PatientDashboard() {
       }
     }
   }, [profile?.cancerType, globalCancerType, setGlobalCancerType]);
+
+  const loadProfile = useCallback(async (slot: CancerType = activeSlot, showLoadingSpinner = true) => {
+    try {
+      if (showLoadingSpinner) setLoading(true);
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const res = await fetch(`/api/profile?userId=${getGuestId()}&cancerType=${slot}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const data = await res.json();
+      if (data && data.profile) {
+        setProfile(data.profile);
+        // Only clear uploader/edit mode if not actively interacting
+        if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
+          setShowUploader(false);
+          setEditMode(null);
+        }
+        saveProfileToSlot(data.profile, slot);
+        if (Array.isArray(data.availableSlots)) {
+          const merged = Array.from(new Set([...getAvailableProfileSlots(), ...data.availableSlots])) as CancerType[];
+          setAvailableSlots(merged);
+        } else {
+          setAvailableSlots(getAvailableProfileSlots());
+        }
+        setDualSummary(getDualPrimarySummary());
+      } else {
+        // Fallback: check local storage cached profile
+        const localCached = getProfileBySlot(slot);
+        if (localCached && (localCached.stage || (localCached as any).tStage || localCached.noduleType || localCached.tumorSize || localCached.organ || (localCached as any).biRads)) {
+          setProfile(localCached);
+          if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
+            setShowUploader(false);
+            setEditMode(null);
+          }
+          setAvailableSlots(getAvailableProfileSlots());
+          setDualSummary(getDualPrimarySummary());
+          return;
+        }
+        setProfile(null);
+        if (!showUploaderRef.current) {
+          setShowUploader(true);
+        }
+        setAvailableSlots(getAvailableProfileSlots());
+        setDualSummary(getDualPrimarySummary());
+      }
+    } catch (err) {
+      console.error("Failed to load profile", err);
+      const localCached = getProfileBySlot(slot);
+      if (localCached) {
+        setProfile(localCached);
+        if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
+          setShowUploader(false);
+        }
+      } else {
+        setShowUploader(true);
+      }
+    } finally {
+      if (showLoadingSpinner) setLoading(false);
+    }
+  }, [activeSlot]);
 
   // 当用户在全局导航栏切换癌种时，无论该卡槽是否已有档案，均响应式切换激活卡槽
   useEffect(() => {
@@ -409,65 +473,6 @@ export default function PatientDashboard() {
     };
   }, [profile, isBreast, isColorectal, isGastric, isLiver, isEsophageal, isThyroid, isEndometrial, isCervical]);
 
-  const loadProfile = async (slot: CancerType = activeSlot, showLoadingSpinner = true) => {
-    try {
-      if (showLoadingSpinner) setLoading(true);
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const res = await fetch(`/api/profile?userId=${getGuestId()}&cancerType=${slot}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      const data = await res.json();
-      if (data && data.profile) {
-        setProfile(data.profile);
-        // Only clear uploader/edit mode if not actively interacting
-        if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
-          setShowUploader(false);
-          setEditMode(null);
-        }
-        saveProfileToSlot(data.profile, slot);
-        if (Array.isArray(data.availableSlots)) {
-          const merged = Array.from(new Set([...getAvailableProfileSlots(), ...data.availableSlots])) as CancerType[];
-          setAvailableSlots(merged);
-        } else {
-          setAvailableSlots(getAvailableProfileSlots());
-        }
-        setDualSummary(getDualPrimarySummary());
-      } else {
-        // Fallback: check local storage cached profile
-        const localCached = getProfileBySlot(slot);
-        if (localCached && (localCached.stage || (localCached as any).tStage || localCached.noduleType || localCached.tumorSize || localCached.organ || (localCached as any).biRads)) {
-          setProfile(localCached);
-          if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
-            setShowUploader(false);
-            setEditMode(null);
-          }
-          setAvailableSlots(getAvailableProfileSlots());
-          setDualSummary(getDualPrimarySummary());
-          return;
-        }
-        setProfile(null);
-        if (!showUploaderRef.current) {
-          setShowUploader(true);
-        }
-        setAvailableSlots(getAvailableProfileSlots());
-        setDualSummary(getDualPrimarySummary());
-      }
-    } catch (err) {
-      console.error("Failed to load profile", err);
-      const localCached = getProfileBySlot(slot);
-      if (localCached) {
-        setProfile(localCached);
-        if (!showUploaderRef.current && !editModeRef.current && !showUpdateModalRef.current) {
-          setShowUploader(false);
-        }
-      } else {
-        setShowUploader(true);
-      }
-    } finally {
-      if (showLoadingSpinner) setLoading(false);
-    }
-  };
-
   useEffect(() => {
     // 0. Check if URL specifies calibration mode or a demo template
     let hasTemplate = false;
@@ -625,16 +630,48 @@ export default function PatientDashboard() {
         fetch('/api/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-          body: JSON.stringify({ ...updatedLung, cancerType: 'lung', userId: getGuestId() })
+          body: JSON.stringify({ ...updatedLung, cancerType: 'lung', userId: getGuestId(), reportReviewStatus: updatedLung.reportReviewStatus || 'confirmed' })
         }),
         fetch('/api/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-          body: JSON.stringify({ ...updatedBreast, cancerType: 'breast', userId: getGuestId() })
+          body: JSON.stringify({ ...updatedBreast, cancerType: 'breast', userId: getGuestId(), reportReviewStatus: updatedBreast.reportReviewStatus || 'confirmed' })
         })
       ]);
     } catch (syncErr) {
       console.warn("M0 sync API warning:", syncErr);
+    }
+  };
+
+  const handleConfirmReviewStatus = async () => {
+    if (!profile) return;
+    try {
+      const updated = {
+        ...profile,
+        reportReviewStatus: 'confirmed'
+      };
+      setProfile(updated);
+      saveProfileToSlot(updated, activeSlot);
+
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      await fetch('/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          profileId: profile.id,
+          userId: getGuestId(),
+          cancerType: activeSlot,
+          reportReviewStatus: 'confirmed'
+        })
+      });
+
+      showToast("临床关键指标已核对确认，现在可直接生成专属深度循证报告！", "success");
+    } catch (err) {
+      console.warn("Confirm review failed:", err);
+      showToast("已在本地确认指标，您可直接生成报告", "info");
     }
   };
 
@@ -663,7 +700,12 @@ export default function PatientDashboard() {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ ...parsedData, cancerType: targetSlot, userId: getGuestId() })
+        body: JSON.stringify({ 
+          ...parsedData, 
+          cancerType: targetSlot, 
+          userId: getGuestId(),
+          reportReviewStatus: parsedData.reportReviewStatus || 'confirmed'
+        })
       });
       const dbData = await res.json();
       if (dbData.success) {
@@ -943,6 +985,49 @@ export default function PatientDashboard() {
               title="关闭提示"
             >
               <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Report Review Confirmation Banner if profile parsed but unconfirmed */}
+      {profile && profile.reportReviewStatus && profile.reportReviewStatus !== 'confirmed' && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border border-amber-200/90 text-amber-900 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3.5 animate-fade-in">
+          <div className="flex items-start sm:items-center gap-3">
+            <span className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 border border-amber-200 text-amber-700 shadow-2xs">
+              <ShieldAlert className="w-5 h-5 text-amber-700" />
+            </span>
+            <div className="space-y-0.5">
+              <div className="text-sm font-extrabold flex items-center gap-2 flex-wrap text-amber-950">
+                <span>临床报告解析就绪 · 待核对关键指标</span>
+                <span className="text-[10px] bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full font-bold">
+                  循证安全前置校验
+                </span>
+              </div>
+              <p className="text-xs text-amber-800/90 leading-relaxed">
+                为确保深度循证推理精准无误，请核对当前录入的分期与病理指标。确认无误后即可随时一键生成专属临床循证报告。
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+            <button
+              type="button"
+              onClick={handleConfirmReviewStatus}
+              className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-white" />
+              <span>一键核对确认</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEditMode('edit_direct');
+                setShowUploader(true);
+              }}
+              className="px-3 py-2 rounded-xl bg-white hover:bg-amber-100/60 text-amber-800 border border-amber-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+            >
+              <FileEdit className="w-3.5 h-3.5 shrink-0" />
+              <span>微调指标</span>
             </button>
           </div>
         </div>
@@ -2689,7 +2774,7 @@ export default function PatientDashboard() {
             href={`/profile/report?cancerType=${activeSlot}`} 
             className="w-full mt-5 py-3 rounded-xl btn-primary text-white text-xs sm:text-sm font-bold shadow-md text-center flex items-center justify-center transition-all cursor-pointer"
           >
-            <span>生成专属深度循证报告</span>
+            <span>{profile?.reportReviewStatus && profile?.reportReviewStatus !== 'confirmed' ? '核对指标并生成循证报告' : '生成专属深度循证报告'}</span>
           </Link>
         </div>
 
@@ -2722,13 +2807,6 @@ export default function PatientDashboard() {
         />
       )}
 
-      {/* Serum Biomarkers Monitoring & Longitudinal Trend (Multi-Cancer: Lung, Breast & Colorectal) */}
-      <TumorMarkersCard
-        markers={profile.tumorMarkers}
-        markersHistory={profile.tumorMarkersHistory}
-        gender={profile.gender || profile.sex}
-        cancerType={profile.cancerType || activeType}
-      />
 
       {/* Molecular Pathology & Driver Genes NGS Panel (Lung Cancer) */}
       {isLung && ((profile.geneMutations && profile.geneMutations.length > 0) || profile.egfr === 'positive' || profile.molecular) && (

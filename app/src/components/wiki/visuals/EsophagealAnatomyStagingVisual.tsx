@@ -4,14 +4,9 @@ import React, { useState } from "react";
 import { 
   ShieldCheck, 
   AlertTriangle, 
-  Activity, 
-  CheckCircle2, 
-  Info, 
   Layers, 
-  Crosshair, 
-  Stethoscope,
+  Crosshair,
   Scissors,
-  Zap,
   Radio,
   Award,
   Check
@@ -23,8 +18,8 @@ export function EsophagealAnatomyStagingVisual() {
   // 解剖与浸润深度参数
   const [subsite, setSubsite] = useState<"cervical" | "upper_thoracic" | "middle_thoracic" | "lower_thoracic">("middle_thoracic");
   const [tumorDepth, setTumorDepth] = useState<"t1a" | "t1b" | "t2" | "t3" | "t4a" | "t4b">("t3");
-  const [airwayInvasion, setAirwayInvasion] = useState<boolean>(false);
-  const [aortaInvasion, setAortaInvasion] = useState<boolean>(false);
+  const [airwayInvasion, _setAirwayInvasion] = useState<boolean>(false);
+  const [aortaInvasion, _setAortaInvasion] = useState<boolean>(false);
 
   // 淋巴结与分化参数
   const [examinedNodes, setExaminedNodes] = useState<number>(18);
@@ -36,7 +31,7 @@ export function EsophagealAnatomyStagingVisual() {
   // N 分期推算
   const nStage = positiveNodes === 0 ? "N0" : positiveNodes <= 2 ? "N1" : positiveNodes <= 6 ? "N2" : "N3";
   const isFistulaRisk = tumorDepth === "t4b" || airwayInvasion;
-  const isAortaRisk = tumorDepth === "t4b" || aortaInvasion;
+  const _isAortaRisk = tumorDepth === "t4b" || aortaInvasion;
 
   // AJCC 第 8 版食管鳞癌 Stage 计算
   let calcStage = "IIB";

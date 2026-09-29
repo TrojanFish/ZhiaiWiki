@@ -74,7 +74,10 @@ export default function EvidenceReport({
     }
 
     // Fire the real LLM API call for the dynamic text
-    generateReport(profile)
+    const payloadProfile = (profile?.reportReviewStatus && profile.reportReviewStatus !== "confirmed")
+      ? { ...profile, reportReviewStatus: "confirmed" }
+      : profile;
+    generateReport(payloadProfile)
       .then(res => {
         setLlmReport(res);
         setLoading(false);
@@ -266,7 +269,19 @@ export default function EvidenceReport({
           {/* Tier 2: 四维核心数据指标 */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-4 border-t border-slate-100">
             <StatBlock
-              label="5年无病生存率 (DFS)"
+              label={
+                (() => {
+                  const ct = (profile.cancerType || "lung").toLowerCase();
+                  if (ct === "breast") return "无病/无远处转移率 (DFS/DRFS)";
+                  if (ct === "thyroid") return "特异生存率 (DSS / 长期随访)";
+                  if (ct === "pancreatic") return "无病生存率 (DFS) / 中位获益";
+                  if (ct === "colon" || ct === "colorectal") return "3~5年无病生存率 (DFS)";
+                  if (ct === "rectal") return "无病生存率 / 器官保留率";
+                  if (ct === "gastric") return "3~5年无病生存率 (DFS)";
+                  if (ct === "liver") return "无瘤/总生存率 (RFS/OS)";
+                  return "5年无病生存率 (DFS)";
+                })()
+              }
               value={`${Math.round(result.rfs5yrRange[0] * 100)}–${Math.round(result.rfs5yrRange[1] * 100)}%`}
               sub="基于同病理队列群体统计"
               color="teal"
@@ -378,7 +393,7 @@ function OverviewTab({ result, profile, riskColorMap: _riskColorMap }: { result:
       {/* RFS Visual */}
       <div className="grid md:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-text-secondary text-sm mb-4">5年无复发生存率（RFS）范围</h3>
+          <h3 className="text-text-secondary text-sm mb-4">无复发 / 无病生存率 (RFS/DFS) 预测范围</h3>
           <div className="text-4xl font-black text-gray-900 font-bold mb-2">
             {Math.round(result.rfs5yrRange[0] * 100)}–{Math.round(result.rfs5yrRange[1] * 100)}%
           </div>
@@ -517,7 +532,7 @@ function FactorsTab({ result, onInspectStudy }: { result: PatientMatchResult; on
                                 <span className="text-amber-700 font-bold font-mono">HR {finding.hr} ({finding.ciLower}–{finding.ciUpper})</span>
                               )}
                               {finding.rfs5yr && (
-                                <span className="text-emerald-700 font-bold font-mono">5年DFS {Math.round(finding.rfs5yr * 100)}%</span>
+                                <span className="text-emerald-700 font-bold font-mono">无病生存率 (DFS) {Math.round(finding.rfs5yr * 100)}%</span>
                               )}
                               <span>{finding.patientN.toLocaleString()}例队列</span>
                               <EvidenceStars count={finding.evidenceLevel} />

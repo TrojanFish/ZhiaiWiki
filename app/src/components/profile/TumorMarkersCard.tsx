@@ -12,7 +12,6 @@ import {
   Table as TableIcon,
   CheckCircle2,
   Check,
-  AlertTriangle,
   Pin
 } from "lucide-react";
 import type { TumorMarkersData } from "@/lib/types";

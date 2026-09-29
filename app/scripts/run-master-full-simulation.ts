@@ -608,6 +608,7 @@ async function runMasterSimulation() {
   if (failed === 0) {
     console.log('\n🎉 [LOCAL SIMULATION PASSED] 本地精细化仿真测试 100% 全量通过！');
     console.log('所有 11 大功能环节、11 种恶性肿瘤、药理排雷、动力学、隐私安全与设计系统均无一遗漏且 100% 达标！\n');
+    process.exit(0);
   } else {
     console.log(`\n⚠️ 发现 ${failed} 项异常，请核查日志。\n`);
     process.exit(1);

@@ -1,12 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { getClinicalCohortUnified } from "@/lib/stagingRegistry";
-import { getLungClinicalCohort } from "@/lib/staging";
-import { getBreastClinicalCohort } from "@/lib/breastStaging";
-import { getColonClinicalCohort, getRectalClinicalCohort } from "@/lib/colorectalStaging";
-import { getGastricClinicalCohort } from "@/lib/gastricStaging";
-import { computeLiverClinicalCohort } from "@/lib/liverStaging";
-import { computeEsophagealClinicalCohort } from "@/lib/esophagealStaging";
-import { computeThyroidClinicalCohort } from "@/lib/thyroidStaging";
 
 describe("8 Major Cancers Fine-Grained Landmark Clinical Cohorts Stratification", () => {
   describe("1. Lung Cancer (CheckMate-816, FLAURA2, CROWN)", () => {

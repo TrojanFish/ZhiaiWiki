@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Layers, ShieldCheck, AlertCircle, CheckCircle2, ChevronRight } from "lucide-react";
+import { Layers, AlertCircle, CheckCircle2 } from "lucide-react";
 
 type StageType = "normal" | "dcis" | "idc";
 

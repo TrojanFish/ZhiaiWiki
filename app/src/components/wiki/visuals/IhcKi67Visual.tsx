@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Dna, FlaskConical, Activity, Info, Microscope } from "lucide-react";
+import { Dna, FlaskConical, Activity, Microscope } from "lucide-react";
 
 // Nordhealth A.3 + Carbon C.4: 6态 Biomarker 结果颜色体系
 const BIOMARKER_RESULT = {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Ruler, ShieldCheck, AlertTriangle, Scissors, Activity, CheckCircle2, Info, Stethoscope } from "lucide-react";
+import { Ruler, ShieldCheck, AlertTriangle, Scissors, Activity, CheckCircle2, Stethoscope } from "lucide-react";
 
 type RectalLevel = "low" | "mid" | "high";
 

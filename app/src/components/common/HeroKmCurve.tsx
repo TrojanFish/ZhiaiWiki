@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { TrendingUp, Award, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { TrendingUp, ChevronDown, ChevronUp, Info } from "lucide-react";
 
 interface KmPoint {
   time: number;

@@ -690,6 +690,7 @@ for (const [dim, stat] of Object.entries(dimensionStats)) {
 if (passedSims === totalSims) {
   console.log("\n\x1b[1m\x1b[32m🎉 [Gynecologic Oncology Simulation PASSED] 妇科肿瘤双癌种 7 大维度 30+ 项生产级极限实证仿真 100% 全量通过！\x1b[0m");
   console.log("\x1b[32m系统在 FIGO 2023/2018 分期精度、顶刊队列匹配、DDI 致命排雷、40 篇百科 Schema 及 PACS 模拟器挂载上均达到顶级临床就绪水准。\x1b[0m\n");
+  process.exit(0);
 } else {
   console.log("\n\x1b[1m\x1b[31m❌ [Simulation FAILED] 存在未通过的本地仿真测试项，请排查以上输出！\x1b[0m\n");
   process.exit(1);

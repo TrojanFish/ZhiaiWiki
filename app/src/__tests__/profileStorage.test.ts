@@ -30,7 +30,6 @@ import {
   deleteProfileSlot,
   hasDualPrimaryProfile,
   getDualPrimarySummary,
-  STORAGE_KEY_ACTIVE_SLOT,
   STORAGE_KEY_SLOT_PREFIX,
   STORAGE_KEY_LEGACY,
 } from '../lib/profileStorage';

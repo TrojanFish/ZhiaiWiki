@@ -4,7 +4,7 @@ import {
   getPancreaticClinicalCohort, 
   evaluatePancreaticResectability 
 } from "@/lib/pancreaticStaging";
-import { checkPancreaticDrugInteractions, PANCREATIC_TARGETED_DRUGS } from "@/lib/pancreaticDdiData";
+import { checkPancreaticDrugInteractions } from "@/lib/pancreaticDdiData";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { normalizeCancerType } from "@/lib/stagingRegistry";
 

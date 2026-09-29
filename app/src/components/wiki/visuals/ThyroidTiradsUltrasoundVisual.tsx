@@ -2,15 +2,11 @@
 
 import React, { useState } from "react";
 import { 
-  Activity, 
   AlertTriangle, 
   CheckCircle2, 
   Info, 
-  HelpCircle,
-  ShieldCheck, 
   Crosshair,
   Sliders,
-  Zap,
   Target
 } from "lucide-react";
 

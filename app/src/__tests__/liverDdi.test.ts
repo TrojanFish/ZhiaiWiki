@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   LIVER_TARGETED_DRUGS,
-  LIVER_DDI_RULES,
   checkLiverDrugInteractions,
 } from "@/lib/liverDdiData";
 import { checkDrugInteractionsUnified } from "@/lib/ddiRegistry";

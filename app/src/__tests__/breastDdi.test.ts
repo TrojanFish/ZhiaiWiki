@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkBreastDdi, BREAST_TARGETED_DRUGS, BREAST_DDI_RULES } from '../lib/breastDdiData';
+import { checkBreastDdi, BREAST_TARGETED_DRUGS } from '../lib/breastDdiData';
 
 describe('Breast Cancer DDI Pharmacovigilance Engine', () => {
   it('should intercept severe contraindication between Tamoxifen and Paroxetine (CYP2D6 inhibition)', () => {

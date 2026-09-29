@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Layers, ShieldCheck, AlertTriangle, Activity, Eye, CheckCircle2, Crosshair } from "lucide-react";
+import { ShieldCheck, AlertTriangle, Activity, Eye, Crosshair } from "lucide-react";
 
 type CrmStatus = "safe" | "threatened" | "emvi";
 

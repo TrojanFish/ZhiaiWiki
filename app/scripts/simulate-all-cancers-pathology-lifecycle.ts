@@ -807,6 +807,7 @@ async function runComprehensiveSimulation() {
   if (passedCases !== totalCases) {
     process.exit(1);
   }
+  process.exit(0);
 }
 
 runComprehensiveSimulation().catch(err => {

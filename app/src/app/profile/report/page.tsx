@@ -45,6 +45,7 @@ import ExportBrandFooter from "@/components/common/ExportBrandFooter";
 import { 
   getActiveCancerSlot, 
   getProfileBySlot, 
+  saveProfileToSlot,
   EVENT_SLOT_CHANGED 
 } from "@/lib/profileStorage";
 import { 
@@ -62,6 +63,8 @@ export default function EvidenceReportPage() {
   const [cachedTime, setCachedTime] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [errorInfo, setErrorInfo] = useState<ClinicalErrorInfo | null>(null);
+  const [isReviewRequired, setIsReviewRequired] = useState(false);
+  const [isConfirmingReview, setIsConfirmingReview] = useState(false);
   const [retryCountdown, setRetryCountdown] = useState(0);
   const [copied, setCopied] = useState(false);
   const [isExportingCard, setIsExportingCard] = useState(false);
@@ -291,6 +294,10 @@ export default function EvidenceReportPage() {
 
       if (!reportRes.ok) {
         const errJson = await reportRes.json().catch(() => null);
+        const reviewRequired = reportRes.status === 409 || errJson?.code === 'REPORT_REVIEW_REQUIRED' || errJson?.requiresReview || String(errJson?.error || '').includes('核对并确认报告解析出的关键临床字段');
+        if (reviewRequired) {
+          setIsReviewRequired(true);
+        }
         const clinical = formatClinicalAiError(errJson || "报告生成失败", 'generate');
         const finalInfo: ClinicalErrorInfo = {
           title: errJson?.title || clinical.title,
@@ -375,6 +382,60 @@ export default function EvidenceReportPage() {
       setError((prev) => prev || clinical.message);
     } finally {
       setIsGenerating(false);
+    }
+  };
+  
+  const handleConfirmReviewAndGenerate = async () => {
+    if (!profile) return;
+    setIsConfirmingReview(true);
+    try {
+      const queryCancer = typeof window !== "undefined" 
+        ? (new URLSearchParams(window.location.search).get("cancerType") as CancerType | null) 
+        : null;
+      const activeSlot = (queryCancer && ["lung", "breast", "colon", "rectal", "colorectal", "gastric", "liver"].includes(queryCancer)) 
+        ? queryCancer 
+        : profile.cancerType || (profile as any).organ || getActiveCancerSlot();
+
+      const confirmedProfile: PatientProfile = {
+        ...profile,
+        cancerType: activeSlot,
+        reportReviewStatus: "confirmed",
+      };
+
+      // 1. Sync to local storage slot
+      saveProfileToSlot(confirmedProfile, activeSlot as any);
+      setProfile(confirmedProfile);
+      setIsReviewRequired(false);
+      setError("");
+      setErrorInfo(null);
+
+      // 2. Persist to Cloud Database
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      try {
+        await fetch('/api/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            profileId: profile.id,
+            userId: getGuestId(),
+            cancerType: activeSlot,
+            reportReviewStatus: 'confirmed'
+          })
+        });
+      } catch (cloudErr) {
+        console.warn("Notice: cloud profile confirmation save warning:", cloudErr);
+      }
+
+      // 3. Immediately start generating report
+      await startGeneratingReport(confirmedProfile);
+    } catch (err: any) {
+      console.error("Failed to confirm and generate report:", err);
+      setError(err.message || "确认并生成报告失败，请稍后重试");
+    } finally {
+      setIsConfirmingReview(false);
     }
   };
 
@@ -474,7 +535,12 @@ export default function EvidenceReportPage() {
           return;
         }
 
-        // 4. No cached report exists -> Trigger first-time generation
+        // 4. No cached report exists -> Check review status or trigger first-time generation
+        if (fetchedProfile.reportReviewStatus && fetchedProfile.reportReviewStatus !== "confirmed") {
+          setIsReviewRequired(true);
+          return;
+        }
+
         await startGeneratingReport(fetchedProfile);
 
       } catch (err: any) {
@@ -694,6 +760,11 @@ export default function EvidenceReportPage() {
   const isColon = profile?.cancerType === 'colon' || (profile as any)?.organ === 'colon';
   const isRectal = profile?.cancerType === 'rectal' || (profile as any)?.organ === 'rectal';
   const isCrc = profile?.cancerType === 'colorectal' || (profile as any)?.organ === 'colorectal' || isColon || isRectal;
+  const isEsoph = profile?.cancerType === 'esophageal' || (profile as any)?.organ === 'esophageal' || (profile as any)?.organ === 'esophagus' || (profile as any)?.organ === 'escc';
+  const isThyroid = profile?.cancerType === 'thyroid' || (profile as any)?.organ === 'thyroid';
+  const isEndometrial = profile?.cancerType === 'endometrial' || (profile as any)?.organ === 'endometrial' || (profile as any)?.organ === 'uterine';
+  const isCervical = profile?.cancerType === 'cervical' || (profile as any)?.organ === 'cervical' || (profile as any)?.organ === 'cervix';
+  const isPancreatic = profile?.cancerType === 'pancreatic' || (profile as any)?.organ === 'pancreatic' || (profile as any)?.organ === 'pancreas';
   const isFemale = (profile?.gender as string) === 'female' || (profile?.sex as string) === 'female' || (profile?.gender as string) === '女' || (profile?.sex as string) === '女';
   const genderText = isFemale ? '女性' : '男性';
 
@@ -1453,6 +1524,91 @@ export default function EvidenceReportPage() {
                 >
                   <FileEdit className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                   <span>核对病理分期指标</span>
+                </Link>
+              </div>
+            </div>
+          ) : isReviewRequired || (profile?.reportReviewStatus && profile?.reportReviewStatus !== 'confirmed' && !reportMarkdown && !isGenerating) ? (
+            <div className="bg-gradient-to-b from-blue-50/90 via-white to-slate-50 p-5 sm:p-7 rounded-3xl border border-blue-200 shadow-sm mb-6 print:hidden space-y-4 animate-fade-in">
+              <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap pb-3.5 border-b border-blue-100">
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <ShieldCheck className="w-5 h-5 text-white" />
+                  </span>
+                  <div>
+                    <h3 className="font-extrabold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                      <span>临床循证安全核对 · 关键临床指标确认</span>
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      为确保生成的深度循证报告与长程随访方案完全基于您的真实病情，请核对下方关键临床指标
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                  循证安全前置校验
+                </span>
+              </div>
+
+              {/* Key Clinical Metrics Summary Grid */}
+              {profile && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3 py-1">
+                  <div className="p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-1">
+                    <span className="text-[11px] text-slate-500 font-semibold block">确诊专科 / 癌种</span>
+                    <span className="text-xs sm:text-sm font-extrabold text-blue-700 block truncate">
+                      {isBreast ? "乳腺肿瘤" : isCrc ? "结直肠肿瘤" : isGastric ? "胃部肿瘤" : isLiver ? "原发性肝癌" : isEsoph ? "食管肿瘤" : isThyroid ? "甲状腺肿瘤" : isEndometrial ? "子宫内膜癌" : isCervical ? "宫颈癌" : isPancreatic ? "胰腺肿瘤" : "肺结节与肺腺癌"}
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-1">
+                    <span className="text-[11px] text-slate-500 font-semibold block">当前分期 (TNM)</span>
+                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">
+                      {profile.stage ? `${profile.stage} 期` : '早期待定'} ({profile.tStage || 'Tx'}{profile.nStage || 'Nx'}{profile.mStage || 'M0'})
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-1">
+                    <span className="text-[11px] text-slate-500 font-semibold block">病灶浸润大小 / 径长</span>
+                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">
+                      {profile.tumorSize != null ? `${profile.tumorSize} cm` : '未录入/待核算'}
+                      {profile.solidSize != null ? ` (实性 ${profile.solidSize}cm)` : ''}
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-1">
+                    <span className="text-[11px] text-slate-500 font-semibold block">高危病理与转移排查</span>
+                    <span className={`text-xs sm:text-sm font-extrabold block truncate ${isAllSafe ? 'text-emerald-700' : 'text-amber-700'}`}>
+                      {isAllSafe ? '未见高危因素 (低危)' : '存在高危/需关注因素'} · {profile.brainMri === 'negative' || profile.systemicStagingConfirmed ? 'M0无转移' : '排查就绪'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex items-center gap-3 flex-wrap">
+                <button
+                  type="button"
+                  onClick={handleConfirmReviewAndGenerate}
+                  disabled={isConfirmingReview || isGenerating}
+                  className="btn-primary px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                >
+                  {isConfirmingReview || isGenerating ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>正在启动深度循证分析...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 shrink-0 text-white" />
+                      <span>我已核对上述关键临床指标，确认无误并生成报告</span>
+                    </>
+                  )}
+                </button>
+
+                <Link
+                  href="/profile?mode=calibrate"
+                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-300 transition-colors text-xs sm:text-sm flex items-center gap-1.5 shadow-2xs"
+                >
+                  <FileEdit className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span>修改/微调指标</span>
                 </Link>
               </div>
             </div>

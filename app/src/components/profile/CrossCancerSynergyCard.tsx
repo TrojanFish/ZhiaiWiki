@@ -56,10 +56,6 @@ export default function CrossCancerSynergyCard({
   if (liverProfile) presentCancers.push({ type: "liver", label: "原发性肝癌", profile: liverProfile });
   if (esophagealProfile) presentCancers.push({ type: "esophageal", label: "原发性食管鳞癌", profile: esophagealProfile });
 
-  if (presentCancers.length < 2) {
-    return null;
-  }
-
   const combinationTitle = presentCancers.map(c => c.label).join(" ✕ ");
 
   // 2. 跨癌种关键治疗药物识别
@@ -144,6 +140,10 @@ export default function CrossCancerSynergyCard({
     (liverProfile || colorectalProfile || colonProfile) &&
     (esophagealProfile || gastricProfile)
   );
+
+  if (presentCancers.length < 2) {
+    return null;
+  }
 
   return (
     <section className={`rounded-2xl bg-white border border-purple-200 shadow-xs overflow-hidden mt-6 mb-8 ${className}`}>

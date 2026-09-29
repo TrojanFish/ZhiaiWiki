@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Layers, ShieldCheck, AlertTriangle, Eye, Activity, CheckCircle2, ChevronRight } from "lucide-react";
+import { Layers, ShieldCheck, AlertTriangle, Activity } from "lucide-react";
 
 type CalcViewType = "benign" | "malignant" | "mammotome";
 

@@ -3,16 +3,9 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { BookOpen, User, Search } from "lucide-react";
+import { User, Search } from "lucide-react";
 import Footer from "@/components/Footer";
 import { WIKI_TOPICS, WIKI_CATEGORIES, getWikiCategories, type WikiCategory, type RiskLevel, type WikiTopic } from "@/lib/wikiData";
-import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
-import { COLORECTAL_WIKI_TOPICS } from "@/lib/colorectalWikiData";
-import { COLON_WIKI_TOPICS } from "@/lib/colonWikiData";
-import { RECTAL_WIKI_TOPICS } from "@/lib/rectalWikiData";
-import { GASTRIC_WIKI_TOPICS } from "@/lib/gastricWikiData";
-import { LIVER_WIKI_TOPICS } from "@/lib/liverWikiData";
-import { ESOPHAGEAL_WIKI_TOPICS } from "@/lib/esophagealWikiData";
 import { useCancerType } from "@/components/common/CancerSwitch";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { CancerIcon } from "@/components/common/CancerIcons";

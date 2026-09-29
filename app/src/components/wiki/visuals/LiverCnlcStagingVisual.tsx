@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ShieldCheck, AlertTriangle, Activity, CheckCircle2, Info, Layers, Crosshair, HeartPulse, Stethoscope, Check, X } from "lucide-react";
+import { ShieldCheck, AlertTriangle, Activity, Crosshair, Check, X } from "lucide-react";
 
 export function LiverCnlcStagingVisual() {
   const [activeTab, setActiveTab] = useState<"cnlc" | "reserve">("cnlc");
@@ -12,7 +12,7 @@ export function LiverCnlcStagingVisual() {
   const [vascularInvasion, setVascularInvasion] = useState<"none" | "vp1_vp2" | "vp3_vp4" | "ivc">("none");
   const [hasMetastasis, setHasMetastasis] = useState<boolean>(false);
   const [childPughGrade, setChildPughGrade] = useState<"A" | "B" | "C">("A");
-  const [albiScore, setAlbiScore] = useState<number>(-2.75); // -3.20 ~ -0.80
+  const [_albiScore, _setAlbiScore] = useState<number>(-2.75); // -3.20 ~ -0.80
 
   // 储备功能五项评分器
   const [bilirubin, setBilirubin] = useState<number>(22); // umol/L

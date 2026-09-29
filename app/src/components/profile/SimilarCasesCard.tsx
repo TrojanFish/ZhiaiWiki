@@ -114,6 +114,11 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
             {cohort.matchedMorphology}
           </span>
         )}
+        {cohort.timeHorizonLabel && (
+          <span className="text-xs font-bold text-sky-800 bg-sky-50 px-3 py-1 rounded-full border border-sky-200 shrink-0 whitespace-nowrap inline-flex items-center gap-1 shadow-2xs">
+            <span>⏱️ {cohort.timeHorizonLabel}</span>
+          </span>
+        )}
         <span className="text-xs font-medium text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 shrink-0 whitespace-nowrap">
           国际顶刊前瞻队列
         </span>
@@ -131,13 +136,34 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
 
       {/* Helper functions for cancer-specialized clinical explanations */}
       {(() => {
-        const isMedianMode = cohort.displayMode === "median_survival" || cohort.os5Year?.includes("中位OS") || cohort.os5Year?.includes("中位 OS");
+        const isExtendedMode = cohort.displayMode === "extended_10yr";
+        const isIntermediateMode = cohort.displayMode === "intermediate_3yr";
+        const isOrganMode = cohort.displayMode === "organ_preservation";
+        const isMedianMode = cohort.displayMode === "median_survival" || (cohort.os5Year?.includes("中位OS") ?? false) || (cohort.os5Year?.includes("中位 OS") ?? false);
         
         const rfsTooltip = (() => {
           if (isMedianMode) {
             return {
               title: "什么是中位无进展生存期 (PFS)？",
               content: "PFS (Progression-Free Survival) 指患者接受系统治疗（靶向/免疫/化疗）后，肿瘤病灶无进展、未出现新转移且患者保持存活的中位时间。这是临床衡量一线药物控制肿瘤活力的核心指标。"
+            };
+          }
+          if (isExtendedMode) {
+            return {
+              title: cohort.metricLabel1 ? `什么是 ${cohort.metricLabel1}？` : "什么是 10 年远期无复发生存率 (DRFS)？",
+              content: "针对内分泌受体阳性 (HR+) 乳腺癌或惰性甲状腺微小癌，超过 50% 的复发可能发生在确诊 5 年之后（迟发复发）。采用 10~20 年超长随访周期评估远期防复发，是指导规范内分泌强化治疗与长期主动监测的科学金标准。"
+            };
+          }
+          if (isIntermediateMode) {
+            return {
+              title: cohort.metricLabel1 ? `什么是 ${cohort.metricLabel1}？` : "什么是 3 年无病生存率 (DFS)？",
+              content: "在胃肠肿瘤（结肠癌、胃癌）及早期肝癌中，复发高峰集中在治疗后前 2~3 年。国际顶级前瞻协作研究（如 IDEA 12,834例研究、RESOLVE 研究）已证实：3 年 DFS 是 5 年治愈的国际公认高精度替代终点。"
+            };
+          }
+          if (isOrganMode) {
+            return {
+              title: cohort.metricLabel1 ? `什么是 ${cohort.metricLabel1}？` : "什么是器官保留率 (保肛率)？",
+              content: "在局部进展期直肠癌接受全程新辅助治疗 (TNT) 后达到临床完全缓解 (cCR) 的患者采纳观察等待 (Watch & Wait) 策略，长期保留自主直肠肛门排便功能、免除终生腹壁造口的患者比例。"
             };
           }
           const cancerExplanations: Record<string, string> = {
@@ -165,16 +191,48 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
               content: "Median OS 指受试临床队列中刚好有 50% 的患者依然健在的生存时间跨度。在中晚期肿瘤全身治疗中，相比单一孤立的时间百分比，中位生存期能更敏锐、更科学地反映新型靶向联合免疫治疗带来的生存获益。"
             };
           }
+          if (isExtendedMode) {
+            return {
+              title: cohort.metricLabel2 ? `什么是 ${cohort.metricLabel2}？` : "什么是 10~30 年特异生存率 (DSS)？",
+              content: "超长随访中的疾病特异生存率 (DSS) 严格排除了高龄其他基础疾病死因，专注于评估该肿瘤本身的致死风险。对于低危甲状腺癌或早期乳腺癌，10~30 年 DSS >99% 标志着极高水准的生命安全与治愈确定性。"
+            };
+          }
+          if (isIntermediateMode) {
+            return {
+              title: cohort.metricLabel2 ? `什么是 ${cohort.metricLabel2}？` : "什么是 5 年总生存率 (OS)？",
+              content: "从确诊或根治手术开始，满 5 年依然健在的患者百分比。在胃肠肿瘤中，跨过 3 年关键门槛并平稳渡过 5 年，临床上即视为彻底根治治愈。"
+            };
+          }
           return {
             title: "什么是 5 年总生存率 (OS)？",
             content: "OS (Overall Survival) 指从确诊或根治开始，5 年后依然健在的患者百分比。这是国际公认衡量肿瘤整体长期治疗效果最高权威的“终极硬终点”。"
           };
         })();
 
-        const metric1Title = cohort.metricLabel1 || (isMedianMode ? "中位无进展生存 (PFS)" : "5年无复发生存率 (RFS)");
-        const metric1Sub = cohort.metricSubLabel1 || (isMedianMode ? "肿瘤控制周期" : (cohort.isPreOp ? "根治治愈潜力" : "无瘤生存指标"));
-        const metric2Title = cohort.metricLabel2 || (isMedianMode ? "中位总生存期 (Median OS)" : "5年总生存率 (OS)");
-        const metric2Sub = cohort.metricSubLabel2 || (isMedianMode ? "一线靶免突破" : "终极金标准");
+        const metric1Title = cohort.metricLabel1 || (
+          isMedianMode ? "中位无进展生存 (PFS)" : 
+          isExtendedMode ? "10年远期无复发生存 (DRFS)" : 
+          isIntermediateMode ? "3年无病生存率 (DFS)" : 
+          isOrganMode ? "3~5年器官保留率 (保肛率)" : 
+          "5年无复发生存率 (RFS)"
+        );
+        const metric1Sub = cohort.metricSubLabel1 || (
+          isMedianMode ? "肿瘤控制周期" : 
+          isExtendedMode ? "远期防复发金标准" : 
+          isIntermediateMode ? "关键替代终点" : 
+          isOrganMode ? "保留自体功能" : 
+          (cohort.isPreOp ? "根治治愈潜力" : "无瘤生存指标")
+        );
+        const metric2Title = cohort.metricLabel2 || (
+          isMedianMode ? "中位总生存期 (Median OS)" : 
+          isExtendedMode ? "10~30年疾病特异生存 (DSS)" : 
+          "5年总生存率 (OS)"
+        );
+        const metric2Sub = cohort.metricSubLabel2 || (
+          isMedianMode ? "一线靶免突破" : 
+          isExtendedMode ? "超长前瞻随访" : 
+          "终极金标准"
+        );
 
         return (
           <div className={`grid grid-cols-1 ${cohort.metric3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2"} gap-3.5 mb-5 relative z-20`}>

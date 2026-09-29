@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ShieldCheck, AlertTriangle, Activity, CheckCircle2, Info, Layers, Crosshair } from "lucide-react";
+import { ShieldCheck, AlertTriangle, CheckCircle2, Layers, Crosshair } from "lucide-react";
 
 type GastricRegion = "cardia" | "fundus" | "body" | "antrum" | "pylorus";
 type BorrmannType = "I" | "II" | "III" | "IV";
@@ -11,7 +11,7 @@ export function GastricAnatomyD2Visual() {
   const [selectedRegion, setSelectedRegion] = useState<GastricRegion>("antrum");
   const [selectedBorrmann, setSelectedBorrmann] = useState<BorrmannType>("III");
   const [lymphNodeCount, setLymphNodeCount] = useState<number>(18);
-  const [clearedStation, setClearedStation] = useState<"D1" | "D2">("D2");
+  const [_clearedStation, _setClearedStation] = useState<"D1" | "D2">("D2");
 
   const regionDetails: Record<GastricRegion, {
     name: string;

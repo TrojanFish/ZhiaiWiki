@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Utensils, AlertCircle, HeartPulse, Clock, ShieldCheck, CheckCircle2, ChevronRight, Lightbulb, AlertTriangle, Check, Pin } from "lucide-react";
+import { Utensils, HeartPulse, ShieldCheck, Lightbulb, AlertTriangle, Check, Pin } from "lucide-react";
 
 type DumpingPhase = "early" | "late";
 type ReconstructionType = "billroth1" | "billroth2" | "roux_en_y";

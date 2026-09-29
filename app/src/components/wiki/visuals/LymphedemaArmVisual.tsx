@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ShieldAlert, Ruler, HeartPulse, CheckCircle2, AlertTriangle, Info, Ban } from "lucide-react";
+import { Ruler, HeartPulse, Ban } from "lucide-react";
 
 export function LymphedemaArmVisual() {
   // Measurement point: wrist | forearm | upperArm

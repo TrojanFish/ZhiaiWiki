@@ -3,7 +3,6 @@ import {
   computeChildPughScore,
   computeAlbiScore,
   isMilanCriteriaMet,
-  normalizeTumorCount,
   computeCnlcStage,
   computeLiverClinicalCohort,
 } from '../lib/liverStaging';

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { FileText, Calendar, LogOut, User } from "lucide-react";
+import { FileText, LogOut, User } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { getCurrentUser, logout } from "@/lib/api";
 

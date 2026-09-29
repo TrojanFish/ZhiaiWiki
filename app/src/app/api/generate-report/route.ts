@@ -87,7 +87,7 @@ const POST_OP_PROMPT = `
 
 const PRE_OP_CT_PROMPT = `
 你是一个严谨的胸部 CT 影像学循证知识图谱与文献对照分析引擎。
-请根据该患者的【胸部 CT 影像学特征档案】（包括主结节部位、大小、CT实性成分CTR、影像征象毛刺/分叶/胸膜牵拉/空泡征等）、【多发结节与伴随微小病灶状态】、【历史多次随访生长轨迹 (VDT)】、【血液肿瘤标志物 (CEA/CYFRA21-1等)】、【全身排查状态 (脑MRI/腹部超声/骨扫描)】与【系统检索到的前瞻性临床研究证据（Fleischner指南 / JCOG0804 / JCOG0802等）】，为患者生成一份客观严谨、温情同理心、排版清晰优雅的《肺结节深度影像循证与就医沟通报告》。
+请根据该患者的【胸部 CT 影像学特征档案】（包括主结节部位、大小、CT实性成分CTR、影像征象毛刺/分叶/胸膜牵拉/空泡征等）、【多发结节与伴随微小病灶状态】、【历史多次随访生长轨迹 (VDT)】、【全身排查状态 (脑MRI/腹部超声/骨扫描)】与【系统检索到的前瞻性临床研究证据（Fleischner指南 / JCOG0804 / JCOG0802等）】，为患者生成一份客观严谨、温情同理心、排版清晰优雅的《肺结节深度影像循证与就医沟通报告》。
 
 请严格按照以下 5 大核心板块输出（请使用标准 Markdown 格式）：
 
@@ -95,7 +95,6 @@ const PRE_OP_CT_PROMPT = `
 > - **影像诊断与恶性风险评估**：客观说明主病灶形态（纯磨玻璃/部分实性/实性）与良恶性风险评级（低危/中危/高危）。
 > - **长程生长轨迹与倍增速度研判**：若档案包含多次随访记录，客观说明前后对比体积倍增时间（VDT）是处于“稳定期”、“慢速惰性期”还是“活跃进展期”。
 > - **双肺多发结节与伴随微小灶定性**：若患者为多发结节，明确向患者科普“双肺多发微小结节极其常见，多为陈旧良性病灶，绝不等于转移扩散”。
-> - **血液肿瘤标志物简析**：若患者提供了 CEA 等指标，客观说明其处于正常区间（正常范围内的波动属于生理性起伏）或轻度偏高的良性原因。
 > - **全身排查与 M0 早期定心丸**：清晰解释若全身排查均为阴性，说明病灶纯属局部极早期改变，绝无扩散；同时解释肺部磨玻璃结节普遍进展极慢的生物学特性，避免患者过度恐慌与盲目焦虑。
 > - **核心行动策略**：提炼最关键的一步决策（如 3-6 个月薄层 CT 随访 vs 评估胸腔镜微创肺段切除）。
 
@@ -845,10 +844,6 @@ export async function POST(request: Request) {
         evidenceItems.push("【中华医学会呼吸病学分会 / Fleischner 多发肺结节专家共识】：双肺多发微小结节在成年人体检中检出率高达 30%~45%，绝大多数为既往隐匿性感染遗留的陈旧性纤维化、微小淋巴结或良性肉芽肿。临床应以【主病灶（最大/最可疑结节）】作为干预决策依据，次要微小病灶以常规低剂量薄层 CT 随访即可，绝非恶性转移播散。");
       }
 
-      if (profile.tumorMarkers && (profile.tumorMarkers.cea != null || profile.tumorMarkers.cyfra211 != null || profile.tumorMarkers.nse != null)) {
-        evidenceItems.push("【CSCO / NACB 肺癌肿瘤标志物临床应用指南】：血液肿瘤标志物（如 CEA、CYFRA21-1）在早期肺癌（尤其是纯磨玻璃及早期微浸润腺癌）中绝大多数呈阴性；在正常参考区间（CEA < 5.0 ng/mL）内的任何数值波动均属生理性正常代谢。轻度偏高常与吸烟、轻微胃肠炎或良性气道炎症相关，临床诊断与随访必须严格以胸部薄层 CT 高分辨影像为金标准。");
-      }
-
       if (isCtReport) {
         evidenceItems.push("【Fleischner Society 2017/2023 肺结节管理指南】：对于部分实性结节 (mGGO) 实性成分 <6mm，建议 3~6 个月后复查薄层 CT；若实性成分持续存在且 ≥6mm，应高度警惕浸润性病变，建议考虑多学科会诊评估手术。");
         evidenceItems.push("【JCOG0804 多中心前瞻性临床研究 (JTO)】：针对 CTR ≤0.25 且肿瘤径 ≤2cm 的早期磨玻璃肺腺癌，亚肺叶切除 5 年无复发生存率 (RFS) 达到 99.7%，病理多为原位腺癌 (AIS) 或微浸润腺癌 (MIA)。");
@@ -1040,7 +1035,19 @@ export async function POST(request: Request) {
                       ? BREAST_REPORT_PROMPT 
                       : (isCtReport ? PRE_OP_CT_PROMPT : POST_OP_PROMPT)))))))));
 
-    const finalPrompt = EVIDENCE_ONLY_MODEL_INSTRUCTION + "\n" + templatePrompt
+    const SURVIVAL_HORIZON_INSTRUCTION = `
+【癌种特异性生存期时序终点 (Landmark Horizons) 严谨指令 · 严禁一刀切 5 年生存率】：
+临床循证分析中，必须根据该癌种权威指南的生物学规律呈现针对性时序终点：
+1. 【HR+ 乳腺癌】：必须强调 10~20 年超长随访与迟发复发预防 (TAILORx 12年随访, EBCTCG 20年随访)，说明 5 年后坚持内分泌治疗的必要性；TNBC 强调 3~5 年治愈平台期；
+2. 【分化型甲状腺微小癌 (PTMC)】：严禁以 5 年短期生存为主，必须强调 10~30 年疾病特异生存率 (DSS >99%) 与主动监测科学性；
+3. 【结直肠癌】：强调 3 年无病生存率 (3yr DFS - IDEA 研究) 作为 5 年治愈的权威替代终点；直肠癌 TNT 强调 3~5 年器官保留率 (保肛率)；
+4. 【胃癌】：强调 3 年无病生存率 (3yr DFS · RESOLVE/CLASSIC) 跨过 2 年复发高峰期；晚期突出中位总生存期 (mOS)；
+5. 【肝癌】：早期突出 2 年早期无复发生存率与 5 年治愈；中晚期突出中位总生存期 (mOS 19.2月)；
+6. 【胰腺癌】：局限期术后突出 3 年无病生存率 (3yr DFS) 与中位生存期 (PRODIGE 24 达 54.4月)；中晚期突出中位总生存期 (mOS) 与 1~2 年疾病控制，严禁突兀展示极低的 5 年百分比引发虚无主义恐慌；
+7. 【子宫内膜癌】：POLE 突变型强调终生超高治愈率 (>98%) 与免除放化疗过度医疗。
+`;
+
+    const finalPrompt = EVIDENCE_ONLY_MODEL_INSTRUCTION + "\n" + SURVIVAL_HORIZON_INSTRUCTION + "\n" + templatePrompt
       .replace("{PROFILE_JSON}", JSON.stringify(profile, null, 2))
       .replace("{EVIDENCE_BASE}", evidence);
 

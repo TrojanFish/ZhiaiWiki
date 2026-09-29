@@ -711,6 +711,7 @@ console.log("-".repeat(85) + "\n");
 if (failedChecks === 0) {
   console.log("🎉 恭喜！全景 7 大维度生产就绪与跨端 UI/UX 仿真测试 100% 全量通过！");
   console.log("系统在 12 癌种上传→循证、分期、DDI禁忌、Prompt解耦、移动端安全区、PC端排印及离线PWA上均达到本地仿真验收标准。\n");
+  process.exit(0);
 } else {
   console.error(`⚠️ 发现 ${failedChecks} 项测试未通过，请检查日志并修复后重试！\n`);
   process.exit(1);

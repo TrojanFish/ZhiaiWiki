@@ -4,13 +4,10 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { 
   X, 
-  Heart, 
-  MessageSquareHeart, 
   Coffee, 
   CheckCircle2, 
   AlertCircle, 
   ShieldCheck,
-  Sparkles,
   Check,
   HeartHandshake
 } from "lucide-react";

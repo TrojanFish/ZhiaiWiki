@@ -3,7 +3,7 @@
 import React from "react";
 import type { CancerType, PatientProfile } from "@/lib/types";
 import { CancerIcon } from "@/components/common/CancerIcons";
-import { Plus, AlertCircle, CheckCircle2, ArrowRightLeft } from "lucide-react";
+import { Plus, CheckCircle2, ArrowRightLeft } from "lucide-react";
 
 interface DualPrimarySwitcherProps {
   activeSlot: CancerType;

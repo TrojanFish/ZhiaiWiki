@@ -19,12 +19,9 @@ import {
   Globe,
   Lock,
   Receipt,
-  MessageSquareHeart,
   Heart,
   ShieldCheck,
   ArrowRight,
-  ChevronDown,
-  ChevronUp,
   PenLine
 } from "lucide-react";
 import Footer from "@/components/Footer";

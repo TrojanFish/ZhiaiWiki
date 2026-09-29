@@ -16,14 +16,11 @@ import {
   Search,
   Coffee,
   Heart,
-  Check,
   Settings,
   Menu
 } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
-import LangSwitch from "@/components/LangSwitch";
-import CancerSwitch, { useCancerType, CANCER_TYPE_OPTIONS } from "@/components/common/CancerSwitch";
-import { CancerIcon } from "@/components/common/CancerIcons";
+import CancerSwitch, { useCancerType } from "@/components/common/CancerSwitch";
 import SettingsModal from "@/components/SettingsModal";
 import PublicWelfareDonationModal from "@/components/common/PublicWelfareDonationModal";
 

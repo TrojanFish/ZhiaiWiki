@@ -19,19 +19,17 @@ import {
   Camera,
   Lightbulb,
   ChevronDown,
-  ChevronUp,
-  ArrowRight,
-  Sparkles
+  ArrowRight
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import ConsentModal from "@/components/ConsentModal";
 import StatsBanner from "@/components/StatsBanner";
 import StudyCard from "@/components/StudyCard";
 import HeroKmCurve from "@/components/common/HeroKmCurve";
-import { FEATURED_STUDIES, FEATURED_STUDIES_MIXED } from "@/lib/evidence-data";
+import { FEATURED_STUDIES_MIXED } from "@/lib/evidence-data";
 import { useCancerType } from "@/components/common/CancerSwitch";
 import type { PatientProfile, CancerType } from "@/lib/types";
-import { CancerIcon, LungIcon, BreastRibbonIcon, ColorectalIcon } from "@/components/common/CancerIcons";
+import { CancerIcon } from "@/components/common/CancerIcons";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { getWikiCategories, type WikiCategory } from "@/lib/wikiData";
 export type { PatientProfile };

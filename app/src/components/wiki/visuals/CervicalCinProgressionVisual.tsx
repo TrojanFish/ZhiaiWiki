@@ -2,17 +2,10 @@
 
 import React, { useState } from "react";
 import { 
-  Activity, 
   AlertTriangle, 
-  CheckCircle2, 
-  Info, 
-  HelpCircle,
-  ShieldCheck, 
-  Zap,
-  Layers,
-  ArrowRight,
-  Clock,
-  Scissors
+  CheckCircle2,
+  ShieldCheck,
+  Clock
 } from "lucide-react";
 
 export function CervicalCinProgressionVisual() {

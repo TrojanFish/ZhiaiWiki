@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { WIKI_TOPICS, WIKI_CATEGORIES, getWikiCategories } from "@/lib/wikiData";
-import { BREAST_WIKI_TOPICS, BREAST_WIKI_CATEGORIES } from "@/lib/breastWikiData";
+import { WIKI_TOPICS, getWikiCategories } from "@/lib/wikiData";
+import { BREAST_WIKI_TOPICS } from "@/lib/breastWikiData";
 
 describe("Multi-Cancer Wiki Decoupling & Categories", () => {
   it("should return lung categories when cancerType is lung or undefined", () => {

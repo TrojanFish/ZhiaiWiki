@@ -61,6 +61,7 @@ export function WikiDetailDrawer({
   const [mounted, setMounted] = useState(false);
   const [expandedFaq, setExpandedFaq]         = useState<number | null>(null);
   const [showPosterModal, setShowPosterModal]   = useState(false);
+  const [posterVisualHtml, setPosterVisualHtml] = useState<string | undefined>(undefined);
   const [toastMessage, setToastMessage]        = useState<string | null>(null);
   const [savedQuestions, setSavedQuestions]    = useState<Record<string, boolean>>({});
   const [isVisible, setIsVisible]              = useState(false);  // 控制入场动效
@@ -254,7 +255,10 @@ export function WikiDetailDrawer({
 
                   <button
                     type="button"
-                    onClick={() => setShowPosterModal(true)}
+                    onClick={() => {
+                      setPosterVisualHtml(visualContainerRef.current?.innerHTML || undefined);
+                      setShowPosterModal(true);
+                    }}
                     title="生成微信分享海报"
                     className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-blue-200 bg-blue-50/80 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all cursor-pointer active:scale-95 shadow-xs"
                   >
@@ -587,7 +591,7 @@ export function WikiDetailDrawer({
       {showPosterModal && topic && (
         <WikiSharePosterModal
           topic={topic}
-          visualDomHtml={visualContainerRef.current?.innerHTML || undefined}
+          visualDomHtml={posterVisualHtml}
           onClose={() => setShowPosterModal(false)}
         />
       )}

@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { ShieldCheck, AlertTriangle, Activity, Pill, Zap, CheckCircle2, Info, Eye, Stethoscope, Droplet } from "lucide-react";
+import { ShieldCheck, AlertTriangle, Zap, CheckCircle2, Info, Eye, Stethoscope } from "lucide-react";
 
 export function HccInterventionSystemicVisual() {
   const [activeTab, setActiveTab] = useState<"intervention" | "systemic">("intervention");
   const [interventionMode, setInterventionMode] = useState<"normal" | "tace" | "haic">("tace");
-  const [showVaricesWarning, setShowVaricesWarning] = useState<boolean>(true);
+  const [_showVaricesWarning, _setShowVaricesWarning] = useState<boolean>(true);
 
   return (
     <div className="w-full bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden my-6">

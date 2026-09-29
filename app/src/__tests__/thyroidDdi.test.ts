@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { 
   THYROID_TARGETED_DRUGS, 
-  THYROID_DDI_RULES, 
   checkThyroidDrugInteractions 
 } from "@/lib/thyroidDdiData";
 import { checkDrugInteractionsUnified } from "@/lib/ddiRegistry";

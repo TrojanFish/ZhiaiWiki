@@ -345,7 +345,7 @@ export interface BasePatientProfile {
   clinicalRecommendation?: string | null;
   followUpHistory?: FollowUpRecord[];
 
-  // 肿瘤标志物
+  // 肿瘤标志物 (血象生化指标与 12 实体瘤权威生存率循证均无直接相关性，全站 12 癌种已全面停采；保留字段仅供数据库历史归档向下平滑兼容)
   tumorMarkers?: TumorMarkersData;
   tumorMarkersHistory?: TumorMarkersData[];
 
@@ -380,9 +380,13 @@ export interface BasePatientProfile {
   nextAction?: string;
   psychologicalState?: string;
 
-  // 报告生成
+  // 报告生成与临床复核
   reportMarkdown?: string;
   reportGeneratedAt?: string | Date;
+  reportDate?: string | Date | null;
+  reportSourceType?: string | null;
+  reportReviewStatus?: "needs_review" | "confirmed" | "rejected" | string | null;
+  reportEvidenceSpans?: any;
   cancerSpecificData?: any;
 
   // 平铺字段兼容支持（向下兼容平铺访问）

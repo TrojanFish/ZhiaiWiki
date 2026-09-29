@@ -5,25 +5,21 @@ import {
   Clock, 
   AlertTriangle, 
   CheckCircle2, 
-  Coffee, 
-  Milk, 
   Pill, 
   Apple, 
   ShieldAlert, 
   Info,
   Calendar,
-  AlertCircle,
-  HelpCircle,
   Activity
 } from "lucide-react";
 
 export function ThyroidLt4TimingIsolationVisual() {
   const [takeMode, setTakeMode] = useState<"morning" | "bedtime">("morning");
-  const [takeTimeHour, setTakeTimeHour] = useState<number>(6); // 06:00 or 06:30
+  const [takeTimeHour, _setTakeTimeHour] = useState<number>(6); // 06:00 or 06:30
   const [breakfastDelayMin, setBreakfastDelayMin] = useState<number>(60); // 30, 45, 60 min
   const [calciumIntakeHour, setCalciumIntakeHour] = useState<number>(12); // e.g. 12:00
   const [hasSoyOrCoffeeWithPill, setHasSoyOrCoffeeWithPill] = useState<boolean>(false);
-  const [missedScenario, setMissedScenario] = useState<"miss_1day" | "miss_many" | "none">("none");
+  const [_missedScenario, _setMissedScenario] = useState<"miss_1day" | "miss_many" | "none">("none");
 
   // 计算 L-T4 与 钙剂/铁剂 的时间差
   const calciumIntervalHours = Math.abs(calciumIntakeHour - takeTimeHour);

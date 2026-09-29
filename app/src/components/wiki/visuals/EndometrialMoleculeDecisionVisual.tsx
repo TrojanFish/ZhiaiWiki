@@ -2,16 +2,11 @@
 
 import React, { useState } from "react";
 import { 
-  Activity, 
   AlertTriangle, 
   CheckCircle2, 
-  Info, 
-  HelpCircle,
+  Info,
   ShieldCheck, 
-  Dna,
-  Zap,
-  Layers,
-  ArrowRight
+  Dna
 } from "lucide-react";
 
 export function EndometrialMoleculeDecisionVisual() {

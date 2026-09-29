@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { HeartPulse, ShieldAlert, ShieldCheck, CheckCircle2, ChevronRight, Activity, Smile } from "lucide-react";
+import { HeartPulse, ShieldAlert, ShieldCheck, Activity } from "lucide-react";
 
 type CareView = "stoma_leak_prevention" | "lars_rehab";
 

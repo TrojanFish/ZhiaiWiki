@@ -392,6 +392,7 @@ export interface KmCurveArm {
 
 export type MetricDisplayMode = 
   | "standard_5yr" 
+  | "intermediate_3yr"
   | "extended_10yr" 
   | "median_survival" 
   | "organ_preservation" 
@@ -435,7 +436,15 @@ export interface ClinicalCohortResult {
   kmArms?: KmCurveArm[];
 
   // 自适应多维预后评价高级架构 (v3.2)
-  displayMode?: "standard_5yr" | "extended_10yr" | "median_survival" | "organ_preservation" | "neoadjuvant_pcr";
+  displayMode?: MetricDisplayMode;
+  timeHorizonMonths?: number;   // 显式指定最大随访月数（如 24, 36, 60, 120, 240）
+  timeHorizonYears?: number;    // 显式指定最大随访年数（如 2, 3, 5, 10, 20）
+  timeHorizonLabel?: string;    // 如 "10年长效随访", "3年金标准替代终点", "中位生存获益"
+  landmarkRate?: {              // 针对特定里程碑的关键发生率
+    month: number;
+    label: string;
+    rate: string;
+  };
   metricLabel1?: string;        // 自定义第1指标名称 (默认: "5年无复发生存率 (RFS)")
   metricSubLabel1?: string;     // 自定义第1指标角标 (默认: "无瘤生存指标")
   metricLabel2?: string;        // 自定义第2指标名称 (默认: "5年总生存率 (OS)")

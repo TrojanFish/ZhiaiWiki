@@ -249,7 +249,15 @@ export async function POST(request: Request) {
       reportGeneratedAt: data.reportMarkdown ? new Date() : null,
       reportDate: data.reportDate ? new Date(data.reportDate) : null,
       reportSourceType: data.reportType || null,
-      reportReviewStatus: data.reportReviewStatus === 'confirmed' ? 'confirmed' : 'needs_review',
+      reportReviewStatus: data.reportReviewStatus === 'confirmed'
+        ? 'confirmed'
+        : data.reportReviewStatus === 'needs_review'
+        ? 'needs_review'
+        : (data.isManualEntry || data.reportType === 'manual' || data.isManualMode)
+        ? 'confirmed'
+        : (existingProfile?.reportReviewStatus === 'confirmed')
+        ? 'confirmed'
+        : 'needs_review',
       reportEvidenceSpans: data.reportEvidenceSpans || null,
     };
 
@@ -740,7 +748,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { userId, profileId, reportMarkdown, cancerType } = await request.json();
+    const { userId, profileId, reportMarkdown, reportReviewStatus, cancerType } = await request.json();
     const authenticatedUserId = getAuthenticatedUserId(request);
     const verifiedGuestId = extractVerifiedGuestId(request);
 
@@ -761,8 +769,8 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: false, error: "未授权：无效的用户身份" }, { status: 401 });
     }
 
-    if (!reportMarkdown) {
-      return NextResponse.json({ success: false, error: "缺少报告内容" }, { status: 400 });
+    if (!reportMarkdown && !reportReviewStatus) {
+      return NextResponse.json({ success: false, error: "缺少更新内容" }, { status: 400 });
     }
 
     let targetProfile = null;
@@ -787,12 +795,18 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: false, error: "未找到对应患者病理档案" }, { status: 404 });
     }
 
+    const updateData: any = {};
+    if (reportMarkdown) {
+      updateData.reportMarkdown = reportMarkdown;
+      updateData.reportGeneratedAt = new Date();
+    }
+    if (reportReviewStatus) {
+      updateData.reportReviewStatus = reportReviewStatus === 'confirmed' ? 'confirmed' : 'needs_review';
+    }
+
     const updated = await prisma.patientProfile.update({
       where: { id: targetProfile.id },
-      data: {
-        reportMarkdown,
-        reportGeneratedAt: new Date(),
-      }
+      data: updateData
     });
 
     return NextResponse.json({ success: true, profile: updated });

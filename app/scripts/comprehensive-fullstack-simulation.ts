@@ -560,6 +560,7 @@ async function runFullstackSimulation() {
   if (failed === 0) {
     console.log("\n🎉 [PRODUCTION READY] 全栈前后端 7 大维度仿真测试 100% 全量通过！");
     console.log("项目在 API 接口契约、安全密码学、分期精度、药理排雷、公益爱心生态、UI/UX 响应式与生产构建上均已达到正式商用投产标准。\n");
+    process.exit(0);
   } else {
     console.log(`\n⚠️ 存在 ${failed} 项测试未通过，请根据上方日志进行修复。\n`);
     process.exit(1);

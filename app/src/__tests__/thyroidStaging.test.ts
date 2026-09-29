@@ -1,12 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { 
   computeThyroidStage, 
-  deriveThyroidTStage, 
-  deriveThyroidNStage, 
-  deriveThyroidMStage, 
   evaluateTirads, 
-  evaluateAtaRisk, 
-  computeThyroidClinicalCohort 
+  evaluateAtaRisk 
 } from "@/lib/thyroidStaging";
 import { computeCancerStage, getClinicalCohortUnified } from "@/lib/stagingRegistry";
 

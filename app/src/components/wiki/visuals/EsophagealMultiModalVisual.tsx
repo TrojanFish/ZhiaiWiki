@@ -7,13 +7,10 @@ import {
   AlertCircle, 
   CheckCircle2, 
   Clock, 
-  Utensils, 
-  HeartHandshake, 
-  ArrowRight,
+  Utensils,
   Stethoscope,
   Pill,
-  BedDouble,
-  ChevronRight
+  BedDouble
 } from "lucide-react";
 
 export function EsophagealMultiModalVisual() {

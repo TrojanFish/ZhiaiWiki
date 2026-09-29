@@ -1,12 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { 
   computeCervicalStage, 
-  deriveCervicalTStage, 
-  deriveCervicalNStage, 
-  deriveCervicalMStage, 
   computeCervicalClinicalCohort 
 } from "@/lib/cervicalStaging";
-import { computeCancerStage, getClinicalCohortUnified } from "@/lib/stagingRegistry";
+import { computeCancerStage } from "@/lib/stagingRegistry";
 
 describe("Cervical Cancer (FIGO 2018 & AJCC 9th) Staging Engine", () => {
   describe("FIGO 2018 Size & Invasion Stratification", () => {

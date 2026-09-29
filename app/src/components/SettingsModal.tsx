@@ -8,16 +8,13 @@ import {
   Languages, 
   Layers, 
   Award, 
-  ShieldCheck, 
   Trash2, 
-  Coffee, 
-  Check, 
-  ExternalLink
+  Check
 } from "lucide-react";
 import { useCancerType, CANCER_TYPE_OPTIONS } from "@/components/common/CancerSwitch";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { CancerIcon } from "@/components/common/CancerIcons";
-import { useLanguage, type LangScript } from "@/components/LangSwitch";
+import { useLanguage } from "@/components/LangSwitch";
 import type { CancerType } from "@/lib/types";
 
 interface SettingsModalProps {

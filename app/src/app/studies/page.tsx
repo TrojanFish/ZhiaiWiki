@@ -11,8 +11,7 @@ import {
   Activity,
   Loader2,
   TrendingUp,
-  GitBranch,
-  Sparkles
+  GitBranch
 } from "lucide-react";
 import StudyCard, { StudyItem } from "@/components/StudyCard";
 import Footer from "@/components/Footer";
