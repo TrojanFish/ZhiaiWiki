@@ -942,14 +942,17 @@ export default function PatientDashboard() {
     (profile.currentStage && profile.currentStage !== 'evaluation' && profile.currentStage !== 'discovery')
   );
 
-  const isEarlyLowRisk = Boolean(
-    profile.mStage === 'M0' ||
-    profile.stage === 'Tis' ||
-    profile.stage === '0' ||
-    profile.stage?.startsWith('IA') ||
-    profile.stage?.startsWith('IA1') ||
-    profile.stage?.startsWith('IA2') ||
-    (isLung && (profile.noduleType === 'pure_ggo' || (profile.ctr != null && profile.ctr <= 0.5)))
+  const isEarlyLowRiskLung = Boolean(
+    isLung && (
+      profile.mStage === 'M0' ||
+      profile.stage === 'Tis' ||
+      profile.stage === '0' ||
+      profile.stage?.startsWith('IA') ||
+      profile.stage?.startsWith('IA1') ||
+      profile.stage?.startsWith('IA2') ||
+      profile.noduleType === 'pure_ggo' ||
+      (profile.ctr != null && profile.ctr <= 0.5)
+    )
   );
   const isFemale = (profile.gender as string) === 'female' || (profile.sex as string) === 'female' || (profile.gender as string) === '女' || (profile.sex as string) === '女';
   const isMale = (profile.gender as string) === 'male' || (profile.sex as string) === 'male' || (profile.gender as string) === '男' || (profile.sex as string) === '男';
@@ -1373,11 +1376,13 @@ export default function PatientDashboard() {
                       )}
                     </span>
                     <span className="px-2.5 py-0.5 rounded-md bg-pink-100 font-extrabold text-pink-950 text-xs shrink-0">
-                      cT定级基准: {profile.tStage || 'cTx'}
+                      {isPostOp ? '术前 cT 参考: ' : 'cT定级基准: '}{profile.tStage || 'cTx'}
                     </span>
                   </div>
                   <div className="text-[11px] text-pink-800 font-medium">
-                    依据 AJCC 第 8/9 版标准，以原发浸润肿块最大径判定 cT 分期（≤2cm 为 T1，&gt;2~5cm 为 T2，&gt;5cm 为 T3）
+                    {isPostOp
+                      ? '术前影像评估参考 · 术后分期以病理浸润径与受体分型 (pT) 为准'
+                      : '依据 AJCC 第 8/9 版标准，以原发浸润肿块最大径判定 cT 分期（≤2cm 为 T1，&gt;2~5cm 为 T2，&gt;5cm 为 T3）'}
                   </div>
                 </div>
 
@@ -2344,13 +2349,13 @@ export default function PatientDashboard() {
                 </div>
               </div>
               <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${
-                profile.systemicStagingConfirmed || profile.mStage === 'M0' || isEarlyLowRisk
+                profile.systemicStagingConfirmed || profile.mStage === 'M0' || isEarlyLowRiskLung
                   ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
                   : 'text-slate-600 bg-slate-100 border-slate-200'
               }`}>
                 {profile.systemicStagingConfirmed || profile.mStage === 'M0' 
                   ? 'M0 根治窗口确立' 
-                  : isEarlyLowRisk 
+                  : isEarlyLowRiskLung 
                   ? '早期豁免常规过度排查 · M0 确立' 
                   : 'M 分期待排查'}
               </span>
@@ -2480,8 +2485,8 @@ export default function PatientDashboard() {
                         <Brain className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>脑部增强 MRI</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.brainMri === 'negative' || (isEarlyLowRisk && !profile.brainMri) ? 'text-emerald-700' : profile.brainMri === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.brainMri === 'negative' ? '阴性 (M0)' : profile.brainMri === 'positive' ? '提示可疑' : isEarlyLowRisk ? '早期免查 (M0)' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.brainMri === 'negative' || (isEarlyLowRiskLung && !profile.brainMri) ? 'text-emerald-700' : profile.brainMri === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.brainMri === 'negative' ? '阴性 (M0)' : profile.brainMri === 'positive' ? '提示可疑' : isEarlyLowRiskLung ? '早期免查 (M0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2489,8 +2494,8 @@ export default function PatientDashboard() {
                         <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>腹部与肾上腺</span>
                       </span>
-                      <span className={`font-bold mt-1 ${(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings' || isEarlyLowRisk) ? 'text-emerald-700' : profile.abdominalUltrasound === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings') ? '阴性/良性' : profile.abdominalUltrasound === 'positive' ? '提示可疑' : isEarlyLowRisk ? '常规正常 (M0)' : '未检查'}
+                      <span className={`font-bold mt-1 ${(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings' || isEarlyLowRiskLung) ? 'text-emerald-700' : profile.abdominalUltrasound === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {(profile.abdominalUltrasound === 'negative' || profile.abdominalUltrasound === 'benign_findings') ? '阴性/良性' : profile.abdominalUltrasound === 'positive' ? '提示可疑' : isEarlyLowRiskLung ? '常规正常 (M0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2498,8 +2503,8 @@ export default function PatientDashboard() {
                         <Activity className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>全身骨显像 ECT</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.boneScan === 'negative' || (isEarlyLowRisk && !profile.boneScan) ? 'text-emerald-700' : profile.boneScan === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.boneScan === 'negative' ? '阴性 (M0)' : profile.boneScan === 'positive' ? '提示可疑' : isEarlyLowRisk ? '早期免查 (M0)' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.boneScan === 'negative' || (isEarlyLowRiskLung && !profile.boneScan) ? 'text-emerald-700' : profile.boneScan === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.boneScan === 'negative' ? '阴性 (M0)' : profile.boneScan === 'positive' ? '提示可疑' : isEarlyLowRiskLung ? '早期免查 (M0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2507,8 +2512,8 @@ export default function PatientDashboard() {
                         <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>颈部/锁骨上淋巴结</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.neckLymphNodes === 'negative' || (isEarlyLowRisk && !profile.neckLymphNodes) ? 'text-emerald-700' : profile.neckLymphNodes === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.neckLymphNodes === 'negative' ? '未见肿大 (阴性)' : profile.neckLymphNodes === 'positive' ? '提示肿大 (需活检)' : isEarlyLowRisk ? '触诊阴性 (N0)' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.neckLymphNodes === 'negative' || (isEarlyLowRiskLung && !profile.neckLymphNodes) ? 'text-emerald-700' : profile.neckLymphNodes === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.neckLymphNodes === 'negative' ? '未见肿大 (阴性)' : profile.neckLymphNodes === 'positive' ? '提示肿大 (需活检)' : isEarlyLowRiskLung ? '触诊阴性 (N0)' : '未检查'}
                       </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-col justify-between">
@@ -2516,8 +2521,8 @@ export default function PatientDashboard() {
                         <Scan className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>全身 PET-CT</span>
                       </span>
-                      <span className={`font-bold mt-1 ${profile.petCt === 'negative' || (isEarlyLowRisk && !profile.petCt) ? 'text-emerald-700' : profile.petCt === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
-                        {profile.petCt === 'negative' ? '无浓聚 (M0)' : profile.petCt === 'positive' ? '高代谢' : isEarlyLowRisk ? '早期免查 (M0)' : '未检查'}
+                      <span className={`font-bold mt-1 ${profile.petCt === 'negative' || (isEarlyLowRiskLung && !profile.petCt) ? 'text-emerald-700' : profile.petCt === 'positive' ? 'text-rose-600' : 'text-slate-400'}`}>
+                        {profile.petCt === 'negative' ? '无浓聚 (M0)' : profile.petCt === 'positive' ? '高代谢' : isEarlyLowRiskLung ? '早期免查 (M0)' : '未检查'}
                       </span>
                     </div>
                   </>
@@ -2586,11 +2591,11 @@ export default function PatientDashboard() {
                 )}
               </div>
 
-              {/* Early-stage Low Risk Exemption Notice */}
-              {isEarlyLowRisk && (
+              {/* Early-stage Low Risk Exemption Notice (Lung Cancer) */}
+              {isEarlyLowRiskLung && (
                 <div className="p-2.5 bg-emerald-50/80 rounded-xl border border-emerald-200/80 text-[11px] text-emerald-800 flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>依据 NCCN / CSCO 指南，Tis / IA 期病灶远处转移概率极低，术前胸腹常规影像正常即确立 M0，豁免常规骨扫描与脑 MRI 等过度排查。</span>
+                  <span>依据 NCCN / CSCO 肺癌指南，Tis / IA 期病变远处转移概率极低，术前胸腹常规影像正常即确立 M0，豁免常规骨扫描与脑 MRI 等过度排查。</span>
                 </div>
               )}
 
