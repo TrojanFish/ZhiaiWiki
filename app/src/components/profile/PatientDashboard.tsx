@@ -907,15 +907,15 @@ export default function PatientDashboard() {
         )}
         <ReportUploader 
           cancerType={activeSlot}
-          initialData={editMode === 'edit_direct' ? profile : null}
-          existingProfile={profile}
+          initialData={editMode === 'edit_direct' && profile?.cancerType === activeSlot ? profile : null}
+          existingProfile={profile?.cancerType === activeSlot ? profile : null}
           initialManualMode={manualDirectMode}
           onSwitchToUpload={() => setManualDirectMode(false)}
           onParsed={(data) => {
             setManualDirectMode(false);
             handleParsed(data);
           }}
-          onCancel={profile ? () => {
+          onCancel={profile?.cancerType === activeSlot ? () => {
             setShowUploader(false);
             setEditMode(null);
             setManualDirectMode(false);

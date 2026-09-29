@@ -44,7 +44,11 @@ export default function DualPrimarySwitcher({
   onAddSecondCancer,
   className = "",
 }: DualPrimarySwitcherProps) {
-  const isMultiPrimary = availableSlots.length >= 2;
+  const effectiveSlots = React.useMemo(() => {
+    return Array.from(new Set([...(availableSlots || []), activeSlot])).filter(Boolean) as CancerType[];
+  }, [availableSlots, activeSlot]);
+
+  const isMultiPrimary = effectiveSlots.length >= 2;
 
   // Format summaries
   const lungSummary = React.useMemo(() => {
@@ -347,17 +351,17 @@ export default function DualPrimarySwitcher({
 
   // 1. 多原发患者专案切换器 (Multi-Primary Mode)
   if (isMultiPrimary) {
-    const gridCols = availableSlots.length === 2 
+    const gridCols = effectiveSlots.length === 2 
       ? "grid-cols-1 sm:grid-cols-2" 
-      : availableSlots.length === 3 
+      : effectiveSlots.length === 3 
       ? "grid-cols-1 sm:grid-cols-3" 
-      : availableSlots.length === 4
+      : effectiveSlots.length === 4
       ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-      : availableSlots.length === 5
+      : effectiveSlots.length === 5
       ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
-      : availableSlots.length === 6
+      : effectiveSlots.length === 6
       ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
-      : availableSlots.length === 7
+      : effectiveSlots.length === 7
       ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7"
       : "grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8";
 
@@ -378,7 +382,7 @@ export default function DualPrimarySwitcher({
               <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
               已激活跨癌种联合用药自检与就医协同
             </div>
-            {onAddSecondCancer && availableSlots.length < 4 && (
+            {onAddSecondCancer && effectiveSlots.length < 4 && (
               <button
                 type="button"
                 onClick={onAddSecondCancer}
@@ -392,7 +396,7 @@ export default function DualPrimarySwitcher({
         </div>
 
         <div className={`grid ${gridCols} gap-2.5 sm:gap-3.5 mt-3`}>
-          {availableSlots.map((slot) => {
+          {effectiveSlots.map((slot) => {
             const cfg = slotConfigs[slot];
             if (!cfg) return null;
             const isActive = activeSlot === slot;
@@ -441,8 +445,8 @@ export default function DualPrimarySwitcher({
   }
 
   // 2. 单癌种患者轻量提示条 (Single Cancer Mode with option to add second)
-  if (availableSlots.length === 1) {
-    const currentCancer = availableSlots[0];
+  if (effectiveSlots.length === 1) {
+    const currentCancer = effectiveSlots[0];
     const cancerName = currentCancer === "esophageal" ? "原发性食管鳞癌" : currentCancer === "liver" ? "原发性肝癌" : currentCancer === "gastric" ? "胃癌" : currentCancer === "breast" ? "乳腺癌" : currentCancer === "colon" ? "结肠癌" : currentCancer === "rectal" ? "直肠癌" : currentCancer === "colorectal" ? "结直肠癌" : "肺癌";
     const currentSummary = currentCancer === "esophageal" ? esophagealSummary : currentCancer === "liver" ? liverSummary : currentCancer === "gastric" ? gastricSummary : currentCancer === "breast" ? breastSummary : currentCancer === "colon" ? colonSummary : currentCancer === "rectal" ? rectalSummary : currentCancer === "colorectal" ? colorectalSummary : lungSummary;
 

@@ -686,7 +686,19 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
     if (hasInitializedRef.current?.startsWith('manual_')) {
       return;
     }
-    const sourceData = initialData || existingProfile;
+    const currentTargetCancer = cancerType || 'lung';
+    const isMatchingInitial = initialData && (initialData.cancerType === currentTargetCancer || !initialData.cancerType);
+    const isMatchingExisting = existingProfile && (existingProfile.cancerType === currentTargetCancer || !existingProfile.cancerType);
+    const sourceData = isMatchingInitial ? initialData : (isMatchingExisting ? existingProfile : null);
+
+    if (!sourceData) {
+      if (parsedData && parsedData.cancerType && parsedData.cancerType !== currentTargetCancer && !parsedData.isManualEntry) {
+        setParsedData(null);
+        hasInitializedRef.current = null;
+      }
+      return;
+    }
+
     if (sourceData) {
       const sourceId = `${sourceData.id || ''}_${sourceData.cancerType || ''}_${initialData ? 'edit_direct' : 'exist'}`;
       if (hasInitializedRef.current === sourceId) {
@@ -882,7 +894,8 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
           reportText, 
           images: images.map((img) => ({ base64: img.base64, mimeType: img.mimeType })),
           imageBase64: images[0]?.base64, 
-          imageMimeType: images[0]?.mimeType 
+          imageMimeType: images[0]?.mimeType,
+          cancerType: currentCancer || cancerType,
         }),
       });
       
@@ -1302,10 +1315,10 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             {/* Mobile pill stepper */}
             <div className="flex md:hidden mb-4 p-1 bg-slate-100/80 rounded-2xl border border-slate-200/80 gap-1">
               {([
-                { step: 1 as const, label: "影像随访" },
-                { step: 2 as const, label: "病理高危" },
-                { step: 3 as const, label: "基因靶向" },
-                { step: 4 as const, label: "标志排查" },
+                { step: 1 as const, label: isLung ? "影像随访" : isBreast ? "乳腺影像" : isColorectal ? "肠镜影像" : "影像诊断" },
+                { step: 2 as const, label: isBreast ? "免疫组化" : isLung ? "病理高危" : "组织病理" },
+                { step: 3 as const, label: isLung ? "驱动基因" : isBreast ? "分子分型" : isColorectal ? "靶向基因" : "分子靶点" },
+                { step: 4 as const, label: isBreast ? "标志排查" : "标志排查" },
               ]).map(({ step, label }) => (
                 <button key={step} type="button" onClick={() => setCurrentStep(step)}
                   className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${currentStep === step ? "bg-white text-blue-700 shadow-sm" : "text-slate-500"}`}

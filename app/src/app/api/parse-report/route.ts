@@ -603,7 +603,23 @@ export async function POST(request: Request) {
       (sanitizedReportText && /乳腺|BI-?RADS|钼靶|导管癌|小叶癌|ER\s*[\(（\:\：\+]|PR\s*[\(（\:\：\+]|HER-?2|前哨淋巴|保乳/i.test(sanitizedReportText)) ||
       extracted.cancerType === "breast" ||
       extracted.organ === "breast" ||
-      extracted.biRads
+      extracted.biRads ||
+      extracted.breastLaterality ||
+      extracted.erStatus ||
+      extracted.prStatus ||
+      extracted.her2Status ||
+      extracted.her2Fish ||
+      extracted.nottinghamGrade ||
+      extracted.axillaryNodesPositive != null ||
+      extracted.axillaryNodesTotal != null ||
+      extracted.sentinelNodesPositive != null ||
+      extracted.sentinelNodesTotal != null ||
+      extracted.oncotypeDxScore != null ||
+      /乳腺|导管癌|小叶癌|保乳|全切|非特殊型/i.test(String(extracted.histologyType || "")) ||
+      /乳腺|导管癌|小叶癌|保乳|全切|非特殊型/i.test(String(extracted.histology || "")) ||
+      /保乳|mastectomy|bcs/i.test(String(extracted.surgeryType || "")) ||
+      /乳|breast/i.test(String(extracted.cancerType || "")) ||
+      /乳|breast/i.test(String(extracted.organ || ""))
     );
     const isColorectalHint = Boolean(
       (sanitizedReportText && /结肠|直肠|结直肠|回盲|回肠|降结肠|乙状结肠|升结肠|横结肠|盲肠|肠镜|KRAS|NRAS|BRAF|MSI|dMMR|pMMR|CRM|EMVI|肿瘤沉积|癌结节/i.test(sanitizedReportText)) ||
@@ -613,7 +629,15 @@ export async function POST(request: Request) {
       extracted.organ === "colorectal" ||
       extracted.organ === "colon" ||
       extracted.organ === "rectal" ||
-      extracted.primaryLocation
+      extracted.primaryLocation ||
+      extracted.distanceFromAnalVerge != null ||
+      extracted.msiStatus ||
+      extracted.dmmrStatus ||
+      extracted.crmStatus ||
+      extracted.emviStatus ||
+      extracted.tumorDeposits ||
+      /结肠|直肠|腺瘤/i.test(String(extracted.histologyType || "")) ||
+      /结肠|直肠|全系膜|tme/i.test(String(extracted.surgeryType || ""))
     );
     const isGastricHint = Boolean(
       (sanitizedReportText && /胃|胃窦|胃体|贲门|胃底|幽门|胃镜|印戒细胞|D2根治|lauren|borrmann|claudin\s*18/i.test(sanitizedReportText)) ||
@@ -622,7 +646,9 @@ export async function POST(request: Request) {
       extracted.organ === "stomach" ||
       extracted.borrmannType ||
       extracted.laurenClassification ||
-      extracted.claudin182Status
+      extracted.claudin182Status ||
+      /胃|印戒/i.test(String(extracted.histologyType || "")) ||
+      /胃切除|esd|d2/i.test(String(extracted.surgeryType || ""))
     );
     const isLiverHint = Boolean(
       (sanitizedReportText && /肝癌|肝细胞|HCC|CNLC|肝硬化|Child-?Pugh|门脉癌栓|PVTT|微血管侵犯|MVI|TACE|HAIC|AFP|PIVKA/i.test(sanitizedReportText)) ||
@@ -631,7 +657,11 @@ export async function POST(request: Request) {
       extracted.organ === "hcc" ||
       extracted.childPughGrade ||
       extracted.cnlcStage ||
-      extracted.albiGrade
+      extracted.albiGrade ||
+      extracted.vascularInvasion ||
+      extracted.mviGrade ||
+      extracted.afpLevel != null ||
+      /肝细胞|hcc/i.test(String(extracted.histologyType || ""))
     );
     const isEsophagealHint = Boolean(
       (sanitizedReportText && /食管|食道|门齿|胸段|鳞状细胞癌|ESCC|CROSS|NEOCRTEC|喉返神经/i.test(sanitizedReportText)) ||
@@ -640,14 +670,21 @@ export async function POST(request: Request) {
       extracted.organ === "esophagus" ||
       extracted.organ === "escc" ||
       extracted.subsite ||
-      extracted.incisorDistanceCm
+      extracted.incisorDistanceCm != null ||
+      extracted.airwayInvasionRisk != null
     );
     const isThyroidHint = Boolean(
       (sanitizedReportText && /甲状腺|TI-?RADS|C-TIRADS|乳头状癌|PTC|微小癌|PTMC|滤泡癌|髓样癌|清甲|优甲乐|TgAb|降钙素|中央区清扫/i.test(sanitizedReportText)) ||
       extracted.cancerType === "thyroid" ||
       extracted.organ === "thyroid" ||
       extracted.ultrasoundTirads ||
-      extracted.extrathyroidalExtension
+      extracted.extrathyroidalExtension ||
+      extracted.centralNodesPositive != null ||
+      extracted.lateralNodesPositive != null ||
+      extracted.brafV600e ||
+      extracted.tgLevel != null ||
+      extracted.calcitoninLevel != null ||
+      /甲状腺|乳头状|ptc|ptmc/i.test(String(extracted.histologyType || ""))
     );
     const isEndometrialHint = Boolean(
       (sanitizedReportText && /子宫内膜|内膜癌|子宫体|肌层浸润|POLE|p53|TCGA|FIGO.*(?:内膜|uterine)|宫旁|孕激素保育/i.test(sanitizedReportText)) ||
@@ -655,15 +692,21 @@ export async function POST(request: Request) {
       extracted.organ === "endometrial" ||
       extracted.organ === "uterine" ||
       extracted.poleMutationStatus ||
-      extracted.myometrialInvasion
+      extracted.myometrialInvasion ||
+      extracted.cervicalInvolvement ||
+      extracted.pelvicNodesPositive != null ||
+      /内膜|子宫/i.test(String(extracted.histologyType || ""))
     );
     const isCervicalHint = Boolean(
       (sanitizedReportText && /宫颈|CIN|SIL|TCT|HPV\s*(?:16|18|高危)|锥切|LEEP|CKC|宫旁浸润|三维后装|近距离放疗|CCRT|广泛子宫/i.test(sanitizedReportText)) ||
       extracted.cancerType === "cervical" ||
       extracted.organ === "cervical" ||
       extracted.organ === "cervix" ||
-      extracted.stromalInvasionMm ||
-      extracted.coneMarginStatus
+      extracted.stromalInvasionMm != null ||
+      extracted.coneMarginStatus ||
+      extracted.parametrialInvasion != null ||
+      extracted.hpvStatus ||
+      /宫颈/i.test(String(extracted.histologyType || ""))
     );
     const isPancreaticHint = Boolean(
       (sanitizedReportText && /胰腺|胰头|胰体|胰尾|胰导管|Whipple|胰十二指肠|肠系膜上动脉|SMA|SMV|腹腔干|门静脉|CA19-?9|可切除性/i.test(sanitizedReportText)) ||
@@ -671,14 +714,18 @@ export async function POST(request: Request) {
       extracted.organ === "pancreatic" ||
       extracted.organ === "pancreas" ||
       extracted.resectabilityStatus ||
-      extracted.smvPvInvolvement
+      extracted.smvPvInvolvement != null ||
+      extracted.smaInvolvement != null ||
+      extracted.ca199 != null ||
+      /胰腺|导管腺癌|pdac/i.test(String(extracted.histologyType || "")) ||
+      /whipple|胰十二指肠/i.test(String(extracted.surgeryType || ""))
     );
     const isLungHint = Boolean(
       (sanitizedReportText && /肺|胸部\s*CT|磨玻璃|GGO|GGN|实性成分|肺叶|肺段|胸膜|STAS|VPI|Lung-?RADS|EGFR|ALK|ROS1/i.test(sanitizedReportText)) ||
       extracted.cancerType === "lung" ||
       extracted.organ === "lung" ||
       extracted.lungRads ||
-      extracted.solidSize != null
+      (!isBreastHint && !isColorectalHint && !isGastricHint && !isLiverHint && !isEsophagealHint && !isThyroidHint && !isEndometrialHint && !isCervicalHint && !isPancreaticHint && extracted.solidSize != null)
     );
 
     let inferredTypeFromText: CancerType | null = null;
@@ -694,7 +741,7 @@ export async function POST(request: Request) {
     else if (isLungHint) inferredTypeFromText = "lung";
 
     const detectedCancerType = normalizeCancerType(
-      requestedCancerType || extracted.cancerType || extracted.organ,
+      requestedCancerType || inferredTypeFromText || extracted.cancerType || extracted.organ,
       inferredTypeFromText || sanitizedReportText
     );
 
