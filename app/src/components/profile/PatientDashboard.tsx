@@ -42,7 +42,6 @@ import SimilarCasesCard from "./SimilarCasesCard";
 import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 import ProfileExportModal from "./ProfileExportModal";
 import { DdiCheckerVisual } from "@/components/wiki/visuals/DdiCheckerVisual";
-import { NoduleTimelineChart } from "./NoduleTimelineChart";
 import { MolecularProfileCard } from "./MolecularProfileCard";
 
 
@@ -2796,14 +2795,6 @@ export default function PatientDashboard() {
             setShowDdiModal(true);
           }}
           onSyncM0Checks={handleSyncM0Checks}
-        />
-      )}
-
-      {/* Pulmonary Nodule Growth Dynamic VDT Trajectory (Lung Cancer only) */}
-      {isLung && profile.followUpHistory && profile.followUpHistory.length > 0 && (
-        <NoduleTimelineChart
-          history={profile.followUpHistory}
-          profile={profile}
         />
       )}
 

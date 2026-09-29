@@ -13,7 +13,6 @@ import {
   X,
   CircleDot,
   ShieldCheck,
-  TrendingUp,
   Activity,
   Brain,
   Stethoscope,
@@ -29,7 +28,7 @@ import {
   FileEdit,
   Edit3,
 } from "lucide-react";
-import type { SecondaryNodule, FollowUpRecord, CancerType } from "@/lib/types";
+import type { SecondaryNodule, CancerType } from "@/lib/types";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { computeCancerStage } from "@/lib/stagingRegistry";
 import { 
@@ -603,11 +602,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
   const [newSecSize, setNewSecSize] = useState("");
   const [newSecType, setNewSecType] = useState("pure_ggo");
 
-  // Follow-up history records state
-  const [newHistDate, setNewHistDate] = useState("");
-  const [newHistTumorSize, setNewHistTumorSize] = useState("");
-  const [newHistSolidSize, setNewHistSolidSize] = useState("");
-  const [newHistNote, setNewHistNote] = useState("");
 
   // Gene Mutations state
   const [customGeneName, setCustomGeneName] = useState("");
@@ -947,31 +941,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         ? String(parsedData.ki67).replace(/%/g, "").trim()
         : (base.ki67 || null);
 
-      // Prepare follow-up timeline node
-      const prevHistory = Array.isArray(base.followUpHistory) ? [...base.followUpHistory] : [];
-      const finalHistory = Array.isArray(parsedData.followUpHistory) && parsedData.followUpHistory.length > 0
-        ? [...parsedData.followUpHistory]
-        : [...prevHistory];
-
-      // Add current scan to history if it's a CT report and not yet in history
-      const reportDate = parsedData.reportDate || new Date().toISOString().split('T')[0];
-      const hasDateInHist = finalHistory.some((h: any) => h.date === reportDate);
-      if (!hasDateInHist && (parsedData.reportType === 'ct_imaging' || parsedData.tumorSize)) {
-        if (tumorVal !== null) {
-          finalHistory.push({
-            id: `hist_${Date.now()}`,
-            date: reportDate,
-            tumorSize: stagingPreview?.tumorSize !== undefined ? stagingPreview.tumorSize : tumorVal,
-            solidSize: stagingPreview?.solidSize !== undefined ? stagingPreview.solidSize : solidVal,
-            ctr: stagingPreview?.ctr ?? calculatedCtr,
-            noduleType: parsedData.noduleType || "mixed_ggo",
-            lungRads: parsedData.lungRads || null,
-            note: parsedData.clinicalRecommendation || "本次检查建档"
-          });
-        }
-      }
-      finalHistory.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
       const finalData = {
         ...base,
         id: base.id,
@@ -1015,9 +984,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         isMultipleNodules: Boolean(parsedData.isMultipleNodules || (Array.isArray(parsedData.secondaryNodules) && parsedData.secondaryNodules.length > 0) || base.isMultipleNodules),
         secondaryNodules: Array.isArray(parsedData.secondaryNodules) ? parsedData.secondaryNodules : (base.secondaryNodules || []),
 
-        // P0-2 Follow-up History
-        followUpHistory: finalHistory,
-
         // P2-2 Tumor Markers
         tumorMarkers: parsedData.tumorMarkers || base.tumorMarkers || null,
 
@@ -1049,7 +1015,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
         petCt: parsedData.petCt || base.petCt || "not_performed",
         benignFindings: Array.isArray(parsedData.benignFindings) ? parsedData.benignFindings : (base.benignFindings || []),
         systemicStagingConfirmed: Boolean(parsedData.systemicStagingConfirmed === true || base.systemicStagingConfirmed === true),
-        reportDate,
+        reportDate: parsedData.reportDate || base.reportDate || new Date().toISOString().split('T')[0],
         reportReviewStatus: "confirmed",
         reportEvidenceSpans: Array.isArray(parsedData.reportEvidenceSpans) ? parsedData.reportEvidenceSpans : [],
       };
@@ -1178,44 +1144,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
     });
   };
 
-  const handleAddHistoryRecord = () => {
-    if (!newHistDate || !newHistTumorSize) return;
-    const tumorVal = parseFloat(newHistTumorSize) || 1.0;
-    const solidVal = newHistSolidSize ? parseFloat(newHistSolidSize) : 0;
-    const ctrVal = tumorVal > 0 ? Math.min(1, Math.round((solidVal / tumorVal) * 100) / 100) : 0;
-
-    const current = Array.isArray(parsedData.followUpHistory) ? parsedData.followUpHistory : [];
-    const newItem: FollowUpRecord = {
-      id: `hist_${Date.now()}`,
-      date: newHistDate,
-      tumorSize: tumorVal,
-      solidSize: solidVal,
-      ctr: ctrVal,
-      note: newHistNote.trim() || "历史随访复查"
-    };
-
-    const updated = [...current, newItem].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-
-    setParsedData({
-      ...parsedData,
-      followUpHistory: updated
-    });
-
-    setNewHistDate("");
-    setNewHistTumorSize("");
-    setNewHistSolidSize("");
-    setNewHistNote("");
-  };
-
-  const handleRemoveHistoryRecord = (id: string) => {
-    const current = Array.isArray(parsedData.followUpHistory) ? parsedData.followUpHistory : [];
-    setParsedData({
-      ...parsedData,
-      followUpHistory: current.filter((item: any) => item.id !== id)
-    });
-  };
 
   if (parsedData) {
     const noduleType = parsedData.noduleType || "mixed_ggo";
@@ -2069,116 +1997,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             </div>
           </div>
 
-          {/* Section: Longitudinal CT Follow-up History Management (P0-2) */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft space-y-3.5">
-            <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 flex items-center justify-center shrink-0">
-                  <TrendingUp className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">历次 CT 随访时序记录管理</h3>
-                  <p className="text-[11px] text-slate-500">时序生长折线图与 VDT 倍增时间测算数据源</p>
-                </div>
-              </div>
-              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-50 text-sky-800 border border-sky-200">
-                已录入 {(parsedData.followUpHistory || []).length} 次检查记录
-              </span>
-            </div>
 
-            <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
-              系统将按检查日期自动串联各次 CT 的全径与实性成分，计算<strong>体积倍增时间 (VDT)</strong> 并判定生长动力学。您可在此补录往年老片数据：
-            </p>
-
-            {/* List of existing records */}
-            <div className="space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {(parsedData.followUpHistory || []).map((item: any) => (
-                  <div
-                    key={item.id}
-                    className="p-2.5 bg-slate-50/70 rounded-xl border border-slate-200 flex items-center justify-between gap-2 text-xs"
-                  >
-                    <div>
-                      <div className="font-bold text-slate-900 flex items-center gap-1.5">
-                        <span>{item.date}</span>
-                        <span className="text-[10px] px-1.5 py-0.5 bg-teal-50 text-teal-800 rounded font-semibold border border-teal-100">
-                          全径: {(item.tumorSize * 10).toFixed(0)}mm | 实性: {((item.solidSize || 0) * 10).toFixed(0)}mm
-                        </span>
-                      </div>
-                      <div className="text-[10px] text-slate-500 mt-0.5">
-                        CTR: {item.ctr != null ? (item.ctr * 100).toFixed(0) : "0"}%{item.note ? ` · ${item.note}` : ""}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveHistoryRecord(item.id)}
-                      className="text-slate-400 hover:text-rose-600 p-1 text-xs cursor-pointer transition-colors"
-                      title="移除该条记录"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add history record form */}
-              <div className="p-3 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2 pt-2">
-                <div className="text-[11px] font-bold text-slate-800">+ 补录既往体检/复查老片数据：</div>
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">检查日期</label>
-                    <input
-                      type="date"
-                      value={newHistDate}
-                      onChange={(e) => setNewHistDate(e.target.value)}
-                      className="w-full h-8 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">结节全径 (cm)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      placeholder="如: 0.8"
-                      value={newHistTumorSize}
-                      onChange={(e) => setNewHistTumorSize(e.target.value)}
-                      className="w-full h-8 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">实性成分 (cm)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      placeholder="纯磨玻璃填0"
-                      value={newHistSolidSize}
-                      onChange={(e) => setNewHistSolidSize(e.target.value)}
-                      className="w-full h-8 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">备注说明 (选填)</label>
-                    <input
-                      type="text"
-                      placeholder="如: 2024体检初查"
-                      value={newHistNote}
-                      onChange={(e) => setNewHistNote(e.target.value)}
-                      className="w-full h-8 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-sky-500"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="button"
-                    onClick={handleAddHistoryRecord}
-                    className="h-8 px-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer flex items-center"
-                  >
-                    + 加入时序随访列表
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
           </>
         )}
       </div>

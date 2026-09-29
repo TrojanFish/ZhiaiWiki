@@ -343,6 +343,7 @@ export interface BasePatientProfile {
   imagingFeatures?: string[];
   malignancyRisk?: "low" | "moderate" | "high" | string | null;
   clinicalRecommendation?: string | null;
+  /** @deprecated 结节随访生长时序轨迹与历次老片补录（结节倍增时间/生长动力学主要用于良恶性筛查初判，与确诊实体瘤生存率循证不直接相关，全站已停止录入与展示；保留字段仅供数据库历史归档向下平滑兼容） */
   followUpHistory?: FollowUpRecord[];
 
   // 肿瘤标志物 (血象生化指标与 12 实体瘤权威生存率循证均无直接相关性，全站 12 癌种已全面停采；保留字段仅供数据库历史归档向下平滑兼容)
