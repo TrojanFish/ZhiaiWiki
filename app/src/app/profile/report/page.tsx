@@ -31,7 +31,8 @@ import {
   CheckCircle2,
   AlertOctagon,
   MinusCircle,
-  Network
+  Network,
+  Heart
 } from "lucide-react";
 import type { PatientProfile, CancerType } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
@@ -54,12 +55,74 @@ import {
   type ClinicalErrorInfo 
 } from "@/lib/clinicalErrors";
 
+// Deterministic fingerprint for detecting calibrated profile modifications
+function generateProfileFingerprint(p: PatientProfile | null): string {
+  if (!p) return "";
+  const keyValues = [
+    p.cancerType || (p as any).organ || "",
+    p.stage || "",
+    p.tStage || "",
+    p.nStage || "",
+    p.mStage || "",
+    p.tumorSize ?? "",
+    p.solidSize ?? "",
+    p.noduleType ?? "",
+    p.surgeryType ?? "",
+    p.margin ?? (p as any).marginStatus ?? "",
+    p.lvi ?? "",
+    p.stas ?? "",
+    p.vpi ?? (p as any).pleuralInvasion ?? "",
+    p.grade ?? (p as any).iaslcGrade ?? (p as any).nottinghamGrade ?? "",
+    p.ki67 ?? "",
+    JSON.stringify(p.cancerSpecificData || {})
+  ];
+  return keyValues.join("|");
+}
+
+function getCancerMeta(prof: PatientProfile | null) {
+  const type = prof?.cancerType || (prof as any)?.organ || "";
+  if (type === "liver" || (prof as any)?.organ === "hcc") {
+    return { name: "原发性肝癌", short: "肝癌报告", badge: "肝癌专案", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+  }
+  if (type === "gastric" || (prof as any)?.organ === "stomach") {
+    return { name: "胃癌", short: "胃癌报告", badge: "胃癌专案", badgeClass: "bg-amber-50 text-amber-700 border-amber-200" };
+  }
+  if (type === "breast") {
+    return { name: "乳腺癌", short: "乳腺报告", badge: "乳腺专案", badgeClass: "bg-pink-50 text-pink-700 border-pink-200" };
+  }
+  if (type === "colon") {
+    return { name: "结肠癌", short: "结肠报告", badge: "结肠专案", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+  }
+  if (type === "rectal") {
+    return { name: "直肠癌", short: "直肠报告", badge: "直肠专案", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+  }
+  if (type === "colorectal") {
+    return { name: "结直肠癌", short: "结直肠报告", badge: "结直肠专案", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+  }
+  if (type === "esophageal" || (prof as any)?.organ === "esophagus" || (prof as any)?.organ === "escc") {
+    return { name: "食管鳞癌", short: "食管报告", badge: "食管专案", badgeClass: "bg-amber-50 text-amber-700 border-amber-200" };
+  }
+  if (type === "thyroid") {
+    return { name: "甲状腺癌", short: "甲状腺报告", badge: "甲状腺专案", badgeClass: "bg-teal-50 text-teal-700 border-teal-200" };
+  }
+  if (type === "endometrial" || (prof as any)?.organ === "uterine") {
+    return { name: "子宫内膜癌", short: "内膜癌报告", badge: "内膜癌专案", badgeClass: "bg-purple-50 text-purple-700 border-purple-200" };
+  }
+  if (type === "cervical" || (prof as any)?.organ === "cervix") {
+    return { name: "宫颈癌", short: "宫颈报告", badge: "宫颈专案", badgeClass: "bg-rose-50 text-rose-700 border-rose-200" };
+  }
+  if (type === "pancreatic" || (prof as any)?.organ === "pancreas") {
+    return { name: "胰腺癌", short: "胰腺报告", badge: "胰腺专案", badgeClass: "bg-orange-50 text-orange-700 border-orange-200" };
+  }
+  return { name: "肺腺癌", short: "肺癌报告", badge: "肺癌专案", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" };
+}
 
 export default function EvidenceReportPage() {
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [reportMarkdown, setReportMarkdown] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoadedFromCache, setIsLoadedFromCache] = useState(false);
+  const [isReportStale, setIsReportStale] = useState(false);
   const [cachedTime, setCachedTime] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [errorInfo, setErrorInfo] = useState<ClinicalErrorInfo | null>(null);
@@ -93,12 +156,16 @@ export default function EvidenceReportPage() {
     const isRec = prof?.cancerType === 'rectal' || (prof as any)?.organ === 'rectal';
     const isCrc = prof?.cancerType === 'colorectal' || (prof as any)?.organ === 'colorectal' || isCol || isRec;
     const isThy = prof?.cancerType === 'thyroid' || (prof as any)?.organ === 'thyroid';
-    const section3Match = 
-      markdown.match(/##?\s*(?:3[\.\s、]|三[\.\s、]|【向[^】]*问诊清单[^】]*】)[\s\S]*?(?=##?\s*(?:4[\.\s、]|四[\.\s、]|$))/i) ||
-      markdown.match(/##?\s*3[\s\S]*?(?=##?\s*4|$)/) ||
-      markdown.match(/【向[^】]*问诊清单】[\s\S]*?(?=##?\s*\d|$)/);
+    const isEndometrial = prof?.cancerType === 'endometrial' || (prof as any)?.organ === 'endometrial' || (prof as any)?.organ === 'uterine';
+    const isCervical = prof?.cancerType === 'cervical' || (prof as any)?.organ === 'cervical' || (prof as any)?.organ === 'cervix';
+    const isPancreatic = prof?.cancerType === 'pancreatic' || (prof as any)?.organ === 'pancreatic' || (prof as any)?.organ === 'pancreas';
 
-    const text = section3Match ? section3Match[0] : markdown;
+    // Agnostic checklist matcher: matches section whether it's section 3, 4, 5, or unnumbered
+    const checklistMatch = 
+      markdown.match(/##?\s*(?:\d+[\.\s、]|[一二三四五六七八][\.\s、])?[^\n]*?(?:问诊|便签|清单|咨询)[^\n]*?\n([\s\S]*?)(?=##?\s*(?:\d+[\.\s、]|[一二三四五六七八][\.\s、])|$)/i) ||
+      markdown.match(/##?\s*(?:3|4|5)[\s\S]*?(?=##?\s*(?:4|5|6)|$)/);
+
+    const text = checklistMatch ? checklistMatch[0] : markdown;
     const lines = text.split('\n');
     const items: { title: string; content: string }[] = [];
     
@@ -112,7 +179,7 @@ export default function EvidenceReportPage() {
             title: titleMatch[1].trim(),
             content: titleMatch[2].trim() || cleaned.replace(/\*\*.*?\*\*/, '').trim()
           });
-        } else if (cleaned.length > 5 && !cleaned.includes('问诊清单') && !cleaned.includes('##')) {
+        } else if (cleaned.length > 5 && !cleaned.includes('问诊清单') && !cleaned.includes('便签卡') && !cleaned.includes('##')) {
           items.push({
             title: `关注问题 ${items.length + 1}`,
             content: cleaned.replace(/\*\*/g, '').trim()
@@ -148,6 +215,30 @@ export default function EvidenceReportPage() {
     }
 
     if (items.length === 0) {
+      if (isEndometrial) {
+        return [
+          { title: "分子分型与辅助治疗定案", content: "请教主治医生我的 FIGO 2023 分子分型（POLEmut / MMRd / NSMP / p53abn）结果如何？是否属于 POLE 突变可安全免除放化疗？" },
+          { title: "辅助放化疗模式选择", content: "根据肌层浸润深度与脉管侵犯，若需辅助治疗，首选阴道残端后装放疗 (VBT) 还是全盆外放疗 (EBRT)？是否需联合 TC 化疗？" },
+          { title: "Lynch 综合征遗传排查", content: "错配修复蛋白 (MMR) 状态如何？若为 dMMR 是否建议直系亲属进行 Lynch 综合征相关遗传咨询？" },
+          { title: "残端细胞学与盆腔随访规划", content: "术后第一次阴道残端涂片细胞学脱落检查与盆腹增强 MRI 复查建议在第几个月进行？" }
+        ];
+      }
+      if (isCervical) {
+        return [
+          { title: "治疗路径金标准确认", content: "请教主治医生根据肿瘤大小与宫旁状态，首选方案是开腹广泛切除还是顺铂增敏同步放化疗 (CCRT)？" },
+          { title: "3D 近距离后装放疗实施", content: "若执行根治性放化疗，后装近距离放疗是否采用 MRI/CT 引导下的 3D 个体化插植技术？" },
+          { title: "顺铂增敏水化与肾功能保护", content: "每周顺铂增敏化疗期间的水化方案如何安排？肌酐与内生肌酐清除率如何动态监测？" },
+          { title: "盆底康复与阴道粘连防护", content: "放疗结束后何时启动规范阴道冲洗及扩张器维护以预防阴道挛缩狭窄？" }
+        ];
+      }
+      if (isPancreatic) {
+        return [
+          { title: "强化辅助化疗方案选择", content: "请教主治医生根据术后体力恢复与病理切缘，推荐首选 mFOLFIRINOX 还是吉西他滨联合卡培他滨？" },
+          { title: "BRCA 基因检测与靶向维持", content: "是否建议进行胚系 BRCA1/2 及 HRR 基因检测以评估后续奥拉帕利靶向维持治疗机遇？" },
+          { title: "胰酶 (PERT) 剂量与餐中服药", content: "术后消化不良与腹泻，当前胰酶胶囊（如得每通）每餐推荐服用多少剂量？是否需正餐中顿服？" },
+          { title: "薄层增强影像与 CA19-9 复查", content: "术后第一次薄层胰腺高分辨率增强 CT/MRI 与 CA19-9/CEA 联合复查建议安排在第几周？" }
+        ];
+      }
       if (isThy) {
         return [
           { title: "TSH 抑制目标设定", content: "请教主治医生根据我的术后病理分期及复发危险度分层（高/中/低危），TSH 应控制在何种抑制范围（如 <0.1 mU/L 或 0.1~0.5 mU/L）？" },
@@ -338,6 +429,7 @@ export default function EvidenceReportPage() {
 
       setCachedTime(nowFormatted);
       setIsLoadedFromCache(true);
+      setIsReportStale(false);
 
       // 1. Save to localStorage (Guest & Instant Cache strictly scoped by cancer slot)
       const cancerType = currentProfile.cancerType || (currentProfile as any).organ || getActiveCancerSlot();
@@ -347,13 +439,18 @@ export default function EvidenceReportPage() {
       const timeCacheKey = currentProfile.id
         ? `oncopath_report_time_${currentProfile.id}`
         : `oncopath_report_time_${cancerType}_${getGuestId()}`;
+      const fpKey = currentProfile.id
+        ? `oncopath_report_fp_${currentProfile.id}`
+        : `oncopath_report_fp_${cancerType}_${getGuestId()}`;
 
       if (typeof window !== "undefined") {
         localStorage.setItem(reportCacheKey, accumulatedText);
         localStorage.setItem(timeCacheKey, nowFormatted);
+        localStorage.setItem(fpKey, generateProfileFingerprint(currentProfile));
         if (cancerType === "lung") {
           localStorage.setItem(`oncopath_report_${currentProfile.id || getGuestId()}`, accumulatedText);
           localStorage.setItem(`oncopath_report_time_${currentProfile.id || getGuestId()}`, nowFormatted);
+          localStorage.setItem(`oncopath_report_fp_${currentProfile.id || getGuestId()}`, generateProfileFingerprint(currentProfile));
         }
       }
 
@@ -498,6 +595,25 @@ export default function EvidenceReportPage() {
         setProfile(fetchedProfile);
         setError("");
 
+        const checkStaleness = (prof: PatientProfile, cacheKeyFp: string) => {
+          let stale = false;
+          if (prof.updatedAt && prof.reportGeneratedAt) {
+            const updatedTime = new Date(prof.updatedAt).getTime();
+            const genTime = new Date(prof.reportGeneratedAt).getTime();
+            if (!isNaN(updatedTime) && !isNaN(genTime) && updatedTime - genTime > 10000) {
+              stale = true;
+            }
+          }
+          if (!stale && typeof window !== "undefined") {
+            const savedFp = localStorage.getItem(cacheKeyFp);
+            const currentFp = generateProfileFingerprint(prof);
+            if (savedFp && savedFp !== currentFp) {
+              stale = true;
+            }
+          }
+          return stale;
+        };
+
         // 2. Check Cloud Database for existing report
         if (fetchedProfile.reportMarkdown) {
           setReportMarkdown(fetchedProfile.reportMarkdown);
@@ -508,6 +624,11 @@ export default function EvidenceReportPage() {
               })
             : null;
           setCachedTime(timeStr);
+          const cancerType = fetchedProfile.cancerType || (fetchedProfile as any).organ || activeSlot;
+          const fpKey = fetchedProfile.id
+            ? `oncopath_report_fp_${fetchedProfile.id}`
+            : `oncopath_report_fp_${cancerType}_${getGuestId()}`;
+          setIsReportStale(checkStaleness(fetchedProfile, fpKey));
           return;
         }
 
@@ -519,6 +640,9 @@ export default function EvidenceReportPage() {
         const timeCacheKey = fetchedProfile.id
           ? `oncopath_report_time_${fetchedProfile.id}`
           : `oncopath_report_time_${cancerType}_${getGuestId()}`;
+        const fpKey = fetchedProfile.id
+          ? `oncopath_report_fp_${fetchedProfile.id}`
+          : `oncopath_report_fp_${cancerType}_${getGuestId()}`;
 
         let localCached = typeof window !== "undefined" ? localStorage.getItem(reportCacheKey) : null;
         let localTime = typeof window !== "undefined" ? localStorage.getItem(timeCacheKey) : null;
@@ -532,6 +656,7 @@ export default function EvidenceReportPage() {
           setReportMarkdown(localCached);
           setIsLoadedFromCache(true);
           setCachedTime(localTime);
+          setIsReportStale(checkStaleness(fetchedProfile, fpKey));
           return;
         }
 
@@ -573,14 +698,8 @@ export default function EvidenceReportPage() {
     if (!reportContainerRef.current || isExportingDirectPdf) return;
     try {
       setIsExportingDirectPdf(true);
-      const isEsoph = profile?.cancerType === 'esophageal' || (profile as any)?.organ === 'esophageal' || (profile as any)?.organ === 'esophagus' || (profile as any)?.organ === 'escc';
-      const isLiver = profile?.cancerType === 'liver' || (profile as any)?.organ === 'liver' || (profile as any)?.organ === 'hcc';
-      const isGastric = profile?.cancerType === 'gastric' || (profile as any)?.organ === 'gastric' || (profile as any)?.organ === 'stomach';
-      const isBreast = profile?.cancerType === 'breast' || (profile as any)?.organ === 'breast';
-      const isColon = profile?.cancerType === 'colon' || (profile as any)?.organ === 'colon';
-      const isRectal = profile?.cancerType === 'rectal' || (profile as any)?.organ === 'rectal';
-      const isCrc = profile?.cancerType === 'colorectal' || (profile as any)?.organ === 'colorectal' || isColon || isRectal;
-      const cancerName = isEsoph ? "食管鳞癌" : isLiver ? "原发性肝癌" : isGastric ? "胃癌" : isBreast ? "乳腺癌" : isColon ? "结肠癌" : isRectal ? "直肠癌" : isCrc ? "结直肠癌" : "肺结节与肺腺癌";
+      const cancerMeta = getCancerMeta(profile);
+      const cancerName = cancerMeta.name;
       const dateStr = new Date().toISOString().split("T")[0];
       const success = await exportElementToA4Pdf(reportContainerRef.current, {
         fileName: `ZhiaiWiki-${cancerName}临床专属循证解读报告-${profile?.stage || "临床"}-${dateStr}.pdf`,
@@ -730,15 +849,14 @@ export default function EvidenceReportPage() {
   const handleCopyChecklist = async () => {
     if (!reportMarkdown) return;
 
-    // Comprehensive regex extraction for Section 3 (Consultation checklist)
-    const section3Match = 
-      reportMarkdown.match(/##?\s*(?:3[\.\s、]|三[\.\s、]|【(?:向|门诊)[^】]*(?:问诊|便签)[^】]*】)[\s\S]*?(?=##?\s*(?:4[\.\s、]|四[\.\s、]|$))/i) ||
-      reportMarkdown.match(/##?\s*3[\s\S]*?(?=##?\s*4|$)/) ||
-      reportMarkdown.match(/【(?:向|门诊)[^】]*(?:问诊|便签)[^】]*】[\s\S]*?(?=##?\s*\d|$)/);
+    // Comprehensive regex extraction for consultation checklist regardless of section number
+    const checklistMatch = 
+      reportMarkdown.match(/##?\s*(?:\d+[\.\s、]|[一二三四五六七八][\.\s、])?[^\n]*?(?:问诊|便签|清单|咨询)[^\n]*?\n([\s\S]*?)(?=##?\s*(?:\d+[\.\s、]|[一二三四五六七八][\.\s、])|$)/i) ||
+      reportMarkdown.match(/##?\s*(?:3|4|5)[\s\S]*?(?=##?\s*(?:4|5|6)|$)/);
 
     let textToCopy = "";
-    if (section3Match) {
-      textToCopy = section3Match[0].trim();
+    if (checklistMatch) {
+      textToCopy = checklistMatch[0].trim();
     } else {
       textToCopy = reportMarkdown;
     }
@@ -883,10 +1001,10 @@ export default function EvidenceReportPage() {
             <div className="w-px h-3.5 sm:h-4 bg-slate-200 flex-shrink-0"></div>
             <div className="font-extrabold text-slate-900 text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
               <span className={`w-2 h-2 rounded-full flex-shrink-0 ${isGenerating ? 'bg-amber-500 animate-pulse' : 'bg-accent-teal'}`} />
-              <span className="sm:hidden">{isLiver ? "肝癌报告" : isGastric ? "胃癌报告" : isBreast ? "乳腺报告" : isCrc ? "结直肠报告" : "肺癌报告"}</span>
-              <span className="hidden sm:inline">{isLiver ? "原发性肝癌" : isGastric ? "胃癌" : isBreast ? "乳腺癌" : isCrc ? "结直肠癌" : "肺腺癌"}专属深度循证解读报告</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${isLiver ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : isGastric ? 'bg-amber-50 text-amber-700 border-amber-200' : isBreast ? 'bg-pink-50 text-pink-700 border-pink-200' : isCrc ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
-                {isLiver ? '肝癌专案' : isGastric ? '胃癌专案' : isBreast ? '乳腺专案' : isCrc ? '结直肠专案' : '肺癌专案'}
+              <span className="sm:hidden">{getCancerMeta(profile).short}</span>
+              <span className="hidden sm:inline">{getCancerMeta(profile).name}专属深度循证解读报告</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${getCancerMeta(profile).badgeClass}`}>
+                {getCancerMeta(profile).badge}
               </span>
             </div>
           </div>
@@ -903,6 +1021,20 @@ export default function EvidenceReportPage() {
 
             {!isGenerating && (
               <div className="flex items-center gap-1.5 sm:gap-2">
+                {/* 0. Re-analyze / Regenerate Report Button */}
+                {profile && reportMarkdown && (
+                  <button
+                    onClick={() => startGeneratingReport(profile)}
+                    disabled={isGenerating}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 hover:border-amber-300 transition-all shadow-2xs cursor-pointer group whitespace-nowrap disabled:opacity-50"
+                    title="按当前最新病理指标重新生成循证报告"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-amber-600 transition-transform group-hover:-rotate-90 flex-shrink-0" />
+                    <span className="sm:hidden">重新分析</span>
+                    <span className="hidden sm:inline">重新分析报告</span>
+                  </button>
+                )}
+
                 {/* 1. Export / Print PDF Button */}
                 <button 
                   onClick={handleDirectPdfExport}
@@ -955,6 +1087,39 @@ export default function EvidenceReportPage() {
       {/* Main Page Layout Wrapper */}
       <div className="max-w-5xl xl:max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-8 sm:pb-12 print:pt-0 print:px-0">
 
+        {/* Stale Report Alert Banner (When calibrated profile updates desynchronize with cached report) */}
+        {isReportStale && !isGenerating && (
+          <div className="mb-4 bg-gradient-to-r from-amber-50 via-amber-50/90 to-yellow-50 border-2 border-amber-300 rounded-2xl p-4 sm:p-5 shadow-sm text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in print:hidden">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-extrabold text-sm sm:text-base text-slate-900">
+                    检测到病理指标已校对更新
+                  </h4>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] font-bold">
+                    当前展示为历史版本
+                  </span>
+                </div>
+                <p className="text-xs text-amber-900/80 mt-0.5 leading-relaxed">
+                  您最近在档案中微调或校对了病理指标，当前报告仍基于旧指标生成。建议立即按最新指标重新生成报告。
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+              <button
+                onClick={() => profile && startGeneratingReport(profile)}
+                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-95"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>按最新指标重新生成</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Pure printable & long-image exportable container (No trailing blank space) */}
         <div id="report-printable-area" ref={reportContainerRef} className="space-y-4 sm:space-y-5 bg-slate-50/90 p-3.5 sm:p-6 md:p-7 rounded-3xl border border-slate-200/90 shadow-sm print:bg-white print:border-none print:shadow-none print:p-0">
           
@@ -965,7 +1130,7 @@ export default function EvidenceReportPage() {
                 <span className="font-black text-blue-700 text-sm sm:text-base tracking-tight">知癌维基 ZhiaiWiki</span>
                 <span className="text-slate-300">|</span>
                 <span className="font-bold text-slate-800 text-xs sm:text-sm">
-                  {isBreast ? "乳腺肿瘤与乳腺癌" : isCrc ? "结直肠恶性肿瘤" : "肺结节与肺腺癌"}临床专属循证解读报告
+                  {getCancerMeta(profile).name}临床专属循证解读报告
                 </span>
               </div>
               {isLoadedFromCache && !isGenerating && cachedTime && (
@@ -1672,7 +1837,7 @@ export default function EvidenceReportPage() {
                 components={{
                   h2: ({ node: _node, children, ...props }) => {
                     const text = String(children || "");
-                    const isChecklist = text.includes("问诊清单") || text.includes("就医便签") || text.includes("3.");
+                    const isChecklist = text.includes("问诊清单") || text.includes("就医便签") || text.includes("问诊便签") || text.includes("门诊就医");
                     return (
                       <div className="mt-7 mb-4 pt-3 border-t border-slate-100 first:border-none first:pt-0">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50/90 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80">
@@ -1817,6 +1982,21 @@ export default function EvidenceReportPage() {
           </div>
         </div>
 
+          {/* Native React UI Warmth & Medical Care Card (Replaces LLM boilerplate tokens with modern human-centric design) */}
+          <div className="my-5 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-50/70 via-sky-50/50 to-blue-50/70 border border-teal-200/80 shadow-2xs text-slate-800">
+            <div className="flex items-center gap-2 mb-2 text-teal-800 font-bold text-xs uppercase tracking-wide">
+              <Heart className="w-4 h-4 text-rose-500 fill-rose-500 shrink-0" />
+              <span>知癌维基 · 临床关怀与康复寄语</span>
+            </div>
+            <p className="text-xs sm:text-[13px] leading-relaxed text-slate-700">
+              现代实体瘤精准诊疗已取得突破性进展。规范的手术根治、分期评估与长程生活质量随访构成了最坚实的生命防线。请您遵从主治医师团队医嘱，规律随访，保持平和乐观心态与均衡作息，知癌维基愿全程陪伴您的每一步康复之路。
+            </p>
+            <div className="mt-2.5 pt-2 border-t border-teal-100 flex items-center justify-between text-[11px] text-teal-700 font-medium flex-wrap gap-1">
+              <span>祝您早日康复，健康平安！</span>
+              <span className="font-bold">知癌维基 (ZhiaiWiki) 临床循证知识库团队 敬上</span>
+            </div>
+          </div>
+
           {/* Medical Disclaimer Stamp Footer inside report */}
           <div className="border-t border-slate-200/90 pt-3 text-[10px] text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-1">
             <span>免责声明：本报告由 知癌维基 (ZhiaiWiki) 临床循证推理引擎根据患者个体病理/影像与国际医学指南生成，仅供就医沟通参考。</span>
@@ -1936,7 +2116,7 @@ export default function EvidenceReportPage() {
                 <img src={ONCOPATH_LOGO_DATA_URI} alt="知癌维基 Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <div className="text-xs font-black tracking-wider text-slate-900">知癌维基 ZhiaiWiki · {isBreast ? "乳腺癌" : isCrc ? "结直肠癌" : "肺癌"}循证知识平台</div>
+                <div className="text-xs font-black tracking-wider text-slate-900">知癌维基 ZhiaiWiki · {getCancerMeta(profile).name}循证知识平台</div>
                 <div className="text-[10px] text-slate-500">门诊就医问诊便签卡 · 医患高效协同</div>
               </div>
             </div>

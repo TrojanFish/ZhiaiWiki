@@ -324,6 +324,8 @@ export interface EsophagealSpecificData {
 export interface BasePatientProfile {
   id?: string;
   userId?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
   age?: number | null;
   gender?: "female" | "male" | "unknown" | string | null;
   sex?: "female" | "male" | "unknown" | string | null;
