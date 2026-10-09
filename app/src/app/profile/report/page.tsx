@@ -1153,7 +1153,7 @@ export default function EvidenceReportPage() {
               <div className="text-[11px] text-slate-400 font-medium font-mono whitespace-nowrap">
                 <span className="hidden print:inline">报告归档时间: </span>
                 <span className="print:hidden">报告时间: </span>
-                <span>{new Date().toLocaleDateString('zh-CN')}</span>
+                <span suppressHydrationWarning>{new Date().toLocaleDateString('zh-CN')}</span>
               </div>
             </div>
           </div>
@@ -2121,7 +2121,7 @@ export default function EvidenceReportPage() {
               </div>
             </div>
             <div className="text-right">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+              <span suppressHydrationWarning className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                 {new Date().toLocaleDateString('zh-CN')}
               </span>
             </div>

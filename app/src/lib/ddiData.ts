@@ -8,7 +8,7 @@ export interface TargetedDrug {
   genericName: string;
   brandName: string;
   generation: string;
-  target: "EGFR" | "ALK" | "KRAS" | "ROS1" | "MET" | "RET" | "HER2";
+  target: "EGFR" | "ALK" | "KRAS" | "ROS1" | "MET" | "RET" | "HER2" | "未知靶点" | string;
   standardDosage: string;
   metabolismPathway: string;
   phDependent: boolean; // Is absorption reduced by elevated gastric pH (PPI/H2RA)
@@ -692,8 +692,22 @@ export const DDI_RULES: DdiRule[] = [
  */
 export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: string[] = []): DdiAnalysisResult {
   const safeChronicIds = Array.isArray(chronicDrugIds) ? chronicDrugIds : [];
-  const targeted = TARGETED_DRUGS.find(d => d.id === targetedDrugId) || TARGETED_DRUGS[0];
+  const foundTargeted = TARGETED_DRUGS.find(d => d.id === targetedDrugId);
+  const isUnknownTarget = !foundTargeted;
+
+  const targeted: TargetedDrug = foundTargeted || {
+    id: targetedDrugId || "unknown",
+    genericName: targetedDrugId ? `未收录抗肿瘤药物 (${targetedDrugId})` : "未指定抗肿瘤药物",
+    brandName: "待识别",
+    generation: "未知",
+    target: "未知靶点",
+    standardDosage: "遵医嘱",
+    metabolismPathway: "未知",
+    phDependent: false,
+  };
+
   const selectedChronic = ALL_CHRONIC_DRUGS.filter(d => safeChronicIds.includes(d.id));
+  const unverifiedChronicIds = safeChronicIds.filter(id => !ALL_CHRONIC_DRUGS.some(d => d.id === id));
 
   const interactions: Array<{ chronicDrug: ChronicDrug; rule: DdiRule }> = [];
   let severeCount = 0;
@@ -707,18 +721,31 @@ export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: st
       r.chronicDrugId === chronic.id
     );
 
-    // Default fallback if no specific rule is listed (considered general compatible with monitoring)
+    // Default fallback if no specific rule is listed
     if (!matchedRule) {
-      matchedRule = {
-        targetDrugIds: ["*"],
-        chronicDrugId: chronic.id,
-        riskLevel: "compatible_safe",
-        riskLabel: "通常安全 (常规监测)",
-        title: `${chronic.name} 与 ${targeted.genericName} 未见明确严重代谢冲突`,
-        mechanism: "两药在标准临床治疗剂量下未见重大 CYP3A4 通道抢占或吸收阻滞报告。",
-        clinicalGuidance: "可按原医嘱遵医嘱服用。用药期间注意常规随访监测肝肾功能即可。",
-        evidenceLevel: "FDA/NMPA说明书"
-      };
+      if (isUnknownTarget) {
+        matchedRule = {
+          targetDrugIds: ["*"],
+          chronicDrugId: chronic.id,
+          riskLevel: "timing_caution",
+          riskLabel: "风险未知 (需药师审核)",
+          title: `${chronic.name} 与未收录靶向药相互作用待查`,
+          mechanism: "当前抗肿瘤药物尚未收录于知识库，无法排除 CYP 代谢通道竞争或吸收相互作用。",
+          clinicalGuidance: "严禁在未经医师或临床药师审核情况下联合服用，建议咨询专科药师。",
+          evidenceLevel: "临床警示"
+        };
+      } else {
+        matchedRule = {
+          targetDrugIds: ["*"],
+          chronicDrugId: chronic.id,
+          riskLevel: "compatible_safe",
+          riskLabel: "通常安全 (常规监测)",
+          title: `${chronic.name} 与 ${targeted.genericName} 未见明确严重代谢冲突`,
+          mechanism: "两药在标准临床治疗剂量下未见重大 CYP3A4 通道抢占或吸收阻滞报告。",
+          clinicalGuidance: "可按原医嘱遵医嘱服用。用药期间注意常规随访监测肝肾功能即可。",
+          evidenceLevel: "FDA/NMPA说明书"
+        };
+      }
     }
 
     if (matchedRule.riskLevel === "severe_contraindication") severeCount++;
@@ -731,6 +758,33 @@ export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: st
     });
   }
 
+  // 2. Handle unverified chronic drugs
+  for (const unverifiedId of unverifiedChronicIds) {
+    const unverifiedDrug: ChronicDrug = {
+      id: unverifiedId,
+      name: `未知用药 (${unverifiedId})`,
+      aliases: [],
+      category: "diet_supplements",
+      categoryLabel: "未收录药物",
+      typicalUse: "未知合并用药"
+    };
+    const unknownRule: DdiRule = {
+      targetDrugIds: ["*"],
+      chronicDrugId: unverifiedId,
+      riskLevel: "timing_caution",
+      riskLabel: "风险未知 (需药师审核)",
+      title: `未知药物 (${unverifiedId}) 与抗肿瘤用药相互作用待查`,
+      mechanism: "该药物未被系统知识库收录，代谢途径与潜在排斥反应尚未明确。",
+      clinicalGuidance: "存在未收录药物，无法排除相互作用风险，严禁盲目联合服用，请向主管医师或药师咨询。",
+      evidenceLevel: "临床警示"
+    };
+    cautionCount++;
+    interactions.push({
+      chronicDrug: unverifiedDrug,
+      rule: unknownRule
+    });
+  }
+
   // Determine overall status
   let overallStatus: "danger" | "warning" | "safe" = "safe";
   let summaryText = "";
@@ -738,9 +792,17 @@ export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: st
   if (severeCount > 0) {
     overallStatus = "danger";
     summaryText = `检测到 ${severeCount} 项严重用药禁忌！存在极高药物失效或毒性剧增风险，请务必立即就医调整用药！`;
-  } else if (cautionCount > 0) {
+  } else if (isUnknownTarget || unverifiedChronicIds.length > 0 || cautionCount > 0) {
     overallStatus = "warning";
-    summaryText = `检测到 ${cautionCount} 项需错峰服药或调整的相互作用。请注意服药时间间隔，避免同杯水同吞。`;
+    if (isUnknownTarget && unverifiedChronicIds.length > 0) {
+      summaryText = `检测到未收录靶向药及 ${unverifiedChronicIds.length} 种未收录合并用药，存在未知相互作用风险，无法排除禁忌，请咨询主管医师或药师！`;
+    } else if (isUnknownTarget) {
+      summaryText = `当前抗肿瘤药物未被知识库收录，无法排查确切配伍禁忌，严禁盲目联合用药，请务必咨询主管医师或临床药师！`;
+    } else if (unverifiedChronicIds.length > 0) {
+      summaryText = `检测到 ${unverifiedChronicIds.length} 种未收录合并用药，无法排除相互作用风险。其余排查药物请注意核对。`;
+    } else {
+      summaryText = `检测到 ${cautionCount} 项需错峰服药或调整的相互作用。请注意服药时间间隔，避免同杯水同吞。`;
+    }
   } else {
     overallStatus = "safe";
     summaryText = `共排查 ${selectedChronic.length} 种日常用药，均处于安全相容区间，可遵医嘱正常规律服用！`;
@@ -752,7 +814,7 @@ export function checkDrugInteractions(targetedDrugId: string, chronicDrugIds: st
   return {
     targetedDrug: targeted,
     selectedChronicDrugs: selectedChronic,
-    totalChecked: selectedChronic.length,
+    totalChecked: selectedChronic.length + unverifiedChronicIds.length,
     severeCount,
     cautionCount,
     safeCount,

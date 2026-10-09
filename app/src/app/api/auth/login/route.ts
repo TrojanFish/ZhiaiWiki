@@ -88,7 +88,8 @@ export async function POST(request: Request) {
     return response;
   } catch (error: any) {
     console.error("Error during user login:", error);
-    return NextResponse.json({ success: false, detail: error.message || "登录服务异常，请稍后重试" }, { status: 500 });
+    const safeDetail = process.env.NODE_ENV === 'production' ? "登录服务异常，请稍后重试" : (error.message || "登录服务异常，请稍后重试");
+    return NextResponse.json({ success: false, detail: safeDetail }, { status: 500 });
   }
 }
 

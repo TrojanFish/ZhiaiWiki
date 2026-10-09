@@ -15,17 +15,7 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
   const [step, setStep] = useState(1);
   const [_hasDraftRestored, _setHasDraftRestored] = useState(false);
   const [form, setForm] = useState<Partial<PatientProfile>>(() => {
-    if (initialData) return initialData;
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          return { ...parsed };
-        }
-      } catch {}
-    }
-    return {
+    return initialData || {
       gender: "female",
       stage: "IA1",
       morphology: "mixed_ggo",
@@ -40,6 +30,19 @@ export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps)
       histology: [{ type: "papillary" }, { type: "acinar" }],
     };
   });
+
+  // Client-side mounted draft hydration to guarantee zero SSR mismatch
+  useEffect(() => {
+    if (initialData || typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setForm(prev => ({ ...prev, ...parsed }));
+        _setHasDraftRestored(true);
+      }
+    } catch {}
+  }, [initialData]);
 
   // Auto-save draft on form changes
   useEffect(() => {

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { isCookieSecure } from './userAuth';
 
 const DEFAULT_GUEST_SECRET = 'oncopath_guest_session_secret_key_2026';
-const GUEST_SECRET = process.env.ADMIN_SECRET || DEFAULT_GUEST_SECRET;
+const GUEST_SECRET = process.env.GUEST_SESSION_SECRET || process.env.ADMIN_SECRET || DEFAULT_GUEST_SECRET;
 export const GUEST_COOKIE_NAME = 'oncopath_guest_token';
 export const GUEST_COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
 

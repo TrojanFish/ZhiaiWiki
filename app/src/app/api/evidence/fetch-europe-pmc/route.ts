@@ -99,6 +99,7 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error('Error in /api/evidence/fetch-europe-pmc:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Europe PMC 抓取失败' }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? 'Europe PMC 同步服务异常，请稍后重试' : (error.message || 'Europe PMC 抓取失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

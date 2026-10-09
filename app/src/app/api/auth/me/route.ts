@@ -35,6 +35,7 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error("Error in /api/auth/me:", error);
-    return NextResponse.json({ authenticated: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "身份验证服务异常" : (error.message || "未知错误");
+    return NextResponse.json({ authenticated: false, error: safeError }, { status: 500 });
   }
 }

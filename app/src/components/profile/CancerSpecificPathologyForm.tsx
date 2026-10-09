@@ -4,13 +4,7 @@ import React from "react";
 import {
   Activity,
   Layers,
-  AlertTriangle,
-  ShieldCheck,
   Microscope,
-  Info,
-  Check,
-  Stethoscope,
-  Ruler,
   Dna,
 } from "lucide-react";
 import type { CancerType } from "@/lib/types";

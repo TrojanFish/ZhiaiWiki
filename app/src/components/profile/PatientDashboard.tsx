@@ -43,6 +43,7 @@ import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 import ProfileExportModal from "./ProfileExportModal";
 import { DdiCheckerVisual } from "@/components/wiki/visuals/DdiCheckerVisual";
 import { MolecularProfileCard } from "./MolecularProfileCard";
+import LegalDisclaimerBadge from "@/components/common/LegalDisclaimerBadge";
 
 
 // Dynamically import ReportUploader modal for instant dashboard rendering
@@ -1167,6 +1168,9 @@ export default function PatientDashboard() {
           </button>
         </div>
       </div>
+
+      {/* Clinical Evidence Legal Disclaimer */}
+      <LegalDisclaimerBadge variant="banner" className="my-2" />
 
       {/* Dual Primary Multi-Slot Switcher Pill Bar */}
       <DualPrimarySwitcher

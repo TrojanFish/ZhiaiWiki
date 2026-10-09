@@ -149,6 +149,7 @@ ${article.abstractText || ""}
     return NextResponse.json({ success: false, error: "未知的 action 操作" }, { status: 400 });
   } catch (error: any) {
     console.error("Error in fetch-pubmed route:", error);
-    return NextResponse.json({ success: false, error: error.message || "PubMed 检索抓取失败" }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "PubMed 抓取服务异常，请稍后重试" : (error.message || "PubMed 检索抓取失败");
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

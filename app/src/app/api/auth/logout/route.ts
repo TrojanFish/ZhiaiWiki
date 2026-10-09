@@ -12,6 +12,7 @@ export async function POST() {
     return response;
   } catch (error: any) {
     console.error("Error in /api/auth/logout:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "退出服务异常" : (error.message || "未知错误");
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

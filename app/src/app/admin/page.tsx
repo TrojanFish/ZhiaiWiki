@@ -552,29 +552,6 @@ export default function AdminPage() {
                 </div>
               )}
 
-              {/* Development & Testing Credentials Helper */}
-              <div className="p-3 bg-blue-50/80 border border-blue-200/80 rounded-xl text-xs text-blue-900 flex items-start gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-accent-blue shrink-0 mt-0.5" />
-                <div className="flex-1 space-y-1">
-                  <div className="font-semibold flex items-center justify-between">
-                    <span>系统默认管理员凭据</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUsername("admin");
-                        setPassword("OncoPath2026!");
-                      }}
-                      className="text-[11px] text-accent-blue font-bold hover:underline cursor-pointer"
-                    >
-                      一键填入
-                    </button>
-                  </div>
-                  <div className="text-[11px] text-blue-700 font-mono">
-                    账号: <span className="font-bold">admin</span> · 密码: <span className="font-bold">OncoPath2026!</span>
-                  </div>
-                </div>
-              </div>
-
               <button
                 type="submit"
                 disabled={isLoggingIn}

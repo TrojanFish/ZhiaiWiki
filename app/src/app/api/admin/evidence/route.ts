@@ -56,7 +56,8 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error('Error fetching admin evidence:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '获取文献数据失败，请稍后重试' : (error.message || '获取文献数据失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -235,7 +236,8 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error('Error saving admin evidence:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '保存文献数据失败，请稍后重试' : (error.message || '保存文献数据失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -259,6 +261,7 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true, message: "Study deleted successfully" });
   } catch (error: any) {
     console.error('Error deleting study:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? '删除文献失败，请稍后重试' : (error.message || '删除文献失败');
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

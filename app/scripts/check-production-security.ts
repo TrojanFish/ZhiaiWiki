@@ -108,14 +108,19 @@ if (hasStaging && hasVdt) {
 }
 
 // 3. PIPL & Data Security Guardrails
-const sanitizePath = path.join(srcDir, 'lib/piplSanitizer.ts');
-if (fs.existsSync(sanitizePath)) {
-  const sanitizeContent = fs.readFileSync(sanitizePath, 'utf8');
-  if (sanitizeContent.includes('sanitizePII') || sanitizeContent.includes('maskPatientData')) {
-    recordCheck('数据安全', 'PIPL 个人隐私脱敏引擎', 'CRITICAL', 'PASS', '存在合规的病历文本 PIPL 脱敏与姓名/身份证/电话打码脱敏模块。');
+const sanitizePath = path.join(srcDir, 'lib/privacy.ts');
+const altSanitizePath = path.join(srcDir, 'lib/piplSanitizer.ts');
+const targetSanitizePath = fs.existsSync(sanitizePath) ? sanitizePath : (fs.existsSync(altSanitizePath) ? altSanitizePath : null);
+
+if (targetSanitizePath) {
+  const sanitizeContent = fs.readFileSync(targetSanitizePath, 'utf8');
+  if (sanitizeContent.includes('sanitizeClinicalText') || sanitizeContent.includes('sanitizePatientProfile') || sanitizeContent.includes('sanitizePII')) {
+    recordCheck('数据安全', 'PIPL 个人隐私脱敏引擎', 'CRITICAL', 'PASS', '存在合规的病历文本 PIPL 脱敏与姓名/身份证/电话打码脱敏模块 (privacy.ts)。');
   } else {
     recordCheck('数据安全', 'PIPL 个人隐私脱敏引擎', 'WARNING', 'WARN', '未识别到标准 PII 脱敏导出函数。');
   }
+} else {
+  recordCheck('数据安全', 'PIPL 个人隐私脱敏引擎', 'CRITICAL', 'FAIL', '未找到 PIPL 个人隐私脱敏引擎 (src/lib/privacy.ts)！');
 }
 
 // Print Results Table

@@ -27,7 +27,8 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error("Admin fetch love relay failed:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "获取记录失败，请稍后重试" : (error.message || "获取记录失败");
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -78,7 +79,8 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ success: false, error: "未知操作类型" }, { status: 400 });
   } catch (error: any) {
     console.error("Admin update love relay failed:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "更新记录失败，请稍后重试" : (error.message || "更新记录失败");
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }
 
@@ -110,6 +112,7 @@ export async function DELETE(request: Request) {
     });
   } catch (error: any) {
     console.error("Admin delete love relay failed:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "删除记录失败，请稍后重试" : (error.message || "删除记录失败");
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

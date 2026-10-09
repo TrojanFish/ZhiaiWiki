@@ -15,7 +15,7 @@ export async function GET() {
     dbLatencyMs = Date.now() - dbStart;
     dbStatus = "connected";
   } catch (err: any) {
-    dbStatus = `degraded: ${err.message || 'error'}`;
+    dbStatus = process.env.NODE_ENV === 'production' ? 'degraded' : `degraded: ${err.message || 'error'}`;
   }
 
   const geminiConfigured = !!(process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY);

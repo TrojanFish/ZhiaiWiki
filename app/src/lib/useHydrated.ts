@@ -27,9 +27,13 @@ export function useMountedProfile<T>(loader: () => T | null, fallback: T | null 
   const [data, setData] = useState<T | null>(fallback);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    setData(loader());
-  }, [loader]);
+    if (!isHydrated || typeof window === "undefined") return;
+    try {
+      setData(loader());
+    } catch (e) {
+      console.warn("Failed to load mounted profile:", e);
+    }
+  }, [isHydrated]);
 
   return { data, isHydrated };
 }

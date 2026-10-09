@@ -113,6 +113,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, data: resultData });
   } catch (error: any) {
     console.error('Error parsing PDF paper via Gemini:', error);
-    return NextResponse.json({ success: false, error: error.message || "PDF 解析失败" }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "PDF 解析服务异常，请重试" : (error.message || "PDF 解析失败");
+    return NextResponse.json({ success: false, error: safeError }, { status: 500 });
   }
 }

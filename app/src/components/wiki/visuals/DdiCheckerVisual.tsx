@@ -23,6 +23,7 @@ import {
   ALL_CHRONIC_DRUGS
 } from "@/lib/ddiRegistry";
 import type { CancerType } from "@/lib/types";
+import LegalDisclaimerBadge from "@/components/common/LegalDisclaimerBadge";
 
 export interface DdiCheckerVisualProps {
   initialTargetDrugId?: string;
@@ -250,6 +251,9 @@ export function DdiCheckerVisual({
             </div>
           )
         )}
+
+      {/* Clinical Pharmacovigilance Disclaimer */}
+      <LegalDisclaimerBadge variant="banner" className="mb-1" />
 
       {/* Step 1: Target Drug Selection */}
       <div className="space-y-2">

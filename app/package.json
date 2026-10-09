@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint src scripts",
+    "typecheck": "tsc --noEmit",
     "test:unit": "vitest run",
     "test:guardrails": "tsx scripts/test-guardrails.ts",
     "test:simulation": "tsx scripts/comprehensive-simulation.ts",

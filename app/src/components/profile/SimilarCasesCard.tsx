@@ -5,7 +5,6 @@ import {
   Lightbulb,
   BookOpen,
   Sun,
-  ShieldCheck,
   Star,
   Users,
   ExternalLink,

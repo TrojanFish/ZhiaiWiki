@@ -71,6 +71,7 @@ export async function GET(request: Request) {
     return NextResponse.json(results);
   } catch (error: any) {
     console.error("Error in /api/evidence/search:", error);
-    return NextResponse.json({ error: error.message || "检索文献失败" }, { status: 500 });
+    const safeError = process.env.NODE_ENV === 'production' ? "检索文献失败，请稍后重试" : (error.message || "检索文献失败");
+    return NextResponse.json({ error: safeError }, { status: 500 });
   }
 }
