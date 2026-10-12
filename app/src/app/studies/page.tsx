@@ -438,6 +438,69 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "esophageal") {
+        switch (selectedTopic) {
+          case "surgery":
+            return (
+              factors.includes("SURGERY") ||
+              factors.includes("RESECTION") ||
+              factors.includes("CHECKMATE-577") ||
+              factors.includes("577") ||
+              fullText.includes("CHECKMATE") ||
+              fullText.includes("577") ||
+              fullText.includes("切除") ||
+              fullText.includes("手术") ||
+              fullText.includes("辅助")
+            );
+          case "targeted":
+            return (
+              factors.includes("NEOCRTEC5010") ||
+              factors.includes("CROSS") ||
+              factors.includes("NEOADJUVANT") ||
+              fullText.includes("NEOCRTEC") ||
+              fullText.includes("CROSS") ||
+              fullText.includes("新辅助") ||
+              fullText.includes("放化疗")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("ESCORT-1ST") ||
+              factors.includes("RATIONALE-306") ||
+              factors.includes("JUPITER-06") ||
+              factors.includes("CAMRELIZUMAB") ||
+              factors.includes("TISLELIZUMAB") ||
+              fullText.includes("ESCORT") ||
+              fullText.includes("RATIONALE") ||
+              fullText.includes("卡瑞利珠单抗") ||
+              fullText.includes("替雷利珠单抗") ||
+              fullText.includes("一线免疫")
+            );
+          case "pathology":
+            return (
+              factors.includes("ESCC") ||
+              factors.includes("SQUAMOUS") ||
+              factors.includes("ADENOCARCINOMA") ||
+              factors.includes("LYMPH_NODE") ||
+              fullText.includes("鳞癌") ||
+              fullText.includes("腺癌") ||
+              fullText.includes("分化") ||
+              fullText.includes("淋巴结")
+            );
+          case "imaging":
+            return (
+              factors.includes("CT") ||
+              factors.includes("EUS") ||
+              factors.includes("ESOPHAGOGRAM") ||
+              fullText.includes("CT") ||
+              fullText.includes("超声内镜") ||
+              fullText.includes("钡餐") ||
+              fullText.includes("穿孔")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -533,6 +596,13 @@ export default function StudiesPage() {
     { id: "pathology", label: "KRAS/BRCA 靶点与标志物", icon: Microscope },
     { id: "immunotherapy", label: "晚期一线 AG 方案", icon: ShieldCheck },
     { id: "imaging", label: "薄层 CT 与交界可切除", icon: Activity },
+  ] : cancerType === "esophageal" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "surgery", label: "根治手术与术后辅助", icon: Layers },
+    { id: "targeted", label: "新辅助放化疗 (CROSS)", icon: Target },
+    { id: "immunotherapy", label: "晚期一线免疫联合", icon: ShieldCheck },
+    { id: "pathology", label: "鳞癌/腺癌病理分型", icon: Microscope },
+    { id: "imaging", label: "超声内镜与管壁浸润", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -575,6 +645,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的原发性胃癌里程碑试验（CheckMate-649、ToGA、SPOTLIGHT、KEYNOTE-811、FLOT4 等）。为 HER2/CLDN18.2 靶向、PD-L1 CPS 免疫分层与 D2 根治决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "pancreatic" ? (
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性胰腺导管腺癌里程碑试验（PRODIGE 24、MPACT、POLO、NAPOLI-3 等）。为 R0 根治术后辅助化疗、BRCA 维持治疗与交界转化分期决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "esophageal" ? (
+            <>严格收录 <strong>NEJM、Lancet、JCO、JAMA</strong> 等顶级期刊发表的原发性食管癌里程碑试验（CheckMate-577、NEOCRTEC5010、CROSS、ESCORT-1st、RATIONALE-306 等）。为新辅助放化疗、术后免疫维持与晚期一线联合决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
