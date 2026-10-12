@@ -1228,20 +1228,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {parsedData?.isManualEntry ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setParsedData(null);
-                  hasInitializedRef.current = null;
-                  if (onSwitchToUpload) onSwitchToUpload();
-                }}
-                className="text-xs text-blue-600 hover:text-blue-800 font-bold px-3 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-50 transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <Camera className="w-3.5 h-3.5 text-blue-600" />
-                <span>切换为拍照解析</span>
-              </button>
-            ) : (
+            {!parsedData?.isManualEntry && (
               <button
                 type="button"
                 onClick={() => {
