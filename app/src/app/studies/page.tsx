@@ -230,6 +230,73 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "liver") {
+        switch (selectedTopic) {
+          case "surgery":
+            return (
+              factors.includes("SURGERY") ||
+              factors.includes("RESECTION") ||
+              factors.includes("TRANSPLANT") ||
+              factors.includes("MILAN") ||
+              fullText.includes("切除") ||
+              fullText.includes("移植") ||
+              fullText.includes("MILAN") ||
+              fullText.includes("SURGERY")
+            );
+          case "targeted":
+            return (
+              factors.includes("IMBRAVE") ||
+              factors.includes("ORIENT-32") ||
+              factors.includes("REFLECT") ||
+              factors.includes("LENVATINIB") ||
+              factors.includes("SORAFENIB") ||
+              factors.includes("ATEZOLIZUMAB") ||
+              factors.includes("BEVACIZUMAB") ||
+              fullText.includes("IMBRAVE") ||
+              fullText.includes("ORIENT") ||
+              fullText.includes("REFLECT") ||
+              fullText.includes("仑伐替尼") ||
+              fullText.includes("索拉非尼") ||
+              fullText.includes("阿替利珠单抗") ||
+              fullText.includes("信迪利单抗")
+            );
+          case "pathology":
+            return (
+              factors.includes("TACE") ||
+              factors.includes("HAIC") ||
+              factors.includes("INTERVENTION") ||
+              fullText.includes("TACE") ||
+              fullText.includes("HAIC") ||
+              fullText.includes("介入") ||
+              fullText.includes("灌注")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("HIMALAYA") ||
+              factors.includes("CHECKMATE-040") ||
+              factors.includes("DURVALUMAB") ||
+              factors.includes("TREMELIMUMAB") ||
+              fullText.includes("HIMALAYA") ||
+              fullText.includes("STRIDE") ||
+              fullText.includes("双免疫") ||
+              fullText.includes("免疫")
+            );
+          case "imaging":
+            return (
+              factors.includes("MRI") ||
+              factors.includes("CT") ||
+              factors.includes("MVI") ||
+              factors.includes("AFP") ||
+              fullText.includes("MRI") ||
+              fullText.includes("造影") ||
+              fullText.includes("微血管侵犯") ||
+              fullText.includes("AFP")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -304,6 +371,13 @@ export default function StudiesPage() {
     { id: "pathology", label: "辅助化疗周期与分期", icon: Microscope },
     { id: "immunotherapy", label: "dMMR/MSI-H 免疫单药", icon: ShieldCheck },
     { id: "imaging", label: "直肠高分辨 MRI 与 CRM", icon: Activity },
+  ] : cancerType === "liver" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "targeted", label: "一线靶免联合方案", icon: Target },
+    { id: "pathology", label: "TACE/HAIC 介入灌注", icon: Microscope },
+    { id: "immunotherapy", label: "双免疫与维持治疗", icon: ShieldCheck },
+    { id: "surgery", label: "手术切除与肝移植", icon: Layers },
+    { id: "imaging", label: "普美显 MRI 与 MVI", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -337,6 +411,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的里程碑多中心 RCT（TAILORx、RxPONDER、MonarchE、DESTINY-Breast 等）。为乳腺癌精准分型、免除过度化疗与强化靶向提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "colorectal" ? (
             <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的结直肠癌里程碑试验（IDEA、MOSAIC、KEYNOTE-177、CALGB 80405、RAPIDO 等）。为辅助化疗减毒、免疫免化疗与保肛策略提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "liver" ? (
+            <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性肝细胞癌里程碑试验（IMbrave150、ORIENT-32、REFLECT、HIMALAYA、LEAP-002 等）。为晚期一线靶免联合、介入转化与长程病毒抑制提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
