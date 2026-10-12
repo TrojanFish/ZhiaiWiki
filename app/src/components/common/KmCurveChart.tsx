@@ -145,9 +145,9 @@ export function KmCurveChart({
         </div>
 
         {/* Statistical Summary Callout Chip */}
-        {series.some(s => s.hr) && (
+        {series.some(s => typeof s.hr === "number") && (
           <div className="flex items-center gap-2 shrink-0">
-            {series.filter(s => s.hr).map((s, idx) => (
+            {series.filter((s): s is KMSeries & { hr: number } => typeof s.hr === "number").map((s, idx) => (
               <div key={idx} className="p-2 sm:px-3 sm:py-2 rounded-2xl bg-gradient-to-br from-blue-50/80 to-indigo-50/50 border border-blue-200/80 shadow-2xs">
                 <div className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider">
                   复发风险降低 (HR)
