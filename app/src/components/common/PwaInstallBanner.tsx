@@ -54,30 +54,59 @@ export function PwaInstallBanner() {
         return;
       }
 
-      // Check if user dismissed recently
-      const dismissedTime = localStorage.getItem("zhiaiwiki_pwa_dismissed");
-      if (dismissedTime && Date.now() - Number(dismissedTime) < 7 * 24 * 60 * 60 * 1000) {
-        return;
+      // Check if user dismissed permanently, in this session, or within 30 days
+      try {
+        if (sessionStorage.getItem("zhiaiwiki_pwa_session_dismissed")) {
+          return;
+        }
+        const dismissedVal = localStorage.getItem("zhiaiwiki_pwa_dismissed") || localStorage.getItem("oncopath_pwa_dismissed");
+        if (dismissedVal === "permanent") {
+          return;
+        }
+        if (dismissedVal) {
+          const time = Number(dismissedVal);
+          if (!isNaN(time) && Date.now() - time < 30 * 24 * 60 * 60 * 1000) {
+            return;
+          }
+        }
+      } catch {
+        // Fallback for restricted private storage mode
       }
     }
 
-    // 3. Listen for beforeinstallprompt
+    // 3. Listen for beforeinstallprompt with gentle 8-second delay
+    let timer: ReturnType<typeof setTimeout> | null = null;
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowBanner(true);
+
+      // Do not interrupt the user immediately upon entering the page; wait 8 seconds
+      timer = setTimeout(() => {
+        try {
+          const isSession = sessionStorage.getItem("zhiaiwiki_pwa_session_dismissed");
+          const dismissedVal = localStorage.getItem("zhiaiwiki_pwa_dismissed") || localStorage.getItem("oncopath_pwa_dismissed");
+          if (isSession || dismissedVal === "permanent") return;
+          if (dismissedVal && Date.now() - Number(dismissedVal) < 30 * 24 * 60 * 60 * 1000) return;
+        } catch {}
+        setShowBanner(true);
+      }, 8000);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     window.addEventListener("appinstalled", () => {
+      if (timer) clearTimeout(timer);
       setShowBanner(false);
       setDeferredPrompt(null);
       setIsInstalled(true);
+      try {
+        localStorage.setItem("zhiaiwiki_pwa_dismissed", "permanent");
+      } catch {}
       console.log("[PWA] ZhiaiWiki was installed successfully!");
     });
 
     return () => {
+      if (timer) clearTimeout(timer);
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     };
   }, []);
@@ -87,6 +116,11 @@ export function PwaInstallBanner() {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     console.log("[PWA] User response to install prompt:", outcome);
+    if (outcome === "accepted") {
+      try {
+        localStorage.setItem("zhiaiwiki_pwa_dismissed", "permanent");
+      } catch {}
+    }
     setDeferredPrompt(null);
     setShowBanner(false);
   };
@@ -94,7 +128,20 @@ export function PwaInstallBanner() {
   const handleDismiss = () => {
     setShowBanner(false);
     if (typeof window !== "undefined") {
-      localStorage.setItem("zhiaiwiki_pwa_dismissed", Date.now().toString());
+      try {
+        sessionStorage.setItem("zhiaiwiki_pwa_session_dismissed", "1");
+        localStorage.setItem("zhiaiwiki_pwa_dismissed", Date.now().toString());
+      } catch {}
+    }
+  };
+
+  const handleNeverShowAgain = () => {
+    setShowBanner(false);
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("zhiaiwiki_pwa_session_dismissed", "1");
+        localStorage.setItem("zhiaiwiki_pwa_dismissed", "permanent");
+      } catch {}
     }
   };
 
@@ -132,10 +179,17 @@ export function PwaInstallBanner() {
             </button>
             <button
               type="button"
-              onClick={handleDismiss}
-              className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer"
+              onClick={handleNeverShowAgain}
+              className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium transition-colors cursor-pointer border border-slate-700/60"
             >
-              稍后提示
+              不再提示
+            </button>
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="px-2 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer"
+            >
+              稍后
             </button>
           </div>
         </div>
