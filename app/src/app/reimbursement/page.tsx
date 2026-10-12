@@ -621,44 +621,46 @@ export default function ReimbursementPage() {
       {/* Main Content Area (Standard max-w-7xl with Responsive Card Rhythm) */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         
-        {/* Segmented Navigation Tabs Bar (Scrollable) */}
-        <div className="bg-white p-1.5 sm:p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md bg-white/95">
+        {/* 一体化胶囊分段导航栏 (Sticky 浮动滑轨) */}
+        <div className="bg-slate-100/90 p-1 sm:p-1.5 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-1 overflow-x-auto no-scrollbar sticky top-20 z-20 backdrop-blur-md">
           <button
             onClick={() => setActiveTab("reimbursement_table")}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer select-none active:scale-[0.98] ${
               activeTab === "reimbursement_table" 
-                ? "bg-blue-600 text-white shadow-xs" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5 font-extrabold" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
             }`}
           >
-            <FileText className="w-3.5 h-3.5 shrink-0" />
+            <FileText className={`w-3.5 h-3.5 shrink-0 ${activeTab === "reimbursement_table" ? "text-blue-600" : "text-slate-400"}`} />
             <span>1. 特药目录与限定红线</span>
           </button>
 
           <button
             onClick={() => setActiveTab("calculator")}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer select-none active:scale-[0.98] ${
               activeTab === "calculator" 
-                ? "bg-blue-600 text-white shadow-xs" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5 font-extrabold" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
             }`}
           >
-            <Calculator className="w-3.5 h-3.5 shrink-0" />
+            <Calculator className={`w-3.5 h-3.5 shrink-0 ${activeTab === "calculator" ? "text-blue-600" : "text-slate-400"}`} />
             <span>2. 自负费用在线测算器</span>
           </button>
 
           <button
             onClick={() => setActiveTab("materials")}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer select-none active:scale-[0.98] ${
               activeTab === "materials" 
-                ? "bg-blue-600 text-white shadow-xs" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5 font-extrabold" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
             }`}
           >
-            <FileCheck className="w-3.5 h-3.5 shrink-0" />
+            <FileCheck className={`w-3.5 h-3.5 shrink-0 ${activeTab === "materials" ? "text-blue-600" : "text-slate-400"}`} />
             <span>3. 门慢门特盖章材料包</span>
             {checkedMaterials.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-xs bg-white/20 text-white font-mono">
+              <span className={`px-1.5 py-0.2 rounded-full text-xs font-mono ${
+                activeTab === "materials" ? "bg-blue-100 text-blue-800 font-bold" : "bg-slate-200 text-slate-700"
+              }`}>
                 {checkedMaterials.length}/6
               </span>
             )}
@@ -666,37 +668,37 @@ export default function ReimbursementPage() {
 
           <button
             onClick={() => setActiveTab("dual_channel")}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer select-none active:scale-[0.98] ${
               activeTab === "dual_channel" 
-                ? "bg-blue-600 text-white shadow-xs" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5 font-extrabold" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
             }`}
           >
-            <Building2 className="w-3.5 h-3.5 shrink-0" />
+            <Building2 className={`w-3.5 h-3.5 shrink-0 ${activeTab === "dual_channel" ? "text-blue-600" : "text-slate-400"}`} />
             <span>4. 双通道药房与异地就医</span>
           </button>
 
           <button
             onClick={() => setActiveTab("pap_guide")}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer select-none active:scale-[0.98] ${
               activeTab === "pap_guide" 
-                ? "bg-blue-600 text-white shadow-xs" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5 font-extrabold" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
             }`}
           >
-            <HeartHandshake className="w-3.5 h-3.5 shrink-0" />
+            <HeartHandshake className={`w-3.5 h-3.5 shrink-0 ${activeTab === "pap_guide" ? "text-rose-600" : "text-slate-400"}`} />
             <span>5. 官方 PAP 慈善赠药</span>
           </button>
 
           <button
             onClick={() => setActiveTab("faq")}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer select-none active:scale-[0.98] ${
               activeTab === "faq" 
-                ? "bg-blue-600 text-white shadow-xs" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5 font-extrabold" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
             }`}
           >
-            <HelpCircle className="w-3.5 h-3.5 shrink-0" />
+            <HelpCircle className={`w-3.5 h-3.5 shrink-0 ${activeTab === "faq" ? "text-amber-600" : "text-slate-400"}`} />
             <span>6. 医保避坑 FAQ</span>
           </button>
         </div>

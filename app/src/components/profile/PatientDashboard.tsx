@@ -3055,28 +3055,43 @@ export default function PatientDashboard() {
               </p>
 
               {availableSlots.length >= 2 && (
-                <div className="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                  <div className="font-bold text-slate-900 text-xs">检测到多原发肿瘤档案，请选择注销范围：</div>
-                  <label className="flex items-center gap-2 cursor-pointer text-slate-700">
-                    <input
-                      type="radio"
-                      name="deleteOption"
-                      checked={deleteOption === 'single'}
-                      onChange={() => setDeleteOption('single')}
-                      className="text-purple-600 focus:ring-purple-500"
-                    />
-                    <span>仅注销当前【{CancerRegistry.get(activeSlot)?.name || '当前癌种'}】档案（保留另一癌种病案）</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer text-rose-700">
-                    <input
-                      type="radio"
-                      name="deleteOption"
-                      checked={deleteOption === 'all'}
-                      onChange={() => setDeleteOption('all')}
-                      className="text-rose-600 focus:ring-rose-500"
-                    />
-                    <span>注销全部档案与所有数据（多原发均彻底清除）</span>
-                  </label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-900">检测到多原发档案，请选择注销范围：</span>
+                    <span className="text-[10px] text-slate-400 font-mono">共 {availableSlots.length} 个癌种病案</span>
+                  </div>
+                  {/* 一体化胶囊分段控制器 */}
+                  <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/90 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setDeleteOption('single')}
+                      className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
+                        deleteOption === 'single'
+                          ? "bg-white text-purple-900 shadow-xs ring-1 ring-purple-100"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <FileText className="w-3.5 h-3.5 text-purple-600" />
+                      <span>仅注销【{CancerRegistry.get(activeSlot)?.name || '当前癌种'}】</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteOption('all')}
+                      className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 select-none ${
+                        deleteOption === 'all'
+                          ? "bg-white text-rose-700 shadow-xs ring-1 ring-rose-200"
+                          : "text-slate-600 hover:text-rose-700"
+                      }`}
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                      <span>注销全部多原发</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 px-1">
+                    {deleteOption === 'single'
+                      ? `保留其他已建档癌种的数据，仅抹除当前【${CancerRegistry.get(activeSlot)?.name || '当前癌种'}】指标。`
+                      : '彻底抹除所有已登记实体瘤的病历、指标与推演记录，无法恢复。'}
+                  </p>
                 </div>
               )}
 

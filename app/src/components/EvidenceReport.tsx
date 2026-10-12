@@ -329,26 +329,29 @@ export default function EvidenceReport({
           </p>
         </div>
 
-        {/* Tier 3: Tabs 详细证据与随访规划 */}
-        <div className="flex gap-1.5 bg-white shadow-2xs rounded-2xl p-1.5 border border-slate-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
-          {(["overview", "factors", "studies", "followup"] as const).map((tab) => (
-            <button
-              key={tab}
-              id={`report-tab-${tab}`}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-[0.98] ${
-                activeTab === tab
-                  ? "btn-primary text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-              }`}
-            >
-              {tab === "overview" && <BarChart2 className="w-4 h-4" />}
-              {tab === "factors" && <Microscope className="w-4 h-4" />}
-              {tab === "studies" && <BookOpen className="w-4 h-4" />}
-              {tab === "followup" && <Calendar className="w-4 h-4" />}
-              <span>{tab === "overview" ? "风险概览" : tab === "factors" ? "病理因果" : tab === "studies" ? "匹配研究" : "随访建议"}</span>
-            </button>
-          ))}
+        {/* Tier 3: Tabs 详细证据与随访规划 - 一体化胶囊分段控制器 */}
+        <div className="flex p-1 sm:p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/90 shadow-inner overflow-x-auto whitespace-nowrap scrollbar-hide">
+          {(["overview", "factors", "studies", "followup"] as const).map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                id={`report-tab-${tab}`}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2 sm:py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-[0.98] select-none ${
+                  isActive
+                    ? "bg-white text-blue-700 shadow-xs ring-1 ring-black/5"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+                }`}
+              >
+                {tab === "overview" && <BarChart2 className={`w-4 h-4 ${isActive ? "text-blue-600" : "text-slate-400"}`} />}
+                {tab === "factors" && <Microscope className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-slate-400"}`} />}
+                {tab === "studies" && <BookOpen className={`w-4 h-4 ${isActive ? "text-sky-600" : "text-slate-400"}`} />}
+                {tab === "followup" && <Calendar className={`w-4 h-4 ${isActive ? "text-emerald-600" : "text-slate-400"}`} />}
+                <span>{tab === "overview" ? "风险概览" : tab === "factors" ? "病理因果" : tab === "studies" ? "匹配研究" : "随访建议"}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Tab Content */}

@@ -249,44 +249,35 @@ export default function SettingsModal({
             <span className="text-[10px] text-slate-400 font-mono">OpenCC 引擎实时转换</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          {/* 一体化胶囊分段控制器 */}
+          <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/90 shadow-2xs">
             <button
               type="button"
               onClick={() => setLang("cn")}
-              className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between ${
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 select-none ${
                 lang === "cn"
-                  ? "bg-indigo-50/80 border-indigo-300 ring-2 ring-indigo-200 text-indigo-950 font-bold shadow-2xs"
-                  : "bg-slate-50/80 hover:bg-slate-100 border-slate-200 text-slate-700"
+                  ? "bg-white text-indigo-950 shadow-xs ring-1 ring-indigo-200/80 font-extrabold"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <div>
-                <div className="text-xs font-bold">简体中文 (zh-CN)</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">国家医保与大陆标准</div>
-              </div>
+              <span>简体中文 (zh-CN)</span>
               {lang === "cn" && (
-                <span className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
-                  <Check className="w-2.5 h-2.5 stroke-[3]" />
-                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0" />
               )}
             </button>
 
             <button
               type="button"
               onClick={() => setLang("tw")}
-              className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between ${
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 select-none ${
                 lang === "tw"
-                  ? "bg-indigo-50/80 border-indigo-300 ring-2 ring-indigo-200 text-indigo-950 font-bold shadow-2xs"
-                  : "bg-slate-50/80 hover:bg-slate-100 border-slate-200 text-slate-700"
+                  ? "bg-white text-indigo-950 shadow-xs ring-1 ring-indigo-200/80 font-extrabold"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <div>
-                <div className="text-xs font-bold">繁體中文 (zh-TW)</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">港台繁體與國際習慣</div>
-              </div>
+              <span>繁體中文 (zh-TW)</span>
               {lang === "tw" && (
-                <span className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
-                  <Check className="w-2.5 h-2.5 stroke-[3]" />
-                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0" />
               )}
             </button>
           </div>
