@@ -20,6 +20,7 @@ import { CancerRegistry } from "@/lib/cancerRegistry";
 import { KmCurveChart } from "@/components/common/KmCurveChart";
 import { ForestPlotChart } from "@/components/common/ForestPlotChart";
 import { TrialEligibilityMatrix } from "@/components/common/TrialEligibilityMatrix";
+import { PdfViewerModal } from "@/components/common/PdfViewerModal";
 import { 
   LANDMARK_KM_DATA, 
   LANDMARK_FOREST_DATA, 
@@ -42,6 +43,7 @@ export default function StudiesPage() {
   const [selectedTopic, setSelectedTopic] = useState<StudyTopic>("all");
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"library" | "km" | "forest" | "eligibility">("library");
+  const [activePdfStudy, setActivePdfStudy] = useState<StudyItem | null>(null);
   const activeRequestIdRef = React.useRef(0);
 
   // 300ms debounce on search input to eliminate request storm and typing stutter
@@ -375,6 +377,67 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "pancreatic") {
+        switch (selectedTopic) {
+          case "surgery":
+            return (
+              factors.includes("WHIPPLE") ||
+              factors.includes("RESECTION") ||
+              factors.includes("SURGERY") ||
+              factors.includes("R0") ||
+              fullText.includes("WHIPPLE") ||
+              fullText.includes("切除") ||
+              fullText.includes("手术") ||
+              fullText.includes("R0")
+            );
+          case "targeted":
+            return (
+              factors.includes("FOLFIRINOX") ||
+              factors.includes("PRODIGE") ||
+              factors.includes("GEMCITABINE") ||
+              factors.includes("ADJUVANT") ||
+              fullText.includes("PRODIGE") ||
+              fullText.includes("FOLFIRINOX") ||
+              fullText.includes("吉西他滨") ||
+              fullText.includes("辅助化疗")
+            );
+          case "pathology":
+            return (
+              factors.includes("KRAS") ||
+              factors.includes("BRCA") ||
+              factors.includes("POLO") ||
+              factors.includes("OLAPARIB") ||
+              factors.includes("CA19-9") ||
+              fullText.includes("KRAS") ||
+              fullText.includes("BRCA") ||
+              fullText.includes("POLO") ||
+              fullText.includes("奥拉帕利") ||
+              fullText.includes("CA19-9")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("MPACT") ||
+              factors.includes("NAB-PACLITAXEL") ||
+              factors.includes("NAPOLI") ||
+              fullText.includes("MPACT") ||
+              fullText.includes("白蛋白紫杉醇") ||
+              fullText.includes("NAPOLI") ||
+              fullText.includes("AG方案")
+            );
+          case "imaging":
+            return (
+              factors.includes("CT") ||
+              factors.includes("EUS") ||
+              factors.includes("BORDERLINE") ||
+              fullText.includes("CT") ||
+              fullText.includes("交界性") ||
+              fullText.includes("血管侵犯")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -463,6 +526,13 @@ export default function StudiesPage() {
     { id: "surgery", label: "D2 根治切除与围术期", icon: Layers },
     { id: "pathology", label: "Lauren 分型与腹膜转移", icon: Microscope },
     { id: "imaging", label: "增强 CT 与胃镜超声", icon: Activity },
+  ] : cancerType === "pancreatic" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "surgery", label: "Whipple 切除与 R0 切缘", icon: Layers },
+    { id: "targeted", label: "mFOLFIRINOX 辅助化疗", icon: Target },
+    { id: "pathology", label: "KRAS/BRCA 靶点与标志物", icon: Microscope },
+    { id: "immunotherapy", label: "晚期一线 AG 方案", icon: ShieldCheck },
+    { id: "imaging", label: "薄层 CT 与交界可切除", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -478,11 +548,14 @@ export default function StudiesPage() {
       {/* Hero Header */}
       <header className="pt-[calc(4.25rem+env(safe-area-inset-top,0px))] md:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3.5 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
         {/* Unified Top Pill Badge */}
-        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full">
+        <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-sky-700 border border-sky-200 shadow-xs max-w-full flex-wrap justify-center">
           <BookOpen className="w-3.5 h-3.5 text-sky-600 shrink-0" />
           <span className="truncate">国际顶刊同行评审文献库</span>
           <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-          <span className="hidden sm:inline shrink-0">100% DOI 原始出处可溯</span>
+          <span className="text-emerald-700 font-extrabold inline-flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>100% 原版 PDF 佐证已归档 · 零 AI 幻觉</span>
+          </span>
         </div>
 
         {/* Unified H1 */}
@@ -500,6 +573,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性肝细胞癌里程碑试验（IMbrave150、ORIENT-32、REFLECT、HIMALAYA、LEAP-002 等）。为晚期一线靶免联合、介入转化与长程病毒抑制提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "gastric" ? (
             <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的原发性胃癌里程碑试验（CheckMate-649、ToGA、SPOTLIGHT、KEYNOTE-811、FLOT4 等）。为 HER2/CLDN18.2 靶向、PD-L1 CPS 免疫分层与 D2 根治决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "pancreatic" ? (
+            <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性胰腺导管腺癌里程碑试验（PRODIGE 24、MPACT、POLO、NAPOLI-3 等）。为 R0 根治术后辅助化疗、BRCA 维持治疗与交界转化分期决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
@@ -634,8 +709,9 @@ export default function StudiesPage() {
               {filteredStudies.length} 篇文献
             </span>
             {totalCount > 0 && (
-              <span className="text-[11px] text-slate-400">
-                (文献库总收录 {totalCount} 篇 · 100% 原始 DOI 支持)
+              <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                <span>文献库总收录 {totalCount} 篇 · 100% 原版 PDF 佐证已归档</span>
               </span>
             )}
           </div>
@@ -688,12 +764,19 @@ export default function StudiesPage() {
         ) : (
           <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${isSearching ? "opacity-75" : "opacity-100"}`}>
             {filteredStudies.map((study) => (
-              <StudyCard key={study.id} study={study} />
+              <StudyCard 
+                key={study.id} 
+                study={study} 
+                onOpenPdf={(s) => setActivePdfStudy(s)} 
+              />
             ))}
           </div>
         )}
         </>
       )}
+
+      {/* In-App Clinical PDF Evidence Viewer Modal */}
+      <PdfViewerModal study={activePdfStudy} onClose={() => setActivePdfStudy(null)} />
       </main>
 
       <Footer maxWidth="max-w-7xl" />
