@@ -879,30 +879,30 @@ export default function PatientDashboard() {
                 ? `直接手动输入各项关键临床与病理指标，系统将实时推演 ${CancerRegistry.get(activeSlot)?.guidelineStandard || '最新国际权威临床分期'} 与证据指南`
                 : `导入病理诊断与影像报告，系统将自动进行【${CancerRegistry.get(activeSlot)?.name || '原发'}】临床要素解析与指南循证对齐`}
             </p>
-            <div className="flex items-center justify-center gap-2 mt-4">
+            <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/80 mt-4 shadow-2xs">
               <button
                 type="button"
                 onClick={() => setManualDirectMode(false)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   !manualDirectMode
                     ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
                 <Camera className="w-3.5 h-3.5" />
-                <span>拍照/文本智能解析</span>
+                <span>智能解析</span>
               </button>
               <button
                 type="button"
                 onClick={() => setManualDirectMode(true)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   manualDirectMode
                     ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
-                <Edit3 className="w-3.5 h-3.5 text-blue-600" />
-                <span>直接手动填报指标 (无需报告)</span>
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>手动填报</span>
               </button>
             </div>
           </div>
