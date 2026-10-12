@@ -675,6 +675,90 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "endometrial") {
+        switch (selectedTopic) {
+          case "immunotherapy":
+            return (
+              factors.includes("RUBY") ||
+              factors.includes("RUBY研究") ||
+              factors.includes("DOSTARLIMAB") ||
+              factors.includes("DMMR") ||
+              factors.includes("MSI-H") ||
+              factors.includes("多塔利单抗") ||
+              factors.includes("无进展生存期翻倍") ||
+              fullText.includes("RUBY") ||
+              fullText.includes("多塔利单抗") ||
+              fullText.includes("DMMR") ||
+              fullText.includes("MSI-H") ||
+              fullText.includes("免疫")
+            );
+          case "pathology":
+            return (
+              factors.includes("PORTEC-4A") ||
+              factors.includes("POLEMUT") ||
+              factors.includes("FIGO 2023分子分型") ||
+              factors.includes("P53") ||
+              factors.includes("NSMP") ||
+              factors.includes("MMRD") ||
+              factors.includes("分子分型") ||
+              fullText.includes("PORTEC-4A") ||
+              fullText.includes("POLE") ||
+              fullText.includes("P53") ||
+              fullText.includes("分子分型") ||
+              fullText.includes("四分法")
+            );
+          case "surgery":
+            return (
+              factors.includes("SENTINEL") ||
+              factors.includes("LYMPH_NODE") ||
+              factors.includes("SURGERY") ||
+              factors.includes("前哨淋巴结") ||
+              factors.includes("全子宫切除") ||
+              factors.includes("分期手术") ||
+              fullText.includes("前哨淋巴结") ||
+              fullText.includes("切除") ||
+              fullText.includes("手术") ||
+              fullText.includes("淋巴结清扫") ||
+              fullText.includes("保育")
+            );
+          case "targeted":
+            return (
+              factors.includes("KEYNOTE-775") ||
+              factors.includes("KEYNOTE775") ||
+              factors.includes("LENVATINIB") ||
+              factors.includes("PEMBROLIZUMAB") ||
+              factors.includes("PMMR") ||
+              factors.includes("仑伐替尼") ||
+              factors.includes("帕博利珠单抗") ||
+              factors.includes("HER2") ||
+              fullText.includes("KEYNOTE-775") ||
+              fullText.includes("775") ||
+              fullText.includes("仑伐替尼") ||
+              fullText.includes("帕博利珠单抗") ||
+              fullText.includes("PMMR") ||
+              fullText.includes("靶向")
+            );
+          case "imaging":
+            return (
+              factors.includes("PORTEC-3") ||
+              factors.includes("PORTEC3") ||
+              factors.includes("BRACHYTHERAPY") ||
+              factors.includes("CCRT") ||
+              factors.includes("MRI") ||
+              factors.includes("后装") ||
+              factors.includes("放疗") ||
+              factors.includes("同步放化疗") ||
+              fullText.includes("PORTEC-3") ||
+              fullText.includes("放疗") ||
+              fullText.includes("后装") ||
+              fullText.includes("肌层浸润") ||
+              fullText.includes("MRI")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -791,6 +875,13 @@ export default function StudiesPage() {
     { id: "surgery", label: "根治切除与 LACC 警示", icon: Layers },
     { id: "pathology", label: "CCRT 与三维后装放疗", icon: Microscope },
     { id: "imaging", label: "盆腔 MRI 与淋巴评估", icon: Activity },
+  ] : cancerType === "endometrial" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "immunotherapy", label: "dMMR 免疫联合与维持", icon: ShieldCheck },
+    { id: "pathology", label: "FIGO 2023 分子四分型", icon: Microscope },
+    { id: "surgery", label: "前哨淋巴结与手术分期", icon: Layers },
+    { id: "targeted", label: "pMMR 靶免方案 (帕博+仑伐)", icon: Target },
+    { id: "imaging", label: "深肌层浸润与后装放疗", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -810,9 +901,9 @@ export default function StudiesPage() {
           <BookOpen className="w-3.5 h-3.5 text-sky-600 shrink-0" />
           <span className="truncate">国际顶刊同行评审文献库</span>
           <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-          <span className="text-emerald-700 font-extrabold inline-flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>100% 原版 PDF 佐证已归档 · 零 AI 幻觉</span>
+          <span className="text-sky-700 font-extrabold inline-flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+            <span>100% 原始数据校验 · 支持顶刊原版论文导入</span>
           </span>
         </div>
 
@@ -839,6 +930,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性分化型甲状腺癌里程碑试验（SELECT、COSMIC-311、ESTIMABL2、ARROW 等）。为放射性碘难治 (RR-DTC)、靶向 TKI 介入时机与 RET/BRAF 精准用药提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "cervical" ? (
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性宫颈癌里程碑试验（KEYNOTE-826、EMBRACE-I、LACC、GOG-240 等）。为局部晚期根治性 CCRT、开腹广泛切除无瘤原则与晚期一线免疫联合提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "endometrial" ? (
+            <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性子宫内膜癌里程碑试验（RUBY、PORTEC-3、PORTEC-4a、KEYNOTE-775 等）。为 FIGO 2023 分子分型降阶梯、dMMR 一线免疫维持与前哨淋巴结清扫提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
@@ -973,9 +1066,9 @@ export default function StudiesPage() {
               {filteredStudies.length} 篇文献
             </span>
             {totalCount > 0 && (
-              <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                <span>文献库总收录 {totalCount} 篇 · 100% 原版 PDF 佐证已归档</span>
+              <span className="text-[11px] text-sky-700 font-semibold bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200 flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-sky-600" />
+                <span>文献库总收录 {totalCount} 篇 · 结构化循证核准就绪 · 支持原版论文热替换</span>
               </span>
             )}
           </div>
