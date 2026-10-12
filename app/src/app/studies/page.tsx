@@ -501,6 +501,96 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "thyroid") {
+        switch (selectedTopic) {
+          case "targeted":
+            return (
+              factors.includes("SELECT") ||
+              factors.includes("COSMIC") ||
+              factors.includes("LENVATINIB") ||
+              factors.includes("CABOZANTINIB") ||
+              factors.includes("SORAFENIB") ||
+              factors.includes("TKI") ||
+              factors.includes("RAIR-DTC") ||
+              factors.includes("RR-DTC") ||
+              factors.includes("仑伐替尼") ||
+              factors.includes("SELECT研究") ||
+              fullText.includes("SELECT") ||
+              fullText.includes("COSMIC") ||
+              fullText.includes("仑伐替尼") ||
+              fullText.includes("卡博替尼") ||
+              fullText.includes("索拉非尼") ||
+              fullText.includes("碘难治")
+            );
+          case "surgery":
+            return (
+              factors.includes("SURGERY") ||
+              factors.includes("THYROIDECTOMY") ||
+              factors.includes("LYMPH_NODE") ||
+              factors.includes("KUMA") ||
+              factors.includes("主动监测") ||
+              factors.includes("免除手术") ||
+              fullText.includes("切除") ||
+              fullText.includes("全切") ||
+              fullText.includes("腺叶切除") ||
+              fullText.includes("中央区") ||
+              fullText.includes("侧颈") ||
+              fullText.includes("清扫") ||
+              fullText.includes("主动监测")
+            );
+          case "pathology":
+            return (
+              factors.includes("BRAF") ||
+              factors.includes("RET") ||
+              factors.includes("ARROW") ||
+              factors.includes("PRALSETINIB") ||
+              factors.includes("SELPERCATINIB") ||
+              factors.includes("RET突变") ||
+              factors.includes("RET融合") ||
+              factors.includes("普拉替尼") ||
+              fullText.includes("BRAF") ||
+              fullText.includes("RET") ||
+              fullText.includes("ARROW") ||
+              fullText.includes("普拉替尼") ||
+              fullText.includes("塞普替尼") ||
+              fullText.includes("髓样癌")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("ESTIMABL2") ||
+              factors.includes("RAI") ||
+              factors.includes("IODINE") ||
+              factors.includes("TSH") ||
+              factors.includes("碘-131清甲") ||
+              factors.includes("免除放疗") ||
+              factors.includes("辐射防护") ||
+              fullText.includes("ESTIMABL") ||
+              fullText.includes("碘-131") ||
+              fullText.includes("131-I") ||
+              fullText.includes("131I") ||
+              fullText.includes("TSH") ||
+              fullText.includes("清甲") ||
+              fullText.includes("核素")
+            );
+          case "imaging":
+            return (
+              factors.includes("ULTRASOUND") ||
+              factors.includes("TIRADS") ||
+              factors.includes("TI-RADS") ||
+              factors.includes("FNA") ||
+              fullText.includes("超声") ||
+              fullText.includes("TIRADS") ||
+              fullText.includes("TI-RADS") ||
+              fullText.includes("穿刺") ||
+              fullText.includes("细针穿刺") ||
+              fullText.includes("微小乳头状癌") ||
+              fullText.includes("PTMC")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -603,6 +693,13 @@ export default function StudiesPage() {
     { id: "immunotherapy", label: "晚期一线免疫联合", icon: ShieldCheck },
     { id: "pathology", label: "鳞癌/腺癌病理分型", icon: Microscope },
     { id: "imaging", label: "超声内镜与管壁浸润", icon: Activity },
+  ] : cancerType === "thyroid" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "targeted", label: "放射性碘难治与 TKI", icon: Target },
+    { id: "surgery", label: "甲状腺切除与清扫", icon: Layers },
+    { id: "pathology", label: "BRAF/RET 驱动突变", icon: Microscope },
+    { id: "immunotherapy", label: "TSH 抑制与 131I 治疗", icon: ShieldCheck },
+    { id: "imaging", label: "高频彩超与颈部评估", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -647,6 +744,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性胰腺导管腺癌里程碑试验（PRODIGE 24、MPACT、POLO、NAPOLI-3 等）。为 R0 根治术后辅助化疗、BRCA 维持治疗与交界转化分期决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "esophageal" ? (
             <>严格收录 <strong>NEJM、Lancet、JCO、JAMA</strong> 等顶级期刊发表的原发性食管癌里程碑试验（CheckMate-577、NEOCRTEC5010、CROSS、ESCORT-1st、RATIONALE-306 等）。为新辅助放化疗、术后免疫维持与晚期一线联合决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "thyroid" ? (
+            <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性分化型甲状腺癌里程碑试验（SELECT、COSMIC-311、ESTIMABL2、ARROW 等）。为放射性碘难治 (RR-DTC)、靶向 TKI 介入时机与 RET/BRAF 精准用药提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
