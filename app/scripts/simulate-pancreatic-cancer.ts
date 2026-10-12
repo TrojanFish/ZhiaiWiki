@@ -32,7 +32,7 @@ function assertSim(condition: boolean, desc: string, detail?: string) {
 }
 
 console.log("\x1b[1m\x1b[36m========================================================\x1b[0m");
-console.log("\x1b[1m\x1b[36m   OncoPath 胰腺癌 7 维度端到端临床深度仿真测试套件    \x1b[0m");
+console.log("\x1b[1m\x1b[36m   ZhiaiWiki 胰腺癌 7 维度端到端临床深度仿真测试套件    \x1b[0m");
 console.log("\x1b[1m\x1b[36m========================================================\x1b[0m\n");
 
 // =================== 维度 1: 确定性 TNM 与解剖切除性推演 ===================

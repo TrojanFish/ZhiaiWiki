@@ -54,7 +54,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           });
           const adminData = await adminRes.json();
           if (adminData.success && adminData.token) {
-            localStorage.setItem("oncopath_admin_token", adminData.token);
+            localStorage.setItem("zhiaiwiki_admin_token", adminData.token);
             localStorage.setItem("email", adminData.admin.username);
             localStorage.setItem("role", "admin");
             window.dispatchEvent(new Event("auth-change"));

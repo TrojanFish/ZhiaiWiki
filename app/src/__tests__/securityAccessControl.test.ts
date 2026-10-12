@@ -77,7 +77,7 @@ describe('Production Security & Access Control Guardrails (P0 & P1)', () => {
     it('should validate admin credentials with constant-time equality', () => {
       // In non-production, default passes; bad credentials fail
       expect(validateAdminCredentials('admin', 'WrongPass!')).toBe(false);
-      expect(validateAdminCredentials('wrong_admin', 'OncoPath2026!')).toBe(false);
+      expect(validateAdminCredentials('wrong_admin', 'ZhiaiWiki2026!')).toBe(false);
     });
   });
 });

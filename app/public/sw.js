@@ -115,7 +115,7 @@ self.addEventListener('fetch', (event) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          return new Response('Offline - OncoPath Cached Mode', {
+          return new Response('Offline - ZhiaiWiki Cached Mode', {
             status: 503,
             statusText: 'Service Unavailable',
             headers: { 'Content-Type': 'text/plain; charset=utf-8' }

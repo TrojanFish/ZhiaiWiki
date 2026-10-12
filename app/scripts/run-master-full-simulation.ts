@@ -1,5 +1,5 @@
 /**
- * OncoPath Master Full-System End-to-End Simulation Test Suite
+ * ZhiaiWiki Master Full-System End-to-End Simulation Test Suite
  * 精细化本地全链路仿真测试套件 - 覆盖全部 11 大癌种、所有功能环节无一遗漏
  */
 
@@ -46,7 +46,7 @@ function check(category: string, code: string, name: string, passed: boolean, no
 
 async function runMasterSimulation() {
   console.log('\n========================================================================================');
-  console.log(' 🏥 ONCOPATH 肿瘤全病程循证中台 - 精细化本地全功能环节仿真测试 (MASTER SIMULATION) ');
+  console.log(' 🏥 ZHIAIWIKI 肿瘤全病程循证中台 - 精细化本地全功能环节仿真测试 (MASTER SIMULATION) ');
   console.log('========================================================================================\n');
 
   // -------------------------------------------------------------------------
@@ -588,7 +588,7 @@ async function runMasterSimulation() {
   const rate = ((passed / total) * 100).toFixed(1);
 
   console.log('\n========================================================================================');
-  console.log('            🏆 ONCOPATH 本地精细化仿真测试 - 全链路终审质量报告                         ');
+  console.log('            🏆 ZHIAIWIKI 本地精细化仿真测试 - 全链路终审质量报告                         ');
   console.log('========================================================================================');
   console.log(` 总测试环节数: 11 大核心功能环节`);
   console.log(` 总功能用例数: ${total} 项全覆盖深度测试`);

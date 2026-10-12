@@ -1,11 +1,11 @@
 ---
 name: UI/UX Pro Max - Healthcare & Evidence Intelligence
-description: Production-grade UI/UX design reasoning engine, Next.js 16 SSR hydration protection, evidence traceability rules, and multi-cancer state governance for ZhiaiWiki / OncoPath.
+description: Production-grade UI/UX design reasoning engine, Next.js 16 SSR hydration protection, evidence traceability rules, and multi-cancer state governance for ZhiaiWiki.
 ---
 
 # UI/UX Pro Max - Healthcare & Evidence Intelligence (设计决策推理引擎与全栈质量保障技能)
 
-本技能定义了知癌维基（ZhiaiWiki / OncoPath）全系统在**UI/UX 决策推理、抗焦虑心理学引导、证据可溯源性、Next.js 16 SSR 水合安全防护与多癌种状态治理**等方面的核心工程与设计规则。
+本技能定义了知癌维基（ZhiaiWiki）全系统在**UI/UX 决策推理、抗焦虑心理学引导、证据可溯源性、Next.js 16 SSR 水合安全防护与多癌种状态治理**等方面的核心工程与设计规则。
 
 本技能作为全系统的**「设计推理与工程质量引擎（Reasoning & Quality Engine）」**，任何新增功能或代码修改，必须通过本技能中定义的决策推理与全栈校验规则。
 
@@ -49,7 +49,7 @@ description: Production-grade UI/UX design reasoning engine, Next.js 16 SSR hydr
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("oncopath_profile");
+    const saved = localStorage.getItem("zhiaiwiki_profile");
     if (saved) setProfile(JSON.parse(saved));
   }, []);
   ```

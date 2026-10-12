@@ -1,4 +1,4 @@
-# 知癌维基 ZhiaiWiki (OncoPath) · Web Application
+# 知癌维基 ZhiaiWiki · Web Application
 
 本目录包含知癌维基全栈 Web 应用程序代码（基于 Next.js 16 App Router、TypeScript 与 TailwindCSS v4）。
 

@@ -2,13 +2,13 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 import { isCookieSecure } from './userAuth';
 
-const DEFAULT_ADMIN_SECRET = 'oncopath_evidence_admin_secret_key_2026';
-const DEFAULT_ADMIN_PASSWORD = 'OncoPath2026!';
+const DEFAULT_ADMIN_SECRET = 'zhiaiwiki_evidence_admin_secret_key_2026';
+const DEFAULT_ADMIN_PASSWORD = 'ZhiaiWiki2026!';
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET || DEFAULT_ADMIN_SECRET;
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD;
-export const ADMIN_COOKIE_NAME = 'oncopath_admin_token';
+export const ADMIN_COOKIE_NAME = 'zhiaiwiki_admin_token';
 export const ADMIN_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
 if (process.env.NODE_ENV === 'production' && ADMIN_SECRET === DEFAULT_ADMIN_SECRET) {

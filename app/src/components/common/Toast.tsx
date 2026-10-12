@@ -13,7 +13,7 @@ export interface ToastMessage {
 }
 
 // Global Custom Event name
-const TOAST_EVENT = "ONCOPATH_SHOW_TOAST";
+const TOAST_EVENT = "ZHIAIWIKI_SHOW_TOAST";
 
 /**
  * 全局触发 Toast 提示方法（无需 Context Provider 样板代码，任意组件或普通函数中均可直接调用）

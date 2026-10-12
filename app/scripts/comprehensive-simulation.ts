@@ -1,5 +1,5 @@
 /**
- * OncoPath Comprehensive Production Simulation Test Suite (全面生产环境仿真测试)
+ * ZhiaiWiki Comprehensive Production Simulation Test Suite (全面生产环境仿真测试)
  * Simulates real-world clinical patient profiles, algorithmic engines, security,
  * privacy, offline resilience, and pharmacological interactions.
  */
@@ -36,7 +36,7 @@ function assert(condition: boolean, category: string, testName: string, successM
 }
 
 console.log('========================================================================');
-console.log('🔬 ONCOPATH 生产环境上线前综合仿真测试 (COMPREHENSIVE SIMULATION SUITE)');
+console.log('🔬 ZHIAIWIKI 生产环境上线前综合仿真测试 (COMPREHENSIVE SIMULATION SUITE)');
 console.log('========================================================================\n');
 
 // ============================================================================
@@ -307,7 +307,7 @@ assert(
 );
 
 // 场景 3: HMAC 签名防篡改 Session Token
-const sampleUserId = 'usr_oncopath_8899';
+const sampleUserId = 'usr_zhiaiwiki_8899';
 const sampleEmail = 'doctor@hospital.org';
 const sessionToken = generateUserToken(sampleUserId, sampleEmail);
 const validSession = verifyUserToken(sessionToken);

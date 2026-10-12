@@ -7,7 +7,7 @@ import { calculateVdtAndGrowth } from "../src/lib/vdtCalculator";
 import { sanitizeClinicalText } from "../src/lib/privacy";
 
 console.log("\n" + "=".repeat(85));
-console.log("  OncoPath 生产级性能基准测试与页面加载速度综合审计报告");
+console.log("  ZhiaiWiki 生产级性能基准测试与页面加载速度综合审计报告");
 console.log("=".repeat(85) + "\n");
 
 // 1. 静态构建分包与体积分析 (.next/static)

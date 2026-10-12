@@ -33,7 +33,7 @@ export default function MobileBottomNav() {
   useEffect(() => {
     const checkProfile = () => {
       if (typeof window === "undefined") return;
-      const profile = localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile");
+      const profile = localStorage.getItem("zhiaiwiki_profile") || localStorage.getItem("patient_profile");
       setHasProfile(!!profile);
     };
 

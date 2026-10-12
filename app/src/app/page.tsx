@@ -443,7 +443,7 @@ export default function HomePage() {
       if (typeof window === "undefined") return;
       const email = localStorage.getItem("email") || sessionStorage.getItem("email");
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      const profile = localStorage.getItem("oncopath_profile");
+      const profile = localStorage.getItem("zhiaiwiki_profile");
       setUserEmail(email || null);
       setHasProfile(!!profile || !!email || !!token);
     };

@@ -1,11 +1,11 @@
 ---
 name: Clinical Data Visualization
-description: 临床医学图表与科学可视化设计规范——Kaplan-Meier 生存曲线、HR 森林图、基因组变异全景图、DDI 药物交互矩阵的 Tailwind v4 + React 19 SVG 实现标准，适用于 ZhiaiWiki / OncoPath 全栈平台。
+description: 临床医学图表与科学可视化设计规范——Kaplan-Meier 生存曲线、HR 森林图、基因组变异全景图、DDI 药物交互矩阵的 Tailwind v4 + React 19 SVG 实现标准，适用于 ZhiaiWiki 全栈平台。
 ---
 
 # Clinical Data Visualization（临床医学图表与科学可视化设计规范）
 
-本技能定义了知癌维基（ZhiaiWiki / OncoPath）全站**科学数据可视化**的权威实现标准。任何涉及生存分析、临床试验对比、基因组变异展示与药物相互作用的图表组件，**必须遵循本技能的视觉规范、数学定义、可访问性要求与 React/SVG 实现约束**。
+本技能定义了知癌维基（ZhiaiWiki）全站**科学数据可视化**的权威实现标准。任何涉及生存分析、临床试验对比、基因组变异展示与药物相互作用的图表组件，**必须遵循本技能的视觉规范、数学定义、可访问性要求与 React/SVG 实现约束**。
 
 灵感来源与参考标准：  
 - **IBM Carbon Design System for Healthcare**（临床决策支持 CDS、图表无障碍色板）  

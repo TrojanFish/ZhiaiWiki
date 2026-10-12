@@ -41,7 +41,7 @@ export default function SettingsModal({
   // Read default cancer preference from storage
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("oncopath_default_cancer_type") as CancerType | null;
+    const saved = localStorage.getItem("zhiaiwiki_default_cancer_type") as CancerType | null;
     if (saved) {
       setDefaultCancer(saved);
     }
@@ -75,15 +75,15 @@ export default function SettingsModal({
     setCancerType(type);
     setDefaultCancer(type);
     if (typeof window !== "undefined") {
-      localStorage.setItem("oncopath_default_cancer_type", type);
+      localStorage.setItem("zhiaiwiki_default_cancer_type", type);
     }
   };
 
   const handleClearCache = () => {
     if (typeof window === "undefined") return;
     try {
-      localStorage.removeItem("oncopath_parsed_report_draft");
-      localStorage.removeItem("oncopath_temp_session");
+      localStorage.removeItem("zhiaiwiki_parsed_report_draft");
+      localStorage.removeItem("zhiaiwiki_temp_session");
       sessionStorage.clear();
       setCacheCleared(true);
       setTimeout(() => setCacheCleared(false), 2500);

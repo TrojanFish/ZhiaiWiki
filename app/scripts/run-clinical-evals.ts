@@ -1,5 +1,5 @@
 /**
- * OncoPath Clinical Golden Evals Runner (临床黄金评测集执行器)
+ * ZhiaiWiki Clinical Golden Evals Runner (临床黄金评测集执行器)
  * 依据 Superpowers 端到端验证与仿真规范，对 10 大实体瘤与妇科肿瘤共 20 组复杂边界病例进行自动化评测打分
  * 
  * 运行方式: npm run bench:clinical (或 npx tsx scripts/run-clinical-evals.ts)
@@ -10,7 +10,7 @@ import { computeCancerStage, getClinicalCohortUnified } from '../src/lib/staging
 import { checkDrugInteractionsUnified } from '../src/lib/ddiRegistry';
 
 console.log('\x1b[1m\x1b[35m========================================================================================\x1b[0m');
-console.log('\x1b[1m\x1b[35m    OncoPath 临床黄金评测基准套件 (Clinical Golden Evals Benchmark - Superpowers)     \x1b[0m');
+console.log('\x1b[1m\x1b[35m    ZhiaiWiki 临床黄金评测基准套件 (Clinical Golden Evals Benchmark - Superpowers)     \x1b[0m');
 console.log('\x1b[1m\x1b[35m========================================================================================\x1b[0m\n');
 
 const totalCases = CLINICAL_GOLDEN_CASES.length;

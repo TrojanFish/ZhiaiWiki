@@ -6,14 +6,14 @@
 services:
   db:
     image: pgvector/pgvector:pg16
-    container_name: oncopath-db-dev
+    container_name: zhiaiwiki-db-dev
     environment:
       # 开发环境 DB 凭证 — 从 .env 读取，开发默认值比原 "password" 更强
-      POSTGRES_USER: ${DEV_DB_USER:-oncopath_dev}
-      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD:-OncoPath_Dev_2026!}
-      POSTGRES_DB: ${DEV_DB_NAME:-oncopath_dev}
+      POSTGRES_USER: ${DEV_DB_USER:-zhiaiwiki_dev}
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD:-ZhiaiWiki_Dev_2026!}
+      POSTGRES_DB: ${DEV_DB_NAME:-zhiaiwiki_dev}
     # 不向宿主机暴露数据库端口 — 避免开发机共享网络环境下的直接 DB 攻击面
-    # 如需直接访问数据库，请使用: docker exec -it oncopath-db-dev psql -U oncopath_dev -d oncopath_dev
+    # 如需直接访问数据库，请使用: docker exec -it zhiaiwiki-db-dev psql -U zhiaiwiki_dev -d zhiaiwiki_dev
     # 或临时启用: ports: - "127.0.0.1:35432:5432"  (仅绑定 loopback)
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
@@ -22,14 +22,14 @@ services:
   app:
     build:
       context: ./app
-    container_name: oncopath-app-dev
+    container_name: zhiaiwiki-app-dev
     environment:
-      - DATABASE_URL=postgresql://${DEV_DB_USER:-oncopath_dev}:${DEV_DB_PASSWORD:-OncoPath_Dev_2026!}@db:5432/${DEV_DB_NAME:-oncopath_dev}
+      - DATABASE_URL=postgresql://${DEV_DB_USER:-zhiaiwiki_dev}:${DEV_DB_PASSWORD:-ZhiaiWiki_Dev_2026!}@db:5432/${DEV_DB_NAME:-zhiaiwiki_dev}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-OncoPath2026!}
-      - ADMIN_SECRET=${ADMIN_SECRET:-oncopath_evidence_admin_secret_key_2026}
-      - GUEST_SESSION_SECRET=${GUEST_SESSION_SECRET:-oncopath_guest_hmac_secret_2026}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-ZhiaiWiki2026!}
+      - ADMIN_SECRET=${ADMIN_SECRET:-zhiaiwiki_evidence_admin_secret_key_2026}
+      - GUEST_SESSION_SECRET=${GUEST_SESSION_SECRET:-zhiaiwiki_guest_hmac_secret_2026}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:38030}
     volumes:
       - app_data_dev:/app/data

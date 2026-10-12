@@ -1,10 +1,10 @@
 import type { CancerType, PatientProfile } from "@/lib/types";
 
-export const STORAGE_KEY_ACTIVE_SLOT = "oncopath_active_cancer_slot";
-export const STORAGE_KEY_SLOT_PREFIX = "oncopath_profile_";
-export const STORAGE_KEY_LEGACY = "oncopath_profile";
+export const STORAGE_KEY_ACTIVE_SLOT = "zhiaiwiki_active_cancer_slot";
+export const STORAGE_KEY_SLOT_PREFIX = "zhiaiwiki_profile_";
+export const STORAGE_KEY_LEGACY = "zhiaiwiki_profile";
 export const STORAGE_KEY_FALLBACK_LEGACY = "patient_profile";
-export const EVENT_SLOT_CHANGED = "oncopath-slot-changed";
+export const EVENT_SLOT_CHANGED = "zhiaiwiki-slot-changed";
 
 const KNOWN_CANCER_TYPES: CancerType[] = ["lung", "breast", "colon", "rectal", "gastric", "liver", "esophageal", "colorectal", "thyroid", "endometrial", "cervical", "pancreatic"];
 
@@ -77,7 +77,7 @@ export function getActiveCancerSlot(): CancerType {
   }
 
   // 尝试从全局癌种同步
-  const activeGlobal = (localStorage.getItem("oncopath_active_cancer_type") || localStorage.getItem("oncopath_default_cancer_type")) as CancerType | null;
+  const activeGlobal = (localStorage.getItem("zhiaiwiki_active_cancer_type") || localStorage.getItem("zhiaiwiki_default_cancer_type")) as CancerType | null;
   if (activeGlobal && KNOWN_CANCER_TYPES.includes(activeGlobal)) {
     return activeGlobal;
   }
@@ -99,7 +99,7 @@ export function setActiveCancerSlot(slot: CancerType): void {
 
   localStorage.setItem(STORAGE_KEY_ACTIVE_SLOT, slot);
 
-  // 镜像当前卡槽档案至旧版 oncopath_profile，保持全站未改造组件平稳运行
+  // 镜像当前卡槽档案至旧版 zhiaiwiki_profile，保持全站未改造组件平稳运行
   const currentProfile = getProfileBySlot(slot);
   if (currentProfile) {
     localStorage.setItem(STORAGE_KEY_LEGACY, JSON.stringify(currentProfile));

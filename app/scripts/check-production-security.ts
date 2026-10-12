@@ -1,5 +1,5 @@
 /**
- * OncoPath Production Security & Clinical Safety Checklist
+ * ZhiaiWiki Production Security & Clinical Safety Checklist
  * Audits environment configurations, secret entropy, PIPL compliance, and clinical safety guardrails.
  * Run with: npm run check:security (or npx tsx scripts/check-production-security.ts)
  */
@@ -28,7 +28,7 @@ function recordCheck(
 }
 
 console.log('\x1b[1m\x1b[36m============================================================\x1b[0m');
-console.log('\x1b[1m\x1b[36m  OncoPath (精准肺癌智慧随访) 生产就绪与安全合规性自检清单\x1b[0m');
+console.log('\x1b[1m\x1b[36m  ZhiaiWiki (精准肺癌智慧随访) 生产就绪与安全合规性自检清单\x1b[0m');
 console.log('\x1b[1m\x1b[36m============================================================\x1b[0m\n');
 
 // 1. Audit Environment Variables & Secrets

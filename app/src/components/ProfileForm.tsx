@@ -9,7 +9,7 @@ interface ProfileFormProps {
   initialData?: PatientProfile;
 }
 
-const DRAFT_STORAGE_KEY = "oncopath_profile_draft";
+const DRAFT_STORAGE_KEY = "zhiaiwiki_profile_draft";
 
 export default function ProfileForm({ onSubmit, initialData }: ProfileFormProps) {
   const [step, setStep] = useState(1);

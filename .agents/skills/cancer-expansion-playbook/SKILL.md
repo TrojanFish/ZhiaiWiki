@@ -1,11 +1,11 @@
 ---
-name: OncoPath 多癌种拓展全流程 Playbook
-description: 当需要为 OncoPath / ZhiaiWiki 平台新增任何一种实体瘤（如胰腺癌、前列腺癌、膀胱癌、卵巢癌、鼻咽癌、骨髓瘤等）时，必须阅读本技能，按照完整的 12 步流程执行开发、医学内容填充、DDI 校验、全站 UI/导航同步、测试与验收，确保新癌种与既有 11 个癌种体系完全对齐，不遗漏任何工程、UI 与临床安全环节。
+name: ZhiaiWiki 多癌种拓展全流程 Playbook
+description: 当需要为 ZhiaiWiki 平台新增任何一种实体瘤（如胰腺癌、前列腺癌、膀胱癌、卵巢癌、鼻咽癌、骨髓瘤等）时，必须阅读本技能，按照完整的 12 步流程执行开发、医学内容填充、DDI 校验、全站 UI/导航同步、测试与验收，确保新癌种与既有 11 个癌种体系完全对齐，不遗漏任何工程、UI 与临床安全环节。
 ---
 
-# OncoPath 多癌种拓展全流程 Playbook
+# ZhiaiWiki 多癌种拓展全流程 Playbook
 
-本技能是为 **ZhiaiWiki / OncoPath** 平台接入**任意新实体瘤专科**（如胰腺癌、前列腺癌、膀胱癌、卵巢癌、鼻咽癌、多发性骨髓瘤、淋巴瘤、脑胶质瘤、肾癌等）的权威操作手册。
+本技能是为 **ZhiaiWiki** 平台接入**任意新实体瘤专科**（如胰腺癌、前列腺癌、膀胱癌、卵巢癌、鼻咽癌、多发性骨髓瘤、淋巴瘤、脑胶质瘤、肾癌等）的权威操作手册。
 
 涵盖从需求分析 → 代码脚手架 → 集中式调度挂载 → 医学内容填充 → 临床安全防线 → 全站 UI/导航矩阵同步 → 测试验证 → 全栈验收的**全部标准阶段**，所有工程契约、UI 发现链路与临床安全红线必须严格执行。
 
@@ -13,7 +13,7 @@ description: 当需要为 OncoPath / ZhiaiWiki 平台新增任何一种实体瘤
 
 ## 0. 前置知识：平台架构与集中式调度全貌
 
-在开发新癌种前，必须彻底理解 OncoPath 的分层架构与注册中心机制：
+在开发新癌种前，必须彻底理解 ZhiaiWiki 的分层架构与注册中心机制：
 
 ### 0.1 插件注册中心模式 (CancerRegistry Plugin Pattern)
 
@@ -808,7 +808,7 @@ CancerRegistry.register(pancreaticPlugin); // ← 注册挂载
 
 ### 10.1 主题色彩 Token 追加与微观排版对齐
 
-若新增页面或组件需要癌种专属徽章与高亮描边，必须严格遵循 [`.agents/skills/telemedicine_ui_ux/SKILL.md`](file:///c:/Users/Administrator/Desktop/lung/.agents/skills/telemedicine_ui_ux/SKILL.md) 定义的微观字阶与几何规范：
+若新增页面或组件需要癌种专属徽章与高亮描边，必须严格遵循 [`.agents/skills/telemedicine_ui_ux/SKILL.md`](file:///c:/Users/KeiyeeYu/Desktop/ZhiaiWiki/.agents/skills/telemedicine_ui_ux/SKILL.md) 定义的微观字阶与几何规范：
 ```tsx
 // 徽章与标签标准应用 (微观 6px 间隙 + rounded-full 胶囊)
 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700 border border-orange-200 shadow-2xs">

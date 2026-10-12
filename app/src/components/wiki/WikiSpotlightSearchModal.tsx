@@ -275,7 +275,7 @@ export function WikiSpotlightSearchModal({
   const loadSearchHistory = useCallback(() => {
     try {
       if (typeof window === "undefined") return;
-      const raw = localStorage.getItem(`oncopath_wiki_search_history_${cancerType}`) || localStorage.getItem("oncopath_wiki_search_history");
+      const raw = localStorage.getItem(`zhiaiwiki_wiki_search_history_${cancerType}`) || localStorage.getItem("zhiaiwiki_wiki_search_history");
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
@@ -289,7 +289,7 @@ export function WikiSpotlightSearchModal({
   const saveToHistory = useCallback((topic: WikiTopic) => {
     try {
       if (typeof window === "undefined") return;
-      const key = `oncopath_wiki_search_history_${cancerType}`;
+      const key = `zhiaiwiki_wiki_search_history_${cancerType}`;
       const raw = localStorage.getItem(key);
       let list: SearchHistoryItem[] = raw ? JSON.parse(raw) : [];
       list = list.filter((item) => item.topicId !== topic.id);
@@ -306,7 +306,7 @@ export function WikiSpotlightSearchModal({
 
   const clearHistory = useCallback(() => {
     try {
-      localStorage.removeItem(`oncopath_wiki_search_history_${cancerType}`);
+      localStorage.removeItem(`zhiaiwiki_wiki_search_history_${cancerType}`);
       setSearchHistory([]);
     } catch {}
   }, [cancerType]);
@@ -400,7 +400,7 @@ export function WikiSpotlightSearchModal({
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent,
       };
-      const key = "oncopath_wiki_search_audit";
+      const key = "zhiaiwiki_wiki_search_audit";
       const exist = JSON.parse(localStorage.getItem(key) || "[]");
       exist.push(payload);
       if (exist.length > 50) exist.shift();

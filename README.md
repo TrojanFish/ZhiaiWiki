@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/TrojanFish/OncoPath/main/app/public/logo.png" width="90" alt="ZhiaiWiki Logo">
-  <h1>ZhiaiWiki (OncoPath)</h1>
+  <img src="https://raw.githubusercontent.com/TrojanFish/ZhiaiWiki/main/app/public/logo.png" width="90" alt="ZhiaiWiki Logo">
+  <h1>ZhiaiWiki</h1>
   <p><strong>Multi-Cancer Evidence-Based Oncology Knowledge Platform & Clinical Navigation OS</strong></p>
   <p><em>Covering 12 major solid tumors, grounded in peer-reviewed clinical literature, AJCC/IASLC guidelines, and multi-center real-world prospective cohorts.</em></p>
 
@@ -27,7 +27,7 @@
 
 ## 🌟 Core Vision & Medical Principles
 
-ZhiaiWiki (OncoPath) bridges the communication gap between complex oncology literature and patients by strictly adhering to the **"Evidence-First, AI-Second"** standard:
+ZhiaiWiki bridges the communication gap between complex oncology literature and patients by strictly adhering to the **"Evidence-First, AI-Second"** standard:
 
 1. **Zero Hallucinations & Deterministic Clinical Rules**: Core staging, hazard ratios, and clinical paths are hardcoded. Large Language Models (LLMs) are strictly restricted from making arbitrary prognostic guesses or writing prescriptions.
 2. **100% Peer-Reviewed Traceability**: Direct integration with official Europe PMC / MEDLINE / PubMed databases. Every Hazard Ratio (HR) and 5-year Recurrence-Free Survival (RFS) rate is directly linked to landmark clinical trials (Lancet, JCO, JTO, NEJM, Chest) with active DOI and PubMed hyperlinks.
@@ -143,8 +143,8 @@ Ensure the following ports are open in your cloud firewall:
 
 ### 3. Clone Repository
 ```bash
-git clone https://github.com/TrojanFish/OncoPath.git
-cd OncoPath
+git clone https://github.com/TrojanFish/ZhiaiWiki.git
+cd ZhiaiWiki
 ```
 
 ### 4. Configure Production Environment Variables (`.env`)
@@ -199,13 +199,13 @@ npm run dev
 npm run test:unit
 ```
 * Patient Portal: [http://localhost:3000](http://localhost:3000)
-* Admin Evidence Studio: [http://localhost:3000/admin](http://localhost:3000/admin) (Default testing credentials available with one-click autofill: `admin` / `OncoPath2026!`)
+* Admin Evidence Studio: [http://localhost:3000/admin](http://localhost:3000/admin) (Default testing credentials available with one-click autofill: `admin` / `ZhiaiWiki2026!`)
 
 ---
 
 ## 🛡️ Clinical Disclaimer
 
-1. ZhiaiWiki (OncoPath) strictly adheres to **AJCC 8th/9th Edition** TNM staging criteria and **CSCO / NCCN / ESMO** clinical guidelines.
+1. ZhiaiWiki strictly adheres to **AJCC 8th/9th Edition** TNM staging criteria and **CSCO / NCCN / ESMO** clinical guidelines.
 2. This platform is designed as an **evidence-based scientific retrieval and patient-physician communication aid**; it **does NOT provide individualized medical diagnoses or prescription directives**.
 3. All therapeutic choices, surgical selections, adjuvant chemotherapy protocols, and follow-up intervals must be made in consultation with qualified attending physicians.
 

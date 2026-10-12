@@ -1,11 +1,11 @@
 ---
 name: Oncology Clinical Safety & Evidence Intelligence
-description: Mandatory clinical safety guardrails, peer-reviewed evidence grounding, cancer-type prompt decoupling, DDI pharmacology verification, and PII de-identification standards across all AI agents and medical logic in OncoPath.
+description: Mandatory clinical safety guardrails, peer-reviewed evidence grounding, cancer-type prompt decoupling, DDI pharmacology verification, and PII de-identification standards across all AI agents and medical logic in ZhiaiWiki.
 ---
 
 # Oncology Clinical Safety & Evidence Intelligence (肿瘤临床安全与循证防线技能)
 
-本技能定义了 OncoPath 全栈平台（涵盖肺癌、乳腺癌、结肠癌、直肠癌、胃癌、肝癌、食管癌、甲状腺癌等 8 大实体瘤）的**临床安全红线、循证等级基准、多癌种提示词解耦规范、药理禁忌联锁机制与隐私合规要求**。
+本技能定义了 ZhiaiWiki 全栈平台（涵盖肺癌、乳腺癌、结肠癌、直肠癌、胃癌、肝癌、食管癌、甲状腺癌等 8 大实体瘤）的**临床安全红线、循证等级基准、多癌种提示词解耦规范、药理禁忌联锁机制与隐私合规要求**。
 
 凡是涉及医学分期、临床报告生成、用药禁忌排查、生存率预测及数据持久化的 AI 协作与工程代码修改，**必须严格遵守本技能定义的全部准则**。
 

@@ -41,7 +41,7 @@ export default function KnowledgePage() {
           setProfile(slotProfile);
         } else {
           // Fallback check legacy profile only if it belongs to the current cancer
-          const cached = localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile");
+          const cached = localStorage.getItem("zhiaiwiki_profile") || localStorage.getItem("patient_profile");
           if (cached) {
             const parsed = JSON.parse(cached);
             const profType = parsed?.cancerType || parsed?.organ || "lung";

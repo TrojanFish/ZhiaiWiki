@@ -13,7 +13,7 @@ import {
   EVENT_SLOT_CHANGED,
 } from "@/lib/profileStorage";
 
-const CANCER_STORAGE_KEY = "oncopath_active_cancer_type";
+const CANCER_STORAGE_KEY = "zhiaiwiki_active_cancer_type";
 
 export type { CancerTypeOption };
 
@@ -52,7 +52,7 @@ export function useCancerType(): {
     // to strictly prevent Next.js / React SSR hydration mismatch!
     if (hasHydrated && typeof window !== "undefined") {
       try {
-        const saved = (localStorage.getItem(CANCER_STORAGE_KEY) || localStorage.getItem("oncopath_default_cancer_type")) as CancerType | null;
+        const saved = (localStorage.getItem(CANCER_STORAGE_KEY) || localStorage.getItem("zhiaiwiki_default_cancer_type")) as CancerType | null;
         if (saved && CANCER_TYPE_OPTIONS.some((opt) => opt.type === saved)) {
           return saved;
         }
@@ -67,21 +67,21 @@ export function useCancerType(): {
     hasHydrated = true;
 
     // 1. Initial read from localStorage
-    const saved = (localStorage.getItem(CANCER_STORAGE_KEY) || localStorage.getItem("oncopath_default_cancer_type")) as CancerType | null;
+    const saved = (localStorage.getItem(CANCER_STORAGE_KEY) || localStorage.getItem("zhiaiwiki_default_cancer_type")) as CancerType | null;
     if (saved && CANCER_TYPE_OPTIONS.some((opt) => opt.type === saved)) {
       memoryCachedCancerType = saved;
       setCancerState(saved);
     } else {
       // Check if profile exists with breast
       try {
-        const profileRaw = localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile");
+        const profileRaw = localStorage.getItem("zhiaiwiki_profile") || localStorage.getItem("patient_profile");
         if (profileRaw) {
           const parsed = JSON.parse(profileRaw);
           if (parsed?.cancerType === "breast" || parsed?.organ === "breast") {
             memoryCachedCancerType = "breast";
             setCancerState("breast");
             localStorage.setItem(CANCER_STORAGE_KEY, "breast");
-            localStorage.setItem("oncopath_default_cancer_type", "breast");
+            localStorage.setItem("zhiaiwiki_default_cancer_type", "breast");
           }
         }
       } catch {}
@@ -105,7 +105,7 @@ export function useCancerType(): {
     setCancerState(type);
     if (typeof window !== "undefined") {
       localStorage.setItem(CANCER_STORAGE_KEY, type);
-      localStorage.setItem("oncopath_default_cancer_type", type);
+      localStorage.setItem("zhiaiwiki_default_cancer_type", type);
       setActiveCancerSlot(type);
       window.dispatchEvent(new CustomEvent("cancer-type-changed", { detail: { cancerType: type } }));
       window.dispatchEvent(new Event("storage"));

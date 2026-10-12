@@ -38,7 +38,7 @@ import type { PatientProfile, CancerType } from "@/lib/types";
 import { getGuestId } from "@/lib/guest";
 import { GlossaryTooltip } from "@/components/common/GlossaryTooltip";
 import ReasoningTicker from "@/components/profile/ReasoningTicker";
-import { ONCOPATH_LOGO_DATA_URI } from "@/lib/brandLogo";
+import { ZHIAIWIKI_LOGO_DATA_URI } from "@/lib/brandLogo";
 import { exportElementToA4Pdf } from "@/lib/pdfExporter";
 import { showToast } from "@/components/common/Toast";
 import LangSwitch from "@/components/LangSwitch";
@@ -191,7 +191,7 @@ export default function EvidenceReportPage() {
     // Incorporate custom questions saved by user from Wiki encyclopedia
     if (typeof window !== "undefined") {
       try {
-        const savedCustom = localStorage.getItem("oncopath_clinic_questions");
+        const savedCustom = localStorage.getItem("zhiaiwiki_clinic_questions");
         if (savedCustom) {
           const parsed = JSON.parse(savedCustom);
           if (Array.isArray(parsed)) {
@@ -434,23 +434,23 @@ export default function EvidenceReportPage() {
       // 1. Save to localStorage (Guest & Instant Cache strictly scoped by cancer slot)
       const cancerType = currentProfile.cancerType || (currentProfile as any).organ || getActiveCancerSlot();
       const reportCacheKey = currentProfile.id
-        ? `oncopath_report_${currentProfile.id}`
-        : `oncopath_report_${cancerType}_${getGuestId()}`;
+        ? `zhiaiwiki_report_${currentProfile.id}`
+        : `zhiaiwiki_report_${cancerType}_${getGuestId()}`;
       const timeCacheKey = currentProfile.id
-        ? `oncopath_report_time_${currentProfile.id}`
-        : `oncopath_report_time_${cancerType}_${getGuestId()}`;
+        ? `zhiaiwiki_report_time_${currentProfile.id}`
+        : `zhiaiwiki_report_time_${cancerType}_${getGuestId()}`;
       const fpKey = currentProfile.id
-        ? `oncopath_report_fp_${currentProfile.id}`
-        : `oncopath_report_fp_${cancerType}_${getGuestId()}`;
+        ? `zhiaiwiki_report_fp_${currentProfile.id}`
+        : `zhiaiwiki_report_fp_${cancerType}_${getGuestId()}`;
 
       if (typeof window !== "undefined") {
         localStorage.setItem(reportCacheKey, accumulatedText);
         localStorage.setItem(timeCacheKey, nowFormatted);
         localStorage.setItem(fpKey, generateProfileFingerprint(currentProfile));
         if (cancerType === "lung") {
-          localStorage.setItem(`oncopath_report_${currentProfile.id || getGuestId()}`, accumulatedText);
-          localStorage.setItem(`oncopath_report_time_${currentProfile.id || getGuestId()}`, nowFormatted);
-          localStorage.setItem(`oncopath_report_fp_${currentProfile.id || getGuestId()}`, generateProfileFingerprint(currentProfile));
+          localStorage.setItem(`zhiaiwiki_report_${currentProfile.id || getGuestId()}`, accumulatedText);
+          localStorage.setItem(`zhiaiwiki_report_time_${currentProfile.id || getGuestId()}`, nowFormatted);
+          localStorage.setItem(`zhiaiwiki_report_fp_${currentProfile.id || getGuestId()}`, generateProfileFingerprint(currentProfile));
         }
       }
 
@@ -626,8 +626,8 @@ export default function EvidenceReportPage() {
           setCachedTime(timeStr);
           const cancerType = fetchedProfile.cancerType || (fetchedProfile as any).organ || activeSlot;
           const fpKey = fetchedProfile.id
-            ? `oncopath_report_fp_${fetchedProfile.id}`
-            : `oncopath_report_fp_${cancerType}_${getGuestId()}`;
+            ? `zhiaiwiki_report_fp_${fetchedProfile.id}`
+            : `zhiaiwiki_report_fp_${cancerType}_${getGuestId()}`;
           setIsReportStale(checkStaleness(fetchedProfile, fpKey));
           return;
         }
@@ -635,21 +635,21 @@ export default function EvidenceReportPage() {
         // 3. Check localStorage for slot-scoped offline cache
         const cancerType = fetchedProfile.cancerType || (fetchedProfile as any).organ || activeSlot;
         const reportCacheKey = fetchedProfile.id
-          ? `oncopath_report_${fetchedProfile.id}`
-          : `oncopath_report_${cancerType}_${getGuestId()}`;
+          ? `zhiaiwiki_report_${fetchedProfile.id}`
+          : `zhiaiwiki_report_${cancerType}_${getGuestId()}`;
         const timeCacheKey = fetchedProfile.id
-          ? `oncopath_report_time_${fetchedProfile.id}`
-          : `oncopath_report_time_${cancerType}_${getGuestId()}`;
+          ? `zhiaiwiki_report_time_${fetchedProfile.id}`
+          : `zhiaiwiki_report_time_${cancerType}_${getGuestId()}`;
         const fpKey = fetchedProfile.id
-          ? `oncopath_report_fp_${fetchedProfile.id}`
-          : `oncopath_report_fp_${cancerType}_${getGuestId()}`;
+          ? `zhiaiwiki_report_fp_${fetchedProfile.id}`
+          : `zhiaiwiki_report_fp_${cancerType}_${getGuestId()}`;
 
         let localCached = typeof window !== "undefined" ? localStorage.getItem(reportCacheKey) : null;
         let localTime = typeof window !== "undefined" ? localStorage.getItem(timeCacheKey) : null;
 
         if (!localCached && cancerType === "lung" && typeof window !== "undefined") {
-          localCached = localStorage.getItem(`oncopath_report_${fetchedProfile.id || getGuestId()}`);
-          localTime = localStorage.getItem(`oncopath_report_time_${fetchedProfile.id || getGuestId()}`);
+          localCached = localStorage.getItem(`zhiaiwiki_report_${fetchedProfile.id || getGuestId()}`);
+          localTime = localStorage.getItem(`zhiaiwiki_report_time_${fetchedProfile.id || getGuestId()}`);
         }
 
         if (localCached) {
@@ -2113,7 +2113,7 @@ export default function EvidenceReportPage() {
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 relative z-10">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 bg-white border border-slate-200">
-                <img src={ONCOPATH_LOGO_DATA_URI} alt="知癌维基 Logo" className="w-full h-full object-cover" />
+                <img src={ZHIAIWIKI_LOGO_DATA_URI} alt="知癌维基 Logo" className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="text-xs font-black tracking-wider text-slate-900">知癌维基 ZhiaiWiki · {getCancerMeta(profile).name}循证知识平台</div>

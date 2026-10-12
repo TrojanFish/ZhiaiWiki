@@ -1,11 +1,11 @@
 ---
 name: Clinical Evidence Design Triad
-description: 临床循证设计三位一体规范——融合 Nordhealth Design System（高密度医护端）、NHS.UK Frontend（患者端健康素养）与 IBM Carbon Healthcare（循证级别与精准医疗）三大顶级开源医疗设计体系的精华，提炼为纯 Tailwind v4 + React 19 组件规范，适用于 ZhiaiWiki / OncoPath 全平台。
+description: 临床循证设计三位一体规范——融合 Nordhealth Design System（高密度医护端）、NHS.UK Frontend（患者端健康素养）与 IBM Carbon Healthcare（循证级别与精准医疗）三大顶级开源医疗设计体系的精华，提炼为纯 Tailwind v4 + React 19 组件规范，适用于 ZhiaiWiki 全平台。
 ---
 
 # Clinical Evidence Design Triad（临床循证设计三位一体规范）
 
-本技能是 ZhiaiWiki / OncoPath 平台的**「专科临床可信度系统」**，融合全球三大顶级医疗开源设计体系的精华原则，形成专属于本平台的组件语言。
+本技能是 ZhiaiWiki 平台的**「专科临床可信度系统」**，融合全球三大顶级医疗开源设计体系的精华原则，形成专属于本平台的组件语言。
 
 核心参考来源：
 - 🏥 **[Nordhealth Design System](https://nordhealth.design/)**（欧洲顶级 EHR 临床界面系统）

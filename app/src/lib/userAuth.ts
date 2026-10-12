@@ -4,9 +4,9 @@ import { NextResponse } from 'next/server';
 
 const pbkdf2Async = promisify(crypto.pbkdf2);
 
-const DEFAULT_SECRET = 'oncopath_patient_auth_secret_key_2026';
+const DEFAULT_SECRET = 'zhiaiwiki_patient_auth_secret_key_2026';
 const AUTH_SECRET = process.env.ADMIN_SECRET || DEFAULT_SECRET;
-export const AUTH_COOKIE_NAME = 'oncopath_auth_token';
+export const AUTH_COOKIE_NAME = 'zhiaiwiki_auth_token';
 export const AUTH_COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
 
 export const PBKDF2_ITERATIONS = 210000;

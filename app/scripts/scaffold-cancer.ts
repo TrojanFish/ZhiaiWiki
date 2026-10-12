@@ -1,5 +1,5 @@
 /**
- * OncoPath Subagent-Driven Cancer Scaffolder (专科扩充一键脚手架)
+ * ZhiaiWiki Subagent-Driven Cancer Scaffolder (专科扩充一键脚手架)
  * 依据 Superpowers 标准化架构契约，为新增实体瘤快速生成全套代码与单元测试骨架：
  * 1. Staging 计算引擎 (src/lib/<name>Staging.ts)
  * 2. 药理与 DDI 库 (src/lib/<name>DdiData.ts)
@@ -34,7 +34,7 @@ const guideline = getArg('guideline', `CSCO ${chineseName || cancerKey} 2024 · 
 const isDryRun = args.includes('--dry-run');
 
 console.log('\x1b[1m\x1b[36m========================================================================\x1b[0m');
-console.log('\x1b[1m\x1b[36m    OncoPath 专科扩充一键脚手架 (Subagent Cancer Scaffolder)           \x1b[0m');
+console.log('\x1b[1m\x1b[36m    ZhiaiWiki 专科扩充一键脚手架 (Subagent Cancer Scaffolder)           \x1b[0m');
 console.log('\x1b[1m\x1b[36m========================================================================\x1b[0m\n');
 
 if (!cancerKey || !chineseName) {

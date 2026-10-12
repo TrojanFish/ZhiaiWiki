@@ -1,5 +1,5 @@
 /**
- * OncoPath Gynecologic Oncology Localized Simulation Suite (妇科肿瘤专科本地化深度仿真测试)
+ * ZhiaiWiki Gynecologic Oncology Localized Simulation Suite (妇科肿瘤专科本地化深度仿真测试)
  * 专门针对新增两大癌种：
  * 1. 子宫内膜癌 (Endometrial Cancer, FIGO 2023 4大分子分型体系)
  * 2. 宫颈癌 (Cervical Cancer, FIGO 2018 影像与病理结合分期体系)
@@ -62,7 +62,7 @@ function recordSim(
 }
 
 console.log("\n\x1b[1m\x1b[35m========================================================================================\x1b[0m");
-console.log("\x1b[1m\x1b[35m    OncoPath 妇科肿瘤专科 (子宫内膜癌 & 宫颈癌) 本地化全景仿真测试基准套件            \x1b[0m");
+console.log("\x1b[1m\x1b[35m    ZhiaiWiki 妇科肿瘤专科 (子宫内膜癌 & 宫颈癌) 本地化全景仿真测试基准套件            \x1b[0m");
 console.log("\x1b[1m\x1b[35m    标准: Evidence Before Claims, Always | FIGO 2023 · FIGO 2018 · NCCN · CSCO     \x1b[0m");
 console.log("\x1b[1m\x1b[35m========================================================================================\x1b[0m\n");
 

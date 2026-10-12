@@ -723,12 +723,12 @@ export default function PatientDashboard() {
 
         if (typeof window !== "undefined") {
           const slot = dbData.profile?.cancerType || activeSlot;
-          localStorage.removeItem(`oncopath_report_${dbData.profile?.id || getGuestId()}`);
-          localStorage.removeItem(`oncopath_report_time_${dbData.profile?.id || getGuestId()}`);
-          localStorage.removeItem(`oncopath_report_${slot}_${getGuestId()}`);
-          localStorage.removeItem(`oncopath_report_time_${slot}_${getGuestId()}`);
-          localStorage.removeItem("oncopath_report_markdown");
-          localStorage.removeItem("oncopath_report_timestamp");
+          localStorage.removeItem(`zhiaiwiki_report_${dbData.profile?.id || getGuestId()}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_${dbData.profile?.id || getGuestId()}`);
+          localStorage.removeItem(`zhiaiwiki_report_${slot}_${getGuestId()}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_${slot}_${getGuestId()}`);
+          localStorage.removeItem("zhiaiwiki_report_markdown");
+          localStorage.removeItem("zhiaiwiki_report_timestamp");
           window.dispatchEvent(new Event("storage"));
         }
       }
@@ -752,11 +752,11 @@ export default function PatientDashboard() {
 
         deleteProfileSlot(activeSlot);
         if (typeof window !== "undefined") {
-          localStorage.removeItem(`oncopath_report_${activeSlot}_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_${activeSlot}_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_${activeSlot}_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_${activeSlot}_${guestId}`);
           if (profile?.id) {
-            localStorage.removeItem(`oncopath_report_${profile.id}`);
-            localStorage.removeItem(`oncopath_report_time_${profile.id}`);
+            localStorage.removeItem(`zhiaiwiki_report_${profile.id}`);
+            localStorage.removeItem(`zhiaiwiki_report_time_${profile.id}`);
           }
         }
         const remaining = getAvailableProfileSlots();
@@ -781,42 +781,42 @@ export default function PatientDashboard() {
         }).catch(() => {});
         
         if (typeof window !== "undefined") {
-          localStorage.removeItem("oncopath_profile");
+          localStorage.removeItem("zhiaiwiki_profile");
           localStorage.removeItem("patient_profile");
-          localStorage.removeItem("oncopath_profile_lung");
-          localStorage.removeItem("oncopath_profile_breast");
-          localStorage.removeItem("oncopath_profile_colon");
-          localStorage.removeItem("oncopath_profile_rectal");
-          localStorage.removeItem("oncopath_profile_colorectal");
-          localStorage.removeItem("oncopath_profile_gastric");
-          localStorage.removeItem("oncopath_profile_liver");
-          localStorage.removeItem("oncopath_active_cancer_slot");
-          localStorage.removeItem("oncopath_report_markdown");
-          localStorage.removeItem("oncopath_report_timestamp");
-          localStorage.removeItem(`oncopath_report_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_${guestId}`);
-          localStorage.removeItem(`oncopath_report_lung_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_lung_${guestId}`);
-          localStorage.removeItem(`oncopath_report_breast_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_breast_${guestId}`);
-          localStorage.removeItem(`oncopath_report_colon_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_colon_${guestId}`);
-          localStorage.removeItem(`oncopath_report_rectal_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_rectal_${guestId}`);
-          localStorage.removeItem(`oncopath_report_colorectal_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_colorectal_${guestId}`);
-          localStorage.removeItem(`oncopath_report_gastric_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_gastric_${guestId}`);
-          localStorage.removeItem(`oncopath_report_liver_${guestId}`);
-          localStorage.removeItem(`oncopath_report_time_liver_${guestId}`);
+          localStorage.removeItem("zhiaiwiki_profile_lung");
+          localStorage.removeItem("zhiaiwiki_profile_breast");
+          localStorage.removeItem("zhiaiwiki_profile_colon");
+          localStorage.removeItem("zhiaiwiki_profile_rectal");
+          localStorage.removeItem("zhiaiwiki_profile_colorectal");
+          localStorage.removeItem("zhiaiwiki_profile_gastric");
+          localStorage.removeItem("zhiaiwiki_profile_liver");
+          localStorage.removeItem("zhiaiwiki_active_cancer_slot");
+          localStorage.removeItem("zhiaiwiki_report_markdown");
+          localStorage.removeItem("zhiaiwiki_report_timestamp");
+          localStorage.removeItem(`zhiaiwiki_report_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_lung_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_lung_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_breast_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_breast_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_colon_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_colon_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_rectal_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_rectal_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_colorectal_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_colorectal_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_gastric_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_gastric_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_liver_${guestId}`);
+          localStorage.removeItem(`zhiaiwiki_report_time_liver_${guestId}`);
           if (profile?.id) {
-            localStorage.removeItem(`oncopath_report_${profile.id}`);
-            localStorage.removeItem(`oncopath_report_time_${profile.id}`);
+            localStorage.removeItem(`zhiaiwiki_report_${profile.id}`);
+            localStorage.removeItem(`zhiaiwiki_report_time_${profile.id}`);
           }
-          localStorage.removeItem("oncopath_timeline_events");
-          localStorage.removeItem("oncopath_timeline_is_demo");
-          localStorage.removeItem("oncopath_timeline_custom_events");
-          localStorage.removeItem("oncopath_clinic_questions");
+          localStorage.removeItem("zhiaiwiki_timeline_events");
+          localStorage.removeItem("zhiaiwiki_timeline_is_demo");
+          localStorage.removeItem("zhiaiwiki_timeline_custom_events");
+          localStorage.removeItem("zhiaiwiki_clinic_questions");
           window.dispatchEvent(new Event("storage"));
         }
         

@@ -1,5 +1,5 @@
 /**
- * OncoPath Production-Grade End-to-End Simulation & UI/UX Audit
+ * ZhiaiWiki Production-Grade End-to-End Simulation & UI/UX Audit
  * Validates Code, Staging, DDI, AI Pipeline, PWA, and Responsive UI across PC & Mobile
  */
 
@@ -46,7 +46,7 @@ function record(
 }
 
 console.log("\n" + "=".repeat(85));
-console.log("  OncoPath 生产就绪与 UI/UX 跨端本地全景仿真基准套件 (Production & UI/UX Audit)");
+console.log("  ZhiaiWiki 生产就绪与 UI/UX 跨端本地全景仿真基准套件 (Production & UI/UX Audit)");
 console.log("=".repeat(85) + "\n");
 
 // =========================================================================

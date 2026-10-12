@@ -55,7 +55,7 @@ export function PwaInstallBanner() {
       }
 
       // Check if user dismissed recently
-      const dismissedTime = localStorage.getItem("oncopath_pwa_dismissed");
+      const dismissedTime = localStorage.getItem("zhiaiwiki_pwa_dismissed");
       if (dismissedTime && Date.now() - Number(dismissedTime) < 7 * 24 * 60 * 60 * 1000) {
         return;
       }
@@ -94,7 +94,7 @@ export function PwaInstallBanner() {
   const handleDismiss = () => {
     setShowBanner(false);
     if (typeof window !== "undefined") {
-      localStorage.setItem("oncopath_pwa_dismissed", Date.now().toString());
+      localStorage.setItem("zhiaiwiki_pwa_dismissed", Date.now().toString());
     }
   };
 

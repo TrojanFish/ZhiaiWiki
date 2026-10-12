@@ -66,7 +66,7 @@ export default function WikiPage() {
   // ── 加载用户档案 ─────────────────────────────────────────────────────────
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile");
+      const saved = localStorage.getItem("zhiaiwiki_profile") || localStorage.getItem("patient_profile");
       if (saved) setUserProfile(JSON.parse(saved));
     } catch (e) {
       console.error("Failed to load local profile:", e);

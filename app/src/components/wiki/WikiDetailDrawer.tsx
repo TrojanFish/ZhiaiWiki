@@ -136,7 +136,7 @@ export function WikiDetailDrawer({
   const handleAddToClinicQuestions = (questionText: string, customTitle?: string) => {
     if (!topic || typeof window === "undefined") return;
     try {
-      const existing = localStorage.getItem("oncopath_clinic_questions");
+      const existing = localStorage.getItem("zhiaiwiki_clinic_questions");
       let list = existing ? JSON.parse(existing) : [];
       if (!Array.isArray(list)) list = [];
       const newItem = {
@@ -148,7 +148,7 @@ export function WikiDetailDrawer({
       };
       if (!list.some((item: any) => item.question === questionText)) {
         list.push(newItem);
-        localStorage.setItem("oncopath_clinic_questions", JSON.stringify(list));
+        localStorage.setItem("zhiaiwiki_clinic_questions", JSON.stringify(list));
       }
       setSavedQuestions((prev) => ({ ...prev, [questionText]: true }));
       triggerToast("已成功加入门诊问诊清单！可在就诊便签卡与打印清单中查看。");

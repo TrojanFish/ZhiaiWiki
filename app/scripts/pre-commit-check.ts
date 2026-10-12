@@ -1,5 +1,5 @@
 /**
- * OncoPath Local Pre-commit Guard (Superpowers Verification Gate)
+ * ZhiaiWiki Local Pre-commit Guard (Superpowers Verification Gate)
  * Millisecond-level local interception for:
  * 1. PII Leaks (Unmasked Chinese ID numbers, mobile phone numbers)
  * 2. Plaintext Secrets & API Keys

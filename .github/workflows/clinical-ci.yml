@@ -1,4 +1,4 @@
-name: OncoPath Clinical CI & Evidence Safety Pipeline
+name: ZhiaiWiki Clinical CI & Evidence Safety Pipeline
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
     env:
       CI: true
       NODE_ENV: test
-      DATABASE_URL: "postgresql://postgres:ci_password@localhost:5432/oncopath?schema=public"
+      DATABASE_URL: "postgresql://postgres:ci_password@localhost:5432/zhiaiwiki?schema=public"
       ADMIN_SECRET: ${{ secrets.ADMIN_SECRET || 'clinical_ci_safety_secret_production_ready_2026' }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || 'ci_deterministic_fallback_key' }}
       NEXT_TELEMETRY_DISABLED: 1

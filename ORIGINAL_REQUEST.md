@@ -2,9 +2,9 @@
 
 ## 2026-10-09T02:00:56Z
 
-ZhiaiWiki (知癌维基 / OncoPath) 平台生产环境上线前全方位完整审查与验收，识别并修复代码安全、临床循证防线、SSR水合稳定性、响应式交互及部署配置中的潜在缺陷，确保生产环境高可靠就绪。
+ZhiaiWiki (知癌维基) 平台生产环境上线前全方位完整审查与验收，识别并修复代码安全、临床循证防线、SSR水合稳定性、响应式交互及部署配置中的潜在缺陷，确保生产环境高可靠就绪。
 
-Working directory: c:/Users/Administrator/Desktop/lung
+Working directory: c:/Users/KeiyeeYu/Desktop/ZhiaiWiki
 Integrity mode: development
 
 ## Verification Resources

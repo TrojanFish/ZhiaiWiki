@@ -425,7 +425,7 @@ export default function MdtConsultationHub({
   const [customQuestions, setCustomQuestions] = useState<string[]>([]);
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(`oncopath_mdt_custom_q_${cancerType}`);
+      const saved = localStorage.getItem(`zhiaiwiki_mdt_custom_q_${cancerType}`);
       if (saved) {
         setCustomQuestions(JSON.parse(saved));
       }
@@ -440,7 +440,7 @@ export default function MdtConsultationHub({
     setCustomQuestions(next);
     setCustomQuestionInput("");
     try {
-      localStorage.setItem(`oncopath_mdt_custom_q_${cancerType}`, JSON.stringify(next));
+      localStorage.setItem(`zhiaiwiki_mdt_custom_q_${cancerType}`, JSON.stringify(next));
     } catch (e) {
       console.error("Failed to save custom questions", e);
     }
@@ -450,7 +450,7 @@ export default function MdtConsultationHub({
     const next = customQuestions.filter((_, i) => i !== idx);
     setCustomQuestions(next);
     try {
-      localStorage.setItem(`oncopath_mdt_custom_q_${cancerType}`, JSON.stringify(next));
+      localStorage.setItem(`zhiaiwiki_mdt_custom_q_${cancerType}`, JSON.stringify(next));
     } catch (e) {
       console.error("Failed to update custom questions", e);
     }

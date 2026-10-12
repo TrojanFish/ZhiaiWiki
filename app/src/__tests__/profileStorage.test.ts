@@ -164,7 +164,7 @@ describe('Dual Primary MPMN Multi-Slot profileStorage', () => {
   });
 
   it('should smoothly migrate legacy single-profile storage to appropriate slot', () => {
-    // Simulate an existing user with legacy oncopath_profile
+    // Simulate an existing user with legacy zhiaiwiki_profile
     localStorage.setItem(STORAGE_KEY_LEGACY, JSON.stringify(mockBreastProfile));
 
     // Calling getProfileBySlot or getAvailableProfileSlots triggers automatic migration

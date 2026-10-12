@@ -1,5 +1,5 @@
 /**
- * OncoPath Exhaustive Local Simulation Test Suite (深度全景本地化仿真测试)
+ * ZhiaiWiki Exhaustive Local Simulation Test Suite (深度全景本地化仿真测试)
  * 严格遵循 "Evidence Before Claims, Always" 铁律：
  * 
  * 覆盖 7 大维度 45+ 项生产级极限实证仿真：
@@ -68,7 +68,7 @@ function recordTest(
 }
 
 console.log('========================================================================================');
-console.log('🔬 ONCOPATH 深度全景本地化仿真测试 (EXHAUSTIVE LOCALIZED SIMULATION SUITE)');
+console.log('🔬 ZHIAIWIKI 深度全景本地化仿真测试 (EXHAUSTIVE LOCALIZED SIMULATION SUITE)');
 console.log('标准: Evidence Before Claims, Always | 双癌种全生命周期真实临床情景深度遍历');
 console.log('========================================================================================\n');
 
@@ -718,7 +718,7 @@ recordTest(
 );
 
 // 6.2 PBKDF2 210,000 轮安全加盐密码哈希防爆破
-const secretPass = 'OncoPathStrictClinical2026!';
+const secretPass = 'ZhiaiWikiStrictClinical2026!';
 const { hash, salt } = hashPassword(secretPass);
 const passOk = verifyPassword(secretPass, hash, salt);
 const passReject = verifyPassword('WrongPassword!', hash, salt);
@@ -783,10 +783,10 @@ recordTest(
 );
 
 // 7.2 双癌种持久化键值与状态一致性
-const activeKey = 'oncopath_active_cancer_type';
+const activeKey = 'zhiaiwiki_active_cancer_type';
 const supportedCancers = ['lung', 'breast'];
 recordTest(
-  activeKey === 'oncopath_active_cancer_type' && supportedCancers.includes('breast') && supportedCancers.includes('lung'),
+  activeKey === 'zhiaiwiki_active_cancer_type' && supportedCancers.includes('breast') && supportedCancers.includes('lung'),
   'Internationalization',
   'I18N-STATE-01',
   'Multi-Cancer Active State Persistence Contract',

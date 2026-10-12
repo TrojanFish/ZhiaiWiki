@@ -1,4 +1,4 @@
-# OncoPath 核心循证医学文献库与上传指引
+# ZhiaiWiki 核心循证医学文献库与上传指引
 ### Built-in (19 Core Studies) vs. Recommended Landmark Studies for Ingestion
 
 > 本文档针对 **肺腺癌病理分期、高危浸润因素、外科术式选择（肺段切除 vs 楔形切除 vs 肺叶切除）、围手术期免疫/靶向、长程生存率（5年/10年 RFS/OS）及过度医疗防护红线** 进行了 100% 真实严谨的学术整理，杜绝任何 AI 幻觉。
@@ -68,7 +68,7 @@
 3. 页面右上角点击带有 **`Free PMC Article`**、**`Full Text`** 或期刊直达按钮下载 `.pdf` 文件。
 4. 也可直接点击本文档中的 **DOI 链接** 直达期刊官网下载。
 
-### 2. 通过 OncoPath 循证工作台上传解析
+### 2. 通过 ZhiaiWiki 循证工作台上传解析
 1. 打开本地服务后台：`http://localhost:3000/admin`。
 2. 在左侧选择 **【PDF 智能多模态文献提取】** 模块。
 3. 将下载好的论文 PDF 文件拖拽至上传区域。

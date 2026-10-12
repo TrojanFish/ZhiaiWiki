@@ -1,4 +1,4 @@
-# ZhiaiWiki (知癌维基 / OncoPath) 生产环境预发布全方位审查与终审验收报告
+# ZhiaiWiki (知癌维基) 生产环境预发布全方位审查与终审验收报告
 ## Production Pre-Launch Comprehensive Audit & Acceptance Report
 
 - **文档编号**: `DOC-052-AUDIT-ACCEPTANCE`
@@ -11,7 +11,7 @@
 
 ## 一、执行摘要 (Executive Summary)
 
-本报告针对 **ZhiaiWiki (知癌维基 / OncoPath)** 肿瘤精准随访与循证决策平台进行投产上线前的全方位独立终审验收。本次验收严格遵照 `ORIGINAL_REQUEST.md` (R1-R4) 及 `orchestrator_1/PROJECT.md` (M1-M4) 设定的质量与安全准则，覆盖代码安全防护、个人隐私（PIPL/HIPAA）合规、临床药理排雷（DDI）确定性、Next.js 16 + React 19 SSR 水合稳定性、TypeScript 类型系统完整性、ESLint 规范、全栈仿真测试以及 Docker 容器化生产构建。
+本报告针对 **ZhiaiWiki (知癌维基)** 肿瘤精准随访与循证决策平台进行投产上线前的全方位独立终审验收。本次验收严格遵照 `ORIGINAL_REQUEST.md` (R1-R4) 及 `orchestrator_1/PROJECT.md` (M1-M4) 设定的质量与安全准则，覆盖代码安全防护、个人隐私（PIPL/HIPAA）合规、临床药理排雷（DDI）确定性、Next.js 16 + React 19 SSR 水合稳定性、TypeScript 类型系统完整性、ESLint 规范、全栈仿真测试以及 Docker 容器化生产构建。
 
 ### 验收综合结论
 | 核心指标 | 预设目标 | 终审实测结果 | 结论 |
@@ -95,7 +95,7 @@ C:\Users\Administrator\Desktop\lung\app\src\components\profile\MdtConsultationHu
 > tsx scripts/check-production-security.ts
 
 ============================================================
-  OncoPath (精准肺癌智慧随访) 生产就绪与安全合规性自检清单
+  ZhiaiWiki (精准肺癌智慧随访) 生产就绪与安全合规性自检清单
 ============================================================
 
 [ WARN ] [环境机密] ADMIN_SECRET 熵值与安全性
@@ -296,7 +296,7 @@ Route (app)
 
 ## 六、终审签发结论 (Sign-off)
 
-本项目 **ZhiaiWiki (知癌维基 / OncoPath)** 经过系统性全流程审查、源码级精确修复、五大门禁独立复测及高强度临床仿真验证：
+本项目 **ZhiaiWiki (知癌维基)** 经过系统性全流程审查、源码级精确修复、五大门禁独立复测及高强度临床仿真验证：
 - **安全与合规风险已全部闭环；**
 - **临床药理逻辑确定性无幻觉；**
 - **全栈构建与部署规范严整健全；**

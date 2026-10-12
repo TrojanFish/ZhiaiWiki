@@ -1,6 +1,6 @@
 import { runAllGuardrailTests } from '../src/lib/guardrailVerification';
 
-console.log('=== OncoPath Production Readiness & Guardrails Test ===\n');
+console.log('=== ZhiaiWiki Production Readiness & Guardrails Test ===\n');
 
 const results = runAllGuardrailTests();
 let allPassed = true;

@@ -122,7 +122,7 @@ export default function AdminPage() {
 
   const getAdminToken = () => {
     if (typeof window !== "undefined") {
-      return sessionStorage.getItem("oncopath_admin_token");
+      return sessionStorage.getItem("zhiaiwiki_admin_token");
     }
     return null;
   };
@@ -230,7 +230,7 @@ export default function AdminPage() {
         if (res.ok) {
           setIsAuthenticated(true);
         } else {
-          sessionStorage.removeItem("oncopath_admin_token");
+          sessionStorage.removeItem("zhiaiwiki_admin_token");
           setIsAuthenticated(false);
         }
       }).catch(() => {
@@ -266,7 +266,7 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (data.success && data.token) {
-        sessionStorage.setItem("oncopath_admin_token", data.token);
+        sessionStorage.setItem("zhiaiwiki_admin_token", data.token);
         setIsAuthenticated(true);
         showToast("管理员身份验证成功，欢迎进入证据中台！");
       } else {
@@ -281,7 +281,7 @@ export default function AdminPage() {
 
   // Handle Logout
   const handleLogout = () => {
-    sessionStorage.removeItem("oncopath_admin_token");
+    sessionStorage.removeItem("zhiaiwiki_admin_token");
     setIsAuthenticated(false);
     showToast("已安全退出管理员账号");
   };

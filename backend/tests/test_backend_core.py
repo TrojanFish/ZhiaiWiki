@@ -1,5 +1,5 @@
 """
-Backend Unit Test Suite for ZhiaiWiki / OncoPath.
+Backend Unit Test Suite for ZhiaiWiki.
 Covers:
   - IASLC / AJCC 9th Edition Staging Rules Engine (MedicalRulesEngine)
   - Security utilities (password hashing, PBKDF2 downgrade guards, strength validation)

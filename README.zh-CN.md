@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/TrojanFish/OncoPath/main/app/public/logo.png" width="90" alt="知癌维基 ZhiaiWiki Logo">
-  <h1>知癌维基 ZhiaiWiki (OncoPath)</h1>
+  <img src="https://raw.githubusercontent.com/TrojanFish/ZhiaiWiki/main/app/public/logo.png" width="90" alt="知癌维基 ZhiaiWiki Logo">
+  <h1>知癌维基 ZhiaiWiki</h1>
   <p><strong>多癌种全病程循证医学知识平台 & 临床就医决策支持系统</strong></p>
   <p><em>涵盖 12 大高发实体瘤，基于顶级临床同行评审文献、AJCC/IASLC 指南与真实多中心队列的严肃医学循证推演平台</em></p>
 
@@ -144,8 +144,8 @@ sudo systemctl enable --now docker
 
 ### 3. 克隆代码仓库
 ```bash
-git clone https://github.com/TrojanFish/OncoPath.git
-cd OncoPath
+git clone https://github.com/TrojanFish/ZhiaiWiki.git
+cd ZhiaiWiki
 ```
 
 ### 4. 配置生产环境变量 (`.env`)
@@ -200,13 +200,13 @@ npm run dev
 npm run test:unit
 ```
 * 患者前台：打开浏览器访问 [http://localhost:3000](http://localhost:3000)
-* 管理中台：访问 [http://localhost:3000/admin](http://localhost:3000/admin)（本地开发初始凭据已提供一键填入：`admin` / `OncoPath2026!`）
+* 管理中台：访问 [http://localhost:3000/admin](http://localhost:3000/admin)（本地开发初始凭据已提供一键填入：`admin` / `ZhiaiWiki2026!`）
 
 ---
 
 ## 🛡️ 临床合规与医学免责声明 (Disclaimer)
 
-1. 知癌维基 (ZhiaiWiki / OncoPath) 严格遵守 **AJCC 第 8/9 版** 肿瘤 TNM 分期及 **CSCO / NCCN / ESMO** 临床实践指南。
+1. 知癌维基 (ZhiaiWiki) 严格遵守 **AJCC 第 8/9 版** 肿瘤 TNM 分期及 **CSCO / NCCN / ESMO** 临床实践指南。
 2. 本平台定位为**严肃循证医学知识检索与医患沟通协同工具**，所有统计效应量来源于公开发表的同行评审学术论文，**不构成任何直接的个体化临床诊断结论或处方用药建议**。
 3. 任何关于手术方式选择、辅助化疗方案、靶向耐药后线更换或随访周期的决策，均须严格遵循专科主治医生的线下面诊诊断意见。
 

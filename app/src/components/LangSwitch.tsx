@@ -6,7 +6,7 @@ import { Languages } from "lucide-react";
 
 export type LangScript = "cn" | "tw";
 
-const STORAGE_KEY = "oncopath_lang_script";
+const STORAGE_KEY = "zhiaiwiki_lang_script";
 
 let s2tConverter: ((text: string) => string) | null = null;
 let t2sConverter: ((text: string) => string) | null = null;
@@ -180,7 +180,7 @@ export default function LangSwitch({ className = "", showFullLabel = false }: La
 
     // Notify other components if needed
     window.dispatchEvent(
-      new CustomEvent("oncopath-lang-change", { detail: { lang: nextLang } })
+      new CustomEvent("zhiaiwiki-lang-change", { detail: { lang: nextLang } })
     );
   }, [lang]);
 
@@ -234,7 +234,7 @@ export function setGlobalLanguage(targetScript: LangScript) {
   localStorage.setItem(STORAGE_KEY, targetScript);
   void convertDocument(targetScript);
   window.dispatchEvent(
-    new CustomEvent("oncopath-lang-change", { detail: { lang: targetScript } })
+    new CustomEvent("zhiaiwiki-lang-change", { detail: { lang: targetScript } })
   );
 }
 
@@ -260,8 +260,8 @@ export function useLanguage(): {
         setLangState(detail.lang);
       }
     };
-    window.addEventListener("oncopath-lang-change", handleSync);
-    return () => window.removeEventListener("oncopath-lang-change", handleSync);
+    window.addEventListener("zhiaiwiki-lang-change", handleSync);
+    return () => window.removeEventListener("zhiaiwiki-lang-change", handleSync);
   }, []);
 
   const setLang = useCallback((target: LangScript) => {

@@ -1,5 +1,5 @@
 /**
- * OncoPath Two-Stage Clinical Code Review Tool (Superpowers Code Review)
+ * ZhiaiWiki Two-Stage Clinical Code Review Tool (Superpowers Code Review)
  * 
  * Performs automated two-stage code review on git diff / modified files:
  * Stage 1: Engineering Architecture, Performance & Security (Node event-loop, NaN checks, secrets)
@@ -20,7 +20,7 @@ interface ReviewFinding {
 }
 
 console.log('\x1b[1m\x1b[36m========================================================================\x1b[0m');
-console.log('\x1b[1m\x1b[36m   OncoPath 双阶段代码审查与临床质量审计系统 (Superpowers Reviewer)    \x1b[0m');
+console.log('\x1b[1m\x1b[36m   ZhiaiWiki 双阶段代码审查与临床质量审计系统 (Superpowers Reviewer)    \x1b[0m');
 console.log('\x1b[1m\x1b[36m========================================================================\x1b[0m\n');
 
 // 1. 获取 diff 内容（优先暂存区，若无则取 HEAD 差异）

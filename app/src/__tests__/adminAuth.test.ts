@@ -10,13 +10,13 @@ import {
 describe('Admin Authentication & RBAC Engine', () => {
   describe('Admin Credentials Validation', () => {
     it('should validate default admin credentials in development', () => {
-      expect(validateAdminCredentials('admin', 'OncoPath2026!')).toBe(true);
-      expect(validateAdminCredentials('admin ', 'OncoPath2026! ')).toBe(true); // trims whitespace
+      expect(validateAdminCredentials('admin', 'ZhiaiWiki2026!')).toBe(true);
+      expect(validateAdminCredentials('admin ', 'ZhiaiWiki2026! ')).toBe(true); // trims whitespace
     });
 
     it('should reject invalid username or password', () => {
       expect(validateAdminCredentials('admin', 'wrong_password')).toBe(false);
-      expect(validateAdminCredentials('root', 'OncoPath2026!')).toBe(false);
+      expect(validateAdminCredentials('root', 'ZhiaiWiki2026!')).toBe(false);
       expect(validateAdminCredentials('', '')).toBe(false);
     });
   });

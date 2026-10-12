@@ -59,7 +59,7 @@ export default function UserAvatar({ mode = "navbar", onAction }: UserAvatarProp
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.removeItem("role");
-    localStorage.removeItem("oncopath_admin_token");
+    localStorage.removeItem("zhiaiwiki_admin_token");
     setUserEmail(null);
     setShowDropdown(false);
     window.dispatchEvent(new Event("auth-change"));

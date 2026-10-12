@@ -1,11 +1,11 @@
 ---
 name: Telemedicine & Evidence Health UI/UX Design System
-description: Comprehensive visual design system, token dictionary, cancer-domain theme palettes, and component styling guidelines for ZhiaiWiki / OncoPath.
+description: Comprehensive visual design system, token dictionary, cancer-domain theme palettes, and component styling guidelines for ZhiaiWiki.
 ---
 
 # Telemedicine & Evidence Health UI/UX Design System (远程医疗与循证医学视觉设计系统)
 
-本技能定义了知癌维基（ZhiaiWiki / OncoPath）全站的**官方视觉设计规范、设计参数字典（Design Tokens）、8大癌种专属色彩体系、圆角与投影阶梯及无障碍无歧视标准**。
+本技能定义了知癌维基（ZhiaiWiki）全站的**官方视觉设计规范、设计参数字典（Design Tokens）、8大癌种专属色彩体系、圆角与投影阶梯及无障碍无歧视标准**。
 
 本技能作为全系统的前端**「视觉字典（Visual Token Dictionary）」**，所有 UI 渲染必须严格引用本规范中定义的颜色、阴影、圆角与排印规格。
 

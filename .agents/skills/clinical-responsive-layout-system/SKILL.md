@@ -5,7 +5,7 @@ description: Universal responsive layout architecture, vertical breathing rhythm
 
 # Clinical Responsive Layout & Spacing System (知癌维基 全端响应式临床布局与间距规范技能)
 
-本技能定义了知癌维基（ZhiaiWiki / OncoPath）全站所有页面、子专区、卡片网格、弹窗（Modal）、侧滑抽屉（Drawer）与悬浮工具栏在 **PC 桌面端与移动端** 的**核心布局架构、垂直呼吸节奏、硬件安全区避让、绝对 Z-Index 分层与组件间距阶梯**。
+本技能定义了知癌维基（ZhiaiWiki）全站所有页面、子专区、卡片网格、弹窗（Modal）、侧滑抽屉（Drawer）与悬浮工具栏在 **PC 桌面端与移动端** 的**核心布局架构、垂直呼吸节奏、硬件安全区避让、绝对 Z-Index 分层与组件间距阶梯**。
 
 任何新增页面路由、功能模块、表单抽屉或重构既有 UI 时，**必须严格遵守本技能定义的全部标准与代码模板**，彻底杜绝历史遗留的视觉断层、冗长空白与手机端手势冲突。
 

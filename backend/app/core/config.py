@@ -11,7 +11,7 @@ DEFAULT_MOCK_OPENAI_KEY = "sk-mock-key-for-development"
 class Settings(BaseSettings):
     PROJECT_NAME: str = "ZhiaiWiki"
     ENVIRONMENT: str = "development"
-    DATABASE_URL: str = "sqlite+aiosqlite:///./oncopath.db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./zhiaiwiki.db"
     REDIS_URL: str = "redis://localhost:6379/0"
     SECRET_KEY: str = DEFAULT_INSECURE_SECRET
     ALGORITHM: str = "HS256"
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # Admin credentials for backend admin operations (evidence seeding, etc.)
     # These mirror the Next.js frontend admin credentials for consistency.
     ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "OncoPath2026!"
+    ADMIN_PASSWORD: str = "ZhiaiWiki2026!"
 
     # LLM Configuration (OpenAI-compatible endpoint used by the FastAPI analysis agent)
     # Note: The primary OCR feature uses GEMINI_API_KEY directly from the Next.js frontend.
@@ -48,7 +48,7 @@ class Settings(BaseSettings):
                     "[CRITICAL SECURITY ERROR] ZhiaiWiki backend cannot start in production with default/insecure SECRET_KEY! "
                     "You must provide a high-entropy secret of at least 32 characters via SECRET_KEY environment variable."
                 )
-            if not self.ADMIN_PASSWORD or self.ADMIN_PASSWORD in ("OncoPath2026!", "ChangeMe_Production_Admin_Password_2026!"):
+            if not self.ADMIN_PASSWORD or self.ADMIN_PASSWORD in ("ZhiaiWiki2026!", "ChangeMe_Production_Admin_Password_2026!"):
                 raise ValueError(
                     "[CRITICAL SECURITY ERROR] ZhiaiWiki backend cannot start in production with default ADMIN_PASSWORD! "
                     "You must configure a strong ADMIN_PASSWORD in your production environment."

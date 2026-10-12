@@ -147,7 +147,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
   const handleAddToClinicQuestions = (questionText: string, customTitle?: string) => {
     if (typeof window === "undefined") return;
     try {
-      const existing = localStorage.getItem("oncopath_clinic_questions");
+      const existing = localStorage.getItem("zhiaiwiki_clinic_questions");
       let list = existing ? JSON.parse(existing) : [];
       if (!Array.isArray(list)) list = [];
 
@@ -163,7 +163,7 @@ export function WikiTopicCard({ topic, isMatchedProfile, isHighlighted }: WikiTo
       const alreadyExists = list.some((item: any) => item.question === questionText);
       if (!alreadyExists) {
         list.push(newItem);
-        localStorage.setItem("oncopath_clinic_questions", JSON.stringify(list));
+        localStorage.setItem("zhiaiwiki_clinic_questions", JSON.stringify(list));
       }
 
       setSavedQuestions((prev) => ({ ...prev, [questionText]: true }));

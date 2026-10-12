@@ -1,5 +1,5 @@
 /**
- * OncoPath 全癌种病理仿真综合验证脚本 (simulate-all-cancers-pathology-lifecycle.ts)
+ * ZhiaiWiki 全癌种病理仿真综合验证脚本 (simulate-all-cancers-pathology-lifecycle.ts)
  * 严格按照医学事实性，对 11 大实体瘤执行“上传-校对-修改-循证”四步闭环仿真验证
  */
 
@@ -710,7 +710,7 @@ MSI 检测为 MSS (微卫星稳定)。
 
 async function runComprehensiveSimulation() {
   console.log('\n================================================================================');
-  console.log(' 🩺 ONCOPATH 全癌种病理仿真综合验证：上传 -> 校对 -> 修改 -> 循证 (11大癌种)');
+  console.log(' 🩺 ZHIAIWIKI 全癌种病理仿真综合验证：上传 -> 校对 -> 修改 -> 循证 (11大癌种)');
   console.log(' 遵循医学事实性红线：严禁胡编硬编码，严格遵循 IASLC/AJCC/FIGO/CNLC/ATA 指南');
   console.log('================================================================================\n');
 

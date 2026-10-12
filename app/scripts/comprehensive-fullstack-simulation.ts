@@ -1,5 +1,5 @@
 /**
- * OncoPath 全栈前后端生产就绪度与综合仿真测试套件 (Comprehensive Full-Stack Production Readiness Simulation)
+ * ZhiaiWiki 全栈前后端生产就绪度与综合仿真测试套件 (Comprehensive Full-Stack Production Readiness Simulation)
  * 
  * 仿真标准与覆盖范围：
  *  1. [BACKEND] 核心 API 端点全链路仿真 (Profile, Health, Auth, SimilarCases, Studies, Graph, GenerateReport, ParseReport)
@@ -45,7 +45,7 @@ function sim(passed: boolean, dimension: string, id: string, title: string, deta
 
 async function runFullstackSimulation() {
   console.log("\n========================================================================================");
-  console.log(" 🌐 ONCOPATH 全栈前后端生产就绪度与综合仿真测试套件 (FULL-STACK PRODUCTION SIMULATION) ");
+  console.log(" 🌐 ZHIAIWIKI 全栈前后端生产就绪度与综合仿真测试套件 (FULL-STACK PRODUCTION SIMULATION) ");
   console.log("========================================================================================\n");
 
   // =========================================================================
@@ -194,7 +194,7 @@ async function runFullstackSimulation() {
 
   // 2.2 HMAC 会话签名防篡改与过期验证
   try {
-    const sessionToken = generateUserToken("usr_sim_001", "patient@oncopath.org");
+    const sessionToken = generateUserToken("usr_sim_001", "patient@zhiaiwiki.org");
     const verified = verifyUserToken(sessionToken);
     
     // 伪造篡改测试
@@ -541,7 +541,7 @@ async function runFullstackSimulation() {
   const passRate = ((passed / total) * 100).toFixed(1);
 
   console.log("\n========================================================================================");
-  console.log("                ONCOPATH 全栈前后端生产就绪仿真综合质量度量看板                         ");
+  console.log("                ZHIAIWIKI 全栈前后端生产就绪仿真综合质量度量看板                         ");
   console.log("========================================================================================");
   console.log(` 总仿真测试项: ${total} 组生产级全链路场景`);
   console.log(` 测试通过数量: ${passed} / ${total}`);

@@ -83,7 +83,7 @@ export default function SubpageNavbar() {
   useEffect(() => {
     const checkProfile = () => {
       if (typeof window === "undefined") return;
-      const profile = localStorage.getItem("oncopath_profile") || localStorage.getItem("patient_profile");
+      const profile = localStorage.getItem("zhiaiwiki_profile") || localStorage.getItem("patient_profile");
       const email = localStorage.getItem("email") || sessionStorage.getItem("email");
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       setHasProfile(!!profile || !!email || !!token);

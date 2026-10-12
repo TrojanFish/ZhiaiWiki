@@ -22,7 +22,7 @@ export function logEvent(payload: LogPayload) {
   const level = payload.level || 'info';
   const logEntry = {
     timestamp: new Date().toISOString(),
-    service: 'oncopath-web',
+    service: 'zhiaiwiki-web',
     environment: process.env.NODE_ENV || 'development',
     level,
     ...payload,
