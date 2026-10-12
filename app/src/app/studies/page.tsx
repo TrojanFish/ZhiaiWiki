@@ -591,6 +591,90 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "cervical") {
+        switch (selectedTopic) {
+          case "immunotherapy":
+            return (
+              factors.includes("KEYNOTE-826") ||
+              factors.includes("KEYNOTE") ||
+              factors.includes("PEMBROLIZUMAB") ||
+              factors.includes("CPS") ||
+              factors.includes("PD-L1") ||
+              factors.includes("CADONILIMAB") ||
+              factors.includes("卡度尼利") ||
+              factors.includes("帕博利珠单抗") ||
+              factors.includes("死亡风险降低36%") ||
+              fullText.includes("KEYNOTE") ||
+              fullText.includes("826") ||
+              fullText.includes("帕博利珠单抗") ||
+              fullText.includes("卡度尼利") ||
+              fullText.includes("CPS") ||
+              fullText.includes("免疫")
+            );
+          case "targeted":
+            return (
+              factors.includes("GOG-240") ||
+              factors.includes("GOG240") ||
+              factors.includes("BEVACIZUMAB") ||
+              factors.includes("贝伐珠单抗") ||
+              factors.includes("抗血管靶向") ||
+              factors.includes("总生存期延长") ||
+              fullText.includes("GOG-240") ||
+              fullText.includes("GOG240") ||
+              fullText.includes("贝伐珠单抗") ||
+              fullText.includes("抗血管")
+            );
+          case "surgery":
+            return (
+              factors.includes("LACC") ||
+              factors.includes("LACC试验") ||
+              factors.includes("SURGERY") ||
+              factors.includes("开腹根治术") ||
+              factors.includes("微创腹腔镜警示") ||
+              factors.includes("HYSTERECTOMY") ||
+              factors.includes("无瘤原则") ||
+              fullText.includes("LACC") ||
+              fullText.includes("开腹") ||
+              fullText.includes("微创") ||
+              fullText.includes("腹腔镜") ||
+              fullText.includes("广泛子宫切除") ||
+              fullText.includes("锥切")
+            );
+          case "pathology":
+            return (
+              factors.includes("EMBRACE") ||
+              factors.includes("EMBRACE-I") ||
+              factors.includes("CCRT") ||
+              factors.includes("IGABT") ||
+              factors.includes("BRACHYTHERAPY") ||
+              factors.includes("三维自适应后装放疗") ||
+              factors.includes("局部进展期") ||
+              fullText.includes("EMBRACE") ||
+              fullText.includes("CCRT") ||
+              fullText.includes("后装") ||
+              fullText.includes("近距离") ||
+              fullText.includes("放疗") ||
+              fullText.includes("鳞癌") ||
+              fullText.includes("腺癌")
+            );
+          case "imaging":
+            return (
+              factors.includes("MRI") ||
+              factors.includes("CT") ||
+              factors.includes("PET") ||
+              factors.includes("FIGO") ||
+              factors.includes("SCC") ||
+              fullText.includes("MRI") ||
+              fullText.includes("盆腔增强") ||
+              fullText.includes("淋巴结") ||
+              fullText.includes("FIGO") ||
+              fullText.includes("SCC")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -700,6 +784,13 @@ export default function StudiesPage() {
     { id: "pathology", label: "BRAF/RET 驱动突变", icon: Microscope },
     { id: "immunotherapy", label: "TSH 抑制与 131I 治疗", icon: ShieldCheck },
     { id: "imaging", label: "高频彩超与颈部评估", icon: Activity },
+  ] : cancerType === "cervical" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "immunotherapy", label: "一线免疫联合与 CPS", icon: ShieldCheck },
+    { id: "targeted", label: "贝伐单抗抗血管靶向", icon: Target },
+    { id: "surgery", label: "根治切除与 LACC 警示", icon: Layers },
+    { id: "pathology", label: "CCRT 与三维后装放疗", icon: Microscope },
+    { id: "imaging", label: "盆腔 MRI 与淋巴评估", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -746,6 +837,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>NEJM、Lancet、JCO、JAMA</strong> 等顶级期刊发表的原发性食管癌里程碑试验（CheckMate-577、NEOCRTEC5010、CROSS、ESCORT-1st、RATIONALE-306 等）。为新辅助放化疗、术后免疫维持与晚期一线联合决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "thyroid" ? (
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性分化型甲状腺癌里程碑试验（SELECT、COSMIC-311、ESTIMABL2、ARROW 等）。为放射性碘难治 (RR-DTC)、靶向 TKI 介入时机与 RET/BRAF 精准用药提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "cervical" ? (
+            <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性宫颈癌里程碑试验（KEYNOTE-826、EMBRACE-I、LACC、GOG-240 等）。为局部晚期根治性 CCRT、开腹广泛切除无瘤原则与晚期一线免疫联合提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
