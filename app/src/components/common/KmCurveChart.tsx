@@ -30,7 +30,7 @@ export interface KmCurveChartProps {
   title: string;
   subtitle?: string;
   endpointLabel?: string; // 如 "无进展生存率 (PFS)" 或 "总生存率 (OS)"
-  timeUnit?: string;      // 默认 "月 (Months)"
+  timeUnit?: string;      // 默认 "随访时间 (月)"
   series: KMSeries[];
   plainExplanation?: string; // NHS 白话解读卡
   citation?: {
@@ -59,7 +59,7 @@ export function KmCurveChart({
 
   if (!isHydrated) {
     return (
-      <div className={`w-full aspect-[16/9] rounded-2xl bg-slate-100 animate-pulse flex items-center justify-center text-slate-400 text-xs ${className}`}>
+      <div className={`w-full aspect-[16/9] rounded-3xl bg-slate-100 animate-pulse flex items-center justify-center text-slate-400 text-xs ${className}`}>
         <span>临床生存曲线加载中...</span>
       </div>
     );
@@ -68,15 +68,15 @@ export function KmCurveChart({
   // Calculate scales
   const allTimes = series.flatMap(s => s.data.map(d => d.time));
   const maxTimeRaw = Math.max(12, ...allTimes);
-  // Round up to nice number (multiple of 6 or 12)
   const maxTime = Math.ceil(maxTimeRaw / 6) * 6;
 
-  const svgWidth = 600;
-  const svgHeight = 280;
-  const pad = { top: 25, right: 30, bottom: 40, left: 50 };
+  // 高清医学视口坐标系 (860 x 415)
+  const svgWidth = 860;
+  const svgHeight = 415;
+  const pad = { top: 35, right: 35, bottom: 125, left: 65 };
 
   const plotW = svgWidth - pad.left - pad.right;
-  const plotH = svgHeight - pad.top - pad.bottom;
+  const plotH = svgHeight - pad.top - pad.bottom; // 255
 
   const toX = (t: number) => pad.left + (t / maxTime) * plotW;
   const toY = (s: number) => pad.top + (1 - s) * plotH;
@@ -119,293 +119,394 @@ export function KmCurveChart({
   const yTicks = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
 
   return (
-    <div className={`bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-sm space-y-4 ${className}`}>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-        <div>
-          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <span>{title}</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono font-semibold">
-              Kaplan-Meier 统计图
+    <div className={`bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-xs space-y-5 ${className}`}>
+      {/* ─── Header ─── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 pb-4 border-b border-slate-100">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+              Kaplan-Meier 循证曲线
             </span>
+            {citation && (
+              <span className="text-[10px] text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200/60">
+                {citation.journal} ({citation.year}) · RCT
+              </span>
+            )}
+          </div>
+          <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+            {title}
           </h3>
-          {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+          {subtitle && (
+            <p className="text-xs text-slate-500 leading-relaxed font-normal">
+              {subtitle}
+            </p>
+          )}
         </div>
 
-        {/* Statistical Summary Badges */}
+        {/* Statistical Summary Callout Chip */}
         {series.some(s => s.hr) && (
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-2 shrink-0">
             {series.filter(s => s.hr).map((s, idx) => (
-              <div key={idx} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono tabular-nums">
-                <span className="font-bold text-slate-900">HR {s.hr}</span>
-                {s.hrCI && <span className="text-slate-500 text-[10px]">[{s.hrCI[0]}-{s.hrCI[1]}]</span>}
-                {s.pValue && <span className="text-blue-600 text-[10px] font-bold">p{s.pValue}</span>}
+              <div key={idx} className="p-2 sm:px-3 sm:py-2 rounded-2xl bg-gradient-to-br from-blue-50/80 to-indigo-50/50 border border-blue-200/80 shadow-2xs">
+                <div className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider">
+                  复发风险降低 (HR)
+                </div>
+                <div className="flex items-baseline gap-1.5 mt-0.5 font-mono">
+                  <span className="text-base sm:text-lg font-black text-blue-950">
+                    {Math.round((1 - s.hr) * 100)}%
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    (HR {s.hr})
+                  </span>
+                  {s.pValue && (
+                    <span className="text-[10px] font-bold text-emerald-600">
+                      p{s.pValue}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* SVG Canvas */}
-      <div className="w-full overflow-x-auto">
+      {/* ─── Interactive Segmented Pill Legend ─── */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="inline-flex p-1 bg-slate-100/90 rounded-2xl border border-slate-200/80 shadow-2xs max-w-full overflow-x-auto">
+          {series.map((s, idx) => {
+            const isSelected = activeSeriesIdx === idx;
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveSeriesIdx(isSelected ? null : idx)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 select-none ${
+                  isSelected
+                    ? "bg-white text-slate-900 shadow-xs ring-1 ring-black/5"
+                    : activeSeriesIdx !== null
+                    ? "text-slate-400 hover:text-slate-700"
+                    : "text-slate-700 hover:text-slate-900 hover:bg-white/50"
+                }`}
+              >
+                <span
+                  className="w-3 h-1 rounded-full shrink-0"
+                  style={{ backgroundColor: s.color }}
+                />
+                <span>{s.label}</span>
+                {s.medianOS && (
+                  <span className="text-[10px] font-mono text-slate-400 font-normal">
+                    中位: {s.medianOS}月
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="text-[11px] text-slate-400 font-medium hidden sm:flex items-center gap-1">
+          <span>💡 点击分组可高亮聚焦单组曲线</span>
+        </div>
+      </div>
+
+      {/* ─── High-Definition SVG Canvas ─── */}
+      <div className="w-full overflow-x-auto no-scrollbar">
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          className="w-full min-w-[500px] h-auto select-none"
+          className="w-full min-w-[650px] h-auto select-none"
           role="img"
           aria-label={`${title} 生存曲线图`}
         >
-          {/* Background grid */}
-          {yTicks.map((yVal, i) => (
-            <g key={i}>
-              <line
-                x1={pad.left}
-                y1={toY(yVal)}
-                x2={svgWidth - pad.right}
-                y2={toY(yVal)}
-                stroke="#f1f5f9"
-                strokeWidth={1}
-                strokeDasharray={yVal === 0.5 ? "4 4" : "none"}
-              />
-              <text
-                x={pad.left - 8}
-                y={toY(yVal) + 3.5}
-                textAnchor="end"
-                className="text-[10px] font-mono fill-slate-400 font-medium"
-              >
-                {Math.round(yVal * 100)}%
-              </text>
-            </g>
-          ))}
-
-          {/* 50% Median Line indicator */}
-          <line
-            x1={pad.left}
-            y1={toY(0.5)}
-            x2={svgWidth - pad.right}
-            y2={toY(0.5)}
-            stroke="#cbd5e1"
-            strokeWidth={1}
-            strokeDasharray="3 3"
-          />
-
-          {/* X axis ticks & labels */}
-          {timeTicks.map((t, i) => (
-            <g key={i}>
-              <line
-                x1={toX(t)}
-                y1={pad.top}
-                x2={toX(t)}
-                y2={svgHeight - pad.bottom}
-                stroke="#f8fafc"
-                strokeWidth={1}
-              />
-              <line
-                x1={toX(t)}
-                y1={svgHeight - pad.bottom}
-                x2={toX(t)}
-                y2={svgHeight - pad.bottom + 4}
-                stroke="#cbd5e1"
-                strokeWidth={1}
-              />
-              <text
-                x={toX(t)}
-                y={svgHeight - pad.bottom + 16}
-                textAnchor="middle"
-                className="text-[10px] font-mono fill-slate-500 font-medium"
-              >
-                {t}
-              </text>
-            </g>
-          ))}
-
-          {/* Axes Base Lines */}
-          <line
-            x1={pad.left}
-            y1={svgHeight - pad.bottom}
-            x2={svgWidth - pad.right}
-            y2={svgHeight - pad.bottom}
-            stroke="#94a3b8"
-            strokeWidth={1.5}
-          />
-          <line
-            x1={pad.left}
-            y1={pad.top}
-            x2={pad.left}
-            y2={svgHeight - pad.bottom}
-            stroke="#94a3b8"
-            strokeWidth={1.5}
-          />
-
-          {/* Y Axis Label */}
-          <text
-            x={15}
-            y={pad.top - 10}
-            className="text-[10px] fill-slate-500 font-semibold"
-          >
-            {endpointLabel}
-          </text>
-
-          {/* X Axis Label */}
-          <text
-            x={svgWidth - pad.right}
-            y={svgHeight - 10}
-            textAnchor="end"
-            className="text-[10px] fill-slate-500 font-semibold"
-          >
-            {timeUnit}
-          </text>
-
-          {/* CI Area Bands */}
-          {series.map((s, idx) => {
-            const ciPath = buildCIAreaPath(s.data);
-            if (!ciPath) return null;
-            return (
-              <path
-                key={`ci-${idx}`}
-                d={ciPath}
-                fill={s.fillColor || s.color}
-                opacity={activeSeriesIdx === null || activeSeriesIdx === idx ? 0.12 : 0.04}
-                className="transition-opacity duration-200"
-              />
-            );
-          })}
-
-          {/* KM Curves */}
-          {series.map((s, idx) => {
-            const pathD = buildStepPath(s.data);
-            const isDimmed = activeSeriesIdx !== null && activeSeriesIdx !== idx;
-            return (
-              <g key={`series-${idx}`}>
-                <path
-                  d={pathD}
-                  fill="none"
-                  stroke={s.color}
-                  strokeWidth={activeSeriesIdx === idx ? 3.5 : 2.5}
-                  strokeDasharray={s.strokeDasharray || "none"}
-                  opacity={isDimmed ? 0.35 : 1}
-                  className="transition-all duration-200"
+          <g style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif" }}>
+            {/* Background grid */}
+            {yTicks.map((yVal, i) => (
+              <g key={i}>
+                <line
+                  x1={pad.left}
+                  y1={toY(yVal)}
+                  x2={svgWidth - pad.right}
+                  y2={toY(yVal)}
+                  stroke="#f1f5f9"
+                  strokeWidth={1}
                 />
-
-                {/* Median OS vertical dashed guide */}
-                {s.medianOS && s.medianOS <= maxTime && (
-                  <g opacity={isDimmed ? 0.2 : 0.8}>
-                    <line
-                      x1={toX(s.medianOS)}
-                      y1={toY(0.5)}
-                      x2={toX(s.medianOS)}
-                      y2={svgHeight - pad.bottom}
-                      stroke={s.color}
-                      strokeWidth={1.2}
-                      strokeDasharray="2 2"
-                    />
-                    <circle
-                      cx={toX(s.medianOS)}
-                      cy={toY(0.5)}
-                      r={3}
-                      fill={s.color}
-                    />
-                  </g>
-                )}
+                <text
+                  x={pad.left - 10}
+                  y={toY(yVal) + 3.5}
+                  textAnchor="end"
+                  fontSize="11"
+                  fill="#94a3b8"
+                  fontWeight="500"
+                >
+                  {Math.round(yVal * 100)}%
+                </text>
               </g>
-            );
-          })}
+            ))}
+
+            {/* 50% Median Line indicator */}
+            <line
+              x1={pad.left}
+              y1={toY(0.5)}
+              x2={svgWidth - pad.right}
+              y2={toY(0.5)}
+              stroke="#e2e8f0"
+              strokeWidth={1}
+              strokeDasharray="4 4"
+            />
+
+            {/* X axis ticks & vertical guides */}
+            {timeTicks.map((t, i) => (
+              <g key={i}>
+                <line
+                  x1={toX(t)}
+                  y1={pad.top}
+                  x2={toX(t)}
+                  y2={pad.top + plotH}
+                  stroke="#f8fafc"
+                  strokeWidth={1}
+                />
+                <line
+                  x1={toX(t)}
+                  y1={pad.top + plotH}
+                  x2={toX(t)}
+                  y2={pad.top + plotH + 5}
+                  stroke="#cbd5e1"
+                  strokeWidth={1.5}
+                />
+                <text
+                  x={toX(t)}
+                  y={pad.top + plotH + 18}
+                  textAnchor="middle"
+                  fontSize="11"
+                  fill="#64748b"
+                  fontWeight="600"
+                >
+                  {t}
+                </text>
+              </g>
+            ))}
+
+            {/* Axes Base Lines */}
+            <line
+              x1={pad.left}
+              y1={pad.top + plotH}
+              x2={svgWidth - pad.right}
+              y2={pad.top + plotH}
+              stroke="#cbd5e1"
+              strokeWidth={1.5}
+            />
+            <line
+              x1={pad.left}
+              y1={pad.top}
+              x2={pad.left}
+              y2={pad.top + plotH}
+              stroke="#cbd5e1"
+              strokeWidth={1.5}
+            />
+
+            {/* Y Axis Label */}
+            <text
+              x={pad.left - 10}
+              y={pad.top - 12}
+              textAnchor="start"
+              fontSize="11"
+              fill="#475569"
+              fontWeight="700"
+            >
+              {endpointLabel}
+            </text>
+
+            {/* X Axis Label */}
+            <text
+              x={svgWidth - pad.right}
+              y={pad.top + plotH + 18}
+              textAnchor="end"
+              fontSize="11"
+              fill="#475569"
+              fontWeight="700"
+            >
+              {timeUnit}
+            </text>
+
+            {/* CI Area Bands (Soft 6% opacity) */}
+            {series.map((s, idx) => {
+              const ciPath = buildCIAreaPath(s.data);
+              if (!ciPath) return null;
+              return (
+                <path
+                  key={`ci-${idx}`}
+                  d={ciPath}
+                  fill={s.fillColor || s.color}
+                  opacity={activeSeriesIdx === null || activeSeriesIdx === idx ? 0.08 : 0.02}
+                  className="transition-opacity duration-200"
+                />
+              );
+            })}
+
+            {/* KM Curves */}
+            {series.map((s, idx) => {
+              const pathD = buildStepPath(s.data);
+              const isDimmed = activeSeriesIdx !== null && activeSeriesIdx !== idx;
+              return (
+                <g key={`series-${idx}`}>
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke={s.color}
+                    strokeWidth={activeSeriesIdx === idx ? 3.0 : 2.25}
+                    strokeDasharray={s.strokeDasharray || "none"}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity={isDimmed ? 0.25 : 1}
+                    className="transition-all duration-200"
+                  />
+
+                  {/* Median OS indicator */}
+                  {s.medianOS && s.medianOS <= maxTime && (
+                    <g opacity={isDimmed ? 0.2 : 0.9}>
+                      <line
+                        x1={toX(s.medianOS)}
+                        y1={toY(0.5)}
+                        x2={toX(s.medianOS)}
+                        y2={pad.top + plotH}
+                        stroke={s.color}
+                        strokeWidth={1.25}
+                        strokeDasharray="3 3"
+                      />
+                      <circle
+                        cx={toX(s.medianOS)}
+                        cy={toY(0.5)}
+                        r={3.5}
+                        fill="#ffffff"
+                        stroke={s.color}
+                        strokeWidth={2}
+                      />
+                      <rect
+                        x={toX(s.medianOS) + 5}
+                        y={toY(0.5) - 16}
+                        width={78}
+                        height={16}
+                        rx={4}
+                        fill="#ffffff"
+                        stroke={s.color}
+                        strokeWidth={1}
+                        opacity={0.95}
+                      />
+                      <text
+                        x={toX(s.medianOS) + 44}
+                        y={toY(0.5) - 4}
+                        textAnchor="middle"
+                        fontSize="9.5"
+                        fontWeight="700"
+                        fill={s.color}
+                      >
+                        中位 {s.medianOS}月
+                      </text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+
+            {/* ─── Integrated At-Risk Table Directly in SVG ─── */}
+            {/* Divider line */}
+            <line
+              x1={pad.left - 45}
+              y1={pad.top + plotH + 34}
+              x2={svgWidth - pad.right}
+              y2={pad.top + plotH + 34}
+              stroke="#f1f5f9"
+              strokeWidth={1}
+            />
+
+            {/* At Risk Table Header */}
+            <text
+              x={pad.left}
+              y={pad.top + plotH + 52}
+              fontSize="10"
+              fontWeight="800"
+              fill="#94a3b8"
+              letterSpacing="0.05em"
+            >
+              随访在访例数 (NUMBER AT RISK)
+            </text>
+
+            {/* At Risk Table Rows */}
+            {series.map((s, idx) => {
+              const rowY = pad.top + plotH + 72 + idx * 22;
+              const isDimmed = activeSeriesIdx !== null && activeSeriesIdx !== idx;
+              return (
+                <g key={`risk-row-${idx}`} opacity={isDimmed ? 0.3 : 1} className="transition-opacity">
+                  <circle
+                    cx={pad.left - 18}
+                    cy={rowY - 3.5}
+                    r={3}
+                    fill={s.color}
+                  />
+                  <text
+                    x={pad.left - 8}
+                    y={rowY}
+                    textAnchor="end"
+                    fontSize="11"
+                    fontWeight="600"
+                    fill="#475569"
+                  >
+                    {s.label.split(/[(（]/)[0].trim().slice(0, 8)}
+                  </text>
+                  {timeTicks.map(t => {
+                    const pts = s.data.filter(p => p.time <= t);
+                    const nearest = pts[pts.length - 1];
+                    const riskVal = nearest?.at_risk ?? (t === 0 ? s.nEnrolled : "-");
+                    return (
+                      <text
+                        key={t}
+                        x={toX(t)}
+                        y={rowY}
+                        textAnchor="middle"
+                        fontSize="11"
+                        fontWeight="600"
+                        fill="#334155"
+                        fontFamily="monospace"
+                      >
+                        {riskVal ?? "-"}
+                      </text>
+                    );
+                  })}
+                </g>
+              );
+            })}
+          </g>
         </svg>
       </div>
 
-      {/* Series Legend Controller */}
-      <div className="flex items-center gap-4 flex-wrap pt-1 text-xs">
-        {series.map((s, idx) => {
-          const isSelected = activeSeriesIdx === idx;
-          return (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setActiveSeriesIdx(isSelected ? null : idx)}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                isSelected
-                  ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                  : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
-              }`}
-            >
-              <span
-                className="w-3.5 h-1 rounded-full shrink-0"
-                style={{ backgroundColor: s.color }}
-              />
-              <span className="font-bold">{s.label}</span>
-              {s.medianOS && (
-                <span className={`text-[10px] font-mono tabular-nums ${isSelected ? "text-slate-300" : "text-slate-500"}`}>
-                  中位: {s.medianOS}月
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* At-Risk Table (Nordhealth Compact Density Table) */}
-      <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-50/60 p-2.5">
-        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-1.5 flex items-center justify-between">
-          <span>随访患者在访例数 (Number at Risk Table)</span>
-          <span className="text-slate-400 font-normal">时间节点以月为单位</span>
-        </div>
-        <table className="w-full text-left text-xs font-mono tabular-nums">
-          <thead>
-            <tr className="border-b border-slate-200/60 text-[10px] text-slate-400 font-semibold">
-              <th className="py-1 px-2 font-sans">组别</th>
-              {timeTicks.map(t => (
-                <th key={t} className="py-1 px-2 text-right">{t}月</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 text-[11px]">
-            {series.map((s, idx) => (
-              <tr key={idx} className="hover:bg-white/80 transition-colors">
-                <td className="py-1 px-2 font-sans font-medium text-slate-700 truncate max-w-[140px]">
-                  <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ backgroundColor: s.color }} />
-                  {s.label}
-                </td>
-                {timeTicks.map(t => {
-                  // Find nearest data point <= t
-                  const pts = s.data.filter(p => p.time <= t);
-                  const nearest = pts[pts.length - 1];
-                  const riskVal = nearest?.at_risk ?? (t === 0 ? s.nEnrolled : "-");
-                  return (
-                    <td key={t} className="py-1 px-2 text-right text-slate-600 font-semibold">
-                      {riskVal ?? "-"}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* NHS.UK Plain-Language Health Literacy Reassurance Card */}
+      {/* ─── NHS.UK Plain-Language Health Literacy Reassurance Card ─── */}
       {plainExplanation && (
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-sky-50 border border-sky-200 flex items-start gap-3">
-          <span className="text-2xl shrink-0 mt-0.5" role="img" aria-label="灯泡">💡</span>
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50/80 via-blue-50/60 to-indigo-50/40 border border-sky-100 flex items-start gap-3.5 shadow-2xs">
+          <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 text-base shadow-2xs mt-0.5">
+            💡
+          </div>
           <div className="space-y-1">
-            <h4 className="text-xs sm:text-sm font-bold text-sky-900">这张生存曲线告诉我们什么？（通俗白话解读）</h4>
-            <p className="text-xs text-sky-800 leading-relaxed font-medium">
+            <h4 className="text-xs sm:text-sm font-extrabold text-sky-950">
+              这张生存曲线告诉我们什么？（通俗白话解读）
+            </h4>
+            <p className="text-xs text-sky-900 leading-relaxed font-medium">
               {plainExplanation}
             </p>
           </div>
         </div>
       )}
 
-      {/* Four-Element Citation Block */}
+      {/* ─── Peer-Reviewed Four-Element Citation Block ─── */}
       {citation && (
-        <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
+        <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-slate-400">📖 循证出处：</span>
-            <strong className="text-slate-800">{citation.trialName}</strong>
-            <span>·</span>
+            <span className="text-slate-400">📖 顶刊循证出处：</span>
+            <strong className="text-slate-900 font-bold">{citation.trialName}</strong>
+            <span className="text-slate-300">·</span>
             <span>{citation.journal} ({citation.year})</span>
-            <span>·</span>
+            <span className="text-slate-300">·</span>
             <span className="font-mono tabular-nums">n={citation.sampleSize}例</span>
-            <span>·</span>
-            <span className="text-slate-700 font-medium">{citation.primaryEndpoint}</span>
+            <span className="text-slate-300">·</span>
+            <span className="text-blue-700 font-semibold">{citation.primaryEndpoint}</span>
           </div>
 
           {citation.doiUrl && (
@@ -413,9 +514,9 @@ export function KmCurveChart({
               href={citation.doiUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 hover:underline font-semibold inline-flex items-center gap-1 shrink-0"
+              className="text-blue-600 hover:text-blue-800 hover:underline font-bold inline-flex items-center gap-1 shrink-0 transition-colors"
             >
-              <span>查看原文 (DOI)</span>
+              <span>查看 PubMed / DOI 原文</span>
               <span>↗</span>
             </a>
           )}

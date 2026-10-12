@@ -5,8 +5,8 @@ import type { TrialCriterion } from "@/components/common/TrialEligibilityMatrix"
 // ================= 1. LANDMARK KM SURVIVAL CURVE DATA =================
 export const LANDMARK_KM_DATA: Record<string, KmCurveChartProps> = {
   lung: {
-    title: "ADAURA 研究：奥希替尼辅助治疗 IB-IIIA 期 EGFR 突变 NSCLC 生存曲线",
-    subtitle: "无病生存期 (Disease-Free Survival, DFS) 评估与 5 年总生存期获益",
+    title: "ADAURA 临床试验 · 奥希替尼术后辅助治疗生存曲线",
+    subtitle: "完全切除 IB-IIIA 期 EGFR 敏感突变 NSCLC · 5 年无病生存期 (DFS) 与脑保护获益",
     endpointLabel: "无病生存率 (DFS %)",
     timeUnit: "随访时间 (月)",
     series: [
@@ -32,9 +32,9 @@ export const LANDMARK_KM_DATA: Record<string, KmCurveChartProps> = {
       },
       {
         label: "安慰剂对照组 (标准随访观察)",
-        color: "#dc2626",
-        fillColor: "#ef4444",
-        strokeDasharray: "6 4",
+        color: "#64748b",
+        fillColor: "#94a3b8",
+        strokeDasharray: "5 4",
         medianOS: 27.5,
         nEnrolled: 343,
         data: [

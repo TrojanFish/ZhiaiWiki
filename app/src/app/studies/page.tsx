@@ -400,7 +400,7 @@ export default function StudiesPage() {
         
         {/* Mode 1: Kaplan-Meier Survival Curve */}
         {viewMode === "km" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
             <KmCurveChart
               {...(LANDMARK_KM_DATA[cancerType] || LANDMARK_KM_DATA.lung)}
             />
@@ -409,7 +409,7 @@ export default function StudiesPage() {
 
         {/* Mode 2: Hazard Ratio Forest Plot */}
         {viewMode === "forest" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
             <ForestPlotChart
               {...(LANDMARK_FOREST_DATA[cancerType] || LANDMARK_FOREST_DATA.lung)}
             />
@@ -418,7 +418,7 @@ export default function StudiesPage() {
 
         {/* Mode 3: Trial Eligibility Matrix */}
         {viewMode === "eligibility" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
             <TrialEligibilityMatrix
               trialTitle={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).title}
               phase={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).phase}
