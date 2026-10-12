@@ -399,33 +399,43 @@ export default function StudiesPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-4 sm:space-y-5 md:space-y-6">
         
         {/* Mode 1: Kaplan-Meier Survival Curve */}
-        {viewMode === "km" && (
-          <div className="w-full space-y-6 animate-fade-in">
-            <KmCurveChart
-              {...(LANDMARK_KM_DATA[cancerType] || LANDMARK_KM_DATA.lung)}
-            />
-          </div>
-        )}
+        {viewMode === "km" && (() => {
+          const landmarkKey = (cancerType === "colon" || cancerType === "rectal") ? "colorectal" : cancerType;
+          return (
+            <div className="w-full space-y-6 animate-fade-in">
+              <KmCurveChart
+                {...(LANDMARK_KM_DATA[landmarkKey] || LANDMARK_KM_DATA.lung)}
+              />
+            </div>
+          );
+        })()}
 
         {/* Mode 2: Hazard Ratio Forest Plot */}
-        {viewMode === "forest" && (
-          <div className="w-full space-y-6 animate-fade-in">
-            <ForestPlotChart
-              {...(LANDMARK_FOREST_DATA[cancerType] || LANDMARK_FOREST_DATA.lung)}
-            />
-          </div>
-        )}
+        {viewMode === "forest" && (() => {
+          const landmarkKey = (cancerType === "colon" || cancerType === "rectal") ? "colorectal" : cancerType;
+          return (
+            <div className="w-full space-y-6 animate-fade-in">
+              <ForestPlotChart
+                {...(LANDMARK_FOREST_DATA[landmarkKey] || LANDMARK_FOREST_DATA.lung)}
+              />
+            </div>
+          );
+        })()}
 
         {/* Mode 3: Trial Eligibility Matrix */}
-        {viewMode === "eligibility" && (
-          <div className="w-full space-y-6 animate-fade-in">
-            <TrialEligibilityMatrix
-              trialTitle={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).title}
-              phase={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).phase}
-              criteria={(LANDMARK_TRIAL_CRITERIA[cancerType] || LANDMARK_TRIAL_CRITERIA.lung).criteria}
-            />
-          </div>
-        )}
+        {viewMode === "eligibility" && (() => {
+          const landmarkKey = (cancerType === "colon" || cancerType === "rectal") ? "colorectal" : cancerType;
+          const criteriaData = LANDMARK_TRIAL_CRITERIA[landmarkKey] || LANDMARK_TRIAL_CRITERIA.lung;
+          return (
+            <div className="w-full space-y-6 animate-fade-in">
+              <TrialEligibilityMatrix
+                trialTitle={criteriaData.title}
+                phase={criteriaData.phase}
+                criteria={criteriaData.criteria}
+              />
+            </div>
+          );
+        })()}
 
         {/* Mode 4: Default Full Studies Library */}
         {viewMode === "library" && (
