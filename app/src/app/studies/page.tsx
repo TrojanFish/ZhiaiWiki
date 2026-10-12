@@ -297,6 +297,84 @@ export default function StudiesPage() {
         }
       }
 
+      if (cancerType === "gastric") {
+        switch (selectedTopic) {
+          case "targeted":
+            return (
+              factors.includes("HER2") ||
+              factors.includes("TOGA") ||
+              factors.includes("SPOTLIGHT") ||
+              factors.includes("GLOW") ||
+              factors.includes("CLAUDIN") ||
+              factors.includes("CLDN") ||
+              factors.includes("ZOLBETUXIMAB") ||
+              factors.includes("TRASTUZUMAB") ||
+              fullText.includes("TOGA") ||
+              fullText.includes("SPOTLIGHT") ||
+              fullText.includes("GLOW") ||
+              fullText.includes("HER2") ||
+              fullText.includes("CLAUDIN") ||
+              fullText.includes("曲妥珠单抗") ||
+              fullText.includes("佐妥昔单抗")
+            );
+          case "immunotherapy":
+            return (
+              factors.includes("CHECKMATE") ||
+              factors.includes("KEYNOTE") ||
+              factors.includes("RATIONALE") ||
+              factors.includes("NIVOLUMAB") ||
+              factors.includes("PEMBROLIZUMAB") ||
+              factors.includes("TISLELIZUMAB") ||
+              factors.includes("CPS") ||
+              factors.includes("PD-L1") ||
+              fullText.includes("CHECKMATE") ||
+              fullText.includes("KEYNOTE") ||
+              fullText.includes("649") ||
+              fullText.includes("811") ||
+              fullText.includes("305") ||
+              fullText.includes("纳武利尤单抗") ||
+              fullText.includes("帕博利珠单抗") ||
+              fullText.includes("替雷利珠单抗") ||
+              fullText.includes("CPS")
+            );
+          case "surgery":
+            return (
+              factors.includes("FLOT4") ||
+              factors.includes("SURGERY") ||
+              factors.includes("D2") ||
+              factors.includes("ESD") ||
+              fullText.includes("FLOT") ||
+              fullText.includes("D2") ||
+              fullText.includes("ESD") ||
+              fullText.includes("切除") ||
+              fullText.includes("新辅助")
+            );
+          case "pathology":
+            return (
+              factors.includes("LAUREN") ||
+              factors.includes("BORRMANN") ||
+              factors.includes("PERITONEAL") ||
+              factors.includes("DIFFUSE") ||
+              fullText.includes("LAUREN") ||
+              fullText.includes("弥漫型") ||
+              fullText.includes("肠型") ||
+              fullText.includes("腹膜") ||
+              fullText.includes("印戒细胞")
+            );
+          case "imaging":
+            return (
+              factors.includes("CT") ||
+              factors.includes("EUS") ||
+              factors.includes("ENDOSCOPY") ||
+              fullText.includes("CT") ||
+              fullText.includes("超声胃镜") ||
+              fullText.includes("胃镜")
+            );
+          default:
+            return true;
+        }
+      }
+
       switch (selectedTopic) {
         case "surgery":
           return (
@@ -378,6 +456,13 @@ export default function StudiesPage() {
     { id: "immunotherapy", label: "双免疫与维持治疗", icon: ShieldCheck },
     { id: "surgery", label: "手术切除与肝移植", icon: Layers },
     { id: "imaging", label: "普美显 MRI 与 MVI", icon: Activity },
+  ] : cancerType === "gastric" ? [
+    { id: "all", label: "全部核心文献", icon: BookOpen },
+    { id: "targeted", label: "HER2 与 CLDN18.2 靶向", icon: Target },
+    { id: "immunotherapy", label: "PD-L1 免疫与 CPS 分层", icon: ShieldCheck },
+    { id: "surgery", label: "D2 根治切除与围术期", icon: Layers },
+    { id: "pathology", label: "Lauren 分型与腹膜转移", icon: Microscope },
+    { id: "imaging", label: "增强 CT 与胃镜超声", icon: Activity },
   ] : [
     { id: "all", label: "全部核心文献", icon: BookOpen },
     { id: "surgery", label: "手术与亚肺叶切除", icon: Layers },
@@ -413,6 +498,8 @@ export default function StudiesPage() {
             <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的结直肠癌里程碑试验（IDEA、MOSAIC、KEYNOTE-177、CALGB 80405、RAPIDO 等）。为辅助化疗减毒、免疫免化疗与保肛策略提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : cancerType === "liver" ? (
             <>严格收录 <strong>NEJM、Lancet、JCO</strong> 等顶级期刊发表的原发性肝细胞癌里程碑试验（IMbrave150、ORIENT-32、REFLECT、HIMALAYA、LEAP-002 等）。为晚期一线靶免联合、介入转化与长程病毒抑制提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
+          ) : cancerType === "gastric" ? (
+            <>严格收录 <strong>Lancet、NEJM、JCO</strong> 等顶级期刊发表的原发性胃癌里程碑试验（CheckMate-649、ToGA、SPOTLIGHT、KEYNOTE-811、FLOT4 等）。为 HER2/CLDN18.2 靶向、PD-L1 CPS 免疫分层与 D2 根治决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           ) : (
             <>严格收录 <strong>Lancet、NEJM、JCO、JTO</strong> 等顶级期刊发表的多中心 RCT 与 Meta 分析。为每一项临床分期、术后辅助治疗与随访决策提供<strong>可验证、可溯源的坚实数据支撑</strong>。</>
           )}
