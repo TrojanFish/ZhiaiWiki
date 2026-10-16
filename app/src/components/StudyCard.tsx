@@ -199,60 +199,106 @@ export default function StudyCard({ study, compact = false, onOpenPdf, actionExt
           </div>
         )}
 
-        {/* Structured Key Conclusions with Genuine Progressive Disclosure */}
+        {/* Structured Key Conclusions with Genuine Progressive Disclosure (Triad Standard) */}
         {(() => {
           const conclusions = study.keyConclusions || [];
-          const hasMultipleConclusions = conclusions.length > 1;
+          const hasMultiple = conclusions.length > 1;
           const firstConclusion = conclusions[0] || "";
-          const isFirstConclusionLong = firstConclusion.length > 70;
-          const canToggle = hasMultipleConclusions || isFirstConclusionLong;
+
+          if (conclusions.length === 0) return null;
 
           return (
             <div className="mb-4 text-xs">
-              <div className="text-slate-400 text-[11px] font-semibold mb-1.5 flex items-center justify-between">
-                <span>核心临床定论</span>
-                {canToggle && (
+              <div className="text-slate-400 text-[11px] font-semibold mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                  <span>核心临床定论与终点数据</span>
+                </span>
+                {hasMultiple && (
                   <button
                     type="button"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-0.5 cursor-pointer transition-colors px-1.5 py-0.5 rounded hover:bg-blue-50"
+                    className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors px-2 py-0.5 rounded-md hover:bg-blue-50 border border-transparent hover:border-blue-200"
                   >
-                    <span>
-                      {isExpanded 
-                        ? "收起简述" 
-                        : hasMultipleConclusions 
-                        ? `展开全部终点 (${conclusions.length}项)` 
-                        : "展开完整数据"}
-                    </span>
+                    <span>{isExpanded ? "收起简述" : `展开全部终点 (${conclusions.length}项)`}</span>
                     {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                   </button>
                 )}
               </div>
               
-              <div className="space-y-1.5 text-slate-700 leading-relaxed">
-                {isExpanded ? (
-                  conclusions.map((c, i) => (
-                    <div key={i} className="flex items-start gap-1.5 animate-fade-in">
-                      <span className="text-teal-600 font-black mt-0.5 shrink-0">✓</span>
-                      <p className="text-slate-700 font-normal">{c}</p>
-                    </div>
-                  ))
-                ) : (
-                  <>
-                    <div className="flex items-start gap-1.5">
-                      <span className="text-teal-600 font-black mt-0.5 shrink-0">✓</span>
-                      <p className={`text-slate-700 font-normal ${!hasMultipleConclusions && isFirstConclusionLong ? "line-clamp-2" : ""}`}>
-                        {firstConclusion}
-                      </p>
-                    </div>
-                    {hasMultipleConclusions && (
-                      <div className="pl-4 text-[11px] text-slate-400 font-medium">
-                        · 另有 {conclusions.length - 1} 项关键分层与生存获益数据（点击右上角展开）
+              {/* State 1: Collapsed View (Single Primary Endpoint + Disclosure Action Pill) */}
+              {!isExpanded ? (
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2 bg-slate-50/70 p-2.5 rounded-xl border border-slate-200/70">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 border border-teal-200 shrink-0 mt-0.5 font-mono">
+                      主要终点
+                    </span>
+                    <p className="text-slate-800 font-medium leading-relaxed">
+                      {firstConclusion}
+                    </p>
+                  </div>
+
+                  {hasMultiple && (
+                    <button
+                      type="button"
+                      onClick={() => setIsExpanded(true)}
+                      className="w-full py-1.5 px-3 rounded-xl text-xs font-semibold text-sky-700 bg-sky-50/80 hover:bg-sky-100 border border-sky-200/90 transition-all flex items-center justify-between cursor-pointer group/pill shadow-2xs"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-sky-600 shrink-0" />
+                        <span>另有 <strong className="font-bold text-sky-900">{conclusions.length - 1}</strong> 项关键分层终点与生存获益</span>
+                      </span>
+                      <span className="text-[11px] font-mono text-sky-600 group-hover/pill:translate-x-0.5 transition-transform flex items-center font-bold">
+                        点击展开全部 <ChevronDown className="w-3 h-3 ml-0.5" />
+                      </span>
+                    </button>
+                  )}
+                </div>
+              ) : (
+                /* State 2: Expanded View (Full Clinical Evidence Dossier Container) */
+                <div className="bg-slate-50/90 border border-slate-200/90 rounded-2xl p-3 sm:p-3.5 space-y-2.5 transition-all shadow-inner animate-fade-in">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200/70 text-[11px]">
+                    <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+                      <span>循证定论全景 (共 {conclusions.length} 项临床终点与亚组)</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsExpanded(false)}
+                      className="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-0.5 cursor-pointer hover:underline"
+                    >
+                      <span>收起简述</span>
+                      <ChevronUp className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    {conclusions.map((c, i) => (
+                      <div key={i} className="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200/70 shadow-2xs">
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 mt-0.5 font-mono ${
+                          i === 0
+                            ? "bg-teal-100 text-teal-900 border border-teal-300"
+                            : "bg-sky-50 text-sky-800 border border-sky-200"
+                        }`}>
+                          {i === 0 ? "主要终点" : `终点分层 ${i + 1}`}
+                        </span>
+                        <p className="text-slate-800 font-normal leading-relaxed flex-1">
+                          {c}
+                        </p>
                       </div>
-                    )}
-                  </>
-                )}
-              </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(false)}
+                    className="w-full py-1.5 text-center text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <ChevronUp className="w-3 h-3" />
+                    <span>收起为核心终点简述</span>
+                  </button>
+                </div>
+              )}
             </div>
           );
         })()}
