@@ -23,14 +23,6 @@ const CANCER_TABS = [
   { label: "全部专区", key: "all" },
   { label: "肺癌", key: "肺癌" },
   { label: "乳腺癌", key: "乳腺癌" },
-  { label: "结直肠癌", key: "结直肠癌" },
-  { label: "胃癌", key: "胃癌" },
-  { label: "肝癌", key: "肝癌" },
-  { label: "食管癌", key: "食管癌" },
-  { label: "甲状腺癌", key: "甲状腺癌" },
-  { label: "胰腺癌", key: "胰腺癌" },
-  { label: "子宫内膜癌", key: "子宫内膜癌" },
-  { label: "宫颈癌", key: "宫颈癌" },
   { label: "爱心同行", key: "爱心同行" },
 ];
 

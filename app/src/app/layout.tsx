@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: "%s | 知癌维基 ZhiaiWiki",
   },
   description:
-    "“知癌，方能治癌；每一次循证，皆因至爱。” Knowing Cancer, Treating Cancer, Caring with Love. 涵盖肺癌、乳腺癌、结直肠癌、胃癌、肝癌、食管癌、甲状腺癌与前列腺癌的权威循证决策与全病程就医数字导航系统。每一条结论都有来源，每一个解释都可追溯。",
+    "“知癌，方能治癌；每一次循证，皆因至爱。” Knowing Cancer, Treating Cancer, Caring with Love. 深度聚焦肺癌与乳腺癌的权威循证决策与全病程就医数字导航系统。每一条结论都有来源，每一个解释都可追溯。",
   manifest: "/manifest.json",
   alternates: {
     canonical: "/",
@@ -39,17 +39,12 @@ export const metadata: Metadata = {
     "至爱",
     "肺癌",
     "乳腺癌",
-    "结直肠癌",
-    "胃癌",
-    "肝癌",
-    "食管癌",
-    "甲状腺癌",
-    "前列腺癌",
     "病理报告解读",
     "循证医学",
     "IASLC",
     "CSCO",
     "NCCN",
+    "AJCC",
     "术后随访",
   ],
   icons: {
@@ -127,13 +122,7 @@ const jsonLd = {
       },
       "about": [
         { "@type": "MedicalCondition", "name": "肺癌 (Lung Cancer)" },
-        { "@type": "MedicalCondition", "name": "乳腺癌 (Breast Cancer)" },
-        { "@type": "MedicalCondition", "name": "结直肠癌 (Colorectal Cancer)" },
-        { "@type": "MedicalCondition", "name": "胃癌 (Gastric Cancer)" },
-        { "@type": "MedicalCondition", "name": "肝癌 (Liver Cancer)" },
-        { "@type": "MedicalCondition", "name": "食管癌 (Esophageal Cancer)" },
-        { "@type": "MedicalCondition", "name": "甲状腺癌 (Thyroid Cancer)" },
-        { "@type": "MedicalCondition", "name": "前列腺癌 (Prostate Cancer)" }
+        { "@type": "MedicalCondition", "name": "乳腺癌 (Breast Cancer)" }
       ]
     }
   ]

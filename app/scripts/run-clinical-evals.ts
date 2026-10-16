@@ -30,7 +30,7 @@ for (const c of CLINICAL_GOLDEN_CASES) {
   let computedStage = '';
   try {
     const stageRes = computeCancerStage(c.cancerType, c.profile);
-    computedStage = stageRes.stage || stageRes.cnlcStage || '';
+    computedStage = stageRes.stage || (stageRes as any).cnlcStage || '';
     // 支持精准匹配或前缀匹配（如 "IA1" 匹配 "IA"）
     stagingMatch = (computedStage === c.expectedStage) || (computedStage.startsWith(c.expectedStage));
   } catch (err: any) {

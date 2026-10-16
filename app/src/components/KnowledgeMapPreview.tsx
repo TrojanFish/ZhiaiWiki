@@ -143,32 +143,6 @@ export default function KnowledgeMapPreview({ profile = null, cancerType: propCa
       if (isEarly) {
         activeHighlightNodes.push("SURGERY", "SURVEILLANCE", "OS5YR");
       }
-    } else if (cancerType === 'colorectal' || profile.cancerType === 'colorectal') {
-      const rawData = (profile as any).clinicalData || (profile as any).cancerSpecificData || profile;
-      const isMsiH = rawData.msiStatus === "MSI-H" || rawData.dmmrStatus === "dMMR";
-      const isRasMut = rawData.krasMutation && rawData.krasMutation !== "wildtype" && rawData.krasMutation !== "unknown";
-      if (isMsiH) {
-        activeHighlightNodes.push("MSI_MMR", "PD1_IMMUNO", "LONG_TERM_OS");
-      }
-      if (rawData.krasMutation || rawData.nrasMutation) {
-        activeHighlightNodes.push("RAS_GENE");
-      }
-      if (!isRasMut && rawData.primaryLocation === "left_colon") {
-        activeHighlightNodes.push("ANTI_EGFR", "LONG_TERM_OS");
-      }
-      if (isRasMut || rawData.primaryLocation === "right_colon") {
-        activeHighlightNodes.push("ANTI_VEGF", "LONG_TERM_OS");
-      }
-      if (profile.stage?.startsWith("III") || rawData.stage?.startsWith("III")) {
-        activeHighlightNodes.push("IDEA_CAPOX", "NEUROTOXICITY", "RECURRENCE_RISK");
-      }
-      if (profile.tStage || rawData.tStage) {
-        activeHighlightNodes.push("T_DEPTH");
-      }
-      if (profile.nStage || rawData.nStage) {
-        activeHighlightNodes.push("N_NODES");
-      }
-      activeHighlightNodes.push("SURGERY_TME", "LONG_TERM_OS");
     } else {
       if (profile.stas === "positive") activeHighlightNodes.push("STAS", "SURGERY");
       if (profile.lvi === "positive") activeHighlightNodes.push("LVI", "METASTASIS");

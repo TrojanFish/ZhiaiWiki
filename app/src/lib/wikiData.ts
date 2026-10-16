@@ -110,11 +110,6 @@ export interface WikiTopic {
 
 import type { CancerType } from "./types";
 import { BREAST_WIKI_CATEGORIES } from "./breastWikiData";
-import { COLORECTAL_WIKI_CATEGORIES } from "./colorectalWikiData";
-import { COLON_WIKI_CATEGORIES } from "./colonWikiData";
-import { RECTAL_WIKI_CATEGORIES } from "./rectalWikiData";
-import { GASTRIC_WIKI_CATEGORIES } from "./gastricWikiData";
-import { LIVER_WIKI_CATEGORIES } from "./liverWikiData";
 
 export const WIKI_CATEGORIES: Record<WikiCategory, { label: string; icon: string; desc: string; color: string; badgeBg: string }> = {
   nodule: {
@@ -152,11 +147,6 @@ export const WIKI_CATEGORIES: Record<WikiCategory, { label: string; icon: string
  */
 export function getWikiCategories(cancerType?: CancerType | string | null): Record<WikiCategory, { label: string; icon: string; desc: string; color: string; badgeBg: string }> {
   if (cancerType === "breast") return BREAST_WIKI_CATEGORIES;
-  if (cancerType === "colon") return COLON_WIKI_CATEGORIES;
-  if (cancerType === "rectal") return RECTAL_WIKI_CATEGORIES;
-  if (cancerType === "gastric") return GASTRIC_WIKI_CATEGORIES;
-  if (cancerType === "liver") return LIVER_WIKI_CATEGORIES;
-  if (cancerType === "colorectal") return COLORECTAL_WIKI_CATEGORIES;
   return WIKI_CATEGORIES;
 }
 

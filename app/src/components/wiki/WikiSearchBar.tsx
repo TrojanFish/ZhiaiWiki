@@ -26,24 +26,8 @@ export function WikiSearchBar({
 }: WikiSearchBarProps) {
   const { cancerType: contextCancerType } = useCancerType();
   const cancerType = propCancerType || contextCancerType || "lung";
-  const placeholder = cancerType === "pancreatic"
-    ? "搜索词条：如 'CA19-9'、'Whipple'、'KRAS'、'交界可切除'、'mFOLFIRINOX'、'胰酶替代'..."
-    : cancerType === "breast"
+  const placeholder = cancerType === "breast"
     ? "搜索词条：如 'BI-RADS'、'微钙化'、'HER2'、'21基因'、'他莫昔芬'、'阿贝西利'、'CA15-3'..."
-    : cancerType === "colorectal" || cancerType === "colon" || cancerType === "rectal"
-    ? "搜索词条：如 'CRM切缘'、'IDEA减毒'、'dMMR'、'KRAS'、'新辅助TNT'、'LARS'..."
-    : cancerType === "gastric"
-    ? "搜索词条：如 'ESD保胃'、'D2清扫'、'Lauren印戒'、'Claudin 18.2'、'FLOT'..."
-    : cancerType === "liver"
-    ? "搜索词条：如 'CNLC分期'、'Child-Pugh'、'门脉癌栓'、'T+A方案'、'HAIC'..."
-    : cancerType === "esophageal"
-    ? "搜索词条：如 '鳞癌浸润'、'NEOCRTEC5010'、'微创三切口'、'CheckMate-577'..."
-    : cancerType === "thyroid"
-    ? "搜索词条：如 'C-TIRADS'、'PTMC主动监测'、'BRAF突变'、'免碘131清甲'..."
-    : cancerType === "endometrial"
-    ? "搜索词条：如 'TCGA分子分型'、'POLE突变'、'肌层浸润'、'PORTEC-3'..."
-    : cancerType === "cervical"
-    ? "搜索词条：如 'HPV16/18'、'CIN病变'、'锥切切缘'、'同步放化疗CCRT'..."
     : "搜索词条：如 '气道播散'、'STAS'、'磨玻璃'、'胸膜'、'奥希替尼'、'切缘'、'CEA'...";
 
   return (

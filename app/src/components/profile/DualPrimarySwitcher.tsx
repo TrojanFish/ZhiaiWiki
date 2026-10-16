@@ -10,16 +10,6 @@ interface DualPrimarySwitcherProps {
   availableSlots: CancerType[];
   lungProfile?: PatientProfile | null;
   breastProfile?: PatientProfile | null;
-  colonProfile?: PatientProfile | null;
-  rectalProfile?: PatientProfile | null;
-  colorectalProfile?: PatientProfile | null;
-  gastricProfile?: PatientProfile | null;
-  liverProfile?: PatientProfile | null;
-  esophagealProfile?: PatientProfile | null;
-  thyroidProfile?: PatientProfile | null;
-  endometrialProfile?: PatientProfile | null;
-  cervicalProfile?: PatientProfile | null;
-  pancreaticProfile?: PatientProfile | null;
   onSelectSlot: (slot: CancerType) => void;
   onAddSecondCancer?: () => void;
   className?: string;
@@ -30,16 +20,6 @@ export default function DualPrimarySwitcher({
   availableSlots,
   lungProfile,
   breastProfile,
-  colonProfile,
-  rectalProfile,
-  colorectalProfile,
-  gastricProfile,
-  liverProfile,
-  esophagealProfile,
-  thyroidProfile,
-  endometrialProfile,
-  cervicalProfile,
-  pancreaticProfile,
   onSelectSlot,
   onAddSecondCancer,
   className = "",
@@ -75,135 +55,6 @@ export default function DualPrimarySwitcher({
     };
   }, [breastProfile]);
 
-  const colonSummary = React.useMemo(() => {
-    const prof = colonProfile || colorectalProfile;
-    if (!prof) return { stage: "未建档", label: "结肠病案待建立", isComplete: false };
-    const stg = prof.stage || prof.tStage || "待评估";
-    const rawData = (prof as any).clinicalData || (prof as any).cancerSpecificData || {};
-    const loc = rawData.primaryLocation === "left_colon" ? "左半结肠" : rawData.primaryLocation === "right_colon" ? "右半结肠" : "结肠病变";
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: `${loc}`,
-      isComplete: Boolean(prof.stage || prof.tStage),
-    };
-  }, [colonProfile, colorectalProfile]);
-
-  const rectalSummary = React.useMemo(() => {
-    const prof = rectalProfile || colorectalProfile;
-    if (!prof) return { stage: "未建档", label: "直肠病案待建立", isComplete: false };
-    const stg = prof.stage || prof.tStage || "待评估";
-    const rawData = (prof as any).clinicalData || (prof as any).cancerSpecificData || {};
-    const dist = rawData.distanceFromAnalVerge != null ? `距肛${rawData.distanceFromAnalVerge}cm` : "直肠病变";
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: `${dist}`,
-      isComplete: Boolean(prof.stage || prof.tStage),
-    };
-  }, [rectalProfile, colorectalProfile]);
-
-  const colorectalSummary = React.useMemo(() => {
-    if (!colorectalProfile) return { stage: "未建档", label: "结直肠病案待建立", isComplete: false };
-    const stg = colorectalProfile.stage || colorectalProfile.tStage || "待评估";
-    const rawData = (colorectalProfile as any).clinicalData || (colorectalProfile as any).cancerSpecificData || {};
-    const loc = rawData.primaryLocation === "left_colon" ? "左半结肠" : rawData.primaryLocation === "right_colon" ? "右半结肠" : rawData.primaryLocation === "rectum" ? "直肠" : (colorectalProfile.organ === "colorectal" ? "结直肠病变" : "结肠/直肠病变");
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: `${loc}`,
-      isComplete: Boolean(colorectalProfile.stage || colorectalProfile.tStage),
-    };
-  }, [colorectalProfile]);
-
-  const gastricSummary = React.useMemo(() => {
-    if (!gastricProfile) return { stage: "未建档", label: "胃部病案待建立", isComplete: false };
-    const stg = gastricProfile.stage || gastricProfile.tStage || "待评估";
-    const rawData = (gastricProfile as any).clinicalData || (gastricProfile as any).cancerSpecificData || (gastricProfile as any).gastricData || {};
-    const esdLabel = rawData.isEsdIndication ? "ESD保胃候选" : (rawData.laurenType === "diffuse" ? "弥漫型(含印戒)" : rawData.laurenType === "intestinal" ? "肠型胃癌" : "胃癌病变");
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: `${esdLabel}`,
-      isComplete: Boolean(gastricProfile.stage || gastricProfile.tStage),
-    };
-  }, [gastricProfile]);
-
-  const liverSummary = React.useMemo(() => {
-    if (!liverProfile) return { stage: "未建档", label: "肝脏病案待建立", isComplete: false };
-    const rawData = (liverProfile as any).clinicalData || (liverProfile as any).cancerSpecificData || (liverProfile as any).liverData || {};
-    const stg = rawData.cnlcStage ? `CNLC ${rawData.cnlcStage}期` : (liverProfile.stage || "待评估");
-    const cp = rawData.childPughClass ? `Child-Pugh ${rawData.childPughClass}` : "";
-    const label = cp ? `${cp}级` : (rawData.isMilanEligible ? "符合米兰标准" : "肝癌病变");
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: label,
-      isComplete: Boolean(rawData.cnlcStage || liverProfile.stage),
-    };
-  }, [liverProfile]);
-
-  const esophagealSummary = React.useMemo(() => {
-    if (!esophagealProfile) return { stage: "未建档", label: "食管病案待建立", isComplete: false };
-    const rawData = (esophagealProfile as any).clinicalData || (esophagealProfile as any).cancerSpecificData || {};
-    const stg = esophagealProfile.stage || rawData.stage || "待评估";
-    const subsite = rawData.subsite === "cervical" ? "颈段" : rawData.subsite === "upper_thoracic" ? "胸上段" : rawData.subsite === "lower_thoracic" ? "胸下段" : "胸中段";
-    const label = rawData.airwayInvasionRisk ? "气管食管瘘高危" : `${subsite}鳞癌`;
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label,
-      isComplete: Boolean(esophagealProfile.stage || rawData.stage),
-    };
-  }, [esophagealProfile]);
-
-  const thyroidSummary = React.useMemo(() => {
-    if (!thyroidProfile) return { stage: "未建档", label: "甲状腺病案待建立", isComplete: false };
-    const rawData = (thyroidProfile as any).clinicalData || (thyroidProfile as any).cancerSpecificData || {};
-    const stg = thyroidProfile.stage || rawData.stage || "待评估";
-    const tirads = rawData.ultrasoundTirads ? `TI-RADS ${rawData.ultrasoundTirads}` : "超声待评估";
-    const hist = rawData.histologyType === "ATC" ? "未分化癌" : rawData.histologyType === "MTC" ? "髓样癌" : "乳头状/滤泡癌";
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: rawData.ultrasoundTirads ? tirads : hist,
-      isComplete: Boolean(thyroidProfile.stage || rawData.stage || rawData.ultrasoundTirads),
-    };
-  }, [thyroidProfile]);
-
-  const endometrialSummary = React.useMemo(() => {
-    if (!endometrialProfile) return { stage: "未建档", label: "子宫内膜病案待建立", isComplete: false };
-    const rawData = (endometrialProfile as any).clinicalData || (endometrialProfile as any).cancerSpecificData || {};
-    const stg = endometrialProfile.stage || rawData.stage || "待评估";
-    const sub = rawData.molecularSubtype ? `${rawData.molecularSubtype}分型` : (rawData.histologyType || "内膜样腺癌");
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: sub,
-      isComplete: Boolean(endometrialProfile.stage || rawData.stage),
-    };
-  }, [endometrialProfile]);
-
-  const cervicalSummary = React.useMemo(() => {
-    if (!cervicalProfile) return { stage: "未建档", label: "宫颈病案待建立", isComplete: false };
-    const rawData = (cervicalProfile as any).clinicalData || (cervicalProfile as any).cancerSpecificData || {};
-    const stg = cervicalProfile.stage || rawData.stage || "待评估";
-    const hpv = rawData.hpvStatus ? (rawData.hpvStatus === "hpv16" ? "HPV16阳性" : "高危HPV阳性") : (rawData.histologyType || "宫颈鳞癌");
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: hpv,
-      isComplete: Boolean(cervicalProfile.stage || rawData.stage),
-    };
-  }, [cervicalProfile]);
-
-  const pancreaticSummary = React.useMemo(() => {
-    if (!pancreaticProfile) return { stage: "未建档", label: "胰腺病案待建立", isComplete: false };
-    const rawData = (pancreaticProfile as any).clinicalData || (pancreaticProfile as any).cancerSpecificData || {};
-    const stg = pancreaticProfile.stage || rawData.stage || "待评估";
-    const resect = rawData.resectabilityStatus ? (
-      rawData.resectabilityStatus === "resectable" ? "可直接切除" :
-      rawData.resectabilityStatus === "borderline_resectable" ? "交界可切除" :
-      rawData.resectabilityStatus === "locally_advanced" ? "局部进展期" : "转移性"
-    ) : (rawData.primarySite ? `${rawData.primarySite === "head" ? "胰头" : "胰体尾"}占位` : "胰腺导管腺癌");
-    return {
-      stage: stg.includes("期") ? stg : `${stg}期`,
-      label: resect,
-      isComplete: Boolean(pancreaticProfile.stage || rawData.stage || rawData.resectabilityStatus),
-    };
-  }, [pancreaticProfile]);
-
   const slotConfigs: Record<CancerType, {
     title: string;
     summary: { stage: string; label: string; isComplete: boolean };
@@ -237,133 +88,13 @@ export default function DualPrimarySwitcher({
       textColor: "text-pink-700",
       checkColor: "text-pink-600",
     },
-    colon: {
-      title: "原发性结肠恶性肿瘤",
-      summary: colonSummary,
-      activeCardClass: "bg-white border-emerald-400 ring-2 ring-emerald-400/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-emerald-300",
-      activeIconClass: "bg-emerald-100 text-emerald-600 border-emerald-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-emerald-100 text-emerald-700",
-      textColor: "text-emerald-700",
-      checkColor: "text-emerald-600",
-    },
-    rectal: {
-      title: "原发性直肠恶性肿瘤",
-      summary: rectalSummary,
-      activeCardClass: "bg-white border-teal-500 ring-2 ring-teal-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-teal-300",
-      activeIconClass: "bg-teal-100 text-teal-700 border-teal-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-teal-100 text-teal-800",
-      textColor: "text-teal-800",
-      checkColor: "text-teal-700",
-    },
-    colorectal: {
-      title: "原发性结直肠恶性肿瘤",
-      summary: colorectalSummary,
-      activeCardClass: "bg-white border-emerald-400 ring-2 ring-emerald-400/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-emerald-300",
-      activeIconClass: "bg-emerald-100 text-emerald-600 border-emerald-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-emerald-100 text-emerald-700",
-      textColor: "text-emerald-700",
-      checkColor: "text-emerald-600",
-    },
-    gastric: {
-      title: "原发性胃恶性肿瘤",
-      summary: gastricSummary,
-      activeCardClass: "bg-white border-amber-500 ring-2 ring-amber-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-amber-300",
-      activeIconClass: "bg-amber-100 text-amber-700 border-amber-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-amber-100 text-amber-800",
-      textColor: "text-amber-800",
-      checkColor: "text-amber-600",
-    },
-    liver: {
-      title: "原发性肝恶性肿瘤",
-      summary: liverSummary,
-      activeCardClass: "bg-white border-emerald-600 ring-2 ring-emerald-600/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-emerald-300",
-      activeIconClass: "bg-emerald-100 text-emerald-700 border-emerald-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-emerald-100 text-emerald-800",
-      textColor: "text-emerald-800",
-      checkColor: "text-emerald-600",
-    },
-    esophageal: {
-      title: "原发性食管恶性肿瘤",
-      summary: esophagealSummary,
-      activeCardClass: "bg-white border-purple-500 ring-2 ring-purple-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-purple-300",
-      activeIconClass: "bg-purple-100 text-purple-700 border-purple-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-purple-100 text-purple-800",
-      textColor: "text-purple-800",
-      checkColor: "text-purple-600",
-    },
-    thyroid: {
-      title: "原发性甲状腺恶性肿瘤",
-      summary: thyroidSummary,
-      activeCardClass: "bg-white border-teal-500 ring-2 ring-teal-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-teal-300",
-      activeIconClass: "bg-teal-100 text-teal-700 border-teal-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-teal-100 text-teal-800",
-      textColor: "text-teal-800",
-      checkColor: "text-teal-600",
-    },
-    endometrial: {
-      title: "原发性子宫内膜恶性肿瘤",
-      summary: endometrialSummary,
-      activeCardClass: "bg-white border-rose-500 ring-2 ring-rose-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-rose-300",
-      activeIconClass: "bg-rose-100 text-rose-700 border-rose-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-rose-100 text-rose-800",
-      textColor: "text-rose-800",
-      checkColor: "text-rose-600",
-    },
-    cervical: {
-      title: "原发性宫颈恶性肿瘤",
-      summary: cervicalSummary,
-      activeCardClass: "bg-white border-fuchsia-500 ring-2 ring-fuchsia-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-fuchsia-300",
-      activeIconClass: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-fuchsia-100 text-fuchsia-800",
-      textColor: "text-fuchsia-800",
-      checkColor: "text-fuchsia-600",
-    },
-    pancreatic: {
-      title: "原发性胰腺恶性肿瘤",
-      summary: pancreaticSummary,
-      activeCardClass: "bg-white border-orange-500 ring-2 ring-orange-500/30 shadow-sm",
-      inactiveCardClass: "bg-white/60 border-slate-200/70 hover:bg-white hover:border-orange-300",
-      activeIconClass: "bg-orange-100 text-orange-700 border-orange-200",
-      inactiveIconClass: "bg-slate-100 text-slate-500 border-slate-200",
-      badgeClass: "bg-orange-100 text-orange-800",
-      textColor: "text-orange-800",
-      checkColor: "text-orange-600",
-    },
   };
 
   // 1. 多原发患者专案切换器 (Multi-Primary Mode)
   if (isMultiPrimary) {
     const gridCols = effectiveSlots.length === 2 
       ? "grid-cols-1 sm:grid-cols-2" 
-      : effectiveSlots.length === 3 
-      ? "grid-cols-1 sm:grid-cols-3" 
-      : effectiveSlots.length === 4
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-      : effectiveSlots.length === 5
-      ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
-      : effectiveSlots.length === 6
-      ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
-      : effectiveSlots.length === 7
-      ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7"
-      : "grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8";
+      : "grid-cols-1";
 
     return (
       <div className={`p-3.5 sm:p-4 rounded-2xl bg-linear-to-r from-sky-50/80 via-purple-50/40 to-pink-50/80 border border-purple-200/70 shadow-xs mb-6 ${className}`}>
@@ -371,7 +102,7 @@ export default function DualPrimarySwitcher({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-600 text-white shadow-2xs">
               <ArrowRightLeft className="w-3 h-3" />
-              多原发肿瘤管理模式 (MPMN)
+              双原发肿瘤管理模式 (MPMN)
             </span>
             <span className="text-xs text-slate-500 hidden sm:inline">
               独立分期与分子分型 · 0ms 瞬间切换
@@ -382,7 +113,7 @@ export default function DualPrimarySwitcher({
               <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
               已激活跨癌种联合用药自检与就医协同
             </div>
-            {onAddSecondCancer && effectiveSlots.length < 4 && (
+            {onAddSecondCancer && effectiveSlots.length < 2 && (
               <button
                 type="button"
                 onClick={onAddSecondCancer}
@@ -471,7 +202,7 @@ export default function DualPrimarySwitcher({
             className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 hover:text-purple-600:text-purple-300 px-2.5 py-1 rounded-lg border border-dashed border-slate-300 hover:border-purple-300:border-purple-700 transition-colors cursor-pointer self-start sm:self-auto bg-white/80"
           >
             <Plus className="w-3 h-3" />
-            <span>建立第二癌种档案 (如合并其他原发肿瘤)</span>
+            <span>建立第二癌种档案 (如合并双原发肿瘤)</span>
           </button>
         )}
       </div>

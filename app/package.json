@@ -16,10 +16,9 @@
     "test:full": "tsx scripts/production-full-simulation.ts",
     "review:code": "tsx scripts/review-clinical-diff.ts",
     "bench:clinical": "tsx scripts/run-clinical-evals.ts",
-    "sim:gynecology": "tsx scripts/simulate-gynecologic-cancers.ts",
     "test:fullstack": "tsx scripts/comprehensive-fullstack-simulation.ts",
     "scaffold:cancer": "tsx scripts/scaffold-cancer.ts",
-    "test": "vitest run && tsx scripts/test-guardrails.ts && tsx scripts/comprehensive-simulation.ts && tsx scripts/exhaustive-local-simulation.ts && tsx scripts/production-full-simulation.ts && tsx scripts/simulate-gynecologic-cancers.ts && tsx scripts/comprehensive-fullstack-simulation.ts"
+    "test": "vitest run && tsx scripts/test-guardrails.ts && tsx scripts/comprehensive-simulation.ts && tsx scripts/exhaustive-local-simulation.ts && tsx scripts/production-full-simulation.ts && tsx scripts/comprehensive-fullstack-simulation.ts"
   },
   "dependencies": {
     "@google/genai": "^2.16.0",

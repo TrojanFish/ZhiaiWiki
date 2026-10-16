@@ -8,16 +8,14 @@ import {
 } from "@/lib/ddiRegistry";
 
 describe("CancerRegistry Plugin Architecture", () => {
-  it("should have lung, breast and pancreatic plugins registered by default", () => {
+  it("should have lung and breast plugins registered by default", () => {
     expect(CancerRegistry.has("lung")).toBe(true);
     expect(CancerRegistry.has("breast")).toBe(true);
-    expect(CancerRegistry.has("pancreatic")).toBe(true);
+    expect(CancerRegistry.has("pancreatic" as any)).toBe(false);
     expect(CancerRegistry.has("unknown_xyz" as any)).toBe(false);
 
     const types = CancerRegistry.getSupportedTypes();
-    expect(types).toContain("lung");
-    expect(types).toContain("breast");
-    expect(types).toContain("pancreatic");
+    expect(types).toEqual(["lung", "breast"]);
   });
 
   it("should safely fallback to default (lung) for unknown cancer types", () => {
@@ -224,24 +222,13 @@ describe("CancerRegistry Plugin Architecture", () => {
   });
 
   it("should ensure all registered cancer plugins have domain-specific featured studies and drug policies", () => {
-    const gastric = CancerRegistry.get("gastric");
-    expect(gastric.content?.featuredStudies?.length).toBeGreaterThan(0);
-    expect(gastric.content?.featuredStudies?.some((s: any) => s.id === "toga_2010" || s.id === "spotlight_2023")).toBe(true);
-    expect(gastric.content?.drugPolicies?.some((p: any) => p.id.includes("gastric"))).toBe(true);
+    const lung = CancerRegistry.get("lung");
+    expect(lung.content?.featuredStudies?.length).toBeGreaterThan(0);
+    expect(lung.content?.drugPolicies?.length).toBeGreaterThan(0);
 
-    const liver = CancerRegistry.get("liver");
-    expect(liver.content?.featuredStudies?.length).toBeGreaterThan(0);
-    expect(liver.content?.featuredStudies?.some((s: any) => s.id === "orient_32_2021" || s.id === "imbrave150_2020")).toBe(true);
-    expect(liver.content?.drugPolicies?.length).toBeGreaterThan(0);
-
-    const esophageal = CancerRegistry.get("esophageal");
-    expect(esophageal.content?.featuredStudies?.length).toBeGreaterThan(0);
-    expect(esophageal.content?.featuredStudies?.some((s: any) => s.id === "neocrtec5010_2018" || s.id === "escort1st_2021")).toBe(true);
-    expect(esophageal.content?.drugPolicies?.length).toBeGreaterThan(0);
-
-    const thyroid = CancerRegistry.get("thyroid");
-    expect(thyroid.content?.featuredStudies?.length).toBeGreaterThan(0);
-    expect(thyroid.content?.featuredStudies?.some((s: any) => s.id === "kuma_active_surveillance_2014" || s.id === "select_lenvatinib_2015")).toBe(true);
-    expect(thyroid.content?.drugPolicies?.length).toBeGreaterThan(0);
+    const breast = CancerRegistry.get("breast");
+    expect(breast.content?.featuredStudies?.length).toBeGreaterThan(0);
+    expect(breast.content?.featuredStudies?.some((s: any) => s.id === "tailorx_2018" || s.id === "aphinity_2017")).toBe(true);
+    expect(breast.content?.drugPolicies?.length).toBeGreaterThan(0);
   });
 });

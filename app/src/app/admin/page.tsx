@@ -1147,12 +1147,6 @@ export default function AdminPage() {
                       >
                         <option value="lung">🫁 肺癌 (NSCLC/SCLC)</option>
                         <option value="breast">🎀 乳腺癌 (Breast)</option>
-                        <option value="colorectal">🎗️ 结直肠癌 (Colorectal)</option>
-                        <option value="gastric">🥣 胃癌 (Gastric)</option>
-                        <option value="liver">🩺 肝癌 (Liver)</option>
-                        <option value="esophageal">🥤 食管癌 (Esophageal)</option>
-                        <option value="thyroid">🦋 甲状腺癌 (Thyroid)</option>
-                        <option value="prostate">🛡️ 前列腺癌 (Prostate)</option>
                       </select>
                     </div>
                   </div>
@@ -1470,12 +1464,6 @@ export default function AdminPage() {
               { id: "all", label: "全部癌种" },
               { id: "lung", label: "🫁 肺癌" },
               { id: "breast", label: "🎀 乳腺癌" },
-              { id: "colorectal", label: "🎗️ 结直肠癌" },
-              { id: "gastric", label: "🥣 胃癌" },
-              { id: "liver", label: "🩺 肝癌" },
-              { id: "esophageal", label: "🥤 食管癌" },
-              { id: "thyroid", label: "🦋 甲状腺癌" },
-              { id: "prostate", label: "🛡️ 前列腺癌" },
             ].map((c) => (
               <button
                 key={c.id}
@@ -1520,7 +1508,7 @@ export default function AdminPage() {
                         <div className="text-xs text-text-muted mt-1 flex flex-wrap items-center gap-2">
                           {s.cancerType && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                              {s.cancerType === 'breast' ? '乳腺癌' : s.cancerType === 'colorectal' ? '结直肠癌' : s.cancerType === 'gastric' ? '胃癌' : s.cancerType === 'liver' ? '肝癌' : s.cancerType === 'esophageal' ? '食管癌' : s.cancerType === 'thyroid' ? '甲状腺癌' : s.cancerType === 'prostate' ? '前列腺癌' : '肺癌'}
+                              {s.cancerType === 'breast' ? '乳腺癌' : '肺癌'}
                             </span>
                           )}
                           <span className="text-accent-blue font-medium">{s.journal || "Unknown"}</span>

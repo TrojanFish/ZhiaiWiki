@@ -4,12 +4,9 @@ import path from "node:path";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 import { computeCancerStage, isSupportedCancerType } from "@/lib/stagingRegistry";
 
-const cancerTypes = [
-  "lung", "breast", "colon", "rectal", "gastric", "liver", "esophageal",
-  "colorectal", "thyroid", "endometrial", "cervical", "pancreatic",
-] as const;
+const cancerTypes = ["lung", "breast"] as const;
 
-describe("12-cancer upload/evidence workflow contract", () => {
+describe("lung and breast upload/evidence workflow contract", () => {
   it("registers every supported cancer with staging, cohort, DDI and evidence content", () => {
     for (const cancerType of cancerTypes) {
       const plugin = CancerRegistry.get(cancerType);

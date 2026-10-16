@@ -76,87 +76,6 @@ const CANCER_HOT_KEYWORDS: Record<CancerType, Array<{ text: string; topicId: str
     { text: "阴性切缘标准 (No Ink)", topicId: "no_ink_on_tumor", riskLevel: "low" },
     { text: "21基因复发评分 (RS)", topicId: "oncotype_dx_rs", riskLevel: "low" },
     { text: "前哨淋巴结微转移", topicId: "sentinel_ln_macro_micro", riskLevel: "high" },
-    { text: "脉管癌栓 (LVI)", topicId: "breast_lvi", riskLevel: "high" },
-  ],
-  colorectal: [
-    { text: "环周切缘 (CRM) 评估", topicId: "t_depth_submucosa", riskLevel: "high" },
-    { text: "dMMR / MSI-H 免疫获益", topicId: "msi_dmmr_immunotherapy", riskLevel: "low" },
-    { text: "RAS / BRAF 突变靶向", topicId: "ras_braf_precision", riskLevel: "moderate" },
-    { text: "左半 vs 右半结肠癌", topicId: "left_vs_right_colon", riskLevel: "moderate" },
-    { text: "IDEA 3个月 CAPOX 减毒", topicId: "idea_chemo_duration", riskLevel: "safe" },
-    { text: "12枚淋巴结与癌结节 (TD)", topicId: "lymph_node_12_and_td", riskLevel: "high" },
-  ],
-  colon: [
-    { text: "完整结肠系膜切除 (CME)", topicId: "colon_cme_surgery_lymphnodes", riskLevel: "moderate" },
-    { text: "dMMR / MSI-H 免疫敏感", topicId: "colon_dmmr_msih", riskLevel: "safe" },
-    { text: "结肠左右半生物学分型", topicId: "colon_sidedness_biology", riskLevel: "moderate" },
-    { text: "IDEA 3个月 CAPOX 化疗", topicId: "colon_idea_3months_capox", riskLevel: "low" },
-    { text: "结肠癌肝转移 MDT 转化", topicId: "colon_liver_metastasis_mdt", riskLevel: "high" },
-    { text: "结肠息肉癌变预防", topicId: "colon_screening_polyps", riskLevel: "safe" },
-  ],
-  rectal: [
-    { text: "全直肠系膜切除 (TME)", topicId: "rectal_tme_sacred_plane", riskLevel: "safe" },
-    { text: "盆腔高分辨 MRI 与 CRM", topicId: "rectal_pelvic_hr_mri", riskLevel: "high" },
-    { text: "全程新辅助治疗 (TNT)", topicId: "rectal_tnt_rapido_prodige23", riskLevel: "moderate" },
-    { text: "守望等待 (Watch & Wait)", topicId: "rectal_watch_and_wait", riskLevel: "safe" },
-    { text: "低位直肠前切除综合征 (LARS)", topicId: "rectal_lars_rehabilitation", riskLevel: "moderate" },
-    { text: "预防性回肠造口护理", topicId: "rectal_protective_stoma_care", riskLevel: "low" },
-  ],
-  gastric: [
-    { text: "D2 淋巴结清扫根治度", topicId: "gastric_d2_lymphadenectomy", riskLevel: "safe" },
-    { text: "Lauren 弥漫型印戒细胞癌", topicId: "gastric_lauren_signet_ring", riskLevel: "high" },
-    { text: "Claudin 18.2 靶向治疗", topicId: "gastric_claudin18_zolbetuximab", riskLevel: "moderate" },
-    { text: "ESD 早期内镜下粘膜剥离", topicId: "gastric_esd_early_preservation", riskLevel: "safe" },
-    { text: "FLOT 围手术期新辅助化疗", topicId: "gastric_flot_neoadjuvant", riskLevel: "moderate" },
-    { text: "HER2 阳性一线曲妥珠单抗", topicId: "gastric_her2_toga_trastuzumab", riskLevel: "low" },
-  ],
-  liver: [
-    { text: "CNLC 临床分期决策树", topicId: "liver_cnlc_staging_pathway", riskLevel: "safe" },
-    { text: "Child-Pugh 肝功能储备", topicId: "liver_child_pugh_reserve", riskLevel: "moderate" },
-    { text: "微血管侵犯 (MVI) 早期预警", topicId: "liver_mvi_microvascular_invasion", riskLevel: "high" },
-    { text: "T+A 靶免一线联合方案", topicId: "liver_atezo_bev_imbrave150", riskLevel: "low" },
-    { text: "门静脉癌栓 (PVTT) 降期转化", topicId: "liver_pvtt_portal_vein_thrombosis", riskLevel: "high" },
-    { text: "HAIC 肝动脉灌注化疗", topicId: "liver_haic_hepatic_artery_infusion", riskLevel: "moderate" },
-  ],
-  pancreatic: [
-    { text: "CA19-9 术后动态敏感监测", topicId: "pancreas_ca199_kinetics", riskLevel: "high" },
-    { text: "Whipple 胰十二指肠切除术", topicId: "pancreas_whipple_r0_resection", riskLevel: "safe" },
-    { text: "交界可切除 (BRPC) 评估", topicId: "pancreas_borderline_resectable", riskLevel: "moderate" },
-    { text: "mFOLFIRINOX 强化化疗", topicId: "pancreas_mfolfirinox_prodige", riskLevel: "moderate" },
-    { text: "胰酶替代治疗 (PERT)", topicId: "pancreas_pert_enzyme_replacement", riskLevel: "safe" },
-    { text: "术后胰瘘 (POPF) 预警防御", topicId: "pancreas_popf_fistula_prevention", riskLevel: "high" },
-  ],
-  thyroid: [
-    { text: "超声 TI-RADS 分级微钙化", topicId: "thyroid_rads_active_surveillance", riskLevel: "moderate" },
-    { text: "细针穿刺 (FNA) Bethesda 报告", topicId: "thyroid_fna_bethesda_cytology", riskLevel: "safe" },
-    { text: "微小癌 (PTMC) 主动监测", topicId: "thyroid_ptmc_active_surveillance", riskLevel: "safe" },
-    { text: "BRAF V600E 突变预后解读", topicId: "thyroid_braf_tert_molecular", riskLevel: "moderate" },
-    { text: "碘-131 清甲与低碘饮食", topicId: "thyroid_rai_131_ablation", riskLevel: "low" },
-    { text: "TSH 抑制治疗目标与低钙血症", topicId: "thyroid_tsh_suppression_calcium", riskLevel: "high" },
-  ],
-  esophageal: [
-    { text: "胸腹腔镜微创三切口根治", topicId: "esophageal_mie_minimally_invasive", riskLevel: "safe" },
-    { text: "食管鳞癌黏膜下层浸润深度", topicId: "esophageal_staging_anatomy_incisors", riskLevel: "high" },
-    { text: "新辅助放化疗 (NEOCRTEC5010)", topicId: "esophageal_neocrtec5010_cross_chemorad", riskLevel: "moderate" },
-    { text: "术后纳武利尤单抗免疫辅助", topicId: "esophageal_immunotherapy_escort_checkmate", riskLevel: "low" },
-    { text: "吻合口瘘早期识别与引流", topicId: "esophageal_anastomotic_leak_prevention", riskLevel: "high" },
-    { text: "两野 vs 三野淋巴结清扫", topicId: "esophageal_two_three_field_dissection", riskLevel: "moderate" },
-  ],
-  cervical: [
-    { text: "高危型 HPV 16/18 与 CIN 3", topicId: "cervical_hpv_cin_evolution", riskLevel: "moderate" },
-    { text: "宫颈冷刀锥切 (CKC) 切缘评估", topicId: "cervical_ckc_leep_cone_margin", riskLevel: "safe" },
-    { text: "同步放化疗 (CCRT) 根治标准", topicId: "cervical_ccrt_radiochemotherapy", riskLevel: "high" },
-    { text: "KEYNOTE-826 免疫联合靶向", topicId: "cervical_keynote826_immunotherapy", riskLevel: "low" },
-    { text: "广泛全子宫切除与神经保留", topicId: "cervical_radical_hysterectomy_nerve_sparing", riskLevel: "safe" },
-    { text: "卵巢移位术保护内分泌功能", topicId: "cervical_ovarian_transposition", riskLevel: "safe" },
-  ],
-  endometrial: [
-    { text: "TCGA 分子分型 (POLE/dMMR)", topicId: "endometrial_figo2023_molecular_tcga", riskLevel: "safe" },
-    { text: "绝经后异常子宫出血排查", topicId: "endometrial_early_abnormal_bleeding", riskLevel: "moderate" },
-    { text: "深肌层浸润 (MI >= 50%) 判定", topicId: "endometrial_myometrial_invasion_50", riskLevel: "high" },
-    { text: "淋巴脉管浸润 (LVSI) 风险", topicId: "endometrial_lvsi_lymphovascular_space", riskLevel: "high" },
-    { text: "PORTEC-3 辅助放化疗分层", topicId: "endometrial_portec_radiotherapy", riskLevel: "moderate" },
-    { text: "前哨淋巴结活检 (SLNB) 示踪", topicId: "endometrial_sentinel_lymph_node_slnb", riskLevel: "safe" },
   ],
 };
 
@@ -237,24 +156,6 @@ export function WikiSpotlightSearchModal({
     switch (cancerType) {
       case "breast":
         return "搜索【乳腺癌】词条、指标或分型…如 BI-RADS、HER2、21基因、微钙化…";
-      case "colorectal":
-      case "colon":
-      case "rectal":
-        return "搜索【结直肠癌】词条、指标或治疗…如 CRM切缘、dMMR、IDEA减毒、新辅助…";
-      case "gastric":
-        return "搜索【胃癌】词条、指标或病理…如 D2清扫、Lauren印戒、Claudin 18.2、ESD…";
-      case "liver":
-        return "搜索【肝癌】词条、指标或分期…如 CNLC分期、Child-Pugh、门脉癌栓、微血管侵犯…";
-      case "pancreatic":
-        return "搜索【胰腺癌】词条、指标或方案…如 CA19-9、Whipple、mFOLFIRINOX、交界可切…";
-      case "thyroid":
-        return "搜索【甲状腺癌】词条、超声或指标…如 C-TIRADS、PTMC监测、BRAF、清甲评估…";
-      case "esophageal":
-        return "搜索【食管癌】词条、分期或方案…如 鳞癌浸润、微创三切口、NEOCRTEC5010、吻合口…";
-      case "cervical":
-        return "搜索【宫颈癌】词条、病理或放化疗…如 HPV16/18、CIN、锥切切缘、同步放化疗…";
-      case "endometrial":
-        return "搜索【子宫内膜癌】词条、分子分型…如 TCGA分型、POLE突变、肌层浸润、PORTEC…";
       default:
         return "搜索【肺癌】词条、指标或症状…如 STAS、磨玻璃、EGFR、7组淋巴结…";
     }

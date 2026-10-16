@@ -273,319 +273,13 @@ const CANCER_DRIVER_GENES_MAP: Record<string, Array<{
       ]
     },
   ],
-  colorectal: [
-    {
-      gene: "KRAS",
-      label: "KRAS (RAS下游效应靶点)",
-      badge: "西妥昔耐药指引",
-      subtypes: [
-        { key: "KRAS_exon2", name: "外显子 2 突变 (12/13密码子 · 西妥昔耐药)", isSensitive: false },
-        { key: "KRAS_G12C", name: "G12C 突变 (特异性抑制剂敏感)", isSensitive: true },
-        { key: "KRAS_wt", name: "野生型 (全阴性 · 西妥昔单抗敏感)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "NRAS",
-      label: "NRAS (RAS家族成员)",
-      badge: "3%~5%突变",
-      subtypes: [
-        { key: "NRAS_mut", name: "外显子 2/3/4 活化突变 (抗EGFR耐药)", isSensitive: false },
-        { key: "NRAS_wt", name: "野生型", isSensitive: true },
-      ]
-    },
-    {
-      gene: "BRAF",
-      label: "BRAF (MAPK通路)",
-      badge: "V600E高危预后",
-      subtypes: [
-        { key: "BRAF_V600E", name: "V600E 突变 (侵袭性强 · 双靶/三靶获益)", isSensitive: true },
-        { key: "BRAF_wt", name: "野生型", isSensitive: true },
-      ]
-    },
-    {
-      gene: "MSI/MMR",
-      label: "MSI / MMR (错配修复)",
-      badge: "免疫治疗黄金靶点",
-      subtypes: [
-        { key: "dMMR_MSIH", name: "dMMR / MSI-H (高微卫星不稳定 · PD-1高度敏感)", isSensitive: true },
-        { key: "pMMR_MSS", name: "pMMR / MSS (微卫星稳定)", isSensitive: false },
-      ]
-    },
-    {
-      gene: "HER2",
-      label: "HER2 (扩增过表达)",
-      badge: "双靶治疗靶点",
-      subtypes: [
-        { key: "HER2_amp", name: "HER2 扩增 / IHC 3+ (RAS野生型抗HER2方案)", isSensitive: true },
-        { key: "HER2_neg", name: "HER2 阴性", isSensitive: false },
-      ]
-    }
-  ],
-  gastric: [
-    {
-      gene: "HER2",
-      label: "HER2 (胃癌一线金标准)",
-      badge: "曲妥珠单抗靶点",
-      subtypes: [
-        { key: "HER2_pos", name: "阳性 (IHC 3+ 或 IHC 2+/FISH+)", isSensitive: true },
-        { key: "HER2_neg", name: "阴性", isSensitive: false },
-      ]
-    },
-    {
-      gene: "Claudin18.2",
-      label: "Claudin 18.2 (紧密连接蛋白)",
-      badge: "佐妥昔单抗靶点",
-      subtypes: [
-        { key: "CLDN_pos_high", name: "强阳性 (≥75% 肿瘤细胞膜中/强染色)", isSensitive: true },
-        { key: "CLDN_pos_low", name: "中低表达 (40%~74%)", isSensitive: false },
-        { key: "CLDN_neg", name: "阴性 (<40%)", isSensitive: false },
-      ]
-    },
-    {
-      gene: "PD-L1",
-      label: "PD-L1 (CPS 综合阳性评分)",
-      badge: "免疫一线获益",
-      subtypes: [
-        { key: "CPS_ge5", name: "CPS ≥ 5 (纳武利尤单抗一线联合方案)", isSensitive: true },
-        { key: "CPS_ge10", name: "CPS ≥ 10 (高免疫敏感度)", isSensitive: true },
-        { key: "CPS_lt5", name: "CPS < 5 (获益有限)", isSensitive: false },
-      ]
-    },
-    {
-      gene: "MSI/MMR",
-      label: "MSI / MMR (错配修复)",
-      badge: "免疫免化疗指引",
-      subtypes: [
-        { key: "dMMR_MSIH", name: "dMMR / MSI-H (围手术期免疫新辅助/一线获益)", isSensitive: true },
-        { key: "pMMR", name: "pMMR / MSS", isSensitive: false },
-      ]
-    }
-  ],
-  liver: [
-    {
-      gene: "AFP",
-      label: "AFP (甲胎蛋白基线)",
-      badge: "肝癌特异性标志物",
-      subtypes: [
-        { key: "AFP_high", name: "显著偏高 (≥400 ng/mL)", isSensitive: false },
-        { key: "AFP_mild", name: "轻度偏高 (20~400 ng/mL)", isSensitive: false },
-        { key: "AFP_normal", name: "正常 (<20 ng/mL)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "HBV/HCV",
-      label: "病毒复制载量 (HBV-DNA)",
-      badge: "抗病毒基础管控",
-      subtypes: [
-        { key: "HBV_pos", name: "HBV-DNA 阳性 (需口服恩替卡韦/TAF抗病毒)", isSensitive: false },
-        { key: "HBV_neg", name: "HBV-DNA 阴性 / 已测不到", isSensitive: true },
-      ]
-    },
-    {
-      gene: "CTNNB1",
-      label: "CTNNB1 (Wnt通路突变)",
-      badge: "免疫耐药潜在标志",
-      subtypes: [
-        { key: "CTNNB1_mut", name: "突变激活 (冷肿瘤 · 单药免疫应答偏低)", isSensitive: false },
-        { key: "wt", name: "野生型", isSensitive: true },
-      ]
-    },
-    {
-      gene: "TP53",
-      label: "TP53 (抑癌基因失活)",
-      badge: "高侵袭预后",
-      subtypes: [
-        { key: "TP53_mut", name: "致病性突变 (提示复发风险偏高)", isSensitive: false },
-      ]
-    }
-  ],
-  thyroid: [
-    {
-      gene: "BRAF",
-      label: "BRAF (V600E 突变)",
-      badge: "乳头状癌 60%~80%",
-      subtypes: [
-        { key: "BRAF_V600E", name: "V600E 阳性 (与侵袭性/包膜外侵相关)", isSensitive: true },
-        { key: "BRAF_wt", name: "野生型 (全阴性)", isSensitive: false },
-      ]
-    },
-    {
-      gene: "TERT",
-      label: "TERT (启动子突变)",
-      badge: "高危复发与去分化",
-      subtypes: [
-        { key: "TERT_promoter", name: "启动子 C228T/C250T 突变 (侵袭高危)", isSensitive: false },
-        { key: "TERT_wt", name: "野生型", isSensitive: true },
-      ]
-    },
-    {
-      gene: "RET",
-      label: "RET (融合/点突变)",
-      badge: "靶向治疗与髓样癌",
-      subtypes: [
-        { key: "RET_PTC", name: "RET 融合 (RET/PTC · 普拉替尼/塞普替尼敏感)", isSensitive: true },
-        { key: "RET_MTC", name: "RET 突变 (MEN2综合征 / 髓样癌)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "RAS",
-      label: "RAS (NRAS / HRAS)",
-      badge: "滤泡型高发",
-      subtypes: [
-        { key: "RAS_mut", name: "RAS 突变阳性", isSensitive: false },
-      ]
-    }
-  ],
-  endometrial: [
-    {
-      gene: "POLE",
-      label: "POLE (外切酶结构域突变)",
-      badge: "超高突变 · 预后极佳",
-      subtypes: [
-        { key: "POLE_mut", name: "致病性突变 (降阶梯治疗免辅助放化疗)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "MMR/MSI",
-      label: "MMR / MSI (错配修复状态)",
-      badge: "高微卫星不稳定型",
-      subtypes: [
-        { key: "dMMR", name: "dMMR (MLH1/MSH2/MSH6/PMS2 缺失 · 免疫敏感)", isSensitive: true },
-        { key: "pMMR", name: "pMMR (错配修复完整)", isSensitive: false },
-      ]
-    },
-    {
-      gene: "p53",
-      label: "p53 (TP53 状态)",
-      badge: "高危浆液性分子型",
-      subtypes: [
-        { key: "p53_abnormal", name: "p53 突变型/过表达 (强化化疗/放疗指征)", isSensitive: false },
-        { key: "p53_wild", name: "p53 野生型/正常", isSensitive: true },
-      ]
-    },
-    {
-      gene: "ER/PR",
-      label: "ER / PR (激素受体)",
-      badge: "内分泌治疗指标",
-      subtypes: [
-        { key: "ER_PR_pos", name: "ER/PR 阳性 (孕激素/芳香化酶抑制剂敏感)", isSensitive: true },
-        { key: "ER_PR_neg", name: "阴性", isSensitive: false },
-      ]
-    }
-  ],
-  cervical: [
-    {
-      gene: "HPV",
-      label: "HPV (人乳头瘤病毒分型)",
-      badge: "宫颈癌病因学核心",
-      subtypes: [
-        { key: "HPV16", name: "HPV 16 型阳性 (最常见高危型)", isSensitive: false },
-        { key: "HPV18", name: "HPV 18 型阳性 (高侵袭/腺癌多见)", isSensitive: false },
-        { key: "HPV_other_hr", name: "其他高危型阳性 (31/33/45/52/58等)", isSensitive: false },
-        { key: "HPV_neg", name: "全阴性", isSensitive: true },
-      ]
-    },
-    {
-      gene: "PD-L1",
-      label: "PD-L1 (CPS 评分)",
-      badge: "一线免疫获益",
-      subtypes: [
-        { key: "CPS_ge1", name: "CPS ≥ 1 (帕博利珠单抗联合方案获益)", isSensitive: true },
-        { key: "CPS_lt1", name: "CPS < 1", isSensitive: false },
-      ]
-    },
-    {
-      gene: "TMB",
-      label: "TMB (肿瘤突变负荷)",
-      badge: "广谱免疫标志物",
-      subtypes: [
-        { key: "TMB_high", name: "TMB-H (≥10 mut/Mb)", isSensitive: true },
-      ]
-    }
-  ],
-  pancreatic: [
-    {
-      gene: "KRAS",
-      label: "KRAS (核心驱动靶点)",
-      badge: "90%~95%极高频",
-      subtypes: [
-        { key: "G12D", name: "KRAS G12D 突变 (最常见亚型)", isSensitive: false },
-        { key: "G12V", name: "KRAS G12V 突变", isSensitive: false },
-        { key: "G12R", name: "KRAS G12R 突变", isSensitive: false },
-        { key: "G12C", name: "KRAS G12C 突变 (靶向获益罕见亚型)", isSensitive: true },
-        { key: "wt", name: "KRAS 野生型 (需排查罕见驱动靶点)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "BRCA1/2",
-      label: "BRCA1/2 (同源重组缺陷)",
-      badge: "POLO奥拉帕利靶点",
-      subtypes: [
-        { key: "gBRCA_mut", name: "gBRCA1/2 致病突变 (含铂化疗与奥拉帕利敏感)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "MSI/dMMR",
-      label: "MSI / dMMR (错配修复)",
-      badge: "罕见免疫敏感型",
-      subtypes: [
-        { key: "dMMR", name: "dMMR / MSI-H (PD-1单抗强效缓解)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "SMAD4",
-      label: "SMAD4 (DPC4 基因缺失)",
-      badge: "远处转移风险评估",
-      subtypes: [
-        { key: "SMAD4_loss", name: "SMAD4 表达缺失 (提示转移倾向高)", isSensitive: false },
-      ]
-    }
-  ],
-  esophageal: [
-    {
-      gene: "PD-L1",
-      label: "PD-L1 (CPS / TAP 表达)",
-      badge: "食管癌一线免疫金标准",
-      subtypes: [
-        { key: "CPS_ge10", name: "CPS ≥ 10 或 TAP ≥ 10% (一线免疫获益确凿)", isSensitive: true },
-        { key: "CPS_1_9", name: "CPS 1~9 (中度获益)", isSensitive: true },
-        { key: "CPS_lt1", name: "CPS < 1 (低表达)", isSensitive: false },
-      ]
-    },
-    {
-      gene: "HER2",
-      label: "HER2 (食管胃结合部/腺癌)",
-      badge: "抗HER2靶向",
-      subtypes: [
-        { key: "HER2_pos", name: "HER2 阳性 (IHC 3+ 或 FISH+)", isSensitive: true },
-      ]
-    },
-    {
-      gene: "TP53",
-      label: "TP53 (抑癌基因突变)",
-      badge: "食管鳞癌高频(>80%)",
-      subtypes: [
-        { key: "TP53_mut", name: "致病性突变", isSensitive: false },
-      ]
-    }
-  ]
 };
 
 export default function ReportUploader({ onParsed, initialData, existingProfile, onCancel, initialManualMode, onSwitchToUpload, cancerType = 'lung' }: ReportUploaderProps) {
   const [parsedData, setParsedData] = useState<any | null>(initialData || null);
   const currentCancer: CancerType = (parsedData?.cancerType || cancerType || 'lung') as CancerType;
   const isBreast = currentCancer === 'breast';
-  const isColon = currentCancer === 'colon';
-  const isRectal = currentCancer === 'rectal';
-  const isColorectal = currentCancer === 'colorectal' || isColon || isRectal;
-  const isGastric = currentCancer === 'gastric';
-  const isLiver = currentCancer === 'liver';
-  const isEsophageal = currentCancer === 'esophageal';
-  const isThyroid = currentCancer === 'thyroid';
-  const isEndometrial = currentCancer === 'endometrial';
-  const isCervical = currentCancer === 'cervical';
-  const isPancreatic = currentCancer === 'pancreatic';
-  const isLung = currentCancer === 'lung';
+  const isLung = !isBreast;
 
   const [uploadTab, setUploadTab] = useState<'image' | 'text'>('image');
   const [reportText, setReportText] = useState("");
@@ -1261,9 +955,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
           <aside className="w-52 shrink-0 hidden md:flex flex-col gap-4" style={{position:"sticky",top:"1rem"}}>
             <nav className="flex flex-col gap-1">
               {([
-                { step: 1 as const, label: isLung ? "结节影像与部位" : isBreast ? "乳腺影像与原发灶" : isColorectal ? "肠镜与影像原发灶" : "影像诊断与原发灶" },
-                { step: 2 as const, label: isBreast ? "免疫组化与分型" : isLung ? "组织病理与高危" : "组织病理与分期" },
-                { step: 3 as const, label: isLung ? "驱动基因突变" : isBreast ? "受体与基因检测" : isColorectal ? "RAS/BRAF/MSI" : "分子病理与靶点" },
+                { step: 1 as const, label: isLung ? "结节影像与部位" : "乳腺影像与原发灶" },
+                { step: 2 as const, label: isBreast ? "免疫组化与分型" : "组织病理与高危" },
+                { step: 3 as const, label: isLung ? "驱动基因突变" : "受体与基因检测" },
                 { step: 4 as const, label: "全身排查与标志物" },
               ]).map(({ step, label }) => {
                 const isActive = currentStep === step;
@@ -1307,9 +1001,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
             {/* Mobile pill stepper */}
             <div className="flex md:hidden mb-4 p-1 bg-slate-100/80 rounded-2xl border border-slate-200/80 gap-1">
               {([
-                { step: 1 as const, label: isLung ? "影像随访" : isBreast ? "乳腺影像" : isColorectal ? "肠镜影像" : "影像诊断" },
-                { step: 2 as const, label: isBreast ? "免疫组化" : isLung ? "病理高危" : "组织病理" },
-                { step: 3 as const, label: isLung ? "驱动基因" : isBreast ? "分子分型" : isColorectal ? "靶向基因" : "分子靶点" },
+                { step: 1 as const, label: isLung ? "影像随访" : "乳腺影像" },
+                { step: 2 as const, label: isBreast ? "免疫组化" : "病理高危" },
+                { step: 3 as const, label: isLung ? "驱动基因" : "分子分型" },
                 { step: 4 as const, label: isBreast ? "标志排查" : "标志排查" },
               ]).map(({ step, label }) => (
                 <button key={step} type="button" onClick={() => setCurrentStep(step)}
@@ -1406,55 +1100,6 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                           <option value="mastectomy">乳腺全切术 (Mastectomy)</option>
                           <option value="reconstruction">全切+一期/二期乳房重建</option>
                         </>
-                      ) : isColorectal ? (
-                        <>
-                          <option value="colectomy">结肠切除术 (Colectomy)</option>
-                          <option value="tme">直肠癌全系膜切除 (TME)</option>
-                          <option value="local_excision">内镜/经肛局部切除</option>
-                        </>
-                      ) : isGastric ? (
-                        <>
-                          <option value="distal_gastrectomy">远端胃大部分切除术 (D2)</option>
-                          <option value="total_gastrectomy">全胃切除术 (D2)</option>
-                          <option value="proximal_gastrectomy">近端胃切除术</option>
-                          <option value="esd">内镜黏膜下剥离术 (ESD)</option>
-                        </>
-                      ) : isLiver ? (
-                        <>
-                          <option value="hepatectomy">肝叶/肝段切除术</option>
-                          <option value="ablation">射频/微波局部消融术</option>
-                          <option value="transplant">肝脏移植术</option>
-                          <option value="tace">经动脉化疗栓塞 (TACE)</option>
-                        </>
-                      ) : isThyroid ? (
-                        <>
-                          <option value="total_thyroidectomy">甲状腺全切术</option>
-                          <option value="lobectomy_isthmus">单侧腺叶+峡部切除</option>
-                          <option value="central_dissection">甲状腺全切+中央区淋巴结清扫</option>
-                        </>
-                      ) : isPancreatic ? (
-                        <>
-                          <option value="whipple">胰十二指肠切除术 (Whipple)</option>
-                          <option value="distal_pancreatectomy">胰体尾切除术 (RAMPS)</option>
-                          <option value="total_pancreatectomy">全胰切除术</option>
-                        </>
-                      ) : isEsophageal ? (
-                        <>
-                          <option value="mckeown">食管癌根治术 (McKeown 三切口)</option>
-                          <option value="ivor_lewis">食管癌根治术 (Ivor Lewis 双切口)</option>
-                          <option value="esd">内镜微创切除 (ESD)</option>
-                        </>
-                      ) : isEndometrial ? (
-                        <>
-                          <option value="hysterectomy_bso">全子宫双附件切除术</option>
-                          <option value="staging_surgery">全面分期手术 (伴淋巴结清扫)</option>
-                        </>
-                      ) : isCervical ? (
-                        <>
-                          <option value="wertheim">广泛性全子宫切除术 (Wertheim / Piver III)</option>
-                          <option value="conization">宫颈锥切术 (LEEP / CKC)</option>
-                          <option value="ccrt">根治性同步化放疗 (CCRT, 免手术)</option>
-                        </>
                       ) : (
                         <>
                           <option value="segmentectomy">解剖性肺段切除 (Segmentectomy)</option>
@@ -1477,28 +1122,10 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                      {isBreast ? "乳腺影像与肿块大小 (BI-RADS 评估)" :
-                       isColorectal ? "肠道影像与原发病灶浸润 (T分期)" :
-                       isGastric ? "胃镜与腹盆增强 CT 原发灶 (T分期)" :
-                       isLiver ? "肝脏肿瘤原发灶评估 (最大径 / 数目)" :
-                       isThyroid ? "甲状腺超声与结节评估 (TI-RADS)" :
-                       isEndometrial ? "盆腔 MRI 与肌层浸润深度 (FIGO分期)" :
-                       isCervical ? "宫颈原发灶与盆腔 MRI 浸润 (FIGO分期)" :
-                       isPancreatic ? "胰腺薄层增强 CT 原发灶 (可切除性)" :
-                       isEsophageal ? "食管内镜与增强 CT 原发灶 (T分期)" :
-                       "结节形态与 CT 实性成分 (CTR 核心分期依据)"}
+                      {isBreast ? "乳腺影像与肿块大小 (BI-RADS 评估)" : "结节形态与 CT 实性成分 (CTR 核心分期依据)"}
                     </h3>
                     <p className="text-[11px] text-slate-500">
-                      {isBreast ? "超声/钼靶测量肿块最大径与钙化" :
-                       isColorectal ? "肠镜病变测量与盆腔核磁评估" :
-                       isGastric ? "胃镜活检病变大小与胃壁浸润深度" :
-                       isLiver ? "增强影像测量肿瘤最大径与血管受累" :
-                       isThyroid ? "高分辨超声测量结节大小与钙化" :
-                       isEndometrial ? "MRI 测定肌层浸润与宫颈间质受累" :
-                       isCervical ? "专科检查与 MRI 判定病灶范围" :
-                       isPancreatic ? "薄层 CT 测定肿瘤最大径与血管间隙" :
-                       isEsophageal ? "内镜与 CT 评估病灶长度与外侵" :
-                       "薄层 CT 影像原发灶测量，CTR 为临床分期重要依据"}
+                      {isBreast ? "超声/钼靶测量肿块最大径与钙化" : "薄层 CT 影像原发灶测量，CTR 为临床分期重要依据"}
                     </p>
                   </div>
                 </div>
@@ -1764,7 +1391,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1">
-                      {isBreast ? "BI-RADS 影像分类" : isThyroid ? "C-TIRADS 超声分级" : "原发灶 T 分期参考"}
+                      {isBreast ? "BI-RADS 影像分类" : "原发灶 T 分期参考"}
                     </label>
                     {isBreast ? (
                       <select 
@@ -1781,19 +1408,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                         <option value="5">5 类 (高度提示恶性 ≥95%)</option>
                         <option value="6">6 类 (病理证实恶性)</option>
                       </select>
-                    ) : isThyroid ? (
-                      <select 
-                        value={parsedData.tiRads || ""} 
-                        onChange={e => setParsedData({...parsedData, tiRads: e.target.value})}
-                        className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors cursor-pointer"
-                      >
-                        <option value="">未分级 / 待确认</option>
-                        <option value="3">3 类 (良性可能)</option>
-                        <option value="4A">4A 类 (轻度可疑 2%~10%)</option>
-                        <option value="4B">4B 类 (中度可疑 10%~50%)</option>
-                        <option value="4C">4C 类 (高度可疑 50%~90%)</option>
-                        <option value="5">5 类 (高度恶性 &gt;90%)</option>
-                      </select>
+                    
                     ) : (
                       <select 
                         value={parsedData.tStage || "T1"} 
@@ -1817,7 +1432,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                       value={parsedData.noduleLocation || parsedData.organLocation || ""} 
                       onChange={e => setParsedData({ ...parsedData, noduleLocation: e.target.value, organLocation: e.target.value })}
                       className="w-full h-10 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors"
-                      placeholder={isBreast ? "如: 左乳外上象限 2点钟" : isColorectal ? "如: 乙状结肠距肛缘18cm" : isGastric ? "如: 胃窦小弯侧" : isLiver ? "如: 右后叶 S7/S8 段" : "如: 原发解剖部位"}
+                      placeholder={isBreast ? "如: 左乳外上象限 2点钟" : "如: 右肺上叶前段"}
                     />
                   </div>
                 </div>
@@ -2820,28 +2435,10 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                      {isBreast ? "免疫组化分子分型与基因变异 (IHC / FISH / NGS)" :
-                       isColorectal ? "结直肠癌分子标志物与错配修复 (RAS / BRAF / MSI)" :
-                       isGastric ? "胃癌分子标志物与靶向靶点 (HER2 / CLDN18.2 / MSI)" :
-                       isLiver ? "肝癌血清标志物与体细胞突变谱 (AFP / Wnt / TP53)" :
-                       isThyroid ? "甲状腺癌分子标志物与基因突变 (BRAF / TERT / RET)" :
-                       isEndometrial ? "子宫内膜癌分子分型四分法 (POLE / MMR / p53)" :
-                       isCervical ? "宫颈癌生物学特征与免疫靶点 (HPV / PD-L1 / TMB)" :
-                       isPancreatic ? "胰腺癌分子靶点与基因图谱 (KRAS / BRCA / MSI)" :
-                       isEsophageal ? "食管癌免疫组化与分子指标 (PD-L1 / HER2 / TP53)" :
-                       "分子病理与驱动基因突变谱 (NGS / PCR / 免疫组化)"}
+                      {isBreast ? "免疫组化分子分型与基因变异 (IHC / FISH / NGS)" : "分子病理与驱动基因突变谱 (NGS / PCR / 免疫组化)"}
                     </h3>
                     <p className="text-[11px] text-slate-500">
-                      {isBreast ? "录入 ER、PR、HER2、Ki-67 与 BRCA1/2，指导靶向、内分泌与化疗决策" :
-                       isColorectal ? "录入 KRAS、NRAS、BRAF、MSI/MMR，指导抗EGFR靶向与免疫获益分流" :
-                       isGastric ? "录入 HER2、Claudin 18.2、PD-L1 (CPS) 与 MSI，指导靶向与免疫联合方案" :
-                       isLiver ? "录入 AFP 基线、HBV 病毒载量与突变谱，指导抗病毒、靶靶联合与免疫治疗" :
-                       isThyroid ? "录入 BRAF V600E、TERT 启动子、RET 融合，评估高危复发与靶向治疗" :
-                       isEndometrial ? "录入 POLE、dMMR、p53、ER/PR 四分法，指导精准降阶梯或强化辅助治疗" :
-                       isCervical ? "录入高危型 HPV、PD-L1 (CPS)、TMB，指导免疫联合系统治疗" :
-                       isPancreatic ? "录入 KRAS 亚型、BRCA1/2 突变、MSI 状态，指导含铂维持与靶向探索" :
-                       isEsophageal ? "录入 PD-L1 (CPS/TAP)、HER2，指导一线免疫与抗HER2联合用药" :
-                       "录入驱动突变 (EGFR/ALK等)、高危伴随共突变 (TP53等) 与 PD-L1，指导靶向用药与复发监测"}
+                      {isBreast ? "录入 ER、PR、HER2、Ki-67 与 BRCA1/2，指导靶向、内分泌与化疗决策" : "录入驱动突变 (EGFR/ALK等)、高危伴随共突变 (TP53等) 与 PD-L1，指导靶向用药与复发监测"}
                     </p>
                   </div>
                 </div>
@@ -2915,22 +2512,13 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="space-y-2">
                   <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
                     <span>
-                      {isBreast ? "乳腺癌核心受体与驱动分子指标（点击选择已确诊状态）：" :
-                       isColorectal ? "结直肠癌核心基因与错配修复指标（点击选择）：" :
-                       isGastric ? "胃癌核心分子标志物与靶点（点击选择）：" :
-                       isLiver ? "肝癌核心血清学与分子特征（点击选择）：" :
-                       isThyroid ? "甲状腺癌核心基因突变（点击选择）：" :
-                       isEndometrial ? "子宫内膜癌四分法分子指标（点击选择）：" :
-                       isCervical ? "宫颈癌病原体与免疫标志物（点击选择）：" :
-                       isPancreatic ? "胰腺癌核心驱动与易感基因（点击选择）：" :
-                       isEsophageal ? "食管癌免疫与分子标志物（点击选择）：" :
-                       "经典驱动基因突变（点击选择已检出的基因）："}
+                      {isBreast ? "乳腺癌核心受体与驱动分子指标（点击选择已确诊状态）：" : "经典驱动基因突变（点击选择已检出的基因）："}
                     </span>
                     <span className="text-slate-400 font-normal">支持多选</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {((CANCER_DRIVER_GENES_MAP[currentCancer] || (isColorectal ? CANCER_DRIVER_GENES_MAP.colorectal : PRESET_DRIVER_GENES))).map(item => {
+                    {((CANCER_DRIVER_GENES_MAP[currentCancer] || PRESET_DRIVER_GENES)).map(item => {
                       const currentMut = (parsedData.geneMutations || []).find((m: any) => 
                         m.gene === item.gene && 
                         m.status !== "negative" && 
@@ -3056,9 +2644,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                     <div className="text-xs font-bold text-slate-800 flex items-center justify-between">
                       <span className="flex items-center gap-1">
                         <Activity className="w-3.5 h-3.5 text-indigo-600" />
-                        <span>{isLung ? "PD-L1 蛋白表达 (TPS)" : (isGastric || isCervical || isEsophageal) ? "PD-L1 表达 (CPS)" : "PD-L1 免疫检查点表达"}</span>
+                        <span>{isLung ? "PD-L1 蛋白表达 (TPS)" : "PD-L1 免疫检查点表达"}</span>
                       </span>
-                      <span className="text-[10px] text-slate-400">{isLung ? "TPS 比例" : (isGastric || isCervical || isEsophageal) ? "CPS 评分" : "免疫治疗评估"}</span>
+                      <span className="text-[10px] text-slate-400">{isLung ? "TPS 比例" : "免疫治疗评估"}</span>
                     </div>
                     <div className="grid grid-cols-4 gap-1">
                       {[
@@ -3212,9 +2800,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
                     <Brain className="w-3.5 h-3.5 text-slate-600" />
-                    <span>{isBreast ? "脑部增强 MRI" : isColorectal ? "肝脏增强 MRI/CT" : isGastric ? "腹盆增强 CT/MRI" : isThyroid ? "颈部淋巴结超声" : isPancreatic ? "上腹部增强 MRI" : isLiver ? "胸部薄层 CT" : "脑部增强 MRI"}</span>
+                    <span>"脑部增强 MRI"</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">{isBreast ? "排除中枢转移" : isColorectal ? "排除肝转移" : isGastric ? "排除腹膜种植" : isThyroid ? "排查侧颈转移" : isPancreatic ? "排查肝转移" : isLiver ? "排查肺转移" : "排除中枢脑转移"}</span>
+                  <span className="text-[11px] text-slate-400">{isBreast ? "排除中枢转移" : "排除中枢脑转移"}</span>
                 </div>
                 <div className="flex gap-1.5 h-[34px]">
                   {[
@@ -3247,9 +2835,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
                     <Stethoscope className="w-3.5 h-3.5 text-slate-600" />
-                    <span>{isBreast ? "腹部与肝脏超声" : isColorectal ? "胸部薄层 CT" : isGastric ? "肝脏与腹部超声" : isLiver ? "腹腔/腹膜排查" : isThyroid ? "胸部 CT 肺排查" : isLung ? "腹部与肾上腺超声" : "腹盆腔脏器超声/CT"}</span>
+                    <span>{isBreast ? "腹部与肝脏超声" : "腹部与肾上腺超声"}</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">{isBreast ? "排除肝脏转移" : isColorectal ? "排除肺转移" : isGastric ? "排除肝转移" : isLiver ? "排查腹腔淋巴结" : isThyroid ? "排除肺转移" : "排除肝/肾上腺"}</span>
+                  <span className="text-[11px] text-slate-400">{isBreast ? "排除肝脏转移" : "排除肝/肾上腺"}</span>
                 </div>
                 <div className="flex gap-1.5 h-[34px]">
                   {[
@@ -3317,9 +2905,9 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
                     <Stethoscope className="w-3.5 h-3.5 text-slate-600" />
-                    <span>{isBreast ? "盆腔超声 (内膜)" : isColorectal ? "腹膜与大网膜状态" : isEndometrial ? "盆腔增强 MRI" : isCervical ? "盆腔增强 MRI" : isThyroid ? "甲状腺残余/对侧" : isLung ? "锁骨上淋巴结B超" : "远处区域淋巴结"}</span>
+                    <span>{isBreast ? "盆腔超声 (内膜)" : "锁骨上淋巴结B超"}</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">{isBreast ? "排查内膜基线" : isColorectal ? "排除腹膜种植" : isEndometrial ? "明确局部浸润" : isCervical ? "明确宫旁浸润" : isThyroid ? "评估术区与对侧" : "排除远处淋巴"}</span>
+                  <span className="text-[11px] text-slate-400">{isBreast ? "排查内膜基线" : "排除远处淋巴"}</span>
                 </div>
                 <div className="flex gap-1.5 h-[34px]">
                   {[

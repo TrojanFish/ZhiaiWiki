@@ -100,7 +100,7 @@ export async function GET(request: Request) {
         isOriginalPaper: pdfInfo.isOriginalPaper,
         fileSizeBytes: pdfInfo.fileSizeBytes,
         keyConclusions: conclusions.length > 0 ? conclusions : ['见完整研究文献'],
-        relevantFactors: Array.isArray(relevantFactors) ? relevantFactors : [cancerType === 'breast' ? '乳腺癌预后' : cancerType === 'colorectal' ? '结直肠癌预后' : cancerType === 'gastric' ? '胃癌预后' : cancerType === 'liver' ? '肝癌预后' : cancerType === 'esophageal' ? '食管癌预后' : cancerType === 'thyroid' ? '甲状腺癌预后' : '全癌种循证预后'],
+        relevantFactors: Array.isArray(relevantFactors) ? relevantFactors : [cancerType === 'breast' ? '乳腺癌预后' : cancerType === 'lung' ? '肺癌预后' : '全癌种循证预后'],
         applicableStages: Array.isArray(applicableStages) ? applicableStages : ['I', 'II', 'III'],
         biomarkerDetails: s.biomarkerDetails || undefined,
         interventionArm: s.interventionArm || undefined,

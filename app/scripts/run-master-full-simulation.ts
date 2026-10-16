@@ -17,14 +17,6 @@ import { checkRateLimit } from '../src/lib/rateLimit';
 import { FEATURED_STUDIES } from '../src/lib/evidence-data';
 import { WIKI_TOPICS } from '../src/lib/wikiData';
 import { BREAST_WIKI_TOPICS } from '../src/lib/breastWikiData';
-import { COLON_WIKI_TOPICS } from '../src/lib/colonWikiData';
-import { RECTAL_WIKI_TOPICS } from '../src/lib/rectalWikiData';
-import { GASTRIC_WIKI_TOPICS } from '../src/lib/gastricWikiData';
-import { LIVER_WIKI_TOPICS } from '../src/lib/liverWikiData';
-import { ESOPHAGEAL_WIKI_TOPICS } from '../src/lib/esophagealWikiData';
-import { THYROID_WIKI_TOPICS } from '../src/lib/thyroidWikiData';
-import { ENDOMETRIAL_WIKI_TOPICS } from '../src/lib/endometrialWikiData';
-import { CERVICAL_WIKI_TOPICS } from '../src/lib/cervicalWikiData';
 import * as OpenCC from 'opencc-js';
 
 interface StepResult {
@@ -50,9 +42,9 @@ async function runMasterSimulation() {
   console.log('========================================================================================\n');
 
   // -------------------------------------------------------------------------
-  // 环节 1: 11 大恶性肿瘤确定性分期与决策树引擎 (All 11 Cancers Staging)
+  // 环节 1: 恶性肿瘤确定性分期与决策树引擎 (Lung & Breast Staging)
   // -------------------------------------------------------------------------
-  console.log('\x1b[36m▶ [1/11] 环节一：11 大恶性肿瘤确定性临床分期与决策树引擎\x1b[0m');
+  console.log('\x1b[36m▶ [1/11] 环节一：恶性肿瘤确定性临床分期与决策树引擎 (肺癌 + 乳腺癌)\x1b[0m');
 
   // 1.1 肺癌 (IASLC 9th)
   const lung = computeCancerStage('lung', {
@@ -92,144 +84,6 @@ async function runMasterSimulation() {
     `计算分期: ${breast?.stage} | 分型: ${breast?.molecularSubtype}`
   );
 
-  // 1.3 结肠癌 (AJCC 8th + MSI/MMR)
-  const colon = computeCancerStage('colon', {
-    depthOfInvasion: 'T3',
-    lymphNodesPositive: 2,
-    tumorSize: 3.5,
-    mmrStatus: 'dMMR',
-    rasStatus: 'wildtype',
-  });
-  check(
-    'Staging',
-    'STG-03-COLON',
-    '结肠癌 AJCC 第8版 III期中危化疗方案 (dMMR 免疫获益推演)',
-    colon?.stage === 'IIIA' || colon?.stage === 'IIIB',
-    `计算分期: ${colon?.stage} | 决策方向识别成功`
-  );
-
-  // 1.4 直肠癌 (AJCC 8th + MRF/CRM/TNT)
-  const rectal = computeCancerStage('rectal', {
-    depthOfInvasion: 'T3',
-    lymphNodesPositive: 3,
-    crmStatus: 'positive',
-    mrfInvolved: true,
-  });
-  check(
-    'Staging',
-    'STG-04-RECTAL',
-    '直肠癌 CRM/MRF 阳性全程新辅助治疗 TNT 规范决策',
-    Boolean(rectal?.stage),
-    `计算分期: ${rectal?.stage} | 高危环周切缘阻断推进`
-  );
-
-  // 1.5 结直肠癌统一模型 (Colorectal Unified)
-  const colorectal = computeCancerStage('colorectal', {
-    primaryLocation: 'sigmoid',
-    depthOfInvasion: 'T2',
-    lymphNodesPositive: 0,
-  });
-  check(
-    'Staging',
-    'STG-05-COLORECTAL',
-    '结直肠癌统一模型自动路由与早期评估 (I期)',
-    Boolean(colorectal?.stage),
-    `计算分期: ${colorectal?.stage} | 乙状结肠路径`
-  );
-
-  // 1.6 胃癌 (JGCA 15th + AJCC 8th)
-  const gastric = computeCancerStage('gastric', {
-    depthOfInvasion: 'T3',
-    lymphNodesPositive: 4,
-    her2Status: 'positive',
-    claudin182: 'high',
-  });
-  check(
-    'Staging',
-    'STG-06-GASTRIC',
-    '胃癌局部进展期 D2 根治 + FLOT 围手术期标定',
-    Boolean(gastric?.stage),
-    `计算分期: ${gastric?.stage} | 双靶点标记识别`
-  );
-
-  // 1.7 肝癌 (国家卫健委 CNLC 2024 / BCLC)
-  const liver = computeCancerStage('liver', {
-    tumorSize: 6.5,
-    tumorNumber: 2,
-    vascularInvasion: 'pvtt_vp3',
-    childPugh: 'A',
-    ecogPs: 0,
-  });
-  check(
-    'Staging',
-    'STG-07-LIVER',
-    '原发性肝癌 CNLC 2024 门脉癌栓转化治疗分期 (IIIa期)',
-    liver?.stage === 'IIIa',
-    `CNLC 分期: ${liver?.stage} | 推荐 HAIC 灌注联合靶免转化`
-  );
-
-  // 1.8 食管癌 (AJCC 8th + CROSS/NEOCRTEC5010)
-  const esophageal = computeCancerStage('esophageal', {
-    histology: 'escc',
-    depthOfInvasion: 'T3',
-    lymphNodesPositive: 1,
-    location: 'middle_thoracic',
-  });
-  check(
-    'Staging',
-    'STG-08-ESOPHAGEAL',
-    '食管鳞癌中段新辅助放化疗 (nCRT) 决策分期',
-    Boolean(esophageal?.stage),
-    `计算分期: ${esophageal?.stage} | 同步放化疗指征明确`
-  );
-
-  // 1.9 甲状腺癌 (ATA 2015 + AJCC 8th + C-TIRADS)
-  const thyroid = computeCancerStage('thyroid', {
-    patientAge: 42,
-    tumorSize: 0.8,
-    extrathyroidalExtension: 'none',
-    centralNodesPositive: 0,
-    lateralNodesPositive: 0,
-    brafV600e: 'positive',
-  });
-  check(
-    'Staging',
-    'STG-09-THYROID',
-    '甲状腺微小癌 (PTMC) 55岁分水岭与主动监测/切除推演',
-    thyroid?.stage === 'I',
-    `计算分期: ${thyroid?.stage} | ATA 低危预后判定`
-  );
-
-  // 1.10 子宫内膜癌 (FIGO 2023 四大分子分型)
-  const endometrial = computeCancerStage('endometrial', {
-    myometrialInvasion: 'less_than_half',
-    molecularSubtype: 'POLEmut',
-    lvsi: 'negative',
-  });
-  check(
-    'Staging',
-    'STG-10-ENDOMETRIAL',
-    '子宫内膜癌 FIGO 2023 POLEmut 卓越预后分子降期 (IAm_POLEmut期)',
-    endometrial?.stage === 'IAm_POLEmut',
-    `计算分期: ${endometrial?.stage} | PORTEC-4a 降阶梯免化疗指征`
-  );
-
-  // 1.11 宫颈癌 (FIGO 2018/2023 + HPV/CCRT)
-  const cervical = computeCancerStage('cervical', {
-    histologyType: 'squamous_cell',
-    tumorSize: 3.2,
-    pelvicNodesPositive: 2,
-    nodalStagingMethod: 'radiologic',
-    hpvStatus: 'hpv16',
-  });
-  check(
-    'Staging',
-    'STG-11-CERVICAL',
-    '宫颈癌局部晚期盆腔淋巴结影像升期 (IIIC1r期 · CCRT金标准)',
-    cervical?.stage === 'IIIC1r',
-    `计算分期: ${cervical?.stage} | 首选根治性同步放化疗 + 后装`
-  );
-
   // -------------------------------------------------------------------------
   // 环节 2: 循证医学前瞻生存队列 100% 溯源匹配 (Clinical Cohorts)
   // -------------------------------------------------------------------------
@@ -241,46 +95,16 @@ async function runMasterSimulation() {
   const breastCohort = getClinicalCohortUnified({ cancerType: 'breast', stage: 'IA', molecularSubtype: 'Luminal_A' });
   check('Cohorts', 'EVD-02-BREAST', '乳腺癌 TAILORx / RxPONDER 免除辅助化疗队列匹配', Boolean(breastCohort?.name), `匹配队列: ${breastCohort?.name}`);
 
-  const colonCohort = getClinicalCohortUnified({ cancerType: 'colon', stage: 'IIIB', mmrStatus: 'dMMR' });
-  check('Cohorts', 'EVD-03-COLON', '结肠癌 KEYNOTE-177 免疫一线队列匹配', Boolean(colonCohort?.name), `匹配队列: ${colonCohort?.name}`);
-
-  const liverCohort = getClinicalCohortUnified({ cancerType: 'liver', stage: 'IIIa' });
-  check('Cohorts', 'EVD-04-LIVER', '肝癌 IMbrave150 / TALENTos 转化靶免队列匹配', Boolean(liverCohort?.name), `匹配队列: ${liverCohort?.name}`);
-
-  const ecCohort = getClinicalCohortUnified({ cancerType: 'endometrial', stage: 'IAm_POLEmut' });
-  check('Cohorts', 'EVD-05-ENDOMETRIAL', '内膜癌 PORTEC-4a / RUBY 免疫分子降阶梯队列匹配', Boolean(ecCohort?.name), `匹配队列: ${ecCohort?.name}`);
-
-  const ccCohort = getClinicalCohortUnified({ cancerType: 'cervical', stage: 'IIIC1r' });
-  check('Cohorts', 'EVD-06-CERVICAL', '宫颈癌 EMBRACE-I / KEYNOTE-826 同步放化疗队列匹配', Boolean(ccCohort?.name), `匹配队列: ${ccCohort?.name}`);
-
   // -------------------------------------------------------------------------
-  // 环节 3: 全癌种 DDI 药理相互作用与致命用药禁忌拦截 (Pharmacological DDI)
+  // 环节 3: 药理相互作用与致命用药禁忌拦截 (Pharmacological DDI)
   // -------------------------------------------------------------------------
-  console.log('\n\x1b[36m▶ [3/11] 环节三：全癌种药物配伍相互作用 (DDI) 与用药时序拦截\x1b[0m');
+  console.log('\n\x1b[36m▶ [3/11] 环节三：药物配伍相互作用 (DDI) 与用药时序拦截\x1b[0m');
 
   const lungDdi = checkDrugInteractionsUnified('lung', 'osimertinib', ['rifampin']);
   check('DDI', 'DDI-01-LUNG', '肺癌：奥希替尼 + 利福平 (CYP3A4 强诱导暴跌失效拦截)', lungDdi.overallStatus === 'danger', `状态: ${lungDdi.overallStatus} | 拦截危险项`);
 
   const breastDdi = checkDrugInteractionsUnified('breast', 'tamoxifen', ['paroxetine']);
   check('DDI', 'DDI-02-BREAST', '乳腺癌：他莫昔芬 + 帕罗西汀 (CYP2D6 抑制阻断活性产物转换)', breastDdi.overallStatus === 'danger', `状态: ${breastDdi.overallStatus} | 推荐替代: 文拉法辛`);
-
-  const colonDdi = checkDrugInteractionsUnified('colon', 'capecitabine', ['warfarin']);
-  check('DDI', 'DDI-03-COLON', '结肠癌：卡培他滨 + 华法林 (INR 暴增致死性内脏出血拦截)', colonDdi.overallStatus === 'danger', `状态: ${colonDdi.overallStatus} | 禁忌拦截`);
-
-  const gastricDdi = checkDrugInteractionsUnified('gastric', 'apatinib', ['warfarin']);
-  check('DDI', 'DDI-04-GASTRIC', '胃癌：阿帕替尼 + 华法林 (协同消化道大出血致命拦截)', gastricDdi.overallStatus === 'danger', `状态: ${gastricDdi.overallStatus} | 致命出血风险拦截`);
-
-  const liverDdi = checkDrugInteractionsUnified('liver', 'lenvatinib', ['warfarin']);
-  check('DDI', 'DDI-05-LIVER', '肝癌：仑伐替尼 + 华法林 (门脉高压出血致命风险拦截)', liverDdi.overallStatus === 'danger', `状态: ${liverDdi.overallStatus} | 阻断危险联合`);
-
-  const thyroidDdi = checkDrugInteractionsUnified('thyroid', 'levothyroxine', ['calcium_vitd']);
-  check('DDI', 'DDI-06-THYROID', '甲状腺癌：优甲乐 + 碳酸钙/铁剂 (络合沉淀，4小时用药时序隔离)', thyroidDdi.overallStatus === 'warning' || thyroidDdi.overallStatus === 'caution', `状态: ${thyroidDdi.overallStatus} | 4小时给药时序规则激活`);
-
-  const ecDdi = checkDrugInteractionsUnified('endometrial', 'lenvatinib', ['rifampin']);
-  check('DDI', 'DDI-07-EC', '内膜癌：仑伐替尼 + 利福平 (CYP3A4 诱导失效禁忌)', ecDdi.overallStatus === 'danger', `状态: ${ecDdi.overallStatus} | 靶向失效拦截`);
-
-  const ccDdi = checkDrugInteractionsUnified('cervical', 'cisplatin', ['gentamicin']);
-  check('DDI', 'DDI-08-CC', '宫颈癌：顺铂 + 庆大霉素 (急性肾小管坏死/耳毒性协同禁忌)', ccDdi.overallStatus === 'danger', `状态: ${ccDdi.overallStatus} | 致命毒性拦截`);
 
   // -------------------------------------------------------------------------
   // 环节 4: 动力学计算器与生化标志物数学模型 (Dynamics & Kinetics)
@@ -393,7 +217,7 @@ async function runMasterSimulation() {
   // -------------------------------------------------------------------------
   // 环节 7: 4D 动态因果知识图谱与沙盘推演引擎 (Knowledge Graph)
   // -------------------------------------------------------------------------
-  console.log('\n\x1b[36m▶ [7/11] 环节七：4D 动态因果知识图谱与多癌种沙盘推演\x1b[0m');
+  console.log('\n\x1b[36m▶ [7/11] 环节七：4D 动态因果知识图谱与沙盘推演\x1b[0m');
 
   const registeredCancers = CancerRegistry.getAll();
   const allHaveGraph = registeredCancers.every(
@@ -402,8 +226,8 @@ async function runMasterSimulation() {
   check(
     'Graph',
     'GRP-01-NODES',
-    `11 大癌种 4D 因果网络完整注册 (${registeredCancers.length} 个癌种专区)`,
-    registeredCancers.length >= 10 && allHaveGraph,
+    `癌种 4D 因果网络完整注册 (${registeredCancers.length} 个癌种专区: 肺癌 + 乳腺癌)`,
+    registeredCancers.length >= 2 && allHaveGraph,
     `全部癌种均挂载结构化因果节点与临床循证推演边`
   );
 
@@ -415,14 +239,6 @@ async function runMasterSimulation() {
   const totalWikiTopics = [
     ...WIKI_TOPICS,
     ...BREAST_WIKI_TOPICS,
-    ...COLON_WIKI_TOPICS,
-    ...RECTAL_WIKI_TOPICS,
-    ...GASTRIC_WIKI_TOPICS,
-    ...LIVER_WIKI_TOPICS,
-    ...ESOPHAGEAL_WIKI_TOPICS,
-    ...THYROID_WIKI_TOPICS,
-    ...ENDOMETRIAL_WIKI_TOPICS,
-    ...CERVICAL_WIKI_TOPICS,
   ];
 
   const validTopics = totalWikiTopics.filter(
@@ -432,8 +248,8 @@ async function runMasterSimulation() {
   check(
     'Wiki',
     'WIK-01-SCHEMA',
-    `全网 11 大癌种百科知识卡片 8 维 Schema 完整性 (${totalWikiTopics.length} 篇)`,
-    validTopics.length === totalWikiTopics.length && totalWikiTopics.length >= 200,
+    `全网百科知识卡片 8 维 Schema 完整性 (${totalWikiTopics.length} 篇)`,
+    validTopics.length === totalWikiTopics.length && totalWikiTopics.length >= 50,
     `共 ${totalWikiTopics.length} 篇百科词条，标题、大白话生活比喻、临床真相、战术与定心丸全部合规无残缺`
   );
 
@@ -444,8 +260,8 @@ async function runMasterSimulation() {
     'Visuals',
     'VIS-01-COMPONENTS',
     `PACS 级交互式微观病理视觉模拟器注册 (${visualFiles.length} 款交互组件)`,
-    visualFiles.length >= 10,
-    `涵盖原位癌基底膜、微钙化、肝癌介入栓塞、食管喉返神经链、优甲乐时序等核心模拟器`
+    visualFiles.length >= 2,
+    `涵盖原位癌基底膜、微钙化等核心模拟器`
   );
 
   // -------------------------------------------------------------------------
@@ -458,8 +274,8 @@ async function runMasterSimulation() {
     'Reimbursement',
     'REI-01-DRUGS',
     `国家医保谈判特药政策库覆盖 (${allPolicies.length} 款核心抗癌靶向药)`,
-    allPolicies.length >= 25,
-    `收录奥希替尼、西妥昔单抗、卡瑞利珠单抗、仑伐替尼、贝伐珠单抗等全部主流特药`
+    allPolicies.length >= 8,
+    `收录奥希替尼、曲妥珠单抗等核心特药`
   );
 
   const testPrice = 5580; // 某三代 TKI 单盒价格
@@ -482,7 +298,7 @@ async function runMasterSimulation() {
   // -------------------------------------------------------------------------
   console.log('\n\x1b[36m▶ [10/11] 环节十：患者全病程工作流、双原发切换与门诊问诊清单导出\x1b[0m');
 
-  // 双原发状态推演
+  // 双原发状态推演 (乳腺癌 + 肺癌)
   const primaryBreast = computeCancerStage('breast', {
     tumorSize: 1.5,
     erPercent: 85,
@@ -492,17 +308,20 @@ async function runMasterSimulation() {
     nStage: 'N0',
     mStage: 'M0',
   });
-  const secondaryEc = computeCancerStage('endometrial', {
-    myometrialInvasion: 'less_than_half',
-    molecularSubtype: 'POLEmut',
-    lvsi: 'negative',
+  const secondaryLung = computeCancerStage('lung', {
+    noduleType: 'mixed_ggo',
+    tumorSize: 1.2,
+    solidSize: 0.3,
+    ctr: 0.25,
+    nStage: 'N0',
+    mStage: 'M0',
   });
   check(
     'Workflow',
     'WFL-01-DUAL',
-    '双原发恶性肿瘤独立分轨推演 (乳腺癌 Luminal A + 继发内膜病变)',
-    primaryBreast?.stage === 'IA' && secondaryEc?.stage === 'IAm_POLEmut',
-    `主病灶分期 ${primaryBreast?.stage} 与次病灶分期 ${secondaryEc?.stage} 互不干扰`
+    '双原发恶性肿瘤独立分轨推演 (乳腺癌 Luminal A + 肺原发微浸润结节)',
+    primaryBreast?.stage === 'IA' && secondaryLung?.stage === 'IA1',
+    `主病灶分期 ${primaryBreast?.stage} 与次病灶分期 ${secondaryLung?.stage} 互不干扰`
   );
 
   // 繁体中文本地化
@@ -607,7 +426,7 @@ async function runMasterSimulation() {
 
   if (failed === 0) {
     console.log('\n🎉 [LOCAL SIMULATION PASSED] 本地精细化仿真测试 100% 全量通过！');
-    console.log('所有 11 大功能环节、11 种恶性肿瘤、药理排雷、动力学、隐私安全与设计系统均无一遗漏且 100% 达标！\n');
+    console.log('所有 11 大功能环节、肺癌与乳腺癌专区、药理排雷、动力学、隐私安全与设计系统均无一遗漏且 100% 达标！\n');
     process.exit(0);
   } else {
     console.log(`\n⚠️ 发现 ${failed} 项异常，请核查日志。\n`);

@@ -201,30 +201,6 @@ export default function WikiPage() {
     const profileCancerType = userProfile.cancerType || "lung";
     if (profileCancerType !== cancerType) return false;
 
-    if (cancerType === "liver") {
-      const liv = (userProfile.cancerSpecificData || (userProfile as any).liverData || userProfile) as any;
-      if (topicId === "liver_cnlc_staging_system" && (userProfile.currentStage || userProfile.stage || liv.cnlcStage)) return true;
-      if (topicId === "liver_child_pugh_albi_reserve" && (liv.childPughClass || liv.childPughScore != null || liv.albiGrade != null)) return true;
-      if (topicId === "liver_tace_haic_intervention" && (liv.interventionType || liv.vascularInvasion !== "none" || (liv.tumorCount && liv.tumorCount > 1))) return true;
-      if (topicId === "liver_targeted_immuno_therapy" && (liv.systemicRegimen || userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("IV") || liv.cnlcStage === "IIIa" || liv.cnlcStage === "IIIb")) return true;
-      if (topicId === "liver_hbv_antiviral_prevention" && (liv.hbvDnaStatus || liv.antiviralTherapy || liv.hasCirrhosis)) return true;
-      if (topicId === "liver_afp_pivka_ii_biomarkers" && (liv.afp != null || liv.pivkaIi != null || liv.afpL3 != null)) return true;
-      if (topicId === "liver_ablation_transplant_early" && (liv.isMilanEligible || (liv.tumorSize && liv.tumorSize <= 3) || liv.childPughClass === "B" || liv.childPughClass === "C")) return true;
-      return false;
-    }
-
-    if (cancerType === "gastric") {
-      const gas = (userProfile.cancerSpecificData || (userProfile as any).gastricData || userProfile) as any;
-      if (topicId === "gastric_screening_esd" && (userProfile.currentStage === "evaluation" || userProfile.tStage === "T1a" || gas.tStage === "T1a")) return true;
-      if (topicId === "gastric_lauren_signet_ring" && (gas.laurenType || gas.borrmannType || userProfile.histology?.includes("印戒"))) return true;
-      if (topicId === "gastric_d2_surgery_lymphnodes" && (gas.lymphNodesExamined != null || userProfile.nStage?.startsWith("N"))) return true;
-      if (topicId === "gastric_claudin_her2_biomarkers" && (gas.claudin18_2Status === "positive" || gas.her2Status === "positive" || gas.pdl1Cps != null)) return true;
-      if (topicId === "gastric_flot_sox_perioperative" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("IV"))) return true;
-      if (topicId === "gastric_dumping_syndrome_reconstruction" && (gas.reconstructionType || (userProfile as any).treatmentPlan?.includes("切除") || (userProfile as any).treatmentPlan?.includes("术后"))) return true;
-      if (topicId === "gastric_peritoneal_hipec_management" && (gas.hasPeritonealMets || gas.peritonealCytology === "CY1" || userProfile.stage?.startsWith("IV"))) return true;
-      return false;
-    }
-
     if (cancerType === "breast") {
       if (topicId === "luminal_a_and_b" && (userProfile.erStatus === "positive" || userProfile.prStatus === "positive")) return true;
       if (topicId === "her2_positive_and_adc" && (userProfile.her2Status === "positive" || userProfile.her2Low || userProfile.her2Status === "3+")) return true;
@@ -245,42 +221,6 @@ export default function WikiPage() {
       return false;
     }
 
-    if (cancerType === "colon") {
-      const col = (userProfile.cancerSpecificData || (userProfile as any).colonData || (userProfile as any).colorectalData || userProfile) as any;
-      if (topicId === "colon_screening_polyps" && (userProfile.currentStage === "evaluation" || userProfile.currentStage === "discovery")) return true;
-      if (topicId === "colon_sidedness_biology" && (col.primaryLocation || userProfile.noduleLocation)) return true;
-      if (topicId === "colon_cme_surgery_lymphnodes" && (col.lymphNodesExamined != null || userProfile.nStage?.startsWith("N"))) return true;
-      if (topicId === "colon_dmmr_msih" && (col.msiStatus === "MSI-H" || col.dmmrStatus === "dMMR")) return true;
-      if (topicId === "colon_idea_3months_capox" && (userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("II"))) return true;
-      if (topicId === "colon_liver_metastasis_mdt" && (userProfile.stage?.startsWith("IV") || col.hasDistantMets)) return true;
-      return false;
-    }
-
-    if (cancerType === "rectal") {
-      const rec = (userProfile.cancerSpecificData || (userProfile as any).rectalData || (userProfile as any).colorectalData || userProfile) as any;
-      if (topicId === "rectal_anatomy_ruler" && (rec.distanceFromAnalVerge != null || rec.primaryLocation === "rectum")) return true;
-      if (topicId === "rectal_pelvic_hr_mri" && (rec.crmStatus != null || rec.emviStatus != null)) return true;
-      if (topicId === "rectal_tnt_rapido_prodige23" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
-      if (topicId === "rectal_watch_and_wait" && (rec.pcrStatus === "pCR" || rec.pcrStatus === "cCR")) return true;
-      if (topicId === "rectal_protective_stoma_care" && (rec.stomaType != null || (userProfile as any).treatmentPlan?.includes("造口"))) return true;
-      if (topicId === "rectal_lars_rehabilitation" && (rec.larsScore != null || (userProfile as any).treatmentPlan?.includes("保肛"))) return true;
-      if (topicId === "rectal_tme_sacred_plane" && (rec.tmeQuality != null || userProfile.tStage)) return true;
-      return false;
-    }
-
-    if (cancerType === "colorectal") {
-      const crc = (userProfile.cancerSpecificData || (userProfile as any).colorectalData || userProfile) as any;
-      if (topicId === "colonoscopy_polyps" && (userProfile.currentStage === "evaluation" || userProfile.currentStage === "discovery")) return true;
-      if (topicId === "t_depth_submucosa" && (crc.tStage || userProfile.tStage)) return true;
-      if (topicId === "lymph_node_12_and_td" && (crc.lymphNodesExamined != null || crc.tumorDeposits || userProfile.nStage?.startsWith("N"))) return true;
-      if (topicId === "msi_dmmr_immunotherapy" && (crc.msiStatus === "MSI-H" || crc.dmmrStatus === "dMMR")) return true;
-      if (topicId === "ras_braf_precision" && (crc.krasMutation || crc.nrasMutation || crc.brafMutation)) return true;
-      if (topicId === "left_vs_right_colon" && (crc.primaryLocation || userProfile.noduleLocation)) return true;
-      if (topicId === "idea_chemo_duration" && (userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("II"))) return true;
-      if (topicId === "rectal_stoma_nerves" && (crc.primaryLocation === "rectum" || userProfile.noduleLocation?.includes("直肠"))) return true;
-      return false;
-    }
-
     if (cancerType === "lung") {
       if (topicId === "stas"          && userProfile.stas === "positive") return true;
       if (topicId === "vpi"           && userProfile.vpi === "positive") return true;
@@ -288,34 +228,6 @@ export default function WikiPage() {
       if (topicId === "ggo-evolution" && ((userProfile.ctr != null && userProfile.ctr > 0) || userProfile.morphology === "mixed_ggo")) return true;
       if (topicId === "egfr-targeted" && userProfile.egfr === "positive") return true;
       if (topicId === "iaslc-grade3"  && userProfile.iaslcGrade === "3") return true;
-      return false;
-    }
-
-    if (cancerType === "esophageal") {
-      if (topicId === "esophageal_staging_anatomy_incisors" && userProfile.stage) return true;
-      if (topicId === "esophageal_neocrtec5010_cross_chemorad" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
-      if (topicId === "esophageal_immunotherapy_escort_checkmate" && (userProfile.stage?.startsWith("III") || userProfile.stage?.startsWith("IV"))) return true;
-      return false;
-    }
-
-    if (cancerType === "thyroid") {
-      if (topicId === "thyroid_rads_active_surveillance" && (userProfile.tStage === "T1a" || userProfile.stage === "I")) return true;
-      if (topicId === "thyroid_braf_tert_molecular" && (userProfile as any).brafStatus) return true;
-      if (topicId === "thyroid_tsh_suppression_calcium" && ((userProfile as any).postOp || userProfile.stage)) return true;
-      return false;
-    }
-
-    if (cancerType === "endometrial") {
-      if (topicId === "endometrial_figo2023_molecular_tcga" && userProfile.stage) return true;
-      if (topicId === "endometrial_early_abnormal_bleeding" && userProfile.currentStage === "evaluation") return true;
-      if (topicId === "endometrial_portec_radiotherapy" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
-      return false;
-    }
-
-    if (cancerType === "cervical") {
-      if (topicId === "cervical_hpv_cin_evolution" && userProfile.currentStage === "evaluation") return true;
-      if (topicId === "cervical_ccrt_radiochemotherapy" && (userProfile.stage?.startsWith("II") || userProfile.stage?.startsWith("III"))) return true;
-      if (topicId === "cervical_keynote826_immunotherapy" && (userProfile.stage?.startsWith("IV") || (userProfile as any).pdl1Status)) return true;
       return false;
     }
 
@@ -358,17 +270,7 @@ export default function WikiPage() {
           {userProfile && (() => {
             const profileCancerType = userProfile.cancerType || "lung";
             const isMatching = profileCancerType === cancerType;
-            const getCancerLabel = (type: string) => 
-              type === "esophageal" ? "食管癌" :
-              type === "liver" ? "原发性肝癌" :
-              type === "gastric" ? "胃癌" :
-              type === "breast" ? "乳腺癌" : 
-              type === "colon" ? "结肠癌" : 
-              type === "rectal" ? "直肠癌" : 
-              type === "colorectal" ? "结直肠癌" :
-              type === "thyroid" ? "甲状腺癌" :
-              type === "endometrial" ? "子宫内膜癌" :
-              type === "cervical" ? "宫颈癌" : "肺癌";
+            const getCancerLabel = (type: string) => type === "breast" ? "乳腺癌" : "肺癌";
             if (isMatching) {
               return (
                 <div className="max-w-2xl mx-auto bg-teal-50/90 border border-teal-300 p-3.5 rounded-2xl text-xs text-teal-950 flex items-center justify-between gap-3 shadow-xs">

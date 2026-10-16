@@ -17,11 +17,6 @@ import {
 import Footer from "@/components/Footer";
 import { useCancerType } from "@/components/common/CancerSwitch";
 import { BREAST_RESOURCE_CATEGORIES } from "@/lib/breastResourcesData";
-import { COLORECTAL_RESOURCE_CATEGORIES } from "@/lib/colorectalResourcesData";
-import { GASTRIC_RESOURCE_CATEGORIES } from "@/lib/gastricResourcesData";
-import { LIVER_RESOURCE_CATEGORIES } from "@/lib/liverResourcesData";
-import { ESOPHAGEAL_RESOURCE_CATEGORIES } from "@/lib/esophagealResourcesData";
-import { THYROID_RESOURCE_CATEGORIES } from "@/lib/thyroidResourcesData";
 
 interface ResourceLink {
   name: string;
@@ -226,75 +221,10 @@ const BREAST_CATEGORIES: ResourceCategory[] = BREAST_RESOURCE_CATEGORIES.map((ca
   links: cat.links,
 }));
 
-const COLORECTAL_CATEGORIES: ResourceCategory[] = COLORECTAL_RESOURCE_CATEGORIES.map((cat) => ({
-  id: cat.id,
-  icon: ICON_MAP[cat.iconName] || Building2,
-  level: cat.level,
-  levelLabel: cat.levelLabel,
-  levelColor: cat.levelColor,
-  title: cat.title,
-  subtitle: cat.subtitle,
-  warning: cat.warning,
-  links: cat.links,
-}));
-
-const GASTRIC_CATEGORIES: ResourceCategory[] = GASTRIC_RESOURCE_CATEGORIES.map((cat) => ({
-  id: cat.id,
-  icon: ICON_MAP[cat.iconName] || Building2,
-  level: cat.level,
-  levelLabel: cat.levelLabel,
-  levelColor: cat.levelColor,
-  title: cat.title,
-  subtitle: cat.subtitle,
-  warning: cat.warning,
-  links: cat.links,
-}));
-
-const LIVER_CATEGORIES: ResourceCategory[] = LIVER_RESOURCE_CATEGORIES.map((cat) => ({
-  id: cat.id,
-  icon: ICON_MAP[cat.iconName] || Building2,
-  level: cat.level,
-  levelLabel: cat.levelLabel,
-  levelColor: cat.levelColor,
-  title: cat.title,
-  subtitle: cat.subtitle,
-  warning: cat.warning,
-  links: cat.links,
-}));
-
-const ESOPHAGEAL_CATEGORIES: ResourceCategory[] = ESOPHAGEAL_RESOURCE_CATEGORIES.map((cat) => ({
-  id: cat.id,
-  icon: ICON_MAP[cat.iconName] || Building2,
-  level: cat.level,
-  levelLabel: cat.levelLabel,
-  levelColor: cat.levelColor,
-  title: cat.title,
-  subtitle: cat.subtitle,
-  warning: cat.warning,
-  links: cat.links,
-}));
-
-const THYROID_CATEGORIES: ResourceCategory[] = THYROID_RESOURCE_CATEGORIES.map((cat) => ({
-  id: cat.id,
-  icon: ICON_MAP[cat.iconName] || Building2,
-  level: cat.level,
-  levelLabel: cat.levelLabel,
-  levelColor: cat.levelColor,
-  title: cat.title,
-  subtitle: cat.subtitle,
-  warning: cat.warning,
-  links: cat.links,
-}));
-
 export default function ResourcesPage() {
   const { cancerType } = useCancerType();
   const currentCategories = useMemo(() => {
     if (cancerType === "breast") return BREAST_CATEGORIES;
-    if (cancerType === "colorectal" || cancerType === "colon" || cancerType === "rectal") return COLORECTAL_CATEGORIES;
-    if (cancerType === "gastric") return GASTRIC_CATEGORIES;
-    if (cancerType === "liver") return LIVER_CATEGORIES;
-    if (cancerType === "esophageal") return ESOPHAGEAL_CATEGORIES;
-    if (cancerType === "thyroid") return THYROID_CATEGORIES;
     return CATEGORIES;
   }, [cancerType]);
 
@@ -374,8 +304,6 @@ export default function ResourcesPage() {
         <p className="max-w-3xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
           {cancerType === "breast" ? (
             <>系统甄选 <strong>CSCO、NCCN、St. Gallen、ASCO</strong> 等全球乳腺癌权威学术组织官方指南、Predict Breast 预测工具与中国权威乳腺专科导航。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。</>
-          ) : cancerType === "colorectal" ? (
-            <>系统甄选 <strong>CSCO、NCCN、CACA</strong> 等全球结直肠肿瘤权威指南、中国顶级结直肠专科中心与造口护理伤口治疗学会 (WCET) 权威资源。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。</>
           ) : (
             <>系统甄选 <strong>CSCO、NCCN、ASCO、IASLC</strong> 等全球权威学术组织官方指南与专业数据库。为您提供直达源头的<strong>防坑查阅指南与患者友好通道</strong>。</>
           )}

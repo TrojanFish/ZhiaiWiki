@@ -4,38 +4,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { BookOpen, Users, FileBarChart, Award } from "lucide-react";
 import { FEATURED_STUDIES } from "@/lib/evidence-data";
 import { BREAST_STUDIES } from "@/lib/breastStudiesData";
-import { COLORECTAL_STUDIES } from "@/lib/colorectalStudiesData";
-import { GASTRIC_STUDIES } from "@/lib/gastricStudiesData";
-import { LIVER_STUDIES } from "@/lib/liverStudiesData";
-import { ESOPHAGEAL_STUDIES } from "@/lib/esophagealStudiesData";
-import { THYROID_STUDIES } from "@/lib/thyroidStudiesData";
-import { ENDOMETRIAL_STUDIES } from "@/lib/endometrialStudiesData";
-import { CERVICAL_STUDIES } from "@/lib/cervicalStudiesData";
-import { PANCREATIC_STUDIES } from "@/lib/pancreaticStudiesData";
 import { CancerRegistry } from "@/lib/cancerRegistry";
 
 const RAW_STUDIES = [
   ...FEATURED_STUDIES,
   ...(BREAST_STUDIES as any[]),
-  ...(COLORECTAL_STUDIES as any[]),
-  ...(GASTRIC_STUDIES as any[]),
-  ...(LIVER_STUDIES as any[]),
-  ...(ESOPHAGEAL_STUDIES as any[]),
-  ...(THYROID_STUDIES as any[]),
-  ...(ENDOMETRIAL_STUDIES as any[]),
-  ...(CERVICAL_STUDIES as any[]),
-  ...(PANCREATIC_STUDIES as any[]),
 ];
 
 const UNIQUE_STUDIES = Array.from(new Map(RAW_STUDIES.map((s) => [s.id, s])).values());
-const defaultTotalStudies = Math.max(UNIQUE_STUDIES.length, 92);
+const defaultTotalStudies = UNIQUE_STUDIES.length;
 const calculatedPatients = UNIQUE_STUDIES.reduce((sum, s) => sum + (s.patientN || 0), 0);
-const defaultTotalPatients = Math.max(calculatedPatients, 175000);
-const defaultRctCount = Math.max(
-  UNIQUE_STUDIES.filter((s) => s.studyType === "rct" || s.studyType === "prospective_multicenter").length,
-  50
-);
-const TOTAL_SUPPORTED_CANCERS = CancerRegistry.getAll().length; // 动态对齐 12 大实体肿瘤专区
+const defaultTotalPatients = calculatedPatients;
+const defaultRctCount = UNIQUE_STUDIES.filter((s) => s.studyType === "rct" || s.studyType === "prospective_multicenter").length;
+const TOTAL_SUPPORTED_CANCERS = CancerRegistry.getAll().length;
 
 export default function StatsBanner() {
   const [animated, setAnimated] = useState(false);

@@ -35,14 +35,6 @@ import {
 import {
   LungIcon,
   BreastRibbonIcon,
-  ColonIcon,
-  RectalIcon,
-  GastricIcon,
-  LiverIcon,
-  EsophagealIcon,
-  ThyroidIcon,
-  EndometrialIcon,
-  CervicalIcon,
 } from "@/components/common/CancerIcons";
 
 interface WikiTopicIconProps {
@@ -150,83 +142,6 @@ export function getWikiIconComponent(icon?: string, topicId?: string) {
       case "breast_tumor_markers":
         return { component: AlertTriangle, color: "text-amber-500" };
 
-      // 胃癌专区词条
-      case "gastric_screening_esd":
-        return { component: GastricIcon, color: "text-amber-600" };
-      case "gastric_lauren_signet_ring":
-        return { component: GastricIcon, color: "text-rose-600" };
-      case "gastric_d2_surgery_lymphnodes":
-        return { component: Scissors, color: "text-blue-500" };
-      case "gastric_claudin_her2_biomarkers":
-        return { component: Dna, color: "text-purple-600" };
-      case "gastric_flot_sox_perioperative":
-        return { component: Network, color: "text-indigo-600" };
-      case "gastric_dumping_syndrome_reconstruction":
-        return { component: GastricIcon, color: "text-amber-600" };
-      case "gastric_peritoneal_hipec_management":
-        return { component: AlertTriangle, color: "text-rose-600" };
-
-      // 原发性肝癌专区词条
-      case "liver_cnlc_staging_system":
-        return { component: LiverIcon, color: "text-emerald-700" };
-      case "liver_child_pugh_albi_reserve":
-        return { component: ShieldCheck, color: "text-teal-600" };
-      case "liver_tace_haic_intervention":
-        return { component: Crosshair, color: "text-blue-600" };
-      case "liver_targeted_immuno_therapy":
-        return { component: Zap, color: "text-purple-600" };
-      case "liver_hbv_antiviral_prevention":
-        return { component: ShieldCheck, color: "text-emerald-600" };
-      case "liver_afp_pivka_ii_biomarkers":
-        return { component: TestTube2, color: "text-rose-500" };
-      case "liver_ablation_transplant_early":
-        return { component: LiverIcon, color: "text-teal-600" };
-
-      // 结直肠癌专区词条
-      case "colon_screening_polyps":
-      case "colonoscopy_polyps":
-        return { component: ColonIcon, color: "text-emerald-600" };
-      case "colon_sidedness_biology":
-      case "left_vs_right_colon":
-        return { component: ColonIcon, color: "text-blue-600" };
-      case "colon_cme_surgery_lymphnodes":
-      case "lymph_node_12_and_td":
-        return { component: Scissors, color: "text-blue-500" };
-      case "colon_dmmr_msih":
-      case "msi_dmmr_immunotherapy":
-        return { component: Dna, color: "text-purple-600" };
-      case "colon_idea_3months_capox":
-      case "idea_chemo_duration":
-        return { component: Network, color: "text-indigo-600" };
-      case "colon_liver_metastasis_mdt":
-        return { component: LiverIcon, color: "text-rose-600" };
-      case "rectal_anatomy_ruler":
-        return { component: RectalIcon, color: "text-rose-600" };
-      case "rectal_pelvic_hr_mri":
-        return { component: Scan, color: "text-indigo-600" };
-      case "rectal_tnt_rapido_prodige23":
-        return { component: Network, color: "text-purple-600" };
-      case "rectal_watch_and_wait":
-        return { component: Compass, color: "text-teal-600" };
-      case "rectal_tme_sacred_plane":
-      case "rectal_stoma_nerves":
-        return { component: RectalIcon, color: "text-blue-600" };
-
-      // 食管癌专区词条
-      case "esophageal_screening_early":
-        return { component: EsophagealIcon, color: "text-orange-600" };
-
-      // 甲状腺癌专区词条
-      case "thyroid_tirads_ultrasound":
-        return { component: ThyroidIcon, color: "text-cyan-600" };
-      case "thyroid_ptmc_active_surveillance":
-        return { component: ThyroidIcon, color: "text-teal-600" };
-
-      // 妇科肿瘤专区词条
-      case "endometrial_screening_ultrasound":
-        return { component: EndometrialIcon, color: "text-rose-600" };
-      case "cervical_hpv_tct_screening":
-        return { component: CervicalIcon, color: "text-purple-600" };
     }
   }
 
@@ -292,33 +207,7 @@ export function getWikiIconComponent(icon?: string, topicId?: string) {
     case "pinkribbon":
     case "🎀":
       return { component: BreastRibbonIcon, color: "text-pink-600" };
-    case "colon":
-    case "colorectal":
-    case "bowel":
-    case "gut":
-      return { component: ColonIcon, color: "text-emerald-600" };
-    case "rectal":
-    case "rectum":
-    case "intestine":
-      return { component: RectalIcon, color: "text-rose-600" };
-    case "gastric":
-    case "stomach":
-      return { component: GastricIcon, color: "text-amber-600" };
-    case "liver":
-    case "hepatic":
-    case "hepatitis":
-      return { component: LiverIcon, color: "text-emerald-700" };
-    case "esophageal":
-    case "esophagus":
-      return { component: EsophagealIcon, color: "text-orange-600" };
-    case "thyroid":
-      return { component: ThyroidIcon, color: "text-cyan-600" };
-    case "endometrial":
-    case "uterus":
-      return { component: EndometrialIcon, color: "text-rose-600" };
-    case "cervical":
-    case "cervix":
-      return { component: CervicalIcon, color: "text-purple-600" };
+
     case "nodule":
       return { component: CircleDot, color: "text-teal-600" };
     case "microscope":

@@ -1,11 +1,5 @@
 import type { PatientProfile } from "@/lib/types";
 import { getBreastNodeActivation } from "./breastKnowledgeGraphData";
-import { getColorectalNodeActivation } from "./colorectalKnowledgeGraphData";
-import { getGastricNodeActivation } from "./gastricKnowledgeGraphData";
-import { getLiverNodeActivation } from "./liverKnowledgeGraphData";
-import { getEsophagealNodeActivation } from "./esophagealKnowledgeGraphData";
-import { getThyroidNodeActivation } from "./thyroidKnowledgeGraphData";
-import { getEndometrialNodeActivation, getCervicalNodeActivation } from "./gynecologicalKnowledgeGraphData";
 
 export interface KnowledgeNode {
   id: string;
@@ -57,13 +51,6 @@ export function getNodeActivation(nodeId: string, profile: PatientProfile | null
 
   const effectiveCancer = cancerType || profile.cancerType || "lung";
   if (effectiveCancer === "breast") return getBreastNodeActivation(nodeId, profile);
-  if (effectiveCancer === "colorectal" || effectiveCancer === "colon" || effectiveCancer === "rectal") return getColorectalNodeActivation(nodeId, profile);
-  if (effectiveCancer === "gastric") return getGastricNodeActivation(nodeId, profile);
-  if (effectiveCancer === "liver") return getLiverNodeActivation(nodeId, profile);
-  if (effectiveCancer === "esophageal") return getEsophagealNodeActivation(nodeId, profile);
-  if (effectiveCancer === "thyroid") return getThyroidNodeActivation(nodeId, profile);
-  if (effectiveCancer === "endometrial") return getEndometrialNodeActivation(nodeId, profile);
-  if (effectiveCancer === "cervical") return getCervicalNodeActivation(nodeId, profile);
 
   const isStageIA = profile.stage === "IA1" || profile.stage === "IA2" || profile.stage === "IA3" || (profile.stage?.startsWith("IA") ?? false) || profile.stage === "Tis" || profile.stage === "0";
 

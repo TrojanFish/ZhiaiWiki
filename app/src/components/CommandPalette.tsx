@@ -43,54 +43,6 @@ const CANCER_MARKERS: Record<CancerType, Array<{ name: string; standard: string;
     { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "与 CA15-3 联合检测，显著提高术后亚临床转移排查效能", keywords: ["CEA", "癌胚抗原"] },
     { name: "HER2 细胞外结构域 (ECD)", standard: "< 15.0 ng/mL", desc: "动态反映 HER2 阳性病灶负荷与抗 HER2 靶向治疗响应", keywords: ["HER2", "ECD", "靶向响应"] },
   ],
-  colorectal: [
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "结直肠癌最经典术后随访监测靶标，每 3 个月复查评估远期复发", keywords: ["CEA", "癌胚抗原", "结直肠癌", "肠癌"] },
-    { name: "糖类抗原 CA19-9", standard: "< 37.0 U/mL", desc: "消化道重要标志物，CEA 阴性结直肠癌的重要补充监测", keywords: ["CA19-9", "CA199", "肠癌"] },
-    { name: "糖类抗原 CA125", standard: "< 35.0 U/mL", desc: "排查结直肠癌腹膜广泛种植转移的重要血清学线索", keywords: ["CA125", "腹膜转移"] },
-  ],
-  colon: [
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "结肠癌术后随访核心标志物，指导术后辅助化疗疗效评估", keywords: ["CEA", "癌胚抗原", "结肠癌"] },
-    { name: "糖类抗原 CA19-9", standard: "< 37.0 U/mL", desc: "与 CEA 联用，辅助评估结肠病灶及肝转移风险", keywords: ["CA19-9", "CA199", "结肠癌"] },
-  ],
-  rectal: [
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "直肠癌新辅助放化疗 (TNT) 与根治术后动态对齐指标", keywords: ["CEA", "癌胚抗原", "直肠癌"] },
-    { name: "糖类抗原 CA19-9", standard: "< 37.0 U/mL", desc: "直肠癌复发与局部浸润协同排查标志物", keywords: ["CA19-9", "CA199", "直肠癌"] },
-  ],
-  gastric: [
-    { name: "糖类抗原 CA72-4", standard: "< 6.9 U/mL", desc: "胃癌特异度最高的血清学标志物，监测腹膜转移与浆膜浸润", keywords: ["CA72-4", "CA724", "胃癌"] },
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "胃腺癌常规监测指标，与 CA72-4/CA19-9 形成三联排查", keywords: ["CEA", "癌胚抗原", "胃癌"] },
-    { name: "糖类抗原 CA19-9", standard: "< 37.0 U/mL", desc: "胃癌淋巴结转移与胰脾韧带受累的重要血液监测指标", keywords: ["CA19-9", "CA199", "胃癌"] },
-  ],
-  liver: [
-    { name: "甲胎蛋白 AFP", standard: "< 20.0 ng/mL", desc: "原发性肝细胞癌 (HCC) 最核心诊断与术后动态追踪金标准", keywords: ["AFP", "甲胎蛋白", "肝癌"] },
-    { name: "异常凝血酶原 PIVKA-II / DCP", standard: "< 40.0 mAU/mL", desc: "极早期与 AFP 阴性肝癌突破性标志物，高度预测微血管侵犯 (MVI)", keywords: ["PIVKA", "PIVKA-II", "DCP", "异常凝血酶原", "MVI"] },
-    { name: "甲胎蛋白异质体比率 AFP-L3%", standard: "< 10.0 %", desc: "肝细胞癌特异性衍生异质体，鉴别良性肝硬化与早期恶性转化", keywords: ["AFP-L3", "异质体", "肝癌"] },
-  ],
-  pancreatic: [
-    { name: "糖类抗原 CA19-9", standard: "< 37.0 U/mL", desc: "胰腺导管腺癌敏感度最高标志物(80%)，术后持续>100警惕早期隐匿转移", keywords: ["CA19-9", "CA199", "胰腺癌", "Whipple"] },
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "胰腺癌联合监测指标，与 CA19-9 互补排查 Lewis 阴性假阴性人群", keywords: ["CEA", "癌胚抗原", "胰腺癌"] },
-    { name: "糖类抗原 CA242", standard: "< 20.0 U/mL", desc: "消化道胰胆系恶性肿瘤高特异性标志物，受良性胆道感染干扰小", keywords: ["CA242", "胰腺癌"] },
-  ],
-  thyroid: [
-    { name: "甲状腺球蛋白 Tg", standard: "< 55.0 ng/mL", desc: "分化型甲状腺癌全切及碘131清甲后体内有无残余/复发的金标准", keywords: ["Tg", "甲状腺球蛋白", "清甲", "复发"] },
-    { name: "甲状腺球蛋白抗体 TgAb", standard: "< 115.0 IU/mL", desc: "伴随监测指标，TgAb 滴度高会直接干扰 Tg 读数，滴度持续下降代表疾病缓解", keywords: ["TgAb", "抗体", "甲状腺癌"] },
-    { name: "降钙素 Calcitonin (Ct)", standard: "< 10.0 pg/mL", desc: "甲状腺髓样癌 (MTC) 最特异分泌性标志物，指导 RET 靶向与颈清", keywords: ["降钙素", "Ct", "髓样癌", "MTC"] },
-  ],
-  esophageal: [
-    { name: "鳞状细胞癌抗原 SCC", standard: "< 1.5 ng/mL", desc: "食管鳞癌特异性血清学靶标，动态反映原发灶退缩与纵隔淋巴进展", keywords: ["SCC", "鳞癌抗原", "食管癌"] },
-    { name: "细胞角蛋白19片段 CYFRA21-1", standard: "< 3.3 ng/mL", desc: "食管鳞癌化疗与放疗敏感性评估核心辅助指标", keywords: ["CYFRA", "CYFRA21-1", "食管癌"] },
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "食管腺癌及食管胃结合部腺癌 (AEG) 关键监测指标", keywords: ["CEA", "食管胃结合部", "AEG"] },
-  ],
-  cervical: [
-    { name: "鳞状细胞癌抗原 SCC", standard: "< 1.5 ng/mL", desc: "宫颈鳞癌 (占80%+) 临床分期、同步放化疗疗效及复发监测金标准", keywords: ["SCC", "鳞癌抗原", "宫颈癌"] },
-    { name: "高危型 HPV 16/18 E6/E7", standard: "阴性 / 0 拷贝", desc: "持续阳性或高载量是宫颈癌前病变向浸润癌进展的关键病因指标", keywords: ["HPV", "HPV16", "HPV18", "高危型"] },
-    { name: "糖类抗原 CA125", standard: "< 35.0 U/mL", desc: "宫颈腺癌以及盆腹腔腹膜扩散的敏感监测标志物", keywords: ["CA125", "宫颈腺癌"] },
-  ],
-  endometrial: [
-    { name: "糖类抗原 CA125", standard: "< 35.0 U/mL", desc: "子宫内膜癌术前评估深肌层浸润、盆腹腔淋巴转移及术后随访指标", keywords: ["CA125", "子宫内膜癌", "肌层浸润"] },
-    { name: "人附睾蛋白4 HE4", standard: "< 140.0 pmol/L", desc: "高特异性妇科肿瘤标志物，不受子宫内膜异位等良性妇科炎症干扰", keywords: ["HE4", "人附睾蛋白", "内膜癌"] },
-    { name: "癌胚抗原 CEA", standard: "< 5.0 ng/mL", desc: "特殊病理类型（如浆液性内膜癌、透明细胞癌）长程随访指标", keywords: ["CEA", "浆液性", "透明细胞"] },
-  ],
 };
 
 export default function CommandPalette() {
@@ -152,24 +104,6 @@ export default function CommandPalette() {
     switch (cancerType) {
       case "breast":
         return "搜索【乳腺癌】靶向药 (阿贝西利/T-DXd)、顶刊 (TAILORx)、分期或标志物...";
-      case "colorectal":
-      case "colon":
-      case "rectal":
-        return "搜索【结直肠癌】靶向药 (西妥昔单抗/贝伐珠)、顶刊 (IDEA/KEYNOTE)、分期或标志物...";
-      case "gastric":
-        return "搜索【胃癌】靶向药 (曲妥珠/佐妥昔单抗)、顶刊 (ToGA/FLOT)、分期或标志物...";
-      case "liver":
-        return "搜索【肝癌】靶向药 (仑伐替尼/阿替利珠)、顶刊 (IMbrave150)、分期或标志物...";
-      case "pancreatic":
-        return "搜索【胰腺癌】方案 (mFOLFIRINOX/白紫)、顶刊 (PRODIGE 24)、分期或标志物...";
-      case "thyroid":
-        return "搜索【甲状腺癌】靶向药 (仑伐替尼/索拉非尼)、C-TIRADS分级、标志物...";
-      case "esophageal":
-        return "搜索【食管癌】方案 (帕博利珠/纳武利尤)、顶刊 (CheckMate-577)、分期...";
-      case "cervical":
-        return "搜索【宫颈癌】方案 (贝伐珠/帕博利珠)、顶刊 (KEYNOTE-826)、分期...";
-      case "endometrial":
-        return "搜索【子宫内膜癌】分子分型 (POLE/dMMR)、顶刊 (RUBY/DUO-E)、分期...";
       default:
         return "搜索【肺癌】靶向药 (奥希替尼/塞普替尼)、顶刊 (ADAURA/JCOG)、分期工具或标志物...";
     }

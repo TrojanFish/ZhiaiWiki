@@ -60,16 +60,10 @@ export default function MdtConsultationHub({
 
   const cancerType: CancerType = (profile?.cancerType || "lung") as CancerType;
   const isBreast = cancerType === "breast";
-  const isColon = cancerType === "colon";
-  const isRectal = cancerType === "rectal";
-  const isColorectal = cancerType === "colorectal" || isColon || isRectal;
-  const isGastric = cancerType === "gastric";
-  const isLiver = cancerType === "liver";
-  const isEsophageal = cancerType === "esophageal";
-  const isLung = !isBreast && !isColorectal && !isGastric && !isLiver && !isEsophageal;
+  const isLung = !isBreast;
 
   const rawData = useMemo(() => {
-    return (profile as any)?.clinicalData || (profile as any)?.cancerSpecificData || (profile as any)?.liverData || (profile as any)?.gastricData || profile || {};
+    return (profile as any)?.clinicalData || (profile as any)?.cancerSpecificData || profile || {};
   }, [profile]);
 
   const currentStage = useMemo(() => {
@@ -78,53 +72,6 @@ export default function MdtConsultationHub({
 
   // 1. MDT 专科专家团队矩阵 (Specialist Panel)
   const specialistPanel: SpecialistDept[] = useMemo(() => {
-    if (isEsophageal) {
-      return [
-        { name: "胸部食管外科", role: "微创根治与质控把关", focus: "评估腔镜 MIE 切除指征、二野/三野清扫范围与 ≥15 枚淋巴结质控达标", iconBg: "bg-purple-100", iconText: "text-purple-600" },
-        { name: "胸部肿瘤放疗科", role: "新辅助与同步放化疗", focus: "制定 NEOCRTEC5010 (40Gy) 术前放化疗或颈段食管根治性同步放化疗靶区", iconBg: "bg-indigo-100", iconText: "text-indigo-600" },
-        { name: "肿瘤消化内科", role: "靶免化疗与术后强化", focus: "一线中国原研 PD-1 联合方案制定，以及 CheckMate-577 术后辅助免疫评估", iconBg: "bg-sky-100", iconText: "text-sky-600" },
-        { name: "消化内镜中心", role: "早期保食管与并发症处置", focus: "评估 cT1a 黏膜内癌 ESD 治愈性切除指征，排查气管瘘并指导覆膜支架", iconBg: "bg-teal-100", iconText: "text-teal-600" },
-        { name: "胸部影像与核医学科", role: "解剖受侵与分期判定", focus: "评估气管软骨受压、主动脉间隙浸润角度（T4b 筛查）及锁骨上淋巴结", iconBg: "bg-blue-100", iconText: "text-blue-600" },
-        { name: "临床营养与康复专科", role: "抗反流与空肠造瘘营养", focus: "规划术后管状胃抗反流半卧位管理、空肠造瘘泵注方案与吻合口保护", iconBg: "bg-emerald-100", iconText: "text-emerald-600" },
-      ];
-    }
-    if (isLiver) {
-      return [
-        { name: "肝胆胰外科", role: "根治性切除与肝移植", focus: "评估 CNLC Ia/Ib 切除可行性、米兰标准移植受体筛选与残肝储备余量", iconBg: "bg-emerald-100", iconText: "text-emerald-600" },
-        { name: "介入放射科 (TACE/HAIC)", role: "局部栓塞与动脉化疗灌注", focus: "针对门静脉癌栓 (Vp1-V4) 开展 HAIC-FO 持续灌注化疗或 cTACE 转化治疗", iconBg: "bg-amber-100", iconText: "text-amber-600" },
-        { name: "肝病感染科", role: "乙肝阻断与终身抗病毒", focus: "高敏 HBV DNA 定量监测，规范恩替卡韦/TAF 防范致死性暴发性肝炎", iconBg: "bg-sky-100", iconText: "text-sky-600" },
-        { name: "肿瘤内科 (靶免团队)", role: "系统靶向与免疫联合", focus: "制定 IMbrave150 (T+A) 或 ORIENT-32 (双达) 一线抗血管联合方案", iconBg: "bg-indigo-100", iconText: "text-indigo-600" },
-        { name: "超声介入消融科", role: "局部微创根治消融", focus: "评估 ≤3cm 孤立性肝癌射频消融 (RFA) 或微波消融 (MWA) 治愈指征", iconBg: "bg-rose-100", iconText: "text-rose-600" },
-        { name: "消化内镜中心", role: "门脉高压曲张静脉筛查", focus: "抗 VEGF 靶向治疗前常规筛查食管胃底静脉曲张，排查致死性破裂出血", iconBg: "bg-teal-100", iconText: "text-teal-600" },
-      ];
-    }
-    if (isGastric) {
-      return [
-        { name: "胃肠外科", role: "D2 根治切除与质控", focus: "实施规范 D2 淋巴结清扫（检出 ≥16 枚）与全胃/远端胃消化道重建", iconBg: "bg-indigo-100", iconText: "text-indigo-600" },
-        { name: "消化肿瘤内科", role: "围术期 FLOT4 与靶免", focus: "主导局部进展期围术期 FLOT4 方案，制定 HER2 / CLDN18.2 双靶免时序", iconBg: "bg-blue-100", iconText: "text-blue-600" },
-        { name: "消化内镜中心", role: "早期微创保胃 (ESD)", focus: "评估 cT1a 黏膜内癌、无溃疡、<2cm 早期病灶 ESD 治愈性切除指征", iconBg: "bg-teal-100", iconText: "text-teal-600" },
-        { name: "分子病理诊断中心", role: "靶标伴随诊断与微卫星", focus: "复核 HER2 (IHC/FISH)、Claudin 18.2 阳性比例、dMMR/MSI-H 及 PD-L1 CPS", iconBg: "bg-purple-100", iconText: "text-purple-600" },
-        { name: "影像与腹膜转移科", role: "腹膜转移与深层浸润筛查", focus: "CT/MRI 排除腹水与网膜饼，高危进展期患者行诊断性腹腔镜探查 (DL)", iconBg: "bg-amber-100", iconText: "text-amber-600" },
-        { name: "临床营养专科", role: "倾倒综合征防范与支持", focus: "指导毕I/毕II/Roux-en-Y 术后阶梯式进食、维生素 B12 补充及早期肠内营养", iconBg: "bg-emerald-100", iconText: "text-emerald-600" },
-      ];
-    }
-    if (isRectal) {
-      return [
-        { name: "结直肠肛门外科", role: "TME 根治与极限保肛", focus: "距肛门距离评估、骨盆空间测量、ISR / Dixon 超低位保肛与造口设计", iconBg: "bg-orange-100", iconText: "text-orange-600" },
-        { name: "盆腔放射治疗科", role: "长程/短程放疗与 TNT", focus: "主导 RAPIDO / PRODIGE 23 全程新辅助放化疗靶区勾画，争取最大肿瘤退缩", iconBg: "bg-rose-100", iconText: "text-rose-600" },
-        { name: "直肠高分辨 MRI 影像科", role: "环周切缘 (CRM) 与 EMVI", focus: "评估直肠系膜筋膜 (MRF) 安全距离、壁外血管侵犯 (EMVI) 及侧方淋巴结", iconBg: "bg-blue-100", iconText: "text-blue-600" },
-        { name: "消化肿瘤内科", role: "全程新辅助与系统化疗", focus: "制定 TNT 强化巩固化疗方案，MSI-H 患者评估一线 PD-1 单抗免化免放", iconBg: "bg-indigo-100", iconText: "text-indigo-600" },
-        { name: "造口护理与伤口专科", role: "保护性造口与排便康复", focus: "回肠造口防漏护理、造口还纳时机评估及术后 LARS 综合征排便训练", iconBg: "bg-teal-100", iconText: "text-teal-600" },
-      ];
-    }
-    if (isColon) {
-      return [
-        { name: "结直肠外科", role: "CME 完整结肠系膜切除", focus: "根治性切除结肠原发灶，中央血管高位结扎，保障 ≥12 枚淋巴结检出", iconBg: "bg-emerald-100", iconText: "text-emerald-600" },
-        { name: "肝胆外科 / 介入科", role: "结直肠癌肝转移 (CRLM) MDT", focus: "协同评估肝脏寡转移灶一期或二期切除时序，制定局部消融与介入策略", iconBg: "bg-amber-100", iconText: "text-amber-600" },
-        { name: "消化肿瘤内科", role: "IDEA 减毒与靶向联合", focus: "指导低危 III 期 3 个月 CAPOX 减毒方案，按左/右半与 RAS 状态选靶向", iconBg: "bg-sky-100", iconText: "text-sky-600" },
-        { name: "分子病理中心", role: "全 RAS/BRAF 与 dMMR", focus: "测定 KRAS/NRAS/BRAF 突变及 MSI-H/dMMR，指导西妥昔/贝伐/帕博利珠", iconBg: "bg-purple-100", iconText: "text-purple-600" },
-      ];
-    }
     if (isBreast) {
       return [
         { name: "乳腺外科", role: "保乳手术与前哨淋巴结", focus: "评估保乳切缘安全距离、前哨淋巴结活检 (SLNB) 避免全腋窝清扫水肿", iconBg: "bg-pink-100", iconText: "text-pink-600" },
@@ -143,7 +90,7 @@ export default function MdtConsultationHub({
       { name: "病理诊断与基因中心", role: "浸润高危征象与突变丰度", focus: "病理复核 STAS（气腔播散）、VPI（胸膜侵犯）、脉管癌栓与二代测序 NGS", iconBg: "bg-purple-100", iconText: "text-purple-600" },
       { name: "胸部放疗科", role: "立体定向 SBRT 根治", focus: "心肺功能极差无法耐受全麻手术患者的立体定向消融放疗 (SBRT)", iconBg: "bg-amber-100", iconText: "text-amber-600" },
     ];
-  }, [cancerType, isEsophageal, isLiver, isGastric, isRectal, isColon, isBreast]);
+  }, [cancerType, isBreast]);
 
   // 2. MDT 会诊资料齐备度智能核查 (Readiness Score & Checklist)
   const readinessAudit = useMemo(() => {
@@ -213,116 +160,6 @@ export default function MdtConsultationHub({
 
   // 3. MDT 核心争议决策树与研讨十字路口 (Controversies & Crossroads)
   const controversies: ControversyItem[] = useMemo(() => {
-    if (isEsophageal) {
-      return [
-        {
-          id: "escc_neoadjuvant_vs_upfront",
-          title: "局部进展期：术前新辅助同步放化疗 (NEOCRTEC5010) vs 直接微创手术",
-          controversy: "cT1-4N1-3 或 cT3-4N0 食管鳞癌是否应当优先新辅助？单纯切除复发率高，但放化疗有一定组织水肿与围术期并发症风险。",
-          options: {
-            planA: { label: "方案 A · 术前 NEOCRTEC5010 新辅助放化疗", desc: "长春瑞滨+顺铂联合 40Gy 放疗，pCR 率 43.2%，中位 OS 突破 100.1 个月（1级证据推荐）" },
-            planB: { label: "方案 B · 直接行胸腹腔镜联合微创切除 (MIE)", desc: "仅适合 cT1b-T2N0 极早期、心肺功能极佳且拒绝放疗的严格筛选患者" },
-          },
-          clinicalConsensus: "CSCO 2024 与 NCCN 最高级别共识：只要无气管食管瘘 (TEF) 穿孔风险且心肺耐受，局部进展期 ESCC 首选新辅助放化疗！术后未达 pCR 者序贯 1 年纳武利尤单抗 (CheckMate-577)。",
-        },
-        {
-          id: "escc_lymphadenectomy_qc",
-          title: "清扫范围与质控：二野 (胸腹) vs 三野 (颈胸腹) 清扫与 ≥15 枚淋巴结红线",
-          controversy: "三野清扫可彻底清扫双侧喉返神经旁与锁骨上淋巴结，但喉返神经麻痹与吻合口瘘概率增加；二野清扫更微创，但高位转移可能漏网。",
-          options: {
-            planA: { label: "二野淋巴结清扫 (胸腹两野)", desc: "适用于胸中下段、无高位颈部淋巴结肿大者，必须确保检出 ≥15 枚淋巴结" },
-            planB: { label: "三野淋巴结清扫 (颈胸腹三野)", desc: "适用于胸上段病灶、或触及/可疑颈段喉返神经链转移者，追求纵向彻底根治" },
-          },
-          clinicalConsensus: "无论二野或三野，CSCO 与 AJCC 均明确要求清扫总枚数必须 ≥15 枚，以消除假性病理分期低估。",
-        },
-        {
-          id: "escc_tef_aorta_danger",
-          title: "生命红线排查：气管隆突受压 (TEF风险) 或降主动脉受侵的大出血与穿孔抢救",
-          controversy: "T4b 肿瘤包绕大血管或压迫气管时，绝对禁忌盲目放疗或使用抗血管靶向药，否则肿瘤坏死可导致气管穿孔或主动脉破裂致死。",
-          options: {
-            planA: { label: "强化穿孔抢救与覆膜食管支架预置", desc: "存在饮水呛咳疑诊瘘管者，立即行气管镜与食管碘油造影，优先覆膜支架封堵" },
-            planB: { label: "系统化疗联合 PD-1 缓和降期", desc: "避免直接超高剂量放疗引起急性坏死穿孔，在密切监护下平稳控制肿瘤负荷" },
-          },
-          clinicalConsensus: "MDT 胸外科、介入科、血管外科联合红线：凡伴明显主动脉或气管侵犯者，不可盲目追求手术切除，首选多学科转化与微创封堵保命。",
-        },
-      ];
-    }
-    if (isLiver) {
-      return [
-        {
-          id: "liver_curative_vs_conversion",
-          title: "门静脉癌栓与多发病灶：直接手术切除 vs 局部 HAIC-FO 靶免降期转化",
-          controversy: "CNLC IIb/IIIa 期（伴门脉主干或分支癌栓、多发病灶）患者直接手术往往快速复发，而靶免联合 HAIC-FO 能否争取到根治切除机会？",
-          options: {
-            planA: { label: "方案 A · 经肝动脉持续灌注化疗 (HAIC-FO) + 靶免", desc: "高浓度奥沙利铂+5-FU局部杀灭癌栓，联合 PD-1+抗VEGF，转化率达 40%~55%" },
-            planB: { label: "方案 B · 扩大切除联合术中取栓或 TACE 序贯", desc: "仅在癌栓局限于门脉二级分支且对侧健康肝体积足够时谨慎开展" },
-          },
-          clinicalConsensus: "国家卫健委 CNLC 2024 推荐：伴血管侵犯的局部晚期肝癌首选 HAIC 联合系统靶免开展“双药/三药转化”，待癌栓萎缩降期后再行根治性切除！",
-        },
-        {
-          id: "liver_child_pugh_albi_cutoff",
-          title: "肝功能储备双轴裁决：Child-Pugh 评分 vs ALBI 连续数学模型",
-          controversy: "部分患者表面上是 Child-Pugh A 级，但 ALBI 已进入 2 级甚至 3 级（深层肝微循环受损），大范围切除后极易发生致死性术后肝衰竭 (PHLF)。",
-          options: {
-            planA: { label: "严格遵循 ALBI 1 级 (≤ -2.60) 根治标准", desc: "术后代偿功能极佳，发生肝衰竭概率 <5%，适合实施解剖性大范围切除" },
-            planB: { label: "ALBI 2/3 级采取局部消融 (RFA) 或保护性 TACE", desc: "保住宝贵的正常肝实质，避免大手术摧毁剩余代偿功能" },
-          },
-          clinicalConsensus: "MDT 外科与肝病内科一致原则：宁可肿瘤局部多次介入消融，绝不让患者死于不可逆急性术后肝衰竭。",
-        },
-      ];
-    }
-    if (isGastric) {
-      return [
-        {
-          id: "gastric_esd_vs_surgery",
-          title: "极早期胃癌：内镜黏膜下剥离术 (ESD) 纯微创保胃 vs 外科胃大部切除",
-          controversy: "cT1a 黏膜内癌是否必须切除大半个胃？ESD 能否在完全不破坏消化道完整性的前提下达到肿瘤学根治？",
-          options: {
-            planA: { label: "方案 A · 内镜 ESD 绝对/扩大适应证切除", desc: "黏膜内 (cT1a)、无溃疡、直径无论大小或分化型，完全保留胃容积与幽门功能" },
-            planB: { label: "方案 B · 腹腔镜远端胃或全胃根治术 (D2 清扫)", desc: "伴黏膜下浸润 (cT1b) 或未分化印戒细胞癌高淋巴结转移风险时的规范底线" },
-          },
-          clinicalConsensus: "CSCO 早期胃癌指南：病理证实为整块治愈性切除 (eCuraA) 者，5 年生存率 >99%，无需追加任何外科扩大切除与术后化疗！",
-        },
-        {
-          id: "gastric_flot4_perioperative",
-          title: "局部进展期 (cT2-4 或 N+)：围手术期 FLOT4 方案 vs 直接手术切除",
-          controversy: "直接开刀能快速切除原发灶，但术后复发率高达 50% 以上；围手术期 FLOT4 方案（术前4周期+术后4周期）病理完全缓解率达 16%，中位 OS 延长至 50 个月。",
-          options: {
-            planA: { label: "方案 A · 围手术期 FLOT4 标准方案", desc: "术前 4 周期多西他赛+奥沙利铂+亚叶酸钙+5-FU 降期缩瘤，术后再序贯 4 周期" },
-            planB: { label: "方案 B · 术前直接手术 + 术后口服 SOX / XELOX", desc: "适用于急性穿孔/梗阻无法耐受强化化疗，或高龄基础病复杂的患者" },
-          },
-          clinicalConsensus: "国际 FLOT4 试验与 CSCO 指南：只要患者 PS 评分 0~1 且身体耐受，围手术期 FLOT 是局部进展期腺癌的全球最高级别金标准。",
-        },
-      ];
-    }
-    if (isRectal) {
-      return [
-        {
-          id: "rectal_tnt_watch_and_wait",
-          title: "超低位保肛极限抉择：全程新辅助 (TNT) 后 cCR 采纳 Watch & Wait 保留器官",
-          controversy: "距肛门 <5cm 的局部进展期直肠癌，传统手术面临永久性结肠造口（切除肛门 Miles 手术）。经 TNT 强化放化疗后若肿瘤在肠镜和 MRI 上完全消失 (cCR)，能否不切肛门？",
-          options: {
-            planA: { label: "方案 A · 观察等待 (Watch & Wait) 器官保留", desc: "达到临床完全缓解 (cCR) 后免除开刀，每 3 个月严密复查直肠 MRI 与肠镜" },
-            planB: { label: "方案 B · 规范 TME 根治术 (ISR 超低位保肛或保护性造口)", desc: "对未达到 cCR 或复发高危者行经肛超低位吻合，保留真实排便通路" },
-          },
-          clinicalConsensus: "国际 OnCoRe 与 OPRA 研究证实：严格评估达到 cCR 的患者采纳 Watch & Wait，5 年保肛成功率超 70%，且远处转移率与直接手术相当！",
-        },
-      ];
-    }
-    if (isColon) {
-      return [
-        {
-          id: "colon_idea_short_course",
-          title: "III 期结肠癌减毒革命：IDEA 协作组 3 个月 CAPOX vs 传统 6 个月化疗",
-          controversy: "传统 6 个月含奥沙利铂化疗会导致严重不可逆手脚麻木外周神经毒性。3 个月方案能否在保障同样无病生存期 (DFS) 的前提下大幅减轻神经毒性？",
-          options: {
-            planA: { label: "方案 A · 3 个月 CAPOX (卡培他滨+奥沙利铂)", desc: "适用于低危组 (T1-3 N1)，3 年 DFS 97.4% 与 6 个月无差异，外周神经毒性降低 70%" },
-            planB: { label: "方案 B · 6 个月 FOLFOX / CAPOX 强化治疗", desc: "适用于高危组 (T4 或 N2)，必须强化全身化疗周期控制远隔微转移" },
-          },
-          clinicalConsensus: "IDEA 全球里程碑共识：精准区隔 T1-3N1 低危与 T4/N2 高危，严禁所有患者无差别接受 6 个月过量神经毒性化疗！",
-        },
-      ];
-    }
     if (isBreast) {
       return [
         {
@@ -360,50 +197,10 @@ export default function MdtConsultationHub({
         clinicalConsensus: "ADAURA 临床 III 期研究证实：EGFR 阳性 II-IIIA 期术后使用奥希替尼辅助治疗，5 年总生存率跃升至 88%，成为国家医保与指南最高级别推荐。",
       },
     ];
-  }, [isEsophageal, isLiver, isGastric, isRectal, isColon, isBreast]);
+  }, [isBreast]);
 
   // 4. MDT 门诊 15 分钟就诊问答口袋卡 (Consultation Pocket Card)
   const defaultQuestions: DefaultQuestion[] = useMemo(() => {
-    if (isEsophageal) {
-      return [
-        { title: "解剖段位与术前新辅助", content: "请问我的肿瘤位于食管哪个解剖段（颈段/胸上/中/下段）？是否推荐按照 NEOCRTEC5010 方案在开刀前先行 40Gy 放化疗来缩瘤保命？", priority: "essential" },
-        { title: "气管瘘 (TEF) 与大出血排查", content: "增强 CT 与内镜下肿瘤是否压迫气管隆突或包绕降主动脉？放疗期间出现饮水呛咳如何第一时间排查穿孔与放置覆膜支架？", priority: "high" },
-        { title: "外科质控与 ≥15 枚淋巴结", content: "术后病理报告检出淋巴结总数是否达到了 CSCO/AJCC 规定的 ≥15 枚质控红线？双侧喉返神经旁淋巴结是否有跳跃转移？", priority: "high" },
-        { title: "空肠造瘘与半卧位防反流", content: "术中预置的空肠造瘘管营养液日常如何加温滴注？管状胃重建术后如何通过 30°~45° 半卧位睡眠防范夜间胃酸反流呛咳误吸？", priority: "followup" },
-      ];
-    }
-    if (isLiver) {
-      return [
-        { title: "CNLC 2024 分期与转化手术指征", content: "请教医生我的肝癌按国家卫健委 CNLC 属于哪一期？如果合并门脉分支癌栓，能否通过 HAIC-FO 灌注化疗联合靶免逆转为根治手术？", priority: "essential" },
-        { title: "Child-Pugh 与 ALBI 肝功能余量", content: "我的 Child-Pugh 得分与 ALBI 分级是多少？如果实施大范围肝叶切除或多次介入栓塞，发生急性术后肝衰竭 (PHLF) 的风险多高？", priority: "high" },
-        { title: "高敏乙肝病毒与终身抗病毒", content: "我的高敏乙肝病毒 DNA 定量控制在多少 IU/mL？在靶免或化疗期间是否必须终身服用恩替卡韦或 TAF 预防致死性暴发性重症肝炎？", priority: "essential" },
-        { title: "胃镜排查静脉曲张与靶免用药安全", content: "在使用阿替利珠+贝伐珠单抗等抗血管生成药前，是否已做胃镜确认无重度食管胃底静脉曲张？如何预防致命性消化道大出血？", priority: "high" },
-      ];
-    }
-    if (isGastric) {
-      return [
-        { title: "ESD 保胃指征与切缘病理", content: "病灶浸润深度是否完全局限于黏膜内 (cT1a)？是否达到内镜黏膜下剥离术 (ESD) 治愈性切除标准而免除外科开腹大切胃？", priority: "essential" },
-        { title: "围手术期 FLOT4 方案评估", content: "如果是局部进展期胃腺癌，是否应当在开刀前先接受 4 周期 FLOT 强化化疗以达到病理完全缓解 (pCR) 再行微创根治术？", priority: "high" },
-        { title: "D2 淋巴结清扫 ≥16 枚核对", content: "外科大病理检出的区域淋巴结总数是否达到了 ≥16 枚质控标准？是否存在因清扫枚数偏少导致的假性分期低估？", priority: "high" },
-        { title: "Claudin 18.2 / HER2 靶向配型", content: "组织免疫组化是否已经测定 Claudin 18.2 与 HER2 表达？如果出现远处转移或复发，能否匹配佐妥昔单抗或曲妥珠单抗靶向治疗？", priority: "followup" },
-      ];
-    }
-    if (isRectal) {
-      return [
-        { title: "骨盆高分辨 MRI 与保肛评估", content: "根据骨盆薄层 HR-MRI，肿瘤距肛缘具体多少厘米？是否累及环周切缘 (CRM) 与壁外血管 (EMVI)？超低位保肛 (ISR) 概率多大？", priority: "essential" },
-        { title: "全程新辅助 (TNT) 与 Watch & Wait", content: "是否推荐 RAPIDO 全程新辅助放化疗？如果放化疗结束后肠镜与核磁证实肿瘤完全消失 (cCR)，能否采取观察等待免除切除肛门？", priority: "high" },
-        { title: "保护性造口防漏与还纳规划", content: "如果做低位保肛，是否需要做临时回肠造口保护吻合口？造口日常如何防渗漏发红？术后几个月可以评估还纳手术？", priority: "followup" },
-        { title: "控便排便功能与 LARS 综合征", content: "保肛术后如果出现大便次数多、急迫失禁等低位前切除综合征 (LARS)，易蒙停止泻药与盆底肌提肛锻炼如何规范进行？", priority: "followup" },
-      ];
-    }
-    if (isColon) {
-      return [
-        { title: "IDEA 3 个月减毒方案抉择", content: "结合我的病理分期（如 T1-3N1 低危组），推荐 3 个月 CAPOX 减毒方案还是 6 个月方案？如何最大程度防范奥沙利铂不可逆手脚麻木？", priority: "essential" },
-        { title: "左右半结肠与靶向配型", content: "我的原发灶在左半结肠还是右半结肠？结合全 RAS/BRAF 与微卫星 (MSI) 状态，若需靶向是首选西妥昔单抗还是贝伐珠单抗？", priority: "high" },
-        { title: "CME 手术与 ≥12 枚清扫核验", content: "大病理检出的淋巴结总数是否达到了结肠癌规定的 ≥12 枚质控红线？切除边缘与血管根部结扎是否彻底？", priority: "high" },
-        { title: "肝转移排查与预防", content: "术后血清 CEA 标志物与全腹增强 CT 复查时间节点如何规划？如何第一时间预防或筛查结直肠癌肝转移 (CRLM)？", priority: "followup" },
-      ];
-    }
     if (isBreast) {
       return [
         { title: "21 基因评分与免化疗可能", content: "作为激素受体阳性 (HR+) 患者，是否推荐进行 21 基因或 70 基因复发风险测定，评估免除全身毒性化疗的安全概率？", priority: "essential" },
@@ -419,7 +216,7 @@ export default function MdtConsultationHub({
       { title: "EGFR 驱动基因与靶向辅助", content: "基因检测确定的突变亚型（如 19del 或 L858R）丰度如何？是否符合 ADAURA 方案口服第三代靶向药物（奥希替尼）辅助降复发？", priority: "high" },
       { title: "复查随访与薄层 CT 时间节点", content: "第一次胸部薄层 CT 推荐在术后第几个月复查？随访期间若出现微小病灶变化，薄层 CT 随访节点与征象如何科学比对？", priority: "followup" },
     ];
-  }, [isEsophageal, isLiver, isGastric, isRectal, isColon, isBreast]);
+  }, [isBreast]);
 
   // 从 localStorage 恢复自定义问题
   const [customQuestions, setCustomQuestions] = useState<string[]>([]);
