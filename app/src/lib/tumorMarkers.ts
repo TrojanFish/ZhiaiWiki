@@ -104,33 +104,6 @@ export const TUMOR_MARKER_DEFINITIONS: Record<string, {
     refRange: "30 ~ 300.0 ng/mL",
     benignFactors: ["机体良性急性/慢性炎症反应", "口服或注射补铁剂后", "脂肪肝/高血脂代谢综合征", "感冒发热期"],
     clinicalSignificance: "反映体内铁储备与急性时相反应蛋白。感冒发热、肝功能异常或轻度炎症时极易出现良性偏高。女性育龄期受月经生理失血影响正常上限通常较低（约150 ng/mL）。"
-  },
-  tg: {
-    nameZh: "甲状腺球蛋白 (Tg)",
-    enName: "Thyroglobulin",
-    unit: "ng/mL",
-    refMax: 55.0,
-    refRange: "1.4 ~ 55.0 ng/mL",
-    benignFactors: ["亚急性甲状腺炎/慢性甲状腺炎", "单纯性甲状腺肿", "甲亢 (Graves病)", "术前保留正常腺叶组织"],
-    clinicalSignificance: "甲状腺滤泡上皮特异性蛋白。在保留正常腺叶人群中属于生理表达；但全切及清甲术后，Tg 是分化型甲状腺癌复发极度灵敏的“特异性风向标”（全切治愈后基线常应 <0.2~1.0 ng/mL）。"
-  },
-  tgAb: {
-    nameZh: "甲状腺球蛋白抗体 (TgAb)",
-    enName: "Thyroglobulin Antibody",
-    unit: "IU/mL",
-    refMax: 115.0,
-    refRange: "0 ~ 115.0 IU/mL",
-    benignFactors: ["桥本甲状腺炎 (慢性淋巴细胞性甲状腺炎)", "自身免疫性甲状腺疾病", "健康女性生理波动"],
-    clinicalSignificance: "针对甲状腺球蛋白的自身抗体。TgAb 阳性会与 Tg 结合干扰检测，导致 Tg 假性偏低或假阴性，因此随访评估 Tg 必须与 TgAb 联合解读。"
-  },
-  calcitonin: {
-    nameZh: "降钙素 (Calcitonin / CT)",
-    enName: "Serum Calcitonin",
-    unit: "pg/mL",
-    refMax: 8.4,
-    refRange: "女性 0 ~ 5.0 / 男性 0 ~ 8.4 pg/mL",
-    benignFactors: ["慢性肾功能不全", "高钙血症", "长期大剂量使用 PPI 抑酸药", "良性 C 细胞增生"],
-    clinicalSignificance: "甲状腺 C 细胞特异分泌激素，是甲状腺髓样癌 (MTC) 筛查、确诊与复发监测的特异性金标准指标。"
   }
 };
 
@@ -141,14 +114,12 @@ export const TUMOR_MARKER_DEFINITIONS: Record<string, {
 export function evaluateTumorMarkers(
   data?: TumorMarkersData | null, 
   gender?: "female" | "male" | string | null,
-  cancerType?: "lung" | "breast" | "colorectal" | "thyroid" | string | null
+  cancerType?: "lung" | "breast" | string | null
 ): MarkerEvaluation[] {
   if (!data) return [];
   const results: MarkerEvaluation[] = [];
   const isFemale = gender === "female";
   const isBreast = cancerType === "breast";
-  const isColorectal = cancerType === "colorectal";
-  const isThyroid = cancerType === "thyroid";
 
   for (const [key, def] of Object.entries(TUMOR_MARKER_DEFINITIONS)) {
     const rawVal = (data as any)[key];
@@ -161,9 +132,6 @@ export function evaluateTumorMarkers(
       if (key === "ferritin" && isFemale) {
         effectiveRefMax = 150.0;
         effectiveRefRange = "15 ~ 150.0 ng/mL";
-      } else if (key === "calcitonin" && isFemale) {
-        effectiveRefMax = 5.0;
-        effectiveRefRange = "0 ~ 5.0 pg/mL";
       }
 
       let status: "normal" | "mildly_elevated" | "significantly_elevated" = "normal";
@@ -173,10 +141,6 @@ export function evaluateTumorMarkers(
       let reassuranceText = "";
       if (isBreast) {
         reassuranceText = `当前数值处于实验室正常参考范围（${effectiveRefRange}）内。临床提示：早早期乳腺原位病灶与微小结节血液标志物敏感度较低，正常数值属于良好基线，但不可替代乳腺超声、钼靶摄片及触诊的定期规范随访。`;
-      } else if (isColorectal) {
-        reassuranceText = `当前数值处于实验室正常参考范围（${effectiveRefRange}）内。临床提示：CEA 与 CA19-9 为消化道常用监测指标，正常基线优良，复查请遵医嘱结合肠镜与腹盆增强 CT 影像。`;
-      } else if (isThyroid) {
-        reassuranceText = `当前数值处于实验室正常参考范围（${effectiveRefRange}）内。临床提示：若已行甲状腺全切，低水平 Tg（<0.2 ng/mL）提示极佳治愈控制；随访请务必结合颈部高分辨超声及 TgAb 综合解读。`;
       } else {
         reassuranceText = `当前数值处于实验室正常参考范围（${effectiveRefRange}）内。临床提示：早早期肺结节与微浸润腺癌标志物敏感性较低（绝大多数呈阴性），正常数值属于良好基线，但不可替代胸部薄层高分辨 CT（HRCT）的定期随访对比。`;
       }

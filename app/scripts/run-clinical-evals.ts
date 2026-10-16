@@ -1,6 +1,6 @@
 /**
  * ZhiaiWiki Clinical Golden Evals Runner (临床黄金评测集执行器)
- * 依据 Superpowers 端到端验证与仿真规范，对 10 大实体瘤与妇科肿瘤共 20 组复杂边界病例进行自动化评测打分
+ * 依据 Superpowers 端到端验证与仿真规范，对肺癌与乳腺癌两大恶性肿瘤的复杂边界病例进行自动化评测打分
  * 
  * 运行方式: npm run bench:clinical (或 npx tsx scripts/run-clinical-evals.ts)
  */
@@ -20,7 +20,7 @@ let ddiPassCount = 0;
 let totalDdiTests = 0;
 let allPassed = true;
 
-console.log(`\x1b[36m[Benchmark]\x1b[0m 正在评测 10 大主要恶性肿瘤的 ${totalCases} 组里程碑复杂真实病例...\n`);
+console.log(`\x1b[36m[Benchmark]\x1b[0m 正在评测肺癌与乳腺癌两大恶性肿瘤的 ${totalCases} 组里程碑复杂真实病例...\n`);
 
 for (const c of CLINICAL_GOLDEN_CASES) {
   console.log(`\x1b[1m[${c.id}]\x1b[0m \x1b[33m【${c.cancerType.toUpperCase()}】\x1b[0m ${c.title} (${c.category})`);

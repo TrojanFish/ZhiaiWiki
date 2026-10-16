@@ -1,6 +1,6 @@
 /**
- * ZhiaiWiki 全癌种病理仿真综合验证脚本 (simulate-all-cancers-pathology-lifecycle.ts)
- * 严格按照医学事实性，对 11 大实体瘤执行“上传-校对-修改-循证”四步闭环仿真验证
+ * ZhiaiWiki 肺癌与乳腺癌病理仿真综合验证脚本 (simulate-all-cancers-pathology-lifecycle.ts)
+ * 严格按照医学事实性，对肺癌与乳腺癌执行“上传-校对-修改-循证”四步闭环仿真验证
  */
 
 import { computeCancerStage, getClinicalCohortUnified } from '../src/lib/stagingRegistry';
@@ -165,7 +165,7 @@ E-cadherin (+), P120 (膜+), CK5/6 (-)。
 async function runComprehensiveSimulation() {
   console.log('\n================================================================================');
   console.log(' 🩺 ZHIAIWIKI 肺癌与乳腺癌病理仿真综合验证：上传 -> 校对 -> 修改 -> 循证');
-  console.log(' 遵循医学事实性红线：严禁胡编硬编码，严格遵循 IASLC/AJCC/FIGO/CNLC/ATA 指南');
+  console.log(' 遵循医学事实性红线：严禁胡编硬编码，严格遵循 IASLC/AJCC 指南');
   console.log('================================================================================\n');
 
   let passedCases = 0;

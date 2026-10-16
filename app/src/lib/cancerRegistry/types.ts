@@ -15,15 +15,15 @@ export interface CancerTypeOption {
 
 /**
  * 标准癌种插件规范契约接口 (Cancer Plugin Specification)
- * 任何新接入的癌种（如结直肠癌 CRC、胃癌等）只需实现该规范即可无缝插入系统
+ * 任何新接入的癌种只需实现该规范即可无缝插入系统
  */
 export interface CancerPluginSpec<_TSpecificData = any, TStagingInput = any> {
   // 1. 基础元数据
   id: CancerType;
-  name: string;             // 如 "肺癌" / "乳腺癌" / "结直肠癌"
-  enName: string;           // 如 "Lung Cancer" / "Breast Cancer" / "Colorectal Cancer"
-  icon: string;             // 如 "🫁" / "🎗️" / "🪱"
-  organ: string;            // 如 "lung" / "breast" / "colorectal"
+  name: string;             // 如 "肺癌" / "乳腺癌"
+  enName: string;           // 如 "Lung Cancer" / "Breast Cancer"
+  icon: string;             // 如 "🫁" / "🎗️"
+  organ: string;            // 如 "lung" / "breast"
   guidelineStandard: string;// 如 "IASLC 第 9 版 / AJCC 第 9 版"
   theme: {
     primaryColor: string;

@@ -37,9 +37,6 @@ export interface TumorMarkersData {
   ca199?: number | null;     // 糖类抗原 19-9 U/mL (正常 0~27.0)
   ca153?: number | null;     // 糖类抗原 15-3 U/mL (正常 0~25.0)
   ferritin?: number | null;  // 血清铁蛋白 ng/mL (正常 20~300)
-  tg?: number | null;        // 甲状腺球蛋白 ng/mL (术后复发风向标)
-  tgAb?: number | null;      // 甲状腺球蛋白抗体 IU/mL (排除假阴性干扰)
-  calcitonin?: number | null;// 降钙素 pg/mL (甲状腺髓样癌 MTC 特异标志物)
   testDate?: string | null;  // 化验日期
   hospital?: string | null;  // 化验医院
   note?: string | null;

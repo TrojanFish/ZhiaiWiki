@@ -306,32 +306,14 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     clinicalMeaning: "用于明确肿瘤细胞的起源组织学分类（如 TTF-1/P40 区分腺癌或鳞癌）及指导药物靶点（如 PD-L1、HER2 表达程度）。",
     plainLanguageReassurance: "IHC 结果中的阳性仅代表肿瘤细胞携带某种天然蛋白标签，用于协助医生确诊分类，绝不代表扩散或晚期。"
   },
-  "CRM": {
-    term: "环周切缘 (CRM)",
-    enName: "Circumferential Resection Margin",
-    category: "pathology",
-    categoryLabel: "直肠癌外科病理",
-    summary: "直肠手术切除标本未被腹膜覆盖的侧面切缘到肿瘤最近浸润点的微观距离。",
-    clinicalMeaning: "CRM 距离 > 1mm 为阴性安全切缘；CRM ≤ 1mm 为阳性，提示局部复发风险升高，通常需术前全程新辅助治疗 (TNT) 强化降期。",
-    plainLanguageReassurance: "术前高分辨率 MRI 可精确预测 CRM 状态。若有威胁，现代规范放化疗可有效缩小病灶，大幅提高安全根治保肛机会。"
-  },
   "MSI": {
     term: "微卫星高度不稳定 (MSI-H / dMMR)",
     enName: "Microsatellite Instability-High",
     category: "biomarker",
     categoryLabel: "免疫治疗黄金靶标",
     summary: "细胞错配修复系统功能缺陷导致 DNA 复制微卫星片段累积突变。",
-    clinicalMeaning: "肿瘤新抗原丰富、免疫原性极强。对 PD-1/PD-L1 单抗等免疫检查点抑制剂极为敏感，部分早期患者新辅助双免可达 60%+ pCR。",
-    plainLanguageReassurance: "MSI-H / dMMR 是目前免疫治疗领域最顶级的'金牌靶点'，意味着免疫系统能强力识别杀灭肿瘤，治疗前景极其光明。"
-  },
-  "ChildPugh": {
-    term: "Child-Pugh 肝功能储备分级",
-    enName: "Child-Pugh Score",
-    category: "staging",
-    categoryLabel: "肝功能分级标准",
-    summary: "综合胆红素、白蛋白、凝血酶原时间、腹水及肝性脑病 5 项指标评估肝脏生理代偿储备的积分系统。",
-    clinicalMeaning: "Child-Pugh A 级 (5-6分) 肝功能良好，可耐受根治性切除、局部介入及系统靶免治疗；B 级需谨慎保肝减量；C 级属于终末失代偿。",
-    plainLanguageReassurance: "对于肝癌患者，'保肝'与'治瘤'同样重要。医生通过 Child-Pugh 分级为您严格把关用药安全性，避免任何肝功能过度损伤。"
+    clinicalMeaning: "肿瘤新抗原丰富、免疫原性极强。在多实体瘤中属于广谱免疫获益靶点，对 PD-1/PD-L1 单抗等免疫检查点抑制剂极为敏感。",
+    plainLanguageReassurance: "MSI-H / dMMR 是目前免疫治疗领域公认的黄金获益标志物之一，意味着免疫系统能强力识别杀灭肿瘤，治疗前景良好。"
   },
   "BRAF": {
     term: "BRAF V600E 突变",
@@ -339,17 +321,8 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     category: "biomarker",
     categoryLabel: "靶向治疗靶点",
     summary: "MAPK 信号通路核心激酶发生激活突变，细胞分裂加速。",
-    clinicalMeaning: "常见于甲状腺乳头状癌 (60%+)、结直肠癌 (8%~10%) 及非小细胞肺癌。结直肠癌中提示高侵袭性，但目前有达拉非尼+曲美替尼等双靶/三靶方案破局。",
-    plainLanguageReassurance: "甲状腺癌中单纯 BRAF V600E 并不等同于晚期复发，绝大多数仍处于惰性低危范围；其他癌种中也有明确的双靶联合用药方案。"
-  },
-  "Claudin18.2": {
-    term: "Claudin 18.2 蛋白表达",
-    enName: "Claudin 18.2 Expression",
-    category: "biomarker",
-    categoryLabel: "胃癌前沿靶点",
-    summary: "紧密连接蛋白家族分子，在胃黏膜上皮恶变为胃癌后暴露于细胞表面。",
-    clinicalMeaning: "在胃癌/胃食管结合部腺癌中阳性率约为 35%~40%。SPOTLIGHT / GLOW 大型研究证实佐妥昔单抗 (Zolbetuximab) 联合化疗显著延长生存期。",
-    plainLanguageReassurance: "Claudin 18.2 是近年来胃癌领域最受瞩目的前沿靶点之一，若检测呈高表达，患者拥有专属新型靶向药物治疗机会。"
+    clinicalMeaning: "在非小细胞肺癌 (NSCLC) 中约占 1%~3%，尤其是肺腺癌。目前有达拉非尼联合曲美替尼 (双靶方案) 获得国内外权威指南优先推荐，客观缓解率高。",
+    plainLanguageReassurance: "检测出 BRAF 突变属于明确的靶向获益信号，可采用成熟的双靶口服药物进行精准阻断，极大拓展临床治疗选择。"
   },
   "DDI": {
     term: "药物相互作用 (DDI)",
@@ -366,26 +339,8 @@ export const CLINICAL_GLOSSARY: Record<string, GlossaryTerm> = {
     category: "staging",
     categoryLabel: "分期与预后关键要素",
     summary: "原发灶脱落的肿瘤细胞通过淋巴引流通道到达邻近引流区域的淋巴滤泡滤网组织。",
-    clinicalMeaning: "是肿瘤解剖学 TNM 分期的 N 分期决定因素。N1 为同侧支气管/肺门或第 1 站；N2 为纵隔或第 2 站。提示需要系统辅助治疗或围术期综合治疗。",
-    plainLanguageReassurance: "淋巴结是人体的防线哨卡，发现淋巴结转移绝不等于全身失控扩散！现代规范的清扫手术结合术后辅助靶向/免疫能极大阻断转移链条。"
-  },
-  "EMVI": {
-    term: "壁外血管侵犯 (EMVI)",
-    enName: "Extramural Venous Invasion",
-    category: "pathology",
-    categoryLabel: "直肠癌影像/病理指标",
-    summary: "肿瘤浸润并穿破直肠固有肌层，在肌层外的静脉血管管腔内形成癌栓。",
-    clinicalMeaning: "高分辨率 MRI (mrEMVI) 与术后病理是评估远处血行转移风险的关键指标。阳性患者推荐接受全程新辅助治疗 (TNT) 或强化术后辅助化疗。",
-    plainLanguageReassurance: "术前 MRI 早期识别 EMVI 能够使医疗团队提前布局术前靶免化疗，在手术前将微小癌栓彻底杀死转化。"
-  },
-  "Lauren": {
-    term: "Lauren 胃癌组织学分型",
-    enName: "Lauren Classification of Gastric Cancer",
-    category: "pathology",
-    categoryLabel: "胃癌组织学分型",
-    summary: "1965 年由 Lauren 教授提出的经典胃癌病理分类法，将胃癌划分为肠型 (Intestinal) 与弥漫型 (Diffuse) 两大类。",
-    clinicalMeaning: "肠型胃癌多见于中老年、由慢性萎缩性胃炎演进，对常规氟尿嘧啶+铂类化疗敏感；弥漫型印戒细胞癌多见于年轻患者，对围手术期 FLOT 需结合分子靶向评估。",
-    plainLanguageReassurance: "Lauren 分型是肿瘤科医生量身定制手术切缘范围 (弥漫型需切缘更大) 与化疗方案的关键科学参照，指导精细个体化治疗。"
+    clinicalMeaning: "是肿瘤解剖学 TNM 分期的 N 分期决定因素。N1 为同侧支气管/肺门或乳腺腋窝低级别引流站；N2/N3 提示区域浸润范围更广。通常指导系统性辅助治疗方案。",
+    plainLanguageReassurance: "淋巴结是人体的防线哨卡，发现淋巴结转移绝不等于全身失控扩散！现代规范的手术清扫结合术后辅助靶向/免疫能极大阻断转移链条。"
   }
 };
 

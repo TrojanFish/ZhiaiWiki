@@ -75,29 +75,7 @@ export interface WikiTopic {
     | "MicrocalcificationVisual"
     | "ReceptorSubtypeVisual"
     | "LymphedemaArmVisual"
-    | "DcisBasementMembraneVisual"
-    // 结直肠癌 (特别是直肠癌) 专区专属交互模拟器
-    | "RectalAnatomyRulerVisual"
-    | "RectalCrmMriVisual"
-    | "RectalTntWatchWaitVisual"
-    | "StomaCareLarsVisual"
-    // 胃癌专区专属交互模拟器
-    | "GastricAnatomyD2Visual"
-    | "GastricDumpingNutritionVisual"
-    // 原发性肝癌专区专属交互模拟器
-    | "LiverCnlcStagingVisual"
-    | "HccInterventionSystemicVisual"
-    // 食管鳞癌专区专属交互模拟器
-    | "EsophagealAnatomyStagingVisual"
-    | "EsophagealMultiModalVisual"
-    // 甲状腺癌专区专属交互模拟器
-    | "ThyroidTiradsUltrasoundVisual"
-    | "ThyroidLt4TimingIsolationVisual"
-    // 子宫内膜癌与宫颈癌专区专属交互模拟器
-    | "EndometrialMoleculeDecisionVisual"
-    | "CervicalCinProgressionVisual"
-    // 胰腺癌专区专属交互模拟器
-    | "PancreaticResectabilityVisual";
+    | "DcisBasementMembraneVisual";
 
 
   
@@ -1221,7 +1199,7 @@ export const WIKI_TOPICS: WikiTopic[] = [
         answer: "日常平价的鸡蛋、鱼肉、瘦肉和新鲜蔬菜所提供的均衡营养，效果远超任何昂贵保健品。保健品不能替代正餐，且部分成分不明的补品还可能增加肝肾代谢负担。均衡饮食最健康！"
       }
     ],
-    visualComponent: "GastricDumpingNutritionVisual",
+    visualComponent: "FollowupTimelineVisual",
     graphNodeId: "RECOVERY",
     searchKeywords: ["术后饮食", "发物误区", "蛋白质补充", "shouhouyinshi", "灵芝孢子粉", "戒烟", "海鲜能不能吃", "营养康复", "运动处方"],
   },
