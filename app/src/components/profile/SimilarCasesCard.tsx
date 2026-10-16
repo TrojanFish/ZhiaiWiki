@@ -134,8 +134,6 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
       {/* Helper functions for cancer-specialized clinical explanations */}
       {(() => {
         const isExtendedMode = cohort.displayMode === "extended_10yr";
-        const isIntermediateMode = cohort.displayMode === "intermediate_3yr";
-        const isOrganMode = cohort.displayMode === "organ_preservation";
         const isMedianMode = cohort.displayMode === "median_survival" || (cohort.os5Year?.includes("中位OS") ?? false) || (cohort.os5Year?.includes("中位 OS") ?? false);
         
         const rfsTooltip = (() => {
@@ -148,19 +146,7 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
           if (isExtendedMode) {
             return {
               title: cohort.metricLabel1 ? `什么是 ${cohort.metricLabel1}？` : "什么是 10 年远期无复发生存率 (DRFS)？",
-              content: "针对内分泌受体阳性 (HR+) 乳腺癌或惰性甲状腺微小癌，超过 50% 的复发可能发生在确诊 5 年之后（迟发复发）。采用 10~20 年超长随访周期评估远期防复发，是指导规范内分泌强化治疗与长期主动监测的科学金标准。"
-            };
-          }
-          if (isIntermediateMode) {
-            return {
-              title: cohort.metricLabel1 ? `什么是 ${cohort.metricLabel1}？` : "什么是 3 年无病生存率 (DFS)？",
-              content: "在胃肠肿瘤（结肠癌、胃癌）及早期肝癌中，复发高峰集中在治疗后前 2~3 年。国际顶级前瞻协作研究（如 IDEA 12,834例研究、RESOLVE 研究）已证实：3 年 DFS 是 5 年治愈的国际公认高精度替代终点。"
-            };
-          }
-          if (isOrganMode) {
-            return {
-              title: cohort.metricLabel1 ? `什么是 ${cohort.metricLabel1}？` : "什么是器官保留率 (保肛率)？",
-              content: "在局部进展期直肠癌接受全程新辅助治疗 (TNT) 后达到临床完全缓解 (cCR) 的患者采纳观察等待 (Watch & Wait) 策略，长期保留自主直肠肛门排便功能、免除终生腹壁造口的患者比例。"
+              content: "针对内分泌受体阳性 (HR+) 乳腺癌，超过 50% 的复发可能发生在确诊 5 年之后（迟发复发）。采用 10~12 年超长随访周期评估远期防复发，是指导规范内分泌强化治疗的科学金标准。"
             };
           }
           const cancerExplanations: Record<string, string> = {
@@ -184,14 +170,8 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
           }
           if (isExtendedMode) {
             return {
-              title: cohort.metricLabel2 ? `什么是 ${cohort.metricLabel2}？` : "什么是 10~30 年特异生存率 (DSS)？",
-              content: "超长随访中的疾病特异生存率 (DSS) 严格排除了高龄其他基础疾病死因，专注于评估该肿瘤本身的致死风险。对于低危甲状腺癌或早期乳腺癌，10~30 年 DSS >99% 标志着极高水准的生命安全与治愈确定性。"
-            };
-          }
-          if (isIntermediateMode) {
-            return {
-              title: cohort.metricLabel2 ? `什么是 ${cohort.metricLabel2}？` : "什么是 5 年总生存率 (OS)？",
-              content: "从确诊或根治手术开始，满 5 年依然健在的患者百分比。在胃肠肿瘤中，跨过 3 年关键门槛并平稳渡过 5 年，临床上即视为彻底根治治愈。"
+              title: cohort.metricLabel2 ? `什么是 ${cohort.metricLabel2}？` : "什么是 10~12 年总生存率 (OS)？",
+              content: "超长随访中的总生存率严格追踪患者长期生存状态。对于早期乳腺癌 (如 TAILORx 队列)，10~12 年 OS 超过 93%~95% 标志着极高水准的生命安全与治愈确定性。"
             };
           }
           return {
@@ -203,20 +183,16 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
         const metric1Title = cohort.metricLabel1 || (
           isMedianMode ? "中位无进展生存 (PFS)" : 
           isExtendedMode ? "10年远期无复发生存 (DRFS)" : 
-          isIntermediateMode ? "3年无病生存率 (DFS)" : 
-          isOrganMode ? "3~5年器官保留率 (保肛率)" : 
           "5年无复发生存率 (RFS)"
         );
         const metric1Sub = cohort.metricSubLabel1 || (
           isMedianMode ? "肿瘤控制周期" : 
           isExtendedMode ? "远期防复发金标准" : 
-          isIntermediateMode ? "关键替代终点" : 
-          isOrganMode ? "保留自体功能" : 
           (cohort.isPreOp ? "根治治愈潜力" : "无瘤生存指标")
         );
         const metric2Title = cohort.metricLabel2 || (
           isMedianMode ? "中位总生存期 (Median OS)" : 
-          isExtendedMode ? "10~30年疾病特异生存 (DSS)" : 
+          isExtendedMode ? "10~12年总生存率 (OS)" : 
           "5年总生存率 (OS)"
         );
         const metric2Sub = cohort.metricSubLabel2 || (

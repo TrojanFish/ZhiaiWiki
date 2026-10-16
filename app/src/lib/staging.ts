@@ -392,10 +392,8 @@ export interface KmCurveArm {
 
 export type MetricDisplayMode = 
   | "standard_5yr" 
-  | "intermediate_3yr"
   | "extended_10yr" 
   | "median_survival" 
-  | "organ_preservation" 
   | "neoadjuvant_pcr";
 
 export interface ClinicalCohortResult {

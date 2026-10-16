@@ -75,10 +75,8 @@ export default function KmSurvivalVisualizer({ cohort }: KmSurvivalVisualizerPro
 
   // 模型说明徽章文案
   const modelBadgeText = (() => {
-    if (isExtended) return "10~20年超长随访模型 (TAILORx/Kuma)";
+    if (isExtended) return "10~12年超长随访模型 (TAILORx/RxPONDER)";
     if (isMedian) return "中位生存获益模型 (Lancet/NEJM规范)";
-    if (cohort.displayMode === "intermediate_3yr") return "3年金标准替代终点模型 (IDEA/RESOLVE)";
-    if (cohort.displayMode === "organ_preservation") return "器官保留与保肛模型 (OPRA/RAPIDO)";
     return "双臂随机对照模型 (5年随访)";
   })();
 
