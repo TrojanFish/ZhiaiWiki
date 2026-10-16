@@ -298,6 +298,97 @@ export default function CancerSpecificPathologyForm({
                 <option value="non-pCR">新辅助后残存病灶 (non-pCR)</option>
               </select>
             </div>
+            <p className="text-[10px] text-slate-400">non-pCR 指导 KATHERINE/CREATE-X 强化方案</p>
+          </div>
+
+          {/* 组织学类型 */}
+          <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-800">组织学类型</span>
+              <span className="text-[10px] text-slate-400">WHO 肿瘤分类</span>
+            </div>
+            <div className="grid grid-cols-4 gap-1 h-8">
+              {[
+                { val: "IDC", label: "浸润导管" },
+                { val: "ILC", label: "小叶癌" },
+                { val: "DCIS", label: "原位癌" },
+                { val: "other", label: "特殊型" },
+              ].map(({ val, label }) => {
+                const isSelected = (data.histologyType || "IDC") === val;
+                return (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => onChange({ histologyType: val, histology: val })}
+                    className={`text-[10px] sm:text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center px-0.5 ${
+                      isSelected
+                        ? "bg-rose-600 text-white shadow-2xs"
+                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-slate-400 truncate">约 80% 为浸润导管癌(IDC)；小叶癌(ILC)具多灶倾向</p>
+          </div>
+
+          {/* 发病解剖侧别 */}
+          <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-800">发病侧别</span>
+              <span className="text-[10px] text-slate-400">原发病灶位置</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1 h-8">
+              {[
+                { val: "left", label: "左乳" },
+                { val: "right", label: "右乳" },
+                { val: "bilateral", label: "双侧" },
+              ].map(({ val, label }) => {
+                const isSelected = (data.breastLaterality || "left") === val;
+                return (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => onChange({ breastLaterality: val })}
+                    className={`text-xs rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center ${
+                      isSelected
+                        ? "bg-rose-600 text-white shadow-2xs"
+                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-slate-400 truncate">双侧乳腺癌需排除遗传性 BRCA1/2 突变高风险</p>
+          </div>
+
+          {/* BI-RADS 影像评级 */}
+          <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-800">BI-RADS 评级</span>
+              <span className="text-[10px] text-teal-700 bg-teal-50 px-1 rounded font-bold">ACR 第5版</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <select
+                value={data.biRads ? String(data.biRads).toUpperCase().replace(/BI-?RADS\s*/i, "").replace(/类/g, "") : "4B"}
+                onChange={(e) => onChange({ biRads: e.target.value })}
+                className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 cursor-pointer font-medium"
+              >
+                <option value="1">1 类 (正常阴性 · 恶性率 0%)</option>
+                <option value="2">2 类 (明确良性囊肿/假体 · 恶性率 0%)</option>
+                <option value="3">3 类 (良性可能大 · 恶性率 &le;2% · 3~6月随访)</option>
+                <option value="4A">4A 类 (低度可疑恶性 2%~10% · 建议活检)</option>
+                <option value="4B">4B 类 (中度可疑恶性 10%~50% · 规范活检)</option>
+                <option value="4C">4C 类 (高度可疑恶性 50%~95% · 立即活检)</option>
+                <option value="5">5 类 (高度提示恶性 &ge;95% · 必须活检)</option>
+                <option value="6">6 类 (病理已证实恶性 · 准备治疗方案)</option>
+              </select>
+            </div>
+            <p className="text-[10px] text-slate-400 truncate">超声 / 钼靶 / 增强 MRI 影像报告权威评级标准</p>
           </div>
         </div>
       </div>

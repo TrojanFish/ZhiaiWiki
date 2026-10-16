@@ -2412,7 +2412,7 @@ export default function ReportUploader({ onParsed, initialData, existingProfile,
 
             </div>
 
-            {/* Section: Cancer-Specific Specialized Pathology Parameters Form (for 11 non-lung cancers) */}
+            {/* Section: Cancer-Specific Specialized Pathology Parameters Form (Breast Cancer) */}
             {!isLung && (
               <CancerSpecificPathologyForm
                 cancerType={currentCancer}

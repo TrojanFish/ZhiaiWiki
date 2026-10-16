@@ -111,7 +111,7 @@ console.log(` 3. 药理禁忌召回率 (DDI Safety Recall)    : \x1b[1m\x1b[32m$
 console.log('----------------------------------------------------------------------------------------');
 
 if (allPassed) {
-  console.log('🎉 \x1b[1m\x1b[32m[All Golden Evals PASSED]\x1b[0m 8 大实体瘤 16 组里程碑复杂真实病例 100% 全量通过！');
+  console.log('🎉 \x1b[1m\x1b[32m[All Golden Evals PASSED]\x1b[0m 肺癌与乳腺癌两大肿瘤里程碑复杂真实病例 100% 全量通过！');
   console.log('系统在各专科权威分期、顶刊队列证据链及药理学相互作用拦截上均达到顶级临床就绪水准。\n');
   process.exit(0);
 } else {

@@ -254,7 +254,9 @@ async function runMasterSimulation() {
   );
 
   // 检查视觉组件注册
-  const visualsDir = path.join(process.cwd(), 'src/components/wiki/visuals');
+  const visualsDir = fs.existsSync(path.join(process.cwd(), 'src/components/wiki/visuals'))
+    ? path.join(process.cwd(), 'src/components/wiki/visuals')
+    : path.join(process.cwd(), 'app/src/components/wiki/visuals');
   const visualFiles = fs.readdirSync(visualsDir).filter(f => f.endsWith('.tsx'));
   check(
     'Visuals',
@@ -341,7 +343,10 @@ async function runMasterSimulation() {
   console.log('\n\x1b[36m▶ [11/11] 环节十一：设计系统规范、Option A 纯净白底与栅格安全边距审计\x1b[0m');
 
   // 11.1 globals.css 微排版
-  const globalsCss = fs.readFileSync(path.join(process.cwd(), 'src/app/globals.css'), 'utf-8');
+  const globalsCssPath = fs.existsSync(path.join(process.cwd(), 'src/app/globals.css'))
+    ? path.join(process.cwd(), 'src/app/globals.css')
+    : path.join(process.cwd(), 'app/src/app/globals.css');
+  const globalsCss = fs.readFileSync(globalsCssPath, 'utf-8');
   const hasTextMicro = globalsCss.includes('@utility text-micro');
   const hasTextCaption = globalsCss.includes('@utility text-caption');
   check(
@@ -353,7 +358,9 @@ async function runMasterSimulation() {
   );
 
   // 11.2 Option A: Zero dark:* classes
-  const srcDir = path.join(process.cwd(), 'src');
+  const srcDir = fs.existsSync(path.join(process.cwd(), 'src'))
+    ? path.join(process.cwd(), 'src')
+    : path.join(process.cwd(), 'app/src');
   function scanFiles(dir: string, fileList: string[] = []) {
     const files = fs.readdirSync(dir);
     for (const file of files) {
