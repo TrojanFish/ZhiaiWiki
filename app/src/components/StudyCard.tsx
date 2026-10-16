@@ -199,31 +199,63 @@ export default function StudyCard({ study, compact = false, onOpenPdf, actionExt
           </div>
         )}
 
-        {/* Structured Key Conclusions with Progressive Disclosure */}
-        <div className="mb-4 text-xs">
-          <div className="text-slate-400 text-[11px] font-semibold mb-1.5 flex items-center justify-between">
-            <span>核心临床定论</span>
-            {study.keyConclusions && study.keyConclusions.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-0.5 cursor-pointer transition-colors"
-              >
-                <span>{isExpanded ? "收起简述" : "展开完整终点"}</span>
-                {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              </button>
-            )}
-          </div>
-          
-          <div className={`space-y-1.5 text-slate-700 leading-relaxed ${isExpanded ? "" : "line-clamp-3"}`}>
-            {study.keyConclusions.map((c, i) => (
-              <div key={i} className="flex items-start gap-1.5">
-                <span className="text-teal-600 font-black mt-0.5 shrink-0">✓</span>
-                <span className="text-slate-700 font-normal">{c}</span>
+        {/* Structured Key Conclusions with Genuine Progressive Disclosure */}
+        {(() => {
+          const conclusions = study.keyConclusions || [];
+          const hasMultipleConclusions = conclusions.length > 1;
+          const firstConclusion = conclusions[0] || "";
+          const isFirstConclusionLong = firstConclusion.length > 70;
+          const canToggle = hasMultipleConclusions || isFirstConclusionLong;
+
+          return (
+            <div className="mb-4 text-xs">
+              <div className="text-slate-400 text-[11px] font-semibold mb-1.5 flex items-center justify-between">
+                <span>核心临床定论</span>
+                {canToggle && (
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-0.5 cursor-pointer transition-colors px-1.5 py-0.5 rounded hover:bg-blue-50"
+                  >
+                    <span>
+                      {isExpanded 
+                        ? "收起简述" 
+                        : hasMultipleConclusions 
+                        ? `展开全部终点 (${conclusions.length}项)` 
+                        : "展开完整数据"}
+                    </span>
+                    {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                  </button>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
+              
+              <div className="space-y-1.5 text-slate-700 leading-relaxed">
+                {isExpanded ? (
+                  conclusions.map((c, i) => (
+                    <div key={i} className="flex items-start gap-1.5 animate-fade-in">
+                      <span className="text-teal-600 font-black mt-0.5 shrink-0">✓</span>
+                      <p className="text-slate-700 font-normal">{c}</p>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-teal-600 font-black mt-0.5 shrink-0">✓</span>
+                      <p className={`text-slate-700 font-normal ${!hasMultipleConclusions && isFirstConclusionLong ? "line-clamp-2" : ""}`}>
+                        {firstConclusion}
+                      </p>
+                    </div>
+                    {hasMultipleConclusions && (
+                      <div className="pl-4 text-[11px] text-slate-400 font-medium">
+                        · 另有 {conclusions.length - 1} 项关键分层与生存获益数据（点击右上角展开）
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Footer Row: Humanized Clinical Tags & Action Buttons */}
