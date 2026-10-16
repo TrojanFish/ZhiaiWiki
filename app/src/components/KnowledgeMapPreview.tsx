@@ -24,7 +24,7 @@ const ZoomControls = () => {
   return (
     <div className="inline-flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200 shadow-2xs flex-shrink-0">
       <button 
-        onClick={() => zoomIn()} 
+        onClick={() => zoomIn(0.2)} 
         className="w-9 h-9 flex items-center justify-center rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold shadow-2xs active:scale-95 transition-all cursor-pointer"
         title="放大视图"
         aria-label="放大视图"
@@ -32,7 +32,7 @@ const ZoomControls = () => {
         <Plus className="w-4 h-4" />
       </button>
       <button 
-        onClick={() => zoomOut()} 
+        onClick={() => zoomOut(0.2)} 
         className="w-9 h-9 flex items-center justify-center rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold shadow-2xs active:scale-95 transition-all cursor-pointer"
         title="缩小视图"
         aria-label="缩小视图"
@@ -271,7 +271,8 @@ export default function KnowledgeMapPreview({ profile = null, cancerType: propCa
             minScale={0.5}
             maxScale={4}
             centerOnInit={true}
-            wheel={{ step: 0.1 }}
+            smooth={false}
+            wheel={{ step: 0.05 }}
             doubleClick={{ disabled: true }}
             panning={{ velocityDisabled: true }}
           >
