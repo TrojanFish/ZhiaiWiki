@@ -57,7 +57,7 @@ function normalizeDoi(doi) {
 
 function cleanTitle(title) {
   if (!title) return '';
-  return title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  return title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 async function runImporter() {
@@ -151,6 +151,18 @@ async function runImporter() {
         if (cleanFn.includes('nelson') || (cleanFn.includes('koning') && s.id.includes('NELSON'))) {
           score += 40;
           reasons.push('Koning+NELSON');
+        }
+        if ((cleanFn.includes('cortes') || cleanFn.includes('cortés') || cleanFn.includes('cort s')) && s.id === 'destiny_breast03_2022') {
+          score += 60;
+          reasons.push('Cortes+DESTINY-Breast03');
+        }
+        if (cleanFn.includes('wakelee') && s.id === 'KEYNOTE671_2023') {
+          score += 60;
+          reasons.push('Wakelee+KEYNOTE-671');
+        }
+        if (cleanFn.includes('bardia') && s.id === 'destiny_breast06_2024') {
+          score += 60;
+          reasons.push('Bardia+DESTINY-Breast06');
         }
 
         if (score > bestScore && score >= 35) {

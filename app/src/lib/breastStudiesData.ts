@@ -107,6 +107,27 @@ export const BREAST_STUDIES: StudyItem[] = [
     riskReduction: "-50% 疾病进展风险 (HR=0.50, P<0.001)"
   },
   {
+    id: "destiny_breast06_2024",
+    title: "Trastuzumab Deruxtecan in HER2-Low or HER2-Ultralow Advanced Breast Cancer (DESTINY-Breast06)",
+    journal: "New England Journal of Medicine (NEJM)",
+    year: 2024,
+    patientN: 866,
+    studyType: "rct",
+    evidenceLevel: 5,
+    doi: "10.1056/NEJMoa2407086",
+    pubmedId: "39282914",
+    url: "https://www.nejm.org/doi/full/10.1056/NEJMoa2407086",
+    keyConclusions: [
+      "在既往接受过内分泌治疗进展的 HR+ 转移性乳腺癌患者中，T-DXd 治疗 HER2-Low 患者的中位无进展生存期 (PFS) 显著延长至 13.2 个月 (化疗对照组 8.1 个月，疾病进展或死亡风险降低 38%, HR=0.62)。",
+      "突破性扩展至 HER2 超低表达 (HER2-Ultralow: IHC 0 伴微弱不完整细胞膜着色 ≤10%) 群体：中位 PFS 同样达到 13.2 个月 (对照组 8.3 个月, HR=0.78)，正式打破传统 IHC 0 无靶向药物可用的历史瓶颈。"
+    ],
+    relevantFactors: ["HER2超低表达", "HER2-Ultralow", "T-DXd", "DESTINY-Breast06", "内分泌耐药"],
+    applicableStages: ["IV", "晚期", "复发转移"],
+    biomarkerDetails: "HR+ / HER2-Low (IHC 1+ 或 2+/FISH-) 或 HER2-Ultralow (IHC 0 伴微弱膜着色)",
+    interventionArm: "德曲妥珠单抗 (T-DXd 5.4 mg/kg Q3W) vs 医生选择的化疗",
+    riskReduction: "-38% 疾病进展或死亡风险 (HER2-Low HR=0.62, P<0.0001; Ultralow HR=0.78)"
+  },
+  {
     id: "acosog_z0011_2017",
     title: "Effect of Axillary Dissection vs No Axillary Dissection on 10-Year Overall Survival Among Women With Invasive Breast Cancer and Sentinel Node Metastases (ACOSOG Z0011)",
     journal: "Journal of the American Medical Association (JAMA)",
