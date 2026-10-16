@@ -135,6 +135,16 @@ export interface BreastSpecificData {
   // 辅助妇科与骨密度评估
   pelvicUltrasound?: "normal" | "thickened_endometrium" | "not_performed" | string | null;
   dxaScan?: "normal" | "osteopenia" | "osteoporosis" | "not_performed" | string | null;
+
+  // 绝经前卵巢功能抑制 (OFS) 评估 (SOFT/TEXT 试验) 与双向器官保护
+  ofsStatus?: "not_needed" | "recommended" | "receiving" | "unknown" | string | null;
+  ofsDrug?: "goserelin" | "leuprorelin" | "triptorelin" | string | null;
+  endocrineOrganProtection?: {
+    boneProtectionRequired?: boolean;
+    dxaStatus?: "normal" | "osteopenia" | "osteoporosis" | "not_performed" | string | null;
+    endometrialMonitoringRequired?: boolean;
+    pelvicUltrasoundStatus?: "normal" | "thickened_endometrium" | "not_performed" | string | null;
+  } | null;
 }
 
 

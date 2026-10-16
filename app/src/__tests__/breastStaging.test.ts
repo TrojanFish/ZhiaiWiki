@@ -520,5 +520,166 @@ describe('AJCC 8th/9th Breast Cancer Staging Engine & BI-RADS', () => {
         expect(cohort.keyFactors.some(f => f.includes('Ki-67 临界灰区'))).toBe(true);
       });
     });
+
+    describe('Premenopausal OFS Endocrine Escalation (SOFT / TEXT Trials)', () => {
+      it('should trigger OFS recommendation for premenopausal HR+ with positive lymph nodes', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 2.5,
+          axillaryNodesPositive: 2,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '1+',
+          ki67: 15,
+          grade: '2',
+          menopauseStatus: 'pre',
+          age: 42
+        });
+
+        expect(res.ofsNotice).toBeDefined();
+        expect(res.ofsNotice?.title).toContain('OFS');
+        expect(res.ofsNotice?.recommendation).toContain('SOFT / TEXT');
+        expect(res.ofsNotice?.recommendation).toContain('戈舍瑞林');
+        expect(res.ofsNotice?.clinicalEvidence).toContain('24%~35%');
+        expect(res.ofsNotice?.e2MonitoringNote).toContain('<30 pg/mL');
+        expect(res.treatmentDirection).toContain('【绝经前强化内分泌 (SOFT/TEXT 循证)】');
+        expect(res.explanation).toContain('【绝经前 OFS 强化内分泌治疗推荐】');
+      });
+
+      it('should trigger OFS recommendation for premenopausal young age (<35) even with N0', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 1.5,
+          axillaryNodesPositive: 0,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '0',
+          ki67: 15,
+          grade: '2',
+          menopauseStatus: 'pre',
+          age: 32
+        });
+
+        expect(res.ofsNotice).toBeDefined();
+        expect(res.ofsNotice?.recommendation).toContain('SOFT / TEXT');
+      });
+
+      it('should trigger OFS recommendation for premenopausal with high Ki-67 (>=20%) or Grade 3', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 1.8,
+          axillaryNodesPositive: 0,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '1+',
+          ki67: 35,
+          grade: '3',
+          menopauseStatus: 'pre',
+          age: 46
+        });
+
+        expect(res.ofsNotice).toBeDefined();
+        expect(res.ofsNotice?.clinicalEvidence).toContain('DFS');
+      });
+
+      it('should not trigger OFS recommendation for postmenopausal patients', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 2.5,
+          axillaryNodesPositive: 2,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '1+',
+          ki67: 25,
+          grade: '3',
+          menopauseStatus: 'post',
+          age: 62
+        });
+
+        expect(res.ofsNotice).toBeNull();
+      });
+
+      it('should not trigger OFS recommendation for premenopausal low-risk patients (N0, G1, Ki-67 5%, age 45)', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 1.2,
+          axillaryNodesPositive: 0,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '1+',
+          ki67: 5,
+          grade: '1',
+          menopauseStatus: 'pre',
+          age: 45
+        });
+
+        expect(res.ofsNotice).toBeNull();
+      });
+    });
+
+    describe('Endocrine Bilateral Organ Protection Monitoring (AI Bone & TAM Endometrium)', () => {
+      it('should provide bone protection notice for postmenopausal AI candidates', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 1.5,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '0',
+          menopauseStatus: 'post'
+        });
+
+        expect(res.organProtectionNotice).toBeDefined();
+        expect(res.organProtectionNotice?.boneProtection).toContain('DXA');
+        expect(res.organProtectionNotice?.boneProtection).toContain('ABCSG-18');
+        expect(res.organProtectionNotice?.boneProtection).toContain('T-score < -2.0');
+        expect(res.organProtectionNotice?.boneProtection).toContain('地舒单抗');
+        expect(res.treatmentDirection).toContain('【骨健康监测】');
+        expect(res.explanation).toContain('【骨骼健康守护基线 (AI 芳香化酶抑制剂)】');
+      });
+
+      it('should provide endometrial safety notice for TAM candidates', () => {
+        const res = computeBreastClinicalStage({
+          tumorSize: 1.5,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '0',
+          menopauseStatus: 'pre'
+        });
+
+        expect(res.organProtectionNotice).toBeDefined();
+        expect(res.organProtectionNotice?.endometrialSafety).toContain('经阴道彩超 (TVUS)');
+        expect(res.organProtectionNotice?.endometrialSafety).toContain('>5mm');
+        expect(res.treatmentDirection).toContain('【内膜监测】');
+        expect(res.explanation).toContain('【子宫内膜安全警戒 (他莫昔芬 TAM)】');
+      });
+    });
+
+    describe('HER2-Zero DESTINY-Breast06 Ultralow Clinical Frontier', () => {
+      it('should annotate HER2 IHC 0 with DESTINY-Breast06 ultralow trial progress', () => {
+        const res = deriveHer2StatusCategory({ her2Status: '0' });
+
+        expect(res.category).toBe('zero');
+        expect(res.evidenceNote).toContain('DESTINY-Breast06');
+        expect(res.evidenceNote).toContain('HER2-Ultralow');
+        expect(res.evidenceNote).toContain('德曲妥珠单抗');
+      });
+    });
+
+    describe('CancerRegistry Integration for Breast Plugin', () => {
+      it('should forward ofs and organ protection fields through computeCancerStage', () => {
+        const res = computeCancerStage('breast', {
+          tumorSize: 2.2,
+          axillaryNodesPositive: 2,
+          erStatus: 'positive',
+          prStatus: 'positive',
+          her2Status: '0',
+          grade: '3',
+          ki67: 30,
+          menopauseStatus: 'pre',
+          age: 34,
+          ofsStatus: 'receiving',
+          ofsDrug: 'goserelin'
+        });
+
+        expect(res.cancerType).toBe('breast');
+        expect((res as any).ofsNotice).toBeDefined();
+        expect((res as any).ofsNotice?.recommendation).toContain('SOFT / TEXT');
+        expect((res as any).organProtectionNotice).toBeDefined();
+      });
+    });
   });
 });

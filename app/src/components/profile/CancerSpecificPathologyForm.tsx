@@ -301,6 +301,101 @@ export default function CancerSpecificPathologyForm({
             <p className="text-[10px] text-slate-400">non-pCR 指导 KATHERINE/CREATE-X 强化方案</p>
           </div>
 
+          {/* 绝经前 OFS 卵巢功能抑制 (SOFT/TEXT) */}
+          {(data.menopauseStatus === "pre" || data.menopauseStatus === "peri") && (
+            <div className="bg-rose-50/50 p-3 rounded-xl border border-rose-200 space-y-1.5 sm:col-span-2 lg:col-span-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-rose-950 flex items-center gap-1.5">
+                  <span>卵巢功能抑制 (OFS 停经针)</span>
+                  <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-1.5 py-0.5 rounded">SOFT/TEXT 循证</span>
+                </span>
+                <span className="text-[10px] text-rose-600 font-medium">中高危 HR+ 强化 5 年</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] text-slate-500 block mb-0.5">OFS 执行状态</label>
+                  <select
+                    value={data.ofsStatus || "unknown"}
+                    onChange={(e) => onChange({ ofsStatus: e.target.value })}
+                    className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 cursor-pointer"
+                  >
+                    <option value="unknown">未评估 / 待定</option>
+                    <option value="recommended">评估建议使用 (中高危指征)</option>
+                    <option value="receiving">正在注射停经针</option>
+                    <option value="not_needed">无需联合 (极低危/已绝经)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-slate-500 block mb-0.5">GnRHa 选用药物</label>
+                  <select
+                    value={data.ofsDrug || "goserelin"}
+                    onChange={(e) => onChange({ ofsDrug: e.target.value })}
+                    className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 cursor-pointer"
+                  >
+                    <option value="goserelin">醋酸戈舍瑞林 (诺雷得 3.6mg 每28天)</option>
+                    <option value="leuprorelin">醋酸亮丙瑞林 (抑那通 3.75mg/11.25mg)</option>
+                    <option value="triptorelin">注射用曲普瑞林 (达菲林 3.75mg)</option>
+                  </select>
+                </div>
+              </div>
+              <p className="text-[10px] text-rose-700/80">提示：使用 GnRHa 期间需定期监测血清雌二醇 (E2 &lt; 30 pg/mL)，确保卵巢完全脱敏</p>
+            </div>
+          )}
+
+          {/* 内分泌双向器官保护监测 (AI 骨骼 + TAM 内膜) */}
+          <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1.5 sm:col-span-2 lg:col-span-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-800">内分泌器官安全监测 (骨密度 DXA &amp; 妇科超声 TVUS)</span>
+              <span className="text-[10px] text-slate-500 font-semibold">ABCSG-18 护骨与内膜防线</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label className="text-[10px] text-slate-500 block mb-0.5">骨密度状态 (DXA T-score / AI用药者)</label>
+                <select
+                  value={data.endocrineOrganProtection?.dxaStatus || "unknown"}
+                  onChange={(e) => {
+                    const current = data.endocrineOrganProtection || {};
+                    onChange({
+                      endocrineOrganProtection: {
+                        ...current,
+                        boneProtectionRequired: e.target.value === "osteoporosis" || e.target.value === "osteopenia",
+                        dxaStatus: e.target.value,
+                      }
+                    });
+                  }}
+                  className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 cursor-pointer"
+                >
+                  <option value="unknown">未查 / 状态未知</option>
+                  <option value="normal">正常 (T &gt; -1.0) · 基础补钙/维D3</option>
+                  <option value="osteopenia">骨量减少 (-2.5 &lt; T &le; -1.0) · 密切随访</option>
+                  <option value="osteoporosis">骨质疏松 (T &le; -2.5) · 推荐地舒单抗/唑来膦酸</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] text-slate-500 block mb-0.5">子宫内膜监测 (TVUS 妇科超声 / TAM用药者)</label>
+                <select
+                  value={data.endocrineOrganProtection?.pelvicUltrasoundStatus || "unknown"}
+                  onChange={(e) => {
+                    const current = data.endocrineOrganProtection || {};
+                    onChange({
+                      endocrineOrganProtection: {
+                        ...current,
+                        endometrialMonitoringRequired: e.target.value === "thickened",
+                        pelvicUltrasoundStatus: e.target.value,
+                      }
+                    });
+                  }}
+                  className="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 cursor-pointer"
+                >
+                  <option value="unknown">未查 / 状态未知</option>
+                  <option value="normal">内膜正常 (绝经后 &le;5mm 或均质)</option>
+                  <option value="thickened">内膜增厚 (&gt;5mm) · 建议宫腔镜活检</option>
+                </select>
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-400">AI 用药诱发骨质流失需 DXA 监测；TAM 用药需每年行阴道彩超并警惕异常出血</p>
+          </div>
+
           {/* 组织学类型 */}
           <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1.5">
             <div className="flex items-center justify-between">

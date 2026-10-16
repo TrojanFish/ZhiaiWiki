@@ -647,5 +647,31 @@ describe('IASLC / AJCC 第 9 版 (2024 现行国际金标准) TNM Staging Engine
       expect(rExplicitT.stage).toBe('IA2');
     });
   });
+
+  describe('Multiple GGOs / SMPLC (Synchronous Multiple Primary Lung Cancers) Staging Rules', () => {
+    it('should generate SMPLC guidance and prevent misclassification as M1a metastasis', () => {
+      const res = computeClinicalTnmStage({
+        noduleType: 'mixed_ggo',
+        tumorSize: 1.8,
+        solidSize: 0.6,
+        nStage: 'N0',
+        mStage: 'M0',
+        isMultipleNodules: true,
+        secondaryNodules: [
+          { location: '左肺下叶', sizeMm: 6, type: 'pure_ggo' },
+          { location: '右肺下叶', sizeMm: 4, type: 'pure_ggo' }
+        ]
+      });
+
+      expect(res.isMultipleNodules).toBe(true);
+      expect(res.smplcNotice).toBeDefined();
+      expect(res.smplcNotice?.title).toContain('SMPLC');
+      expect(res.smplcNotice?.distinction).toContain('ACCP');
+      expect(res.smplcNotice?.distinction).toContain('IASLC');
+      expect(res.smplcNotice?.chemoWarning).toContain('严禁将多发磨玻璃结节误定为 IV 期');
+      expect(res.explanation).toContain('【多发磨玻璃结节 (SMPLC) 鉴别说明】');
+      expect(res.stage).toBe('IA1'); // Dominant nodule staged independently
+    });
+  });
 });
 

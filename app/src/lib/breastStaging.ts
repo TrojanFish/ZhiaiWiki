@@ -32,6 +32,17 @@ export interface BreastStagingInput {
   brca1?: "positive" | "negative" | "unknown" | string | null;
   brca2?: "positive" | "negative" | "unknown" | string | null;
   menopauseStatus?: "pre" | "post" | "peri" | "unknown" | string | null; // 绝经状态 (对 RxPONDER 与内分泌选药至关重要)
+  age?: number | null; // 年龄 (岁，<35 岁为绝经前中高危因素之一)
+
+  // 卵巢功能抑制 (OFS) 与器官保护参数
+  ofsStatus?: "not_needed" | "recommended" | "receiving" | "unknown" | string | null;
+  ofsDrug?: "goserelin" | "leuprorelin" | "triptorelin" | string | null;
+  endocrineOrganProtection?: {
+    boneProtectionRequired?: boolean;
+    dxaStatus?: "normal" | "osteopenia" | "osteoporosis" | "unknown" | string | null;
+    endometrialMonitoringRequired?: boolean;
+    pelvicUltrasoundStatus?: "normal" | "thickened" | "unknown" | string | null;
+  } | null;
 
   // 淋巴结清扫详细计数
   sentinelNodesPositive?: number | null;
@@ -42,7 +53,7 @@ export interface BreastStagingInput {
 
   // 新辅助化疗与病理缓解标记 (v3.1)
   neoadjuvantChemo?: boolean | null;
-  pcrStatus?: "ypT0isN0" | "partial_response" | "non_pcr" | "pCR" | "non_pCR" | string | null;
+  pcrStatus?: "ypT0isN0" | "partial_response" | "non_pCR" | "pCR" | "non_pcr" | string | null;
 }
 
 export interface BreastStagingResult {
@@ -75,6 +86,20 @@ export interface BreastStagingResult {
   // Ki-67 临界灰区说明 (v3.1)
   isKi67GrayZone?: boolean;
   ki67Notice?: string | null;
+
+  // 绝经前强化内分泌 (SOFT / TEXT 12年随访循证)
+  ofsNotice?: {
+    title: string;
+    recommendation: string;
+    clinicalEvidence: string;
+    e2MonitoringNote: string;
+  } | null;
+
+  // 内分泌器官靶向守护 (AI 骨质疏松 / TAM 子宫内膜双向监测)
+  organProtectionNotice?: {
+    boneProtection?: string;
+    endometrialSafety?: string;
+  } | null;
 }
 
 /**
@@ -188,7 +213,7 @@ export function deriveHer2StatusCategory(input: {
       isHer2Low: false,
       isHer2Zero: true,
       tDxdEligible: false,
-      evidenceNote: "HER2 IHC 0 表达，暂未纳入当前 DESTINY-Breast04 靶向 ADC 适应症范围。"
+      evidenceNote: "HER2 IHC 0 零表达，符合当前临床常规指南 HER2 阴性基线。前沿进展：ASCO 2024 / NEJM 2024 顶会重磅成果 DESTINY-Breast06 正在探索超低表达 (HER2-Ultralow: IHC 0 伴微弱不完整细胞膜着色 ≤10%) 患者对 ADC 德曲妥珠单抗 (T-DXd) 的获益，该适应症正处于国际指南吸纳与拓展阶段。"
     };
   }
 
@@ -585,6 +610,52 @@ export function computeBreastClinicalStage(input: BreastStagingInput): BreastSta
     treatmentDirection += "【新辅助后续决策】：请结合术后病理 pCR 与 RCB 评分决策强化辅助治疗（如非 pCR HER2+ 换用 T-DM1，三阴性加用卡培他滨）。";
   }
 
+  // 绝经前强化内分泌 (SOFT / TEXT 12年随访循证)
+  const isHrPositive = subtype === "Luminal_A" || subtype === "Luminal_B_HER2_neg" || subtype === "Luminal_B_HER2_pos";
+  const isNodePositive = nStage !== "N0" && !nStage.includes("0") && nStage !== "Nx";
+  const isGrade3 = input.grade === "3" || input.grade === "G3";
+  const isHighKi67 = input.ki67 != null && Number(input.ki67) >= 20;
+  const isYoungAge = input.age != null && Number(input.age) < 35;
+  const isPreMenopausalHighRisk = isPreMenopausal && isHrPositive && (isNodePositive || isGrade3 || isHighKi67 || isYoungAge || isNeoadjuvant);
+
+  let ofsNotice: {
+    title: string;
+    recommendation: string;
+    clinicalEvidence: string;
+    e2MonitoringNote: string;
+  } | null = null;
+
+  if (isPreMenopausalHighRisk) {
+    ofsNotice = {
+      title: "绝经前中高危 HR+ 强化内分泌治疗推荐 (OFS 卵巢功能抑制)",
+      recommendation: "根据 SOFT / TEXT 国际里程碑 12 年随访数据，对于绝经前合并淋巴结阳性、G3 高级、Ki-67 ≥20% 或年龄 <35 岁的中高危患者，强烈推荐联合卵巢功能抑制 (OFS: 戈舍瑞林 / 亮丙瑞林 / 曲普瑞林) + 芳香化酶抑制剂 (AI) 或 OFS + 他莫昔芬 (TAM)，疗程 5 年。",
+      clinicalEvidence: "SOFT/TEXT 联合分析证实：OFS + AI 相比单纯 TAM 显著降低远期复发风险 24%~35%，8~12 年无病生存率 (DFS) 净获益 4%~8%，对年轻及化疗后未闭经的高危患者保护效益尤为突出。",
+      e2MonitoringNote: "临床金标准安全提醒：使用 GnRHa (OFS) 期间，必须定期监测血清雌二醇 (E2) 与 FSH 水平，确保 E2 持续处于绝经后水平 (<30 pg/mL)，防止卵巢未完全抑制诱发内源性激素激增与治疗逃逸。"
+    };
+    treatmentDirection += "【绝经前强化内分泌 (SOFT/TEXT 循证)】：患者属于绝经前伴中高危特征，强烈推荐采用 OFS (GnRHa: 戈舍瑞林/亮丙瑞林/曲普瑞林) 联合 AI (芳香化酶抑制剂) 或 OFS + TAM，疗程 5 年，显著降低复发风险并提升长期 DFS。用药期间须定期监测 E2 (<30 pg/mL) 确保完全脱敏。";
+  }
+
+  // 内分泌器官靶向守护 (AI 骨质疏松 / TAM 子宫内膜双向监测)
+  let organProtectionNotice: {
+    boneProtection?: string;
+    endometrialSafety?: string;
+  } | null = null;
+
+  if (isHrPositive) {
+    organProtectionNotice = {};
+    const isAiCandidate = isPostMenopausal || isPreMenopausalHighRisk || input.ofsStatus === "receiving" || input.ofsStatus === "recommended";
+    const isTamCandidate = !isPostMenopausal || input.ofsStatus === "not_needed";
+
+    if (isAiCandidate) {
+      organProtectionNotice.boneProtection = "【骨骼健康守护基线 (AI 芳香化酶抑制剂)】：芳香化酶抑制剂可导致骨密度加速下降。基线及每 1~2 年必须行 DXA 骨密度检测；基础补充钙剂 (1000~1200mg/d) + 维生素 D3 (800~1000 IU/d)；若 T-score < -2.0 或伴高危骨折风险，遵照 ABCSG-18 试验联合地舒单抗 (Denosumab 60mg 每 6 个月) 或唑来膦酸 (4mg 每 6 个月) 抑制骨质流失与降低骨转移复发。";
+      treatmentDirection += "【骨健康监测】：AI 治疗期须基线及定期完善 DXA 骨密度检查，补足钙/维D3，防范 AI 诱导骨丢失 (AIBL)。";
+    }
+    if (isTamCandidate) {
+      organProtectionNotice.endometrialSafety = "【子宫内膜安全警戒 (他莫昔芬 TAM)】：他莫昔芬对子宫内膜具弱雌激素激动活性。服药期间建议每年完善经阴道彩超 (TVUS)；绝经后内膜厚度 >5mm 或出现异常阴道流血、排液，须立即行内膜活检排除内膜增生或恶变。";
+      treatmentDirection += "【内膜监测】：TAM 治疗期每年行妇科经阴道彩超，警惕异常阴道出血并监测内膜厚度。";
+    }
+  }
+
   let explanation = `【AJCC 现行标准分期评估】：解剖学分期为 ${anatomicalStage} 期 (${tStage} ${nStage} ${mStage})。经受体与生物学因子校准，病理预后分期确定为 Stage ${prognosticStage} 期。分子分型为：${molecularSubtypeLabel}。`;
 
   if (isNeoadjuvant && ypTnmNotice) {
@@ -597,6 +668,18 @@ export function computeBreastClinicalStage(input: BreastStagingInput): BreastSta
 
   if (her2Category === "low" && her2LowNotice) {
     explanation += `\n\n【HER2-Low 靶向线索说明】：${her2LowNotice}`;
+  }
+
+  if (ofsNotice) {
+    explanation += `\n\n【绝经前 OFS 强化内分泌治疗推荐】：SOFT / TEXT 12 年前瞻 RCT 随访证实，绝经前中高危患者联合 OFS 相比单纯 TAM，无病生存率 (DFS) 提升 4%~8%，复发风险显著降低 24%~35%。必须警惕 GnRHa 用药中的 E2 逃逸，建议定期复查雌二醇水平。`;
+  }
+
+  if (organProtectionNotice?.boneProtection) {
+    explanation += `\n\n${organProtectionNotice.boneProtection}`;
+  }
+
+  if (organProtectionNotice?.endometrialSafety) {
+    explanation += `\n\n${organProtectionNotice.endometrialSafety}`;
   }
 
   return {
@@ -617,7 +700,9 @@ export function computeBreastClinicalStage(input: BreastStagingInput): BreastSta
     her2Category,
     her2LowNotice,
     isKi67GrayZone,
-    ki67Notice
+    ki67Notice,
+    ofsNotice,
+    organProtectionNotice
   };
 }
 

@@ -27,6 +27,16 @@ export interface StagingInput {
   lvi?: boolean | string | null;
   marginStatus?: string | null;
   marginDistanceMm?: number | null; // Surgical resection margin distance to tumor edge in mm (JCOG0804/0802 guidelines)
+
+  // 肺内多发磨玻璃结节 (SMPLC 同期多原发 vs 转移 M1a 鉴别)
+  isMultipleNodules?: boolean | null;
+  multipleGgoCount?: number | null;
+  secondaryNodules?: Array<{
+    location?: string;
+    sizeMm?: number;
+    size?: number;
+    type?: string;
+  }> | null;
 }
 
 export interface StagingResult {
@@ -47,6 +57,15 @@ export interface StagingResult {
   marginSafety?: "safe" | "close_margin" | "positive";
   marginNotice?: string;
   versionBridgeNotice?: string; // 历史版本演变释疑 (针对拿第8版旧报告的患者)
+
+  // SMPLC 多原发鉴别结果
+  isMultipleNodules?: boolean;
+  smplcNotice?: {
+    title: string;
+    distinction: string;
+    managementPrinciple: string;
+    chemoWarning: string;
+  } | null;
 }
 
 export function computeClinicalTnmStage(input: StagingInput): StagingResult {
@@ -336,6 +355,29 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
     explanation += ` (⚠️【病理冲突提示】：原位腺癌 Tis 依定义未突破上皮基底膜，病理学上不应伴随 ${nStage} 淋巴结转移，请核查输入数据)`;
   }
 
+  // 3.2 肺内多发亚实性结节/磨玻璃结节 (SMPLC) 鉴别与防误升期防护 (ACCP / IASLC 官方指南)
+  const isMultiple = Boolean(
+    input.isMultipleNodules === true ||
+    (input.secondaryNodules && input.secondaryNodules.length > 0)
+  );
+
+  let smplcNotice: {
+    title: string;
+    distinction: string;
+    managementPrinciple: string;
+    chemoWarning: string;
+  } | null = null;
+
+  if (isMultiple) {
+    smplcNotice = {
+      title: "多发磨玻璃结节 (SMPLC) 与晚期转移鉴别指引",
+      distinction: "依据 ACCP 与 IASLC 官方指南共识：肺内多发亚实性/磨玻璃结节 (GGO) 绝大多数为多中心同时原发性肺癌 (SMPLC) 或腺骨前体病变，各结节生长完全独立、驱动基因高度异质，临床及病理上绝不可轻易判定为晚期肺内播散/转移 (M1a)。",
+      managementPrinciple: "分期与外科原则：当前分期以最大/实性成分最多的「优势主病灶 (Dominant Nodule)」为准进行独立 TNM 分期；对于其余次要亚实性结节采取保全肺功能的长期 HRCT 随访或有限局部消融/楔形切除，严防盲目扩大切除导致呼吸衰竭。",
+      chemoWarning: "⚠️ 临床警戒红线：严禁将多发磨玻璃结节误定为 IV 期远处转移而过早施行高毒性全身化疗。应交由胸外科与呼吸科多学科会诊 (MDT) 综合研判。"
+    };
+    explanation += `\n\n【多发磨玻璃结节 (SMPLC) 鉴别说明】：依据 ACCP / IASLC 共识，肺内多发磨玻璃病灶绝大多数为独立多原发癌 (SMPLC)，当前分期以优势主病灶为基准。严禁武断定为 M1a 晚期转移，坚决杜绝因多发结节施行不必要的全身性剧烈化疗。`;
+  }
+
   // 4. Surgical Resection Margin Safety Calculation (JCOG0804 & JCOG0802 Guidelines)
   let marginSafety: "safe" | "close_margin" | "positive" = "safe";
   let marginNotice: string | undefined;
@@ -371,7 +413,9 @@ export function computeClinicalTnmStage(input: StagingInput): StagingResult {
     isSubsolidAdjusted,
     marginSafety,
     marginNotice,
-    versionBridgeNotice
+    versionBridgeNotice,
+    isMultipleNodules: isMultiple,
+    smplcNotice
   };
 }
 

@@ -43,6 +43,8 @@ export const lungPlugin: CancerPluginSpec = {
         lvi: input.lvi,
         marginStatus: input.marginStatus,
         marginDistanceMm: input.marginDistanceMm,
+        isMultipleNodules: input.isMultipleNodules ?? input.cancerSpecificData?.isMultipleNodules,
+        secondaryNodules: input.secondaryNodules ?? input.cancerSpecificData?.secondaryNodules,
       });
 
       return {
@@ -53,6 +55,8 @@ export const lungPlugin: CancerPluginSpec = {
         mStage: res.mStage,
         explanation: res.explanation,
         versionNotice: res.versionBridgeNotice,
+        isMultipleNodules: res.isMultipleNodules,
+        smplcNotice: res.smplcNotice,
       };
     },
     getCohort: (profile: any) => getClinicalCohortForProfile(profile),
