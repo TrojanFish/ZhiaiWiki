@@ -1092,7 +1092,7 @@ export const LANDMARK_TRIAL_CRITERIA: Record<string, {
         id: "lv9",
         criterion: "难治性重度高血压（经标准三联降压药物规律治疗后收缩压仍 ≥ 150 mmHg 或舒张压 ≥ 100 mmHg）",
         type: "exclusion",
-        patientMatch: "preferred",
+        patientMatch: "met",
         importance: "preferred",
         detail: "基线血压需控制良好，以防贝伐珠单抗治疗期间诱发恶性高血压事件。",
       },

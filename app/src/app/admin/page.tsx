@@ -1582,6 +1582,18 @@ export default function AdminPage() {
 
                       <td className="py-4 pl-3 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
+                          {(s.pdfFileName || (s as any).pdfUrl) && (
+                            <a
+                              href={(s as any).pdfUrl || `/papers/${s.pdfFileName}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-sky-700 hover:text-sky-900 px-2 py-1 bg-sky-50 hover:bg-sky-100 rounded flex items-center gap-1 border border-sky-200 font-semibold"
+                              title="查阅已归档的原版 PDF 佐证"
+                            >
+                              <FileText className="w-3 h-3" />
+                              <span>PDF</span>
+                            </a>
+                          )}
                           {(s.url || s.doi) && (
                             <a
                               href={s.url || `https://doi.org/${s.doi}`}

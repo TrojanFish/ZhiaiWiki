@@ -83,6 +83,26 @@ export async function POST(request: Request) {
 
     const extracted = JSON.parse(cleanedText);
 
+    // Safely save uploaded original PDF into public/papers directory
+    let safeFileName = (fileName || `uploaded_${Date.now()}.pdf`).replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+    if (!safeFileName.toLowerCase().endsWith('.pdf')) {
+      safeFileName += '.pdf';
+    }
+
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      const papersDir = path.join(process.cwd(), 'public', 'papers');
+      if (!fs.existsSync(papersDir)) {
+        fs.mkdirSync(papersDir, { recursive: true });
+      }
+      const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');
+      const buffer = Buffer.from(cleanBase64, 'base64');
+      fs.writeFileSync(path.join(papersDir, safeFileName), buffer);
+    } catch (fileErr) {
+      console.warn('Could not persist uploaded PDF file to public/papers:', fileErr);
+    }
+
     // Provide safe defaults
     const resultData = {
       title: extracted.title || fileName || "未命名医学研究论文",
@@ -107,7 +127,9 @@ export async function POST(request: Request) {
       summary: extracted.summary || "基于上传 PDF 提取的研究背景与方法。",
       conclusion: extracted.conclusion || "基于上传 PDF 提取的临床预后结论。",
       keywords: extracted.keywords || "lung cancer, oncology, evidence",
-      pdfFileName: fileName || "uploaded_paper.pdf",
+      pdfFileName: safeFileName,
+      pdfUrl: `/papers/${safeFileName}`,
+      hasLocalPdf: true,
     };
 
     return NextResponse.json({ success: true, data: resultData });

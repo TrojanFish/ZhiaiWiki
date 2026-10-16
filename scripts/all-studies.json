@@ -1,0 +1,2867 @@
+[
+  {
+    "id": "JCOG0802_2022",
+    "cancerType": "lung",
+    "title": "Segmentectomy versus lobectomy in small-sized peripheral non-small-cell lung cancer (JCOG0802/WJOG4607L)",
+    "journal": "Lancet",
+    "year": 2022,
+    "patientN": 1106,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(21)02333-3",
+    "pubmedId": "35461563",
+    "keyConclusions": [
+      "≤2cm CTR>0.5 周围型早期肺癌，肺段切除在5年总生存率上显著优于肺叶切除 (OS 94.3% vs 91.1%, HR=0.663)",
+      "证实解剖性肺段切除在保留肺功能的同时带来生存获益",
+      "确立精准肺段切除为小型周围型肺癌新的标准术式"
+    ],
+    "relevantFactors": [
+      "TUMOR_SIZE",
+      "SURGERY_TYPE",
+      "CTR"
+    ],
+    "applicableStages": [
+      "IA",
+      "IA1",
+      "IA2"
+    ]
+  },
+  {
+    "id": "CALGB140503_2023",
+    "cancerType": "lung",
+    "title": "Sublobar Resection versus Lobectomy for Small Stage IA Non-Small-Cell Lung Cancer (CALGB 140503/Alliance)",
+    "journal": "N Engl J Med",
+    "year": 2023,
+    "patientN": 697,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2212083",
+    "pubmedId": "36757978",
+    "keyConclusions": [
+      "全球多中心证实：经严格病理确认淋巴结阴性（N0）的 ≤2cm IA期肺癌，亚肺叶与肺叶切除无病生存期等效 (DFS HR=1.01)",
+      "两组5年无病生存率 (63.6% vs 64.1%) 与5年总生存率 (80.3% vs 78.9%, OS HR=0.99) 完全一致",
+      "确证亚肺叶切除（肺段/楔切）在西方人群中的全球等效性与安全性"
+    ],
+    "relevantFactors": [
+      "TUMOR_SIZE",
+      "SURGERY_TYPE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IA1",
+      "IA2"
+    ]
+  },
+  {
+    "id": "JCOG1211_2023",
+    "cancerType": "lung",
+    "title": "Segmentectomy for Ground-Glass-Dominant Lung Cancer with CTR 0.25-0.50 (JCOG1211)",
+    "journal": "Lancet Respir Med",
+    "year": 2023,
+    "patientN": 396,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/S2213-2600(23)00096-7",
+    "pubmedId": "37119830",
+    "keyConclusions": [
+      "针对 ≤3cm 且 CTR 0.25-0.50 的磨玻璃主导型早期肺腺癌，解剖性肺段切除 5年 RFS 高达 98.2% (95%CI 96.2-99.1)",
+      "肺段切除 5年 OS 达 98.4%，局部复发率仅 0.6%",
+      "证实 2-3cm 但 CTR≤0.5 的结节无需做全叶切除，行保肺段切即可获得极佳治愈率"
+    ],
+    "relevantFactors": [
+      "CTR",
+      "SURGERY_TYPE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IA1",
+      "IA2",
+      "IA3"
+    ]
+  },
+  {
+    "id": "JCOG0804_2022",
+    "cancerType": "lung",
+    "title": "Sublobar resection for clinical stage IA radiological noninvasive lung cancer (JCOG0804/WJOG4507L)",
+    "journal": "J Thorac Cardiovasc Surg",
+    "year": 2022,
+    "patientN": 333,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.jtcvs.2021.11.026",
+    "pubmedId": "34919532",
+    "keyConclusions": [
+      "CTR≤0.25 的 ≤2cm 放射学非浸润性肺癌行亚肺叶切除，5年 RFS 达 99.7%",
+      "中位随访期间局部复发率为 0%",
+      "支持低实性成分患者安全施行局部楔形切除或肺段切除"
+    ],
+    "relevantFactors": [
+      "CTR",
+      "SURGERY_TYPE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IA1"
+    ]
+  },
+  {
+    "id": "Wang_Meta_Chest_2021",
+    "cancerType": "lung",
+    "title": "Prognostic impact of spread through air spaces in NSCLC: a systematic review and meta-analysis",
+    "journal": "Chest",
+    "year": 2021,
+    "patientN": 25467,
+    "studyType": "meta_analysis",
+    "evidenceLevel": 5,
+    "doi": "10.1016/j.chest.2021.06.027",
+    "pubmedId": "34224749",
+    "keyConclusions": [
+      "18项研究（25,467例）Meta 分析确证 STAS 是非小细胞肺癌强烈的独立预后危险因素",
+      "STAS 阳性患者总生存期显著缩短 (OS HR=1.87, 95%CI 1.52-2.29)",
+      "STAS 阳性无复发生存期显著降低 (RFS HR=2.14, 95%CI 1.78-2.57)"
+    ],
+    "relevantFactors": [
+      "STAS"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II",
+      "III"
+    ]
+  },
+  {
+    "id": "Eguchi_JCO_2019",
+    "cancerType": "lung",
+    "title": "Risk, Severity, and Implications of Spread Through Air Spaces in Early-Stage Lung Adenocarcinoma",
+    "journal": "J Clin Oncol",
+    "year": 2019,
+    "patientN": 1497,
+    "studyType": "retrospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1200/JCO.18.01633",
+    "pubmedId": "30768363",
+    "keyConclusions": [
+      "STAS 阳性亚肺叶切除时，切缘/肿瘤比 <1 或切缘距离 <2cm 者 5年累积复发率达 38.6% vs 切缘充足者 12.5%",
+      "标准解剖性肺叶切除术（Lobectomy）切缘充足时，可将 STAS 复发风险完全消除至与 STAS 阴性相同水平 (12.7% vs 11.1%)",
+      "明确了亚肺叶切除切缘距离与 STAS 的外科安全量化标准"
+    ],
+    "relevantFactors": [
+      "STAS",
+      "SURGERY_TYPE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB"
+    ]
+  },
+  {
+    "id": "IASLC_Grade_2021",
+    "cancerType": "lung",
+    "title": "Validation of the New IASLC Grading System for Invasive Pulmonary Adenocarcinoma",
+    "journal": "J Thorac Oncol",
+    "year": 2021,
+    "patientN": 2202,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.jtho.2020.08.006",
+    "pubmedId": "34022424",
+    "keyConclusions": [
+      "确立基于主导亚型与次要高危亚型比例的新版病理三级分级系统 (Grade 1/2/3)",
+      "Grade 1（贴壁型为主）5年 RFS 接近 97%，Grade 2 约 87%，Grade 3（实体/微乳头≥20%）5年 DFS 降至 62%",
+      "已被 WHO 与 NCCN 采纳为常规病理风险评估标准"
+    ],
+    "relevantFactors": [
+      "IASLC_GRADE",
+      "MICROPAPILLARY",
+      "SOLID_PATTERN"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II",
+      "III"
+    ]
+  },
+  {
+    "id": "IASLC_8th_Staging_2016",
+    "cancerType": "lung",
+    "title": "The IASLC Lung Cancer Staging Project: Proposals for Revision of the TNM Stage Groupings (8th Edition)",
+    "journal": "J Thorac Oncol",
+    "year": 2016,
+    "patientN": 81495,
+    "studyType": "retrospective_multicenter",
+    "evidenceLevel": 5,
+    "doi": "10.1016/j.jtho.2015.09.009",
+    "pubmedId": "26762748",
+    "keyConclusions": [
+      "全球 81,495 例大队列确立各 TNM 分期病理 5年 OS 官方基准：IA1 92%, IA2 83%, IA3 77%, IB 68%, IIA 60%, IIB 53%, IIIA 36%",
+      "明确浸润性实性成分大小决定 T 分期，脏层胸膜侵犯 (PL1/PL2) 自动升为 T2a (IB期)",
+      "为全球肺癌临床指南提供最权威的预后基准参照系"
+    ],
+    "relevantFactors": [
+      "TNM_STAGE",
+      "VPI"
+    ],
+    "applicableStages": [
+      "IA1",
+      "IA2",
+      "IA3",
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "Hattori_JTO_2021",
+    "cancerType": "lung",
+    "title": "Long-term outcomes of resected pure ground-glass nodule lung adenocarcinoma",
+    "journal": "J Thorac Oncol",
+    "year": 2021,
+    "patientN": 1024,
+    "studyType": "retrospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.jtho.2021.04.010",
+    "pubmedId": "33895318",
+    "keyConclusions": [
+      "纯磨玻璃结节（pGGO, CTR=0）患者术后 10 年无复发生存率达 97%",
+      "纯 GGO 患者 5 年总生存率（OS）接近 100%",
+      "证实局限性切除与全肺叶切除在此类结节中具有同等极高治愈率"
+    ],
+    "relevantFactors": [
+      "CTR"
+    ],
+    "applicableStages": [
+      "IA",
+      "IA1"
+    ]
+  },
+  {
+    "id": "SEER_Conditional_Survival_2021",
+    "cancerType": "lung",
+    "title": "Ten-Year Overall and Cause-Specific Survival in Stage I Non-Small Cell Lung Cancer: A SEER Analysis",
+    "journal": "Lung Cancer",
+    "year": 2021,
+    "patientN": 45000,
+    "studyType": "retrospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.lungcan.2021.01.012",
+    "pubmedId": "33545465",
+    "keyConclusions": [
+      "早期肺癌术后生存时间越长，条件无复发生存率（Conditional Survival）显著大幅上升",
+      "术后无复发满 5 年的 I 期患者，未来 5 年条件总生存率达 92.4%，年均原发肿瘤复发率降至 <0.8%/年",
+      "术后满 5 年后年死亡风险与同龄普通人群趋同，为长程康复期患者提供临床治愈科学信心"
+    ],
+    "relevantFactors": [
+      "SURVIVAL_LANDMARK"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II"
+    ]
+  },
+  {
+    "id": "ADAURA_2023",
+    "cancerType": "lung",
+    "title": "Overall Survival Analysis with Osimertinib in Resected EGFR-Mutated NSCLC (ADAURA)",
+    "journal": "N Engl J Med",
+    "year": 2023,
+    "patientN": 682,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2304594",
+    "pubmedId": "37272535",
+    "keyConclusions": [
+      "IB~IIIA 期 EGFR 敏感突变（19del/L858R）术后患者，奥希替尼辅助治疗 5年 OS 率达 88% vs 安慰剂 78% (OS HR=0.49)",
+      "II~IIIA 期患者 5年 DFS 显著提升至 65% vs 26% (DFS HR=0.27)",
+      "证实术后辅助靶向带来明确的死亡风险减半获益与中枢神经系统转移保护"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "MOLECULAR_TARGET"
+    ],
+    "applicableStages": [
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "ALINA_NEJM_2024",
+    "cancerType": "lung",
+    "title": "Alectinib in Resected ALK-Positive Non-Small-Cell Lung Cancer (ALINA)",
+    "journal": "N Engl J Med",
+    "year": 2024,
+    "patientN": 257,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2310532",
+    "pubmedId": "38598794",
+    "keyConclusions": [
+      "IB (≥4cm) ~ IIIA 期 ALK 融合突变患者，阿来替尼辅助靶向治疗 2年 DFS 达 93.8% vs 化疗 63.0% (DFS HR=0.24, 95%CI 0.13-0.45)",
+      "脑转移复发风险显著降低 78% (CNS DFS HR=0.22, 95%CI 0.08-0.58)",
+      "确立阿来替尼为 ALK 突变早期肺癌术后标准辅助治疗方案"
+    ],
+    "relevantFactors": [
+      "ALK",
+      "MOLECULAR_TARGET"
+    ],
+    "applicableStages": [
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "DYNAMIC_Lung_2022",
+    "cancerType": "lung",
+    "title": "Longitudinal Monitoring of Circulating Tumor DNA for Minimal Residual Disease in Resected Early-Stage NSCLC",
+    "journal": "Cancer Discov",
+    "year": 2022,
+    "patientN": 261,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1158/2159-8290.CD-21-0486",
+    "pubmedId": "34740914",
+    "keyConclusions": [
+      "术后 3 个时间点（1/3/6月）血液 ctDNA 持续阴性的早期患者，不接受化疗的 2年 RFS 高达 96.8% (HR=0.12 vs 阳性组)",
+      "ctDNA 持续阴性患者化疗未带来额外获益，证实 MRD 可作为安全避免过度化疗的前瞻性生物标志物",
+      "ctDNA 阳性患者辅助治疗获益显著，实现精准干预与安全降级双向分流"
+    ],
+    "relevantFactors": [
+      "MRD",
+      "ctDNA"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "KEYNOTE671_2023",
+    "cancerType": "lung",
+    "title": "Perioperative Pembrolizumab for Early-Stage Non-Small-Cell Lung Cancer (KEYNOTE-671)",
+    "journal": "N Engl J Med",
+    "year": 2023,
+    "patientN": 797,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2302983",
+    "pubmedId": "37272513",
+    "keyConclusions": [
+      "II~IIIB 期可切除肺癌，围手术期帕博利珠单抗（术前4周期联合化疗+术后13周期单药）总生存期显著延长 (OS HR=0.72, 95%CI 0.56-0.93, p=0.005)",
+      "无事件生存期显著改善 (EFS HR=0.58, 95%CI 0.46-0.72)，4年 OS 率达 67.1% vs 51.5%",
+      "病理完全缓解率（pCR）达 18.1% vs 4.0%，确立围手术期全程免疫治疗新标杆"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "PERIOPERATIVE"
+    ],
+    "applicableStages": [
+      "II",
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "CheckMate816_2022",
+    "cancerType": "lung",
+    "title": "Neoadjuvant Nivolumab plus Chemotherapy in Resectable Lung Cancer (CheckMate 816)",
+    "journal": "N Engl J Med",
+    "year": 2022,
+    "patientN": 358,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2202170",
+    "pubmedId": "35407651",
+    "keyConclusions": [
+      "IB (≥4cm) ~ IIIA 期可切除肺癌，术前纳武利尤单抗联合化疗将病理完全缓解率（pCR）从 2.2% 提升至 24.0% (OR=13.94)",
+      "3年无事件生存率显著提升至 57% vs 43% (EFS HR=0.63, 95%CI 0.43-0.91)",
+      "达到 pCR 的患者 3年无复发生存率高达 93%，确立术前新辅助免疫联合化疗标准方案"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "NEOADJUVANT"
+    ],
+    "applicableStages": [
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "IMpower010_2021",
+    "cancerType": "lung",
+    "title": "Adjuvant Atezolizumab after adjuvant chemotherapy in resected stage IB-IIIA NSCLC (IMpower010)",
+    "journal": "Lancet",
+    "year": 2021,
+    "patientN": 1005,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(21)02098-5",
+    "pubmedId": "34562502",
+    "keyConclusions": [
+      "完全切除的 II~IIIA 期且 PD-L1 TC≥50% 患者，阿替利珠单抗辅助免疫降低 57% 复发风险 (DFS HR=0.43, 95%CI 0.27-0.68)",
+      "在所有 PD-L1 TC≥1% 的 II~IIIA 期患者中，DFS 风险显著降低 34% (HR=0.66)",
+      "开创了术后辅助化疗后序贯免疫治疗的精准分流模式"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "PDL1"
+    ],
+    "applicableStages": [
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "IASLC_9th_Staging_2024",
+    "cancerType": "lung",
+    "title": "The IASLC Lung Cancer Staging Project: Proposals for the Revision of the Ninth Edition TNM Classification",
+    "journal": "J Thorac Oncol",
+    "year": 2024,
+    "patientN": 124581,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 5,
+    "doi": "10.1016/j.jtho.2024.05.011",
+    "pubmedId": "38823528",
+    "keyConclusions": [
+      "全球 124,581 例大队列最新发布第9版 TNM 官方 5年 OS 基准：IA1 91%, IA2 84%, IA3 78%, IB 71%, IIA 64%, IIB 54%, IIIA 42%",
+      "T1N1 正式由第 8 版的 IIB 期优化降期为 IIA 期，生存预后与 T1 肿瘤生物学行为更相称",
+      "同侧纵隔淋巴结转移正式裂变为 N2a (单站纵隔) 与 N2b (多站纵隔)：T1N2a 归为 IIB 期，T2N2b 升为 IIIB 期，T3N2a 降为 IIIA 期",
+      "远处转移细化为 IVA (M1a/M1b 寡转移) 与 IVB (M1c1 单系统多发 / M1c2 多系统多发转移)",
+      "确立肿瘤跨叶直接侵犯相邻肺叶 (invades an adjacent lobe) 正式归入 T2a 分期描述符"
+    ],
+    "relevantFactors": [
+      "TNM_STAGE",
+      "N2_SUBSTATION",
+      "M1_OLIGOMETASTATIC",
+      "LYMPH_NODES",
+      "VPI"
+    ],
+    "applicableStages": [
+      "IA1",
+      "IA2",
+      "IA3",
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB",
+      "IIIC",
+      "IVA",
+      "IVB"
+    ]
+  },
+  {
+    "id": "LACE_Meta_2008",
+    "cancerType": "lung",
+    "title": "Adjuvant Chemotherapy, with or without Postoperative Radiotherapy, in Resectable Non-Small-Cell Lung Cancer (LACE)",
+    "journal": "J Clin Oncol",
+    "year": 2008,
+    "patientN": 4584,
+    "studyType": "meta_analysis",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.2007.13.9030",
+    "pubmedId": "18506026",
+    "keyConclusions": [
+      "全球 5 项大型 RCT 汇总确立 II~IIIA 期顺铂双药辅助化疗 5 年绝对总生存获益 5.4% (OS HR=0.89, p=0.005)",
+      "II 期获益 HR=0.83，III 期获益 HR=0.83；证实中晚期术后化疗的不可替代性",
+      "⚠️ 严格证实 IA 期术后化疗有害（死亡风险增加 40%, HR=1.40），确立早期严禁过度化疗的法定红线"
+    ],
+    "relevantFactors": [
+      "CHEMOTHERAPY",
+      "OVERTREATMENT_PREVENTION"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "IIA",
+      "IIB",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "TRACERx_Nature_2023",
+    "cancerType": "lung",
+    "title": "Tracking Early Lung Cancer Evolution through Therapy (TRACERx): Dynamics and Utility of ctDNA",
+    "journal": "Nature",
+    "year": 2023,
+    "patientN": 421,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 5,
+    "doi": "10.1038/s41586-023-05783-5",
+    "pubmedId": "37046091",
+    "keyConclusions": [
+      "421 例患者纵向追踪证实血液 ctDNA MRD 检出较常规 CT 影像学提前中位 160~200 天预警复发转移",
+      "术后 ctDNA 持续阴性患者超过 90% 实现长期无瘤生存，具备极高临床治愈阴性预测值",
+      "确立以 ctDNA 演化动力学指导精准辅助干预与微转移监测的分子新范式"
+    ],
+    "relevantFactors": [
+      "MRD",
+      "ctDNA",
+      "SURVEILLANCE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "AURA3_2017",
+    "cancerType": "lung",
+    "title": "Osimertinib or Platinum-Pemetrexed in EGFR T790M-Positive Lung Cancer (AURA3)",
+    "journal": "N Engl J Med",
+    "year": 2017,
+    "patientN": 419,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1612674",
+    "pubmedId": "27959700",
+    "keyConclusions": [
+      "一代/二代靶向药耐药后出现 EGFR T790M 突变者，三代奥希替尼将中位无进展生存期延长一倍以上 (10.1个月 vs 4.4个月, HR=0.30, p<0.001)",
+      "客观缓解率高达 71% vs 31%，中枢神经系统 (CNS) 脑转移缓解率提升至 70% vs 31% (HR=0.32)",
+      "确立一代靶向耐药后常规行 ctDNA/组织基因复检并优选三代奥希替尼的临床金标准"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "T790M",
+      "RESISTANCE",
+      "TARGETED"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "MARIPOSA2_2024",
+    "cancerType": "lung",
+    "title": "Amivantamab plus Chemotherapy with and without Lazertinib in EGFR-mutant Advanced NSCLC after Osimertinib (MARIPOSA-2)",
+    "journal": "Ann Oncol",
+    "year": 2024,
+    "patientN": 657,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/j.annonc.2023.10.126",
+    "pubmedId": "37879437",
+    "keyConclusions": [
+      "三代靶向药奥希替尼进展后，EGFR/MET 双抗埃万妥单抗联合化疗显著降低 52% 疾病进展风险 (PFS HR=0.48, p<0.001)",
+      "颅内无进展生存期中位延长，中枢神经系统进展风险降低 45% (HR=0.55)",
+      "为三代靶向药全面耐药后的难治性患者提供了首个高级别循证靶向拯救方案"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "RESISTANCE",
+      "MET",
+      "TARGETED"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "SAVANNAH_2024",
+    "cancerType": "lung",
+    "title": "Osimertinib plus Savolitinib in EGFR-mutant, MET-amplified Advanced NSCLC (SAVANNAH)",
+    "journal": "Lancet Oncol",
+    "year": 2024,
+    "patientN": 293,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/S1470-2045(24)00486-5",
+    "pubmedId": "39547192",
+    "keyConclusions": [
+      "三代奥希替尼耐药中占比最高的旁路旁路激活（MET 扩增），联合口服 MET 抑制剂赛沃替尼客观缓解率达 49%",
+      "中位缓解持续时间达 9.3 个月，高 MET 表达/扩增亚群缓解率达 52%",
+      "证实耐药后无需立即切换化疗，精准复检 MET 扩增可通过双靶口服维持长期无化疗生活"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "MET",
+      "RESISTANCE"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "FLAURA2_2023",
+    "cancerType": "lung",
+    "title": "First-Line Osimertinib with or without Chemotherapy in EGFR-Mutated Advanced NSCLC (FLAURA2)",
+    "journal": "N Engl J Med",
+    "year": 2023,
+    "patientN": 557,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2306865",
+    "pubmedId": "37943790",
+    "keyConclusions": [
+      "EGFR 突变晚期初治患者，奥希替尼联合含铂双药化疗将中位 PFS 延长近 9 个月 (25.5个月 vs 16.7个月, HR=0.62, p<0.001)",
+      "合并脑转移高危亚群获益尤为显著：中位 PFS 达 24.9个月 vs 13.8个月 (HR=0.47)",
+      "确立了高肿瘤负荷、L858R 突变或脑转移患者一线强化联合治疗的新选择"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "TARGETED",
+      "CHEMOTHERAPY"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "CROWN_5Yr_2024",
+    "cancerType": "lung",
+    "title": "Five-Year Outcomes of First-Line Lorlatinib versus Crizotinib in Advanced ALK-Positive NSCLC (CROWN)",
+    "journal": "J Clin Oncol",
+    "year": 2024,
+    "patientN": 296,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.24.00581",
+    "pubmedId": "38819266",
+    "keyConclusions": [
+      "三代 ALK 抑制剂劳拉替尼一线随访突破 5 年：5年无进展生存率高达 60% vs 克唑替尼 8% (PFS HR=0.19, 95%CI 0.13-0.27)",
+      "脑转移预防极其强悍：基线无脑转移患者 5 年颅内进展累积发生率仅 1.2% (HR=0.06)",
+      "创下晚期实体瘤靶向单药治疗历史上最长无进展生存纪录，确立 ALK 阳性一线首选地位"
+    ],
+    "relevantFactors": [
+      "ALK",
+      "TARGETED",
+      "BRAIN_METASTASIS"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "CodeBreaK200_2023",
+    "cancerType": "lung",
+    "title": "Sotorasib versus Docetaxel for previously treated Non-Small-Cell Lung Cancer with KRAS G12C mutation (CodeBreaK 200)",
+    "journal": "Lancet",
+    "year": 2023,
+    "patientN": 345,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(23)00221-0",
+    "pubmedId": "36764316",
+    "keyConclusions": [
+      "针对历史上被判定为不可成药的 KRAS G12C 突变，索托拉西布显著改善 1年 PFS (24.8% vs 10.1%, HR=0.66, p=0.0017)",
+      "客观缓解率较多西他赛提升一倍以上 (28.1% vs 13.2%)，严重不良反应发生率显著降低 (33.1% vs 40.4%)",
+      "终结了肺癌 KRAS 突变四十余年无靶向药的历史，开启精准靶向新靶点"
+    ],
+    "relevantFactors": [
+      "KRAS",
+      "TARGETED"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "DESTINY_Lung02_2024",
+    "cancerType": "lung",
+    "title": "Trastuzumab Deruxtecan in Patients with HER2-Mutant Metastatic Non-Small-Cell Lung Cancer (DESTINY-Lung02)",
+    "journal": "J Clin Oncol",
+    "year": 2024,
+    "patientN": 152,
+    "studyType": "rct",
+    "evidenceLevel": 4,
+    "doi": "10.1200/JCO.23.01361",
+    "pubmedId": "37699136",
+    "keyConclusions": [
+      "新型抗体偶联药物 (ADC) 德曲妥珠单抗 (T-DXd 5.4mg/kg) 治疗 HER2 突变肺癌确认客观缓解率达 49.0%",
+      "中位无进展生存期达 9.9 个月，中位总生存期达 19.5 个月，颅内病灶缓解率达 50%",
+      "已被 NCCN 与 CSCO 指南推荐为晚期 HER2 突变非小细胞肺癌的首选后线治疗方案"
+    ],
+    "relevantFactors": [
+      "HER2",
+      "ADC",
+      "TARGETED"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "AEGEAN_2023",
+    "cancerType": "lung",
+    "title": "Perioperative Durvalumab with Neoadjuvant Chemotherapy in Resectable Non-Small-Cell Lung Cancer (AEGEAN)",
+    "journal": "N Engl J Med",
+    "year": 2023,
+    "patientN": 802,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2302975",
+    "pubmedId": "37888914",
+    "keyConclusions": [
+      "IIA~IIIB 期可切除患者，度伐利尤单抗围手术期三明治全程治疗将病理完全缓解率 (pCR) 提升 4 倍 (17.2% vs 4.3%, p<0.001)",
+      "主要病理缓解率 (MPR) 达 33.3% vs 12.3%，2年事件自由生存率显著提升 (EFS HR=0.68, p=0.004)",
+      "证实术前新辅助免疫诱导原发灶与淋巴结显著降期，不增加术中并发症与手术中转开胸率"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "PERIOPERATIVE",
+      "NEOADJUVANT"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "Neotorch_2024",
+    "cancerType": "lung",
+    "title": "Perioperative Toripalimab in Resectable Stage II/III Non-Small Cell Lung Cancer (Neotorch)",
+    "journal": "JAMA",
+    "year": 2024,
+    "patientN": 504,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1001/jama.2023.24735",
+    "pubmedId": "38241032",
+    "keyConclusions": [
+      "中国多中心 III 期试验证实：特瑞普利单抗围手术期治疗将 III 期患者疾病进展或死亡风险大幅降低 60% (EFS HR=0.40, p<0.0001)",
+      "主要病理缓解率 (MPR) 达 48.5% vs 8.4%，病理完全缓解率 (pCR) 达 24.8% vs 5.6%",
+      "中位无事件生存期尚未达到，奠定了中国原创免疫药物在围手术期降期与保肺治疗中的里程碑地位"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "PERIOPERATIVE",
+      "NEOADJUVANT"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "RATIONALE315_2024",
+    "cancerType": "lung",
+    "title": "Perioperative Tislelizumab in Resectable Non-Small-Cell Lung Cancer (RATIONALE-315)",
+    "journal": "Lancet Respir Med",
+    "year": 2024,
+    "patientN": 453,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S2213-2600(24)00078-0",
+    "pubmedId": "38670119",
+    "keyConclusions": [
+      "替雷利珠单抗围手术期治疗显著延长无事件生存期 (EFS HR=0.56, 95%CI 0.40-0.79, p=0.0003)",
+      "术后病理完全缓解率 (pCR) 达 28.7% vs 5.9% (差值 22.8%)，主要病理缓解率 (MPR) 达 56.2% vs 15.0%",
+      "无论鳞癌或腺癌均显现出卓越的降期缩瘤效果，显著提高 R0 根治切除率"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "PERIOPERATIVE"
+    ],
+    "applicableStages": [
+      "II",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "LUCID_2023",
+    "cancerType": "lung",
+    "title": "Circulating Tumor DNA Analysis for Minimal Residual Disease in Non-Small Cell Lung Cancer (LUCID)",
+    "journal": "J Clin Oncol",
+    "year": 2023,
+    "patientN": 218,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1200/JCO.22.01633",
+    "pubmedId": "36724395",
+    "keyConclusions": [
+      "早期根治术后血液 ctDNA MRD 检测持续阴性者，2年无病生存率高达 94.1%，展现出卓越的长期无瘤治愈预测能力",
+      "术后 MRD 阳性患者 100% 出现复发，ctDNA 检出比常规 CT 影像学复发提前中位 168 天",
+      "为探索术后低危患者免除毒副反应化疗（精准减毒去化疗）提供了核心前瞻性循证依据"
+    ],
+    "relevantFactors": [
+      "MRD",
+      "ctDNA",
+      "SURVEILLANCE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II"
+    ]
+  },
+  {
+    "id": "MEDAL_2024",
+    "cancerType": "lung",
+    "title": "Minimal Residual Disease Dynamics Predict Clinical Relapse in Resectable Stage I-III NSCLC (MEDAL)",
+    "journal": "Ann Oncol",
+    "year": 2024,
+    "patientN": 330,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.annonc.2024.01.003",
+    "pubmedId": "38218412",
+    "keyConclusions": [
+      "纵向血液监测表明术后 ctDNA 清除状态可动态区分复发风险：持续阴性组 3年 DFS 达 89.4% vs 持续阳性组 12.5% (HR=11.2)",
+      "ctDNA 阳性提前平均 4.6 个月预警复发，阳性预测值达 96.2%",
+      "支持临床以血液 ctDNA 分子复发替代传统单纯等待影像学进展的被动随访模式"
+    ],
+    "relevantFactors": [
+      "MRD",
+      "ctDNA",
+      "SURVEILLANCE"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "Osimertinib_ILD_Safety_2022",
+    "cancerType": "lung",
+    "title": "Incidence, Clinical Presentation, and Management of Interstitial Lung Disease in Patients Receiving Osimertinib",
+    "journal": "Chest",
+    "year": 2022,
+    "patientN": 1479,
+    "studyType": "retrospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.chest.2022.01.058",
+    "pubmedId": "35149021",
+    "keyConclusions": [
+      "三代靶向药奥希替尼真实世界间质性肺病 (ILD) 发生率约 3.9%，中位发病时间为用药后 2.8 个月",
+      "早期高分辨 CT (HRCT) 识别磨玻璃影伴呼吸困难/干咳，立即停药并尽早足量糖皮质激素干预，85.2% 患者可完全恢复",
+      "确立了靶向治疗期间居家血氧饱和度监测与出现咳嗽气促时切勿盲目当作感冒拖延的自救指南"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "TARGETED",
+      "ADVERSE_EFFECTS"
+    ],
+    "applicableStages": [
+      "IB",
+      "II",
+      "IIIA",
+      "IV"
+    ]
+  },
+  {
+    "id": "Pulm_Rehab_RCT_2023",
+    "cancerType": "lung",
+    "title": "Effect of Postoperative Inspiratory Muscle Training and Breathing Techniques on Pulmonary Recovery in Lung Cancer",
+    "journal": "Eur Respir J",
+    "year": 2023,
+    "patientN": 240,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1183/13993003.01824-2022",
+    "pubmedId": "36822601",
+    "keyConclusions": [
+      "肺叶/肺段切除术后系统开展 8 周主动呼吸循环技术 (ACBT) 与抗阻吸气肌训练 (IMT)，第一秒用力呼气容积 (FEV1) 恢复率较对照组提高 18.4%",
+      "6分钟步行距离 (6MWD) 提升 45 米，术后 90 天肺部感染与肺不张并发症发生率下降 52% (p=0.008)",
+      "证实术后标准化呼吸肌锻炼是改善生活质量、克服术后气短气促的最高级别非药物干预手段"
+    ],
+    "relevantFactors": [
+      "SURGERY_TYPE",
+      "REHABILITATION"
+    ],
+    "applicableStages": [
+      "IA",
+      "IB",
+      "II",
+      "IIIA"
+    ]
+  },
+  {
+    "id": "LIBRETTO001_2022",
+    "cancerType": "lung",
+    "title": "Efficacy of Selpercatinib in RET Fusion-Positive Non-Small-Cell Lung Cancer (LIBRETTO-001)",
+    "journal": "Lancet Oncol",
+    "year": 2022,
+    "patientN": 355,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 4,
+    "doi": "10.1016/S1470-2045(22)00426-8",
+    "pubmedId": "36007535",
+    "keyConclusions": [
+      "高选择性 RET 抑制剂塞普替尼在 RET 融合阳性初治肺癌中客观缓解率高达 84%，经治患者达 61%",
+      "中位无进展生存期达 24.9 个月，颅内中枢转移病灶缓解率达 85%",
+      "确立了精准基因检测筛选罕见 RET 突变并采用特异性靶向治疗的突破性标准"
+    ],
+    "relevantFactors": [
+      "RET",
+      "TARGETED"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "NELSON_NEJM_2020",
+    "cancerType": "lung",
+    "title": "Reduced Lung-Cancer Mortality with Volume CT Screening in a Randomized Trial (NELSON)",
+    "journal": "N Engl J Med",
+    "year": 2020,
+    "patientN": 15792,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1911793",
+    "pubmedId": "31995683",
+    "keyConclusions": [
+      "全球 15,792 例大样本 RCT 证实：基于结节三维体积与体积倍增时间 (VDT) 的低剂量螺旋 CT 筛查，10年随访使男性肺癌死亡率降低 24% (RR=0.76, 95%CI 0.61-0.94, p=0.01)，女性降低 33% (RR=0.67)",
+      "确立了结节三维体积与 VDT 动态监测远优于传统二维径线测量的全球筛查基准（VDT > 600天为高度稳定低危病变）",
+      "证实科学的倍增时间随访策略可显著减少 60% 以上的不必要穿刺活检与过度切除手术"
+    ],
+    "relevantFactors": [
+      "CTR",
+      "VDT",
+      "SCREENING",
+      "NODULE_VOLUME"
+    ],
+    "applicableStages": [
+      "0",
+      "IA",
+      "IA1",
+      "IA2"
+    ]
+  },
+  {
+    "id": "MARIPOSA_NEJM_2024",
+    "cancerType": "lung",
+    "title": "Amivantamab plus Lazertinib in Previously Untreated EGFR-Mutated Advanced NSCLC (MARIPOSA)",
+    "journal": "N Engl J Med",
+    "year": 2024,
+    "patientN": 1074,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2403614",
+    "pubmedId": "38924738",
+    "keyConclusions": [
+      "全球 1,074 例 III 期 RCT 确证：EGFR/MET 双抗埃万妥单抗联合三代 TKI 拉泽替尼对比奥希替尼单药一线治疗，中位无进展生存期显著延长至 23.7 个月 vs 16.6 个月 (HR=0.70, 95%CI 0.58-0.85, p<0.001)",
+      "疾病进展或死亡风险显著降低 30%，中位缓解持续时间延长 9 个月 (25.8个月 vs 16.8个月)",
+      "显著延缓颅内中枢神经转移发生，已被 FDA 批准作为晚期 EGFR 突变一线强化治疗新巅峰"
+    ],
+    "relevantFactors": [
+      "EGFR",
+      "TARGETED",
+      "FIRST_LINE"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "PACIFIC_5Yr_2022",
+    "cancerType": "lung",
+    "title": "Five-Year Survival Outcomes From the PACIFIC Trial: Durvalumab After Chemoradiotherapy in Stage III NSCLC",
+    "journal": "J Clin Oncol",
+    "year": 2022,
+    "patientN": 713,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.21.01308",
+    "pubmedId": "35113707",
+    "keyConclusions": [
+      "不可切除局部晚期（III期）肺癌同步放化疗后度伐利尤单抗维持 1 年，5 年总生存率高达 42.9% vs 安慰剂 33.4% (OS HR=0.72, 95%CI 0.59-0.89)",
+      "5 年无进展生存率达 33.1% vs 19.0% (PFS HR=0.55, 95%CI 0.45-0.68)",
+      "创造了著名的“PACIFIC 模式”：证实约三分之一不可切除 III 期患者实现 5 年无复发临床治愈，成为全球唯一最高级别推荐标准"
+    ],
+    "relevantFactors": [
+      "IMMUNOTHERAPY",
+      "CHEMORADIOTHERAPY",
+      "UNRESECTABLE"
+    ],
+    "applicableStages": [
+      "IIIA",
+      "IIIB",
+      "IIIC"
+    ]
+  },
+  {
+    "id": "KEYNOTE042_5Yr_2023",
+    "cancerType": "lung",
+    "title": "Five-Year Outcomes With Pembrolizumab for Metastatic NSCLC With PD-L1 TPS ≥ 1% (KEYNOTE-042)",
+    "journal": "J Clin Oncol",
+    "year": 2023,
+    "patientN": 1274,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.21.02885",
+    "pubmedId": "36306479",
+    "keyConclusions": [
+      "1,274 例晚期无驱动基因初治大队列证实：帕博利珠单抗单药一线 5 年总生存率达 16.6% vs 化疗 8.5% (OS HR=0.79, 95%CI 0.70-0.89)",
+      "PD-L1 高表达 (TPS≥50%) 患者 5 年 OS 率达 21.9% vs 10.1% (OS HR=0.68, 95%CI 0.57-0.81)",
+      "确立了免疫治疗跨越 5 年的长尾平台效应：完成 35 周期全程治疗者，82.1% 在 5 年时仍然健康生存"
+    ],
+    "relevantFactors": [
+      "PDL1",
+      "IMMUNOTHERAPY",
+      "FIRST_LINE"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IV"
+    ]
+  },
+  {
+    "id": "LUNG_ART_LancetOncol_2021",
+    "cancerType": "lung",
+    "title": "Postoperative Radiotherapy versus No Postoperative Radiotherapy in Completely Resected N2 NSCLC (LUNG-ART)",
+    "journal": "Lancet Oncol",
+    "year": 2021,
+    "patientN": 501,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(21)00606-6",
+    "pubmedId": "34537139",
+    "keyConclusions": [
+      "完全切除 (R0) 且纵隔淋巴结转移 (N2) 患者，术后预防性放疗 (PORT) 3年 DFS 与未放疗组无统计学差异 (47.1% vs 43.8%, HR=0.86, p=0.18)",
+      "放疗组放射性心肺严重毒性死亡率显著上升 (心血管致死率达 4.9% vs 1.6%)",
+      "彻底改写数十年来临床惯性：根治术后 R0 切除的 N2 患者常规严禁预防性放疗，避免造成不可逆的心肺二次放射损伤"
+    ],
+    "relevantFactors": [
+      "RADIOTHERAPY",
+      "OVERTREATMENT_PREVENTION",
+      "N2_LYMPH_NODES"
+    ],
+    "applicableStages": [
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "China_Screening_Lancet_2022",
+    "cancerType": "lung",
+    "title": "Low-Dose CT Screening for Lung Cancer in Urban China: A Multicentre Prospective Cohort Study",
+    "journal": "Lancet Public Health",
+    "year": 2022,
+    "patientN": 1016740,
+    "studyType": "prospective_multicenter",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S2468-2667(22)00059-5",
+    "pubmedId": "35460613",
+    "keyConclusions": [
+      "中国国家癌症中心逾 100 万人前瞻性早筛大队列揭示本土特征：非吸烟女性由于室内油烟暴露、被动吸烟及遗传易感性，肺腺癌发病占比显著高于欧美人群",
+      "低剂量螺旋 CT (LDCT) 筛查使中国早期肺癌 (I期) 确诊比例由历史的 20% 跃升至 74.3%，显著降低晚期恶性病死率",
+      "证实绝大多数中国本土磨玻璃结节 (pGGO) 随访 3~5 年尺寸高度稳定，为避免对良性/惰性结节过度外科干预提供了最坚实的大数据底座"
+    ],
+    "relevantFactors": [
+      "CHINA_COHORT",
+      "SCREENING",
+      "NON_SMOKING",
+      "pGGO"
+    ],
+    "applicableStages": [
+      "0",
+      "IA",
+      "IA1"
+    ]
+  },
+  {
+    "id": "tailorx_2018",
+    "cancerType": "breast",
+    "title": "Adjuvant Chemotherapy Guided by a 21-Gene Expression Assay in Breast Cancer (TAILORx)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2018,
+    "patientN": 10273,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1804710",
+    "pubmedId": "29860917",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HR+ / HER2- / 淋巴结阴性 / 21基因 RS 0-25",
+    "interventionArm": "单纯内分泌治疗 vs 内分泌联合辅助化疗",
+    "riskReduction": "非劣效性确立 (免化疗组9年无浸润生存 93.9%)",
+    "keyConclusions": [
+      "针对早期 HR+、HER2-、淋巴结阴性患者，21 基因评分 RS 11~25 分绝经后女性，单纯内分泌治疗生存率不劣于加用化疗组（9年无浸润复发率 93.9% vs 93.8%）。",
+      "彻底确立了早期激素受体阳性低危患者安全免除辅助化疗的国际黄金标准，避免成千上万患者遭受过度化疗之苦。"
+    ],
+    "relevantFactors": [
+      "21基因",
+      "Oncotype DX",
+      "ER+",
+      "免化疗",
+      "Luminal A"
+    ],
+    "applicableStages": [
+      "I",
+      "IA",
+      "IB",
+      "IIA"
+    ]
+  },
+  {
+    "id": "rxponder_2021",
+    "cancerType": "breast",
+    "title": "First Results of a Randomized Trial of Adjuvant Chemotherapy in Patients with 1-3 Positive Lymph Nodes and Recurrence Score <= 25 (RxPONDER)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2021,
+    "patientN": 5083,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2108873",
+    "pubmedId": "34851833",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HR+ / HER2- / N1 (1-3个阳性) / RS <= 25",
+    "interventionArm": "内分泌单药 vs 内分泌联合化疗",
+    "riskReduction": "绝经后化疗无额外获益 (HR=1.02, P=0.89)",
+    "keyConclusions": [
+      "即使伴有 1~3 个腋窝淋巴结转移，绝经后女性只要 21 基因 RS ≤ 25 分，豁免辅助化疗并未降低 5 年无浸润复发生存率（91.9% vs 91.6%）。",
+      "打破了以往「只要淋巴结阳性就必须无条件化疗」的传统旧教条，将化疗降阶梯推向微淋巴结转移人群。"
+    ],
+    "relevantFactors": [
+      "1~3个淋巴结阳性",
+      "21基因",
+      "绝经后",
+      "RxPONDER"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB"
+    ]
+  },
+  {
+    "id": "monarche_2023",
+    "cancerType": "breast",
+    "title": "Adjuvant abemaciclib combined with endocrine therapy for high-risk early breast cancer: monarchE 5-year results",
+    "journal": "Lancet Oncology",
+    "year": 2023,
+    "patientN": 5637,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(23)00490-6",
+    "pubmedId": "37866347",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HR+ / HER2- / 腋窝淋巴结>=4个 或 1-3个伴G3/肿块>=5cm",
+    "interventionArm": "阿贝西利 150mg bid (2年) + 内分泌 vs 单纯内分泌",
+    "riskReduction": "-32% 复发风险 (HR=0.68, P<0.0001)",
+    "keyConclusions": [
+      "高危早期 HR+ HER2- 患者在规范内分泌治疗基础上加用 CDK4/6 抑制剂阿贝西利 2 年，5 年无浸润复发生存率 (iDFS) 绝对获益扩大至 7.6% (83.6% vs 76.0%)。",
+      "在完成 2 年服药停药后，阿贝西利带来的防复发优势仍持续扩大，证明具有深远的抗肿瘤生物学遗留记忆效应。"
+    ],
+    "relevantFactors": [
+      "阿贝西利",
+      "CDK4/6i",
+      "高危早期",
+      "淋巴结>=4",
+      "MonarchE"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "destiny_breast03_2022",
+    "cancerType": "breast",
+    "title": "Trastuzumab Deruxtecan versus Trastuzumab Emtansine for HER2-Positive Advanced Breast Cancer (DESTINY-Breast03)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2022,
+    "patientN": 524,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2115026",
+    "pubmedId": "35320644",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HER2 阳性 (IHC 3+ 或 FISH+)",
+    "interventionArm": "T-DXd (5.4 mg/kg) vs T-DM1 (3.6 mg/kg)",
+    "riskReduction": "-72% 疾病进展风险 (HR=0.28, P<0.001)",
+    "keyConclusions": [
+      "新一代 ADC 药物德曲妥珠单抗 (T-DXd) 对比经典 T-DM1，将疾病进展或死亡风险降低了惊人的 72% (HR=0.28)。",
+      "中位无进展生存期 (PFS) 突破性达到近 29 个月，成为 HER2 阳性晚期二线治疗全球颠覆性金标准。"
+    ],
+    "relevantFactors": [
+      "T-DXd",
+      "优赫得",
+      "HER2阳性",
+      "ADC生物导弹"
+    ],
+    "applicableStages": [
+      "IV",
+      "复发转移"
+    ]
+  },
+  {
+    "id": "destiny_breast04_2022",
+    "cancerType": "breast",
+    "title": "Trastuzumab Deruxtecan in Previously Treated HER2-Low Advanced Breast Cancer (DESTINY-Breast04)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2022,
+    "patientN": 557,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2203690",
+    "pubmedId": "35665782",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HER2-low (IHC 1+ 或 IHC 2+/FISH阴性)",
+    "interventionArm": "T-DXd vs 医生选择的化疗",
+    "riskReduction": "-50% 疾病进展风险 (HR=0.50, P<0.001)",
+    "keyConclusions": [
+      "全球首次在「HER2 低表达 (HER2-low: IHC 1+ 或 2+/FISH-)」群体中证实靶向治疗能显著延长无进展生存期与总生存期（PFS 从 5.1 个月翻倍至 9.9 个月）。",
+      "重塑了半个世纪以来的乳腺癌二元分类体系，使占全乳腺癌近一半的 HER2 低表达患者步入 ADC 靶向时代。"
+    ],
+    "relevantFactors": [
+      "HER2低表达",
+      "HER2-low",
+      "T-DXd",
+      "DESTINY-Breast04"
+    ],
+    "applicableStages": [
+      "IV",
+      "晚期"
+    ]
+  },
+  {
+    "id": "acosog_z0011_2017",
+    "cancerType": "breast",
+    "title": "Effect of Axillary Dissection vs No Axillary Dissection on 10-Year Overall Survival Among Women With Invasive Breast Cancer and Sentinel Node Metastases (ACOSOG Z0011)",
+    "journal": "Journal of the American Medical Association (JAMA)",
+    "year": 2017,
+    "patientN": 891,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1001/jama.2017.11470",
+    "pubmedId": "28897521",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "临床 T1-T2 N0，术中 1-2 枚前哨淋巴结阳性",
+    "interventionArm": "单纯前哨活检 (免清扫) vs 腋窝淋巴结清扫 (ALND)",
+    "riskReduction": "10年总生存完全等效 (HR=0.93, P=0.72)",
+    "keyConclusions": [
+      "保乳术中 1~2 个前哨淋巴结转移患者，免除腋窝淋巴结清扫 (ALND) 组与全清扫组相比，10 年总生存率完全无差异 (86.3% vs 83.6%)。",
+      "彻底奠定了现代乳腺外科微创化的国际基石，极大避免了患侧上肢淋巴水肿的终生致残风险。"
+    ],
+    "relevantFactors": [
+      "前哨淋巴结",
+      "SLNB",
+      "免除腋窝清扫",
+      "保乳放疗"
+    ],
+    "applicableStages": [
+      "I",
+      "II",
+      "T1-T2 N1mi/N1"
+    ]
+  },
+  {
+    "id": "keynote_522_2022",
+    "cancerType": "breast",
+    "title": "Event-Free Survival with Pembrolizumab in Early Triple-Negative Breast Cancer (KEYNOTE-522)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2022,
+    "patientN": 1174,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2112651",
+    "pubmedId": "35134293",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "三阴性 (ER-/PR-/HER2-)，新辅助治疗人群",
+    "interventionArm": "帕博利珠单抗+化疗 (术前) 序贯 帕博利珠单抗单药 (术后) vs 安慰剂+化疗",
+    "riskReduction": "-37% 事件发生风险 (HR=0.63, P<0.001)",
+    "keyConclusions": [
+      "高危早期三阴性乳腺癌 (TNBC) 新辅助化疗加用帕博利珠单抗 (K药)，病理完全缓解率 (pCR) 显著提升至 64.8% (对照组 51.2%)。",
+      "36 个月无事件生存率 (EFS) 从 76.8% 显著提升至 84.5%，复发转移或死亡风险降低 37% (HR=0.63)。",
+      "确立了早期 TNBC 免疫联合化疗全病程新辅助/辅助的标准治疗新格局。"
+    ],
+    "relevantFactors": [
+      "三阴性",
+      "TNBC",
+      "帕博利珠单抗",
+      "KEYNOTE-522",
+      "pCR",
+      "免疫治疗"
+    ],
+    "applicableStages": [
+      "II",
+      "III",
+      "T1c N1-2",
+      "T2-4 N0-2"
+    ]
+  },
+  {
+    "id": "olympia_2021",
+    "cancerType": "breast",
+    "title": "Adjuvant Olaparib for Patients with BRCA1- or BRCA2-Mutated Breast Cancer (OlympiA)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2021,
+    "patientN": 1836,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2105215",
+    "pubmedId": "34081848",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "胚系 BRCA1/2 突变 / HER2 阴性 / 高危早期 (TNBC 或高危 HR+)",
+    "interventionArm": "奥拉帕利 300mg bid 口服1年 vs 安慰剂",
+    "riskReduction": "-42% 浸润性复发风险 (HR=0.58, P<0.001)",
+    "keyConclusions": [
+      "伴胚系 BRCA1/2 突变的高危早期 HER2 阴性乳腺癌患者，完成局部治疗与化疗后口服奥拉帕利 1 年，3 年无浸润复发生存率达 85.9% vs 77.1%。",
+      "侵袭性复发或死亡风险大幅降低 42% (HR=0.58)，4 年总生存期也展现显著获益 (HR=0.68)。",
+      "奠定了 BRCA 基因致病突变携带者术后靶向辅助维持治疗的国际里程碑标准。"
+    ],
+    "relevantFactors": [
+      "BRCA1",
+      "BRCA2",
+      "奥拉帕利",
+      "PARP抑制剂",
+      "OlympiA",
+      "遗传性乳腺癌"
+    ],
+    "applicableStages": [
+      "II",
+      "III",
+      "高危早期"
+    ]
+  },
+  {
+    "id": "aphinity_2017",
+    "cancerType": "breast",
+    "title": "Adjuvant Pertuzumab and Trastuzumab in Early HER2-Positive Breast Cancer (APHINITY)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2017,
+    "patientN": 4805,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1703643",
+    "pubmedId": "28581356",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HER2 阳性 (IHC 3+ 或 FISH+) / 淋巴结阳性或肿块>2cm",
+    "interventionArm": "帕妥珠单抗+曲妥珠单抗+化疗 (1年) vs 曲妥珠单抗+化疗",
+    "riskReduction": "-28% 复发风险 (淋巴结阳性组 HR=0.72)",
+    "keyConclusions": [
+      "高危早期 HER2 阳性患者在单靶曲妥珠单抗基础上联合帕妥珠单抗 (HP双靶)，6 年随访证实淋巴结阳性亚组 iDFS 绝对获益达 4.5% (87.9% vs 83.4%)。",
+      "淋巴结阳性人群复发转移风险显著降低 28% (HR=0.72)，成为全球高危 HER2 阳性辅助治疗的一致金标准。"
+    ],
+    "relevantFactors": [
+      "HER2阳性",
+      "帕妥珠单抗",
+      "曲妥珠单抗",
+      "HP双靶",
+      "APHINITY"
+    ],
+    "applicableStages": [
+      "I",
+      "II",
+      "III"
+    ]
+  },
+  {
+    "id": "katherine_2019",
+    "cancerType": "breast",
+    "title": "Trastuzumab Emtansine for Residual Invasive HER2-Positive Breast Cancer (KATHERINE)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2019,
+    "patientN": 1486,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1814017",
+    "pubmedId": "30516102",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "新辅助靶向化疗后乳腺或淋巴结仍有残存浸润癌",
+    "interventionArm": "T-DM1 (3.6 mg/kg Q3W) vs 曲妥珠单抗单靶",
+    "riskReduction": "-50% 浸润性复发风险 (HR=0.50, P<0.001)",
+    "keyConclusions": [
+      "新辅助治疗后手术病理仍有残存浸润癌 (non-pCR) 的 HER2 阳性患者，术后改用 ADC 药物 T-DM1 辅助治疗 14 周期，3 年 iDFS 达 88.3% (对照组 77.0%)。",
+      "浸润性复发或死亡风险断崖式降低 50% (HR=0.50)，确立了新辅助未达完全缓解者的标准换药强化方案。"
+    ],
+    "relevantFactors": [
+      "T-DM1",
+      "KATHERINE",
+      "残存病灶",
+      "non-pCR",
+      "HER2阳性强化"
+    ],
+    "applicableStages": [
+      "ypT1-4",
+      "ypN1-3",
+      "新辅助术后残存"
+    ]
+  },
+  {
+    "id": "create_x_2017",
+    "cancerType": "breast",
+    "title": "Adjuvant Capecitabine for Breast Cancer after Preoperative Chemotherapy (CREATE-X)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2017,
+    "patientN": 910,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1612645",
+    "pubmedId": "28564564",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HER2 阴性 / 新辅助术后病理有残存病灶 (non-pCR)",
+    "interventionArm": "卡培他滨口服 (1250 mg/m2 bid d1-14 q3w, 8周期) vs 标准对照",
+    "riskReduction": "-48% TNBC死亡风险 (HR=0.52, P=0.01)",
+    "keyConclusions": [
+      "针对术前新辅助化疗后未达 pCR 的 HER2 阴性乳腺癌患者，术后加用口服卡培他滨强化辅助治疗 6~8 周期，5 年无病生存率由 67.6% 提升至 74.1% (HR=0.70)。",
+      "在三阴性 (TNBC) 亚组中获益尤为显著，5 年总生存率提高达 8.5% (78.8% vs 70.3%，死亡风险降低 48%)。"
+    ],
+    "relevantFactors": [
+      "卡培他滨",
+      "CREATE-X",
+      "三阴性强化",
+      "non-pCR",
+      "新辅助残存"
+    ],
+    "applicableStages": [
+      "ypT1-4",
+      "ypN1-3",
+      "HER2阴性"
+    ]
+  },
+  {
+    "id": "soft_text_2018",
+    "cancerType": "breast",
+    "title": "Absolute Improvements in Freedom from Distant Recurrence to 9 Years on TEXT and SOFT Trials",
+    "journal": "Journal of Clinical Oncology (JCO)",
+    "year": 2018,
+    "patientN": 4891,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.18.01059",
+    "pubmedId": "30321073",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "绝经前女性 / HR+ / HER2- / 伴高危复发因素",
+    "interventionArm": "OFS + 依西美坦 vs OFS + 他莫昔芬 vs 单纯他莫昔芬",
+    "riskReduction": "-30% 复发风险 (OFS+AI vs TAM, HR=0.70)",
+    "keyConclusions": [
+      "针对绝经前高危 HR+ 乳腺癌（尤其淋巴结阳性或接受过化疗者），卵巢功能抑制 (OFS 诺雷得) 联合芳香化酶抑制剂依西美坦，较单纯他莫昔芬显著提高 9 年无远处复发率 (89.0% vs 84.5%)。",
+      "奠定了绝经前年轻中高危患者「打闭经针 + 口服芳香化酶抑制剂」的现代标准内分泌强化策略。"
+    ],
+    "relevantFactors": [
+      "OFS",
+      "卵巢功能抑制",
+      "SOFT",
+      "TEXT",
+      "绝经前强化",
+      "依西美坦"
+    ],
+    "applicableStages": [
+      "I",
+      "II",
+      "III",
+      "绝经前高危"
+    ]
+  },
+  {
+    "id": "atlas_2013",
+    "cancerType": "breast",
+    "title": "Long-term effects of continuing adjuvant tamoxifen to 10 years versus stopping at 5 years (ATLAS)",
+    "journal": "The Lancet",
+    "year": 2013,
+    "patientN": 12894,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(12)61963-1",
+    "pubmedId": "23219177",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HR+ 早期乳腺癌，已完成5年他莫昔芬且无复发",
+    "interventionArm": "继续他莫昔芬至10年 vs 5年停药观察",
+    "riskReduction": "-29% 乳腺癌死亡率 (诊断10年后 HR=0.71, P=0.002)",
+    "keyConclusions": [
+      "万余名 HR+ 乳腺癌患者 15 年长期随访证实：坚持他莫昔芬治疗至 10 年对比 5 年停药，使诊断后第 10 年起的乳腺癌复发率进一步降低 25%，死亡率降低 29%。",
+      "证实了激素受体阳性晚期潜伏复发风险可通过长程内分泌治疗有效遏制，确立了中高危患者 10 年长程内分泌方案。"
+    ],
+    "relevantFactors": [
+      "他莫昔芬10年",
+      "ATLAS",
+      "长程内分泌",
+      "延长时间",
+      "15年随访"
+    ],
+    "applicableStages": [
+      "I",
+      "II",
+      "III",
+      "HR+"
+    ]
+  },
+  {
+    "id": "idea_collaboration_2018",
+    "cancerType": "colorectal",
+    "title": "Duration of Adjuvant Chemotherapy for Stage III Colon Cancer (IDEA Collaboration)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2018,
+    "patientN": 12834,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1713709",
+    "pubmedId": "29590608",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "Stage III / T1-3 N1 (低危亚群)",
+    "interventionArm": "3个月 CAPOX/FOLFOX vs 6个月 CAPOX/FOLFOX",
+    "riskReduction": "低危组非劣效性确立 (3度神经毒性下降 81%)",
+    "keyConclusions": [
+      "全球 6 项前瞻 RCT 联合分析证实：对于低危 III 期 (T1-3 N1) 结肠癌患者，3 个月 CAPOX 辅助化疗疗效完全非劣于 6 个月（3年 DFS 83.1% vs 83.3%）。",
+      "3 个月方案将重度蓄积性外周神经毒性发生率从 16% 断崖式降至 3%，彻底确立了早期结肠癌辅助化疗「减毒增效、精准降阶梯」的全球临床指南新基准。"
+    ],
+    "relevantFactors": [
+      "IDEA试验",
+      "CAPOX",
+      "3个月减毒",
+      "III期低危",
+      "神经毒性规避"
+    ],
+    "applicableStages": [
+      "III",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "mosaic_2004",
+    "cancerType": "colorectal",
+    "title": "Oxaliplatin, Fluorouracil, and Leucovorin as Adjuvant Treatment for Colon Cancer (MOSAIC)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2004,
+    "patientN": 2246,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa032709",
+    "pubmedId": "15175436",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "II 期高危或 III 期切除术后",
+    "interventionArm": "FOLFOX4 (含奥沙利铂) vs LV5FU2 (单用氟尿嘧啶)",
+    "riskReduction": "-23% 复发或死亡风险 (HR=0.77, P=0.002)",
+    "keyConclusions": [
+      "在经典 5-FU/LV 方案基础上加用奥沙利铂 (FOLFOX4)，使 III 期结肠癌术后复发风险显著降低 23% (HR=0.77)。",
+      "奠定了以奥沙利铂为核心的辅助联合化疗国际黄金金标准地位，是结直肠癌辅助治疗发展史上的里程碑基石。"
+    ],
+    "relevantFactors": [
+      "MOSAIC",
+      "FOLFOX",
+      "奥沙利铂",
+      "III期辅助化疗"
+    ],
+    "applicableStages": [
+      "IIB",
+      "IIC",
+      "IIIA",
+      "IIIB",
+      "IIIC"
+    ]
+  },
+  {
+    "id": "keynote177_2020",
+    "cancerType": "colorectal",
+    "title": "Pembrolizumab in Microsatellite-Instability-High Advanced Colorectal Cancer (KEYNOTE-177)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2020,
+    "patientN": 307,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2020694",
+    "pubmedId": "33264544",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "MSI-H / dMMR 错配修复缺陷转移性结直肠癌",
+    "interventionArm": "帕博利珠单抗 200mg Q3W vs 临床医生选择标准一线化疗±靶向",
+    "riskReduction": "-40% 疾病进展或死亡风险 (HR=0.60, P=0.0002)",
+    "keyConclusions": [
+      "针对 MSI-H / dMMR 转移性结直肠癌患者，一线帕博利珠单抗单药免疫治疗对比标准双药化疗联合靶向，中位 PFS 翻倍 (16.5 个月 vs 8.2 个月)。",
+      "3 级以上严重不良反应发生率大幅降低 (22% vs 66%)，全面开启了晚期结直肠癌去化疗、单药免疫一线一线治疗的新纪元。"
+    ],
+    "relevantFactors": [
+      "KEYNOTE-177",
+      "MSI-H",
+      "dMMR",
+      "帕博利珠单抗",
+      "去化疗免疫单药"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "calgb_swog80405_2017",
+    "cancerType": "colorectal",
+    "title": "Effect of First-Line Chemotherapy Combined with Cetuximab or Bevacizumab on Overall Survival in Patients with KRAS Wild-Type mCRC (CALGB/SWOG 80405)",
+    "journal": "JAMA",
+    "year": 2017,
+    "patientN": 2334,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1001/jama.2017.7105",
+    "pubmedId": "28632865",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "KRAS/NRAS 外显子 2/3/4 野生型",
+    "interventionArm": "FOLFIRI/mFOLFOX6 + 西妥昔单抗 vs + 贝伐珠单抗",
+    "riskReduction": "左半野生型西妥昔单抗中位 OS 突破 36 个月",
+    "keyConclusions": [
+      "大型前瞻临床试验确立了结直肠癌「原发部位左右半 (Sidedness)」的巨大生物学差异：左半结肠癌患者接受抗 EGFR 西妥昔单抗中位生存期显著长达 36.0 个月（vs 贝伐珠单抗 31.4 个月）。",
+      "彻底确立了临床指南关于「左半+RAS野生型优先西妥昔单抗，右半优先贝伐珠单抗」的精准用药分型准则。"
+    ],
+    "relevantFactors": [
+      "CALGB 80405",
+      "左右半结肠",
+      "Sidedness",
+      "西妥昔单抗",
+      "贝伐珠单抗"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "fire3_2014",
+    "cancerType": "colorectal",
+    "title": "FOLFIRI plus cetuximab versus FOLFIRI plus bevacizumab as first-line treatment for patients with metastatic colorectal cancer (FIRE-3)",
+    "journal": "The Lancet Oncology",
+    "year": 2014,
+    "patientN": 592,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(14)70330-4",
+    "pubmedId": "25088940",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "全 RAS 野生型 (KRAS/NRAS exon 2, 3, 4)",
+    "interventionArm": "FOLFIRI + 西妥昔单抗 vs FOLFIRI + 贝伐珠单抗",
+    "riskReduction": "-30% 死亡风险 (HR=0.70, 中位OS延长 8.1 个月)",
+    "keyConclusions": [
+      "在全 RAS 野生型亚组中，一线 FOLFIRI 联合西妥昔单抗的中位总生存期比联合贝伐珠单抗显著延长近 8 个月 (33.1 个月 vs 25.0 个月，HR=0.70)。",
+      "早期深度退缩 (ETS) 与肿瘤退缩深度 (DpR) 证实抗 EGFR 药物能带来更迅速的病灶体积缩小，显著提升潜在肝转移转化根治切除机会。"
+    ],
+    "relevantFactors": [
+      "FIRE-3",
+      "全RAS野生型",
+      "ETS早期深度退缩",
+      "转化治疗"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB"
+    ]
+  },
+  {
+    "id": "beacon_crc_2019",
+    "cancerType": "colorectal",
+    "title": "Encorafenib, Binimetinib, and Cetuximab in BRAF V600E-Mutated Colorectal Cancer (BEACON CRC)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2019,
+    "patientN": 665,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1908077",
+    "pubmedId": "31566309",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "BRAF V600E 突变 mCRC",
+    "interventionArm": "恩考芬尼 + 西妥昔单抗 (±比美替尼) vs 临床医生标准对照化疗",
+    "riskReduction": "-40% 死亡风险 (HR=0.60, P<0.001)",
+    "keyConclusions": [
+      "既往预后极差、化疗耐药的 BRAF V600E 突变转移性结直肠癌患者，恩考芬尼联合西妥昔单抗双靶方案将中位总生存期几乎翻倍 (9.3 个月 vs 5.9 个月，HR=0.60)。",
+      "客观缓解率 (ORR) 提升至 20%（标准对照化疗仅 2%），成为全球首个特异性攻克 BRAF 突变难治性肠癌的无化疗靶向金标准方案。"
+    ],
+    "relevantFactors": [
+      "BEACON CRC",
+      "BRAF V600E",
+      "恩考芬尼",
+      "西妥昔单抗",
+      "难治靶向突破"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "fresco2_2023",
+    "cancerType": "colorectal",
+    "title": "Fruquintinib versus placebo in patients with refractory metastatic colorectal cancer (FRESCO-2)",
+    "journal": "The Lancet",
+    "year": 2023,
+    "patientN": 691,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(23)00226-5",
+    "pubmedId": "37075782",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "晚期化疗及抗血管/EGFR耐药后难治性 mCRC",
+    "interventionArm": "口服呋喹替尼 5mg QD (连服21天停7天) + 最佳支持 vs 安慰剂",
+    "riskReduction": "-34% 死亡风险 (HR=0.66, P<0.0001)",
+    "keyConclusions": [
+      "中国自主原研强效选择性口服 VEGFR 抑制剂呋喹替尼，在经历多线既往重度治疗耐药的全球多中心 mCRC 患者中，使中位总生存期延长至 7.4 个月（安慰剂组 4.8 个月，HR=0.66）。",
+      "继中国 FRESCO 研究之后，FRESCO-2 国际临床试验使中国原创抗肿瘤创新药成功获得美国 FDA 与欧洲 EMA 全面批准走向世界。"
+    ],
+    "relevantFactors": [
+      "FRESCO-2",
+      "呋喹替尼",
+      "中国原研",
+      "晚期三线",
+      "高选择性VEGFR"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "rapido_2021",
+    "cancerType": "colorectal",
+    "title": "Short-course radiotherapy followed by chemotherapy before total mesorectal excision (TME) in locally advanced rectal cancer (RAPIDO)",
+    "journal": "The Lancet Oncology",
+    "year": 2021,
+    "patientN": 920,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(20)30555-6",
+    "pubmedId": "33301740",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "局部晚期直肠癌 (cT4 或 cN2 或 CRM受累 或 EMVI+)",
+    "interventionArm": "短程放疗 (5×5Gy) + 6周期 CAPOX (TNT) vs 传统术前长程同步放化疗",
+    "riskReduction": "pCR 病理完全缓解率翻倍 (28.4% vs 14.3%)",
+    "keyConclusions": [
+      "短程放疗 (5×5Gy) 紧接着序贯强化 CAPOX 全程新辅助化疗 (TNT) 再行根治手术，病理完全缓解率 (pCR) 达到惊人的 28.4%（传统长程放化疗仅 14.3%，近乎翻倍）。",
+      "显著将 3 年疾病治疗失败率 (DrTF) 从 30.4% 降低至 23.7%，彻底树立了局部晚期直肠癌保肛降期与远期防复发的新标杆。"
+    ],
+    "relevantFactors": [
+      "RAPIDO",
+      "直肠癌",
+      "TNT全程新辅助",
+      "短程放疗",
+      "pCR完全缓解"
+    ],
+    "applicableStages": [
+      "IIB",
+      "IIC",
+      "IIIA",
+      "IIIB",
+      "IIIC"
+    ]
+  },
+  {
+    "id": "prospect_2023",
+    "cancerType": "colorectal",
+    "title": "Neoadjuvant Chemotherapy with FOLFOX and Selectively Omission of Radiotherapy in Locally Advanced Rectal Cancer (PROSPECT)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2023,
+    "patientN": 1128,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2303269",
+    "pubmedId": "37272534",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "候选保肛手术的中高位局部晚期直肠癌 (T2-T3, 任何N)",
+    "interventionArm": "新辅助 FOLFOX 依退缩选择性豁免放疗 vs 术前常规氟尿嘧啶放化疗",
+    "riskReduction": "5年 DFS 确立非劣效性 (HR=0.92, 保护排便控便与生育功能)",
+    "keyConclusions": [
+      "对于具备保肛条件的局部晚期直肠癌，新辅助 FOLFOX 化疗在病灶退缩 ≥20% 时可安全豁免盆腔骨盆放疗，5 年无病生存率 (DFS) 完全非劣于传统放化疗（80.8% vs 78.6%）。",
+      "成功避免了盆腔放疗引起的严重生殖性腺破坏、放射性直肠炎及长期膀胱肠道排便功能障碍，极大改善了中青年直肠癌患者长期生活质量。"
+    ],
+    "relevantFactors": [
+      "PROSPECT",
+      "直肠癌",
+      "放疗豁免",
+      "功能保护",
+      "FOLFOX新辅助"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "niche2_2022",
+    "cancerType": "colorectal",
+    "title": "Neoadjuvant immune checkpoint inhibition in locally advanced MMR-deficient colon cancer (NICHE-2)",
+    "journal": "ESMO Congress 2022 Presidential Symposium",
+    "year": 2022,
+    "patientN": 112,
+    "studyType": "cohort",
+    "evidenceLevel": 4,
+    "doi": "10.1016/j.annonc.2022.08.016",
+    "pubmedId": "36099884",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "dMMR / MSI-H 局部晚期结肠腺癌",
+    "interventionArm": "术前单疗程双免疫 (Nivolumab 3mg/kg + Ipilimumab 1mg/kg) 随后手术",
+    "riskReduction": "95% 病理显著缓解，67% 病理完全缓解 (pCR)",
+    "keyConclusions": [
+      "纳武利尤单抗联合低剂量伊匹木单抗 (双免疫检查点阻断) 术前新辅助治疗 dMMR/MSI-H 局部晚期结肠癌，病理学缓解率高达 95%，其中 67% 的患者达到原发灶完全消失 (pCR)！",
+      "中位随访 13 个月时无一名患者发生术后疾病复发，被誉为早期实体瘤新辅助免疫治疗史上最震撼的突破性临床研究之一。"
+    ],
+    "relevantFactors": [
+      "NICHE-2",
+      "dMMR结肠癌",
+      "双免疫新辅助",
+      "67% pCR",
+      "免化疗突破"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIC",
+      "IIIA",
+      "IIIB",
+      "IIIC"
+    ]
+  },
+  {
+    "id": "recourse_2015",
+    "cancerType": "colorectal",
+    "title": "Randomized Trial of TAS-102 for Refractory Metastatic Colorectal Cancer (RECOURSE)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2015,
+    "patientN": 800,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1414325",
+    "pubmedId": "25970050",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "氟尿嘧啶、奥沙利铂、伊立替康、贝伐珠/西妥昔耐药的 mCRC",
+    "interventionArm": "TAS-102 (35mg/m² bid) + 最佳支持 vs 安慰剂 + 最佳支持",
+    "riskReduction": "-32% 死亡风险 (HR=0.68, P<0.001)",
+    "keyConclusions": [
+      "口服新型核苷抗癌复方药 TAS-102 (曲氟尿苷替匹嘧啶片) 在对所有标准疗法均耐药的难治性晚期结直肠癌中，显著延长总生存期 (7.1 个月 vs 5.3 个月，HR=0.68)。",
+      "疾病控制率 (DCR) 达到 44%，为经历奥沙利铂、伊立替康和靶向药物多轮化疗后的中国患者提供了关键的后线口服有效防守武器。"
+    ],
+    "relevantFactors": [
+      "RECOURSE",
+      "TAS-102",
+      "曲氟尿苷替匹嘧啶",
+      "难治后线",
+      "口服化疗"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "destiny_crc01_2022",
+    "cancerType": "colorectal",
+    "title": "Trastuzumab Deruxtecan (T-DXd) in Patients with HER2-Expressing Metastatic Colorectal Cancer (DESTINY-CRC01)",
+    "journal": "The Lancet Oncology",
+    "year": 2022,
+    "patientN": 86,
+    "studyType": "cohort",
+    "evidenceLevel": 4,
+    "doi": "10.1016/S1470-2045(22)00344-9",
+    "pubmedId": "35753335",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HER2 扩增型 (IHC 3+ 或 IHC 2+/FISH+) RAS 野生型 mCRC",
+    "interventionArm": "T-DXd 6.4mg/kg 静滴 Q3W",
+    "riskReduction": "45.3% 客观缓解率 (ORR)，中位PFS 6.9 个月",
+    "keyConclusions": [
+      "靶向抗体偶联药物 (ADC) 德曲妥珠单抗 (T-DXd) 在 HER2 扩增/高表达 (IHC 3+ 或 IHC 2+/FISH+) 难治性结直肠癌中，确认的客观缓解率 (ORR) 达到突破性的 45.3%。",
+      "中位无进展生存期达 6.9 个月，颠覆了既往 HER2 扩增肠癌缺乏强效高响应靶向治疗的历史认知空白。"
+    ],
+    "relevantFactors": [
+      "DESTINY-CRC01",
+      "HER2扩增",
+      "德曲妥珠单抗",
+      "T-DXd",
+      "ADC精准打击"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "toga_2010",
+    "cancerType": "gastric",
+    "title": "Trastuzumab in combination with chemotherapy versus chemotherapy alone for treatment of HER2-positive advanced gastric or gastro-oesophageal junction cancer (ToGA)",
+    "journal": "Lancet",
+    "year": 2010,
+    "patientN": 584,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(10)61121-X",
+    "pubmedId": "20728210",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HER2 阳性 (IHC 3+ 或 IHC 2+/FISH+)",
+    "interventionArm": "曲妥珠单抗 + 顺铂/氟尿嘧啶 vs 单纯化疗",
+    "riskReduction": "死亡风险降低 26% (HR=0.74, P=0.0046)",
+    "keyConclusions": [
+      "HER2 阳性 (IHC 3+ 或 FISH+) 晚期胃癌患者加用曲妥珠单抗联合化疗，中位总生存期从 11.1 个月提升至 13.8 个月 (高表达亚组达 16.0 个月)，死亡风险降低 26% (HR=0.74)。",
+      "正式确立了胃癌 HER2 靶点筛查作为全球一线治疗不可或缺的诊疗金标准。"
+    ],
+    "relevantFactors": [
+      "HER2",
+      "曲妥珠单抗",
+      "ToGA",
+      "靶向治疗",
+      "胃腺癌"
+    ],
+    "applicableStages": [
+      "III",
+      "IV"
+    ]
+  },
+  {
+    "id": "spotlight_2023",
+    "cancerType": "gastric",
+    "title": "Zolbetuximab plus mFOLFOX6 in patients with CLDN18.2-positive, HER2-negative, untreated, locally advanced unresectable or metastatic gastric or gastro-oesophageal junction adenocarcinoma (SPOTLIGHT)",
+    "journal": "Lancet",
+    "year": 2023,
+    "patientN": 565,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(23)00620-7",
+    "pubmedId": "37068504",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "CLDN18.2 阳性 (≥75% 膜染色 ≥2+) / HER2-",
+    "interventionArm": "Zolbetuximab + mFOLFOX6 vs 安慰剂 + mFOLFOX6",
+    "riskReduction": "疾病进展或死亡风险降低 25% (HR=0.75, P=0.0066)",
+    "keyConclusions": [
+      "针对 Claudin 18.2 阳性（≥75% 肿瘤细胞呈中强膜染色）、HER2 阴性晚期胃癌，佐妥昔单抗 (Zolbetuximab) 联合 mFOLFOX6 使中位无进展生存期延长至 10.6 个月，中位 OS 提升至 18.2 个月。",
+      "开启了继 HER2 之后胃癌最具革命性的特异性细胞紧密连接蛋白靶向治疗新时代。"
+    ],
+    "relevantFactors": [
+      "Claudin 18.2",
+      "佐妥昔单抗",
+      "SPOTLIGHT",
+      "一线靶向",
+      "CLDN18.2"
+    ],
+    "applicableStages": [
+      "III",
+      "IV"
+    ]
+  },
+  {
+    "id": "checkmate_649_2021",
+    "cancerType": "gastric",
+    "title": "First-line nivolumab plus chemotherapy versus chemotherapy alone for advanced gastric, gastro-oesophageal junction, and oesophageal adenocarcinoma (CheckMate 649)",
+    "journal": "Lancet",
+    "year": 2021,
+    "patientN": 1581,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(21)00797-2",
+    "pubmedId": "34102137",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "PD-L1 CPS ≥ 5 / HER2-",
+    "interventionArm": "Nivolumab + XELOX/FOLFOX vs 单纯化疗",
+    "riskReduction": "死亡风险降低 29% (HR=0.71, P<0.0001)",
+    "keyConclusions": [
+      "在 PD-L1 CPS ≥ 5 的晚期胃癌/胃食管结合部腺癌中，纳武利尤单抗 (O药) 联合化疗显著延长中位总生存期至 14.4 个月 (vs 单纯化疗 11.1 个月，HR=0.71)。",
+      "全人群总生存期亦实现显著获益 (13.8 vs 11.6 个月)，被国内外指南全线列为一线首选 I 级推荐。"
+    ],
+    "relevantFactors": [
+      "PD-L1",
+      "CPS",
+      "纳武利尤单抗",
+      "CheckMate-649",
+      "免疫治疗"
+    ],
+    "applicableStages": [
+      "III",
+      "IV"
+    ]
+  },
+  {
+    "id": "resolve_2021",
+    "cancerType": "gastric",
+    "title": "Perioperative or postoperative adjuvant oxaliplatin with S-1 versus postoperative oxaliplatin with capecitabine in patients with locally advanced gastric or gastro-oesophageal junction adenocarcinoma undergoing D2 gastrectomy (RESOLVE)",
+    "journal": "Lancet Oncology",
+    "year": 2021,
+    "patientN": 1028,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(21)00297-9",
+    "pubmedId": "34252374",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "局部进展期 cT4a/N+ 或 cT4b/Nx D2切除术后",
+    "interventionArm": "围手术期SOX vs 术后SOX vs 术后XELOX",
+    "riskReduction": "围手术期SOX降低疾病复发风险 23% (HR=0.77)",
+    "keyConclusions": [
+      "中国自主设计开展的里程碑 III 期研究：证实术后辅助 SOX (替吉奥+奥沙利铂) 方案在 D2 根治术后 3 年无病生存率 (DFS) 不劣于经典 XELOX 方案 (62.1% vs 60.3%)。",
+      "围手术期 SOX 方案（术前 3 周期 + 术后 5 周期）相比术后 XELOX 进一步显著降低复发风险 23% (HR=0.77)。"
+    ],
+    "relevantFactors": [
+      "D2根治术",
+      "SOX方案",
+      "替吉奥",
+      "RESOLVE",
+      "围手术期化疗"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB",
+      "IIIC"
+    ]
+  },
+  {
+    "id": "classic_2012",
+    "cancerType": "gastric",
+    "title": "Adjuvant capecitabine and oxaliplatin for gastric cancer after D2 gastrectomy (CLASSIC): a phase 3 open-label, randomised controlled trial",
+    "journal": "Lancet",
+    "year": 2012,
+    "patientN": 1035,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(11)61873-4",
+    "pubmedId": "22226517",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "D2 淋巴结清扫术后 II~IIIB 期",
+    "interventionArm": "XELOX 辅助化疗 6 个月 vs 单纯手术随访",
+    "riskReduction": "复发风险降低 44% (HR=0.56, P<0.0001)",
+    "keyConclusions": [
+      "在亚洲 D2 根治性切除术后的 II-III 期胃癌中，术后辅助 XELOX (卡培他滨+奥沙利铂) 治疗 6 个月使 3 年 DFS 达 74% (单纯手术组 59%)，显著降低复发风险 44% (HR=0.56)。",
+      "奠定了 D2 根治术后含铂两药方案作为标准辅助治疗的基石地位。"
+    ],
+    "relevantFactors": [
+      "CLASSIC",
+      "XELOX",
+      "D2切除",
+      "卡培他滨",
+      "奥沙利铂",
+      "辅助化疗"
+    ],
+    "applicableStages": [
+      "II",
+      "III"
+    ]
+  },
+  {
+    "id": "orient_32_2021",
+    "cancerType": "liver",
+    "title": "Sintilimab plus a bevacizumab biosimilar (IBI305) versus sorafenib in first-line treatment for unresectable hepatocellular carcinoma (ORIENT-32)",
+    "journal": "Lancet Oncology",
+    "year": 2021,
+    "patientN": 571,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(21)00252-9",
+    "pubmedId": "34143970",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "HBV 相关晚期肝细胞癌 / Child-Pugh A级",
+    "interventionArm": "信迪利单抗 + 贝伐珠单抗类似物 vs 索拉非尼单药",
+    "riskReduction": "死亡风险显著降低 43% (HR=0.57, P<0.0001)",
+    "keyConclusions": [
+      "中国首个自主原研大型 III 期试验：信迪利单抗联合贝伐珠单抗生物类似物 (达伯舒+达攸同) 一线治疗中国不可切除肝癌，使中位总生存期显著优于索拉非尼 (NE vs 10.4 个月, HR=0.57)，死亡风险降低 43%。",
+      "中位 PFS 显著延长至 4.6 vs 2.8 个月，树立了中国乙肝背景晚期肝细胞癌一线“双达”治疗新标杆。"
+    ],
+    "relevantFactors": [
+      "信迪利单抗",
+      "贝伐珠单抗",
+      "ORIENT-32",
+      "双达方案",
+      "乙肝肝癌"
+    ],
+    "applicableStages": [
+      "CNLC IIb",
+      "CNLC IIIa",
+      "CNLC IIIb",
+      "IV"
+    ]
+  },
+  {
+    "id": "imbrave150_2020",
+    "cancerType": "liver",
+    "title": "Atezolizumab plus Bevacizumab in Unresectable Hepatocellular Carcinoma (IMbrave150)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2020,
+    "patientN": 501,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1915745",
+    "pubmedId": "32402160",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "不可切除肝细胞癌 / 未经系统治疗 / Child-Pugh A级",
+    "interventionArm": "Atezolizumab + Bevacizumab vs 索拉非尼",
+    "riskReduction": "死亡风险降低 42% (HR=0.58, P<0.001)",
+    "keyConclusions": [
+      "全球多中心 III 期里程碑试验：阿替利珠单抗联合贝伐珠单抗 (T+A 方案) 一线治疗晚期肝细胞癌，12 个月总生存率高达 67.2% (vs 索拉非尼 54.6%)，死亡风险降低 42% (HR=0.58)。",
+      "终结了索拉非尼长达 13 年的单药垄断，奠定了免疫联合抗血管生成靶向在晚期肝癌一线治疗的基石地位。"
+    ],
+    "relevantFactors": [
+      "阿替利珠单抗",
+      "贝伐珠单抗",
+      "IMbrave150",
+      "T+A方案",
+      "一线靶免"
+    ],
+    "applicableStages": [
+      "CNLC IIb",
+      "CNLC IIIa",
+      "CNLC IIIb",
+      "IV"
+    ]
+  },
+  {
+    "id": "reflect_2018",
+    "cancerType": "liver",
+    "title": "Lenvatinib versus sorafenib in first-line treatment of patients with unresectable hepatocellular carcinoma (REFLECT): a randomised phase 3 non-inferiority trial",
+    "journal": "Lancet",
+    "year": 2018,
+    "patientN": 954,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(18)30207-1",
+    "pubmedId": "29433850",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "Child-Pugh A级 / 不可切除肝细胞癌",
+    "interventionArm": "仑伐替尼单药口服 vs 索拉非尼单药口服",
+    "riskReduction": "PFS 与 ORR 翻倍，OS 达到统计学非劣效",
+    "keyConclusions": [
+      "仑伐替尼 (乐伐替尼) 一线单药对比索拉非尼总生存达到统计学非劣效 (中位 OS 13.6 vs 12.3 个月)，在中国亚组中位 OS 更是突破 15.0 个月。",
+      "客观缓解率 (ORR mRECIST 达 40.6% vs 12.4%) 与中位无进展生存期 (PFS 7.4 vs 3.7 个月) 呈现成倍优势，成为肿瘤负荷大或伴血管癌栓患者的高缓解率首选靶向药物。"
+    ],
+    "relevantFactors": [
+      "仑伐替尼",
+      "REFLECT",
+      "高客观缓解率",
+      "门脉癌栓",
+      "TKI靶向"
+    ],
+    "applicableStages": [
+      "CNLC IIa",
+      "CNLC IIb",
+      "CNLC IIIa"
+    ]
+  },
+  {
+    "id": "zgdh9_donafenib_2021",
+    "cancerType": "liver",
+    "title": "Donafenib versus sorafenib in first-line treatment of patients with advanced hepatocellular carcinoma (ZGDH9)",
+    "journal": "Lancet Oncology",
+    "year": 2021,
+    "patientN": 668,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(21)00216-5",
+    "pubmedId": "34143969",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "不可切除或转移性肝细胞癌 / Child-Pugh A级",
+    "interventionArm": "多纳非尼片 0.2g bid vs 索拉非尼片 0.4g bid",
+    "riskReduction": "死亡风险降低 17% (HR=0.83, P=0.0245)",
+    "keyConclusions": [
+      "中国自主研发的多激酶抑制剂多纳非尼 (重水多纳非尼) 在大型 III 期试验中，中位总生存期显著优于索拉非尼 (12.1 vs 10.3 个月，HR=0.83)，死亡风险降低 17%。",
+      "≥3 级药物不良事件发生率明显更低，特别是在手足皮肤反应和胃肠道毒性方面表现出更优良的耐受性。"
+    ],
+    "relevantFactors": [
+      "多纳非尼",
+      "ZGDH9",
+      "中国原研单药",
+      "靶向治疗",
+      "低不良反应"
+    ],
+    "applicableStages": [
+      "CNLC IIb",
+      "CNLC IIIa",
+      "CNLC IIIb"
+    ]
+  },
+  {
+    "id": "neocrtec5010_2018",
+    "cancerType": "esophageal",
+    "title": "Neoadjuvant Chemoradiotherapy Followed by Surgery Versus Surgery Alone for Locally Advanced Squamous Cell Carcinoma of the Esophagus (NEOCRTEC5010)",
+    "journal": "Journal of Clinical Oncology (JCO)",
+    "year": 2018,
+    "patientN": 451,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.2017.77.5841",
+    "pubmedId": "29924685",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "潜在可切除局部进展期胸段食管鳞癌 (cT1-4N1-2M0)",
+    "interventionArm": "术前新辅助放化疗 (40Gy+顺铂/长春瑞滨) + 手术 vs 单纯根治性手术",
+    "riskReduction": "死亡风险降低 29% (HR=0.71, P=0.001)",
+    "keyConclusions": [
+      "中国首个前瞻性多中心 III 期新辅助放化疗试验：长春瑞滨+顺铂联合 40Gy 放疗术前新辅助治疗胸段可切除食管鳞癌，中位 OS 突破 100.1 个月 (单手术组 66.5 个月，HR=0.71)。",
+      "病理完全缓解率 (pCR) 高达 43.2%，且并未增加围术期手术死亡率，一举确立中国局部进展期食管鳞癌新辅助放化疗标准治疗规范。"
+    ],
+    "relevantFactors": [
+      "NEOCRTEC5010",
+      "新辅助放化疗",
+      "pCR 43%",
+      "长春瑞滨顺铂",
+      "食管鳞癌"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "IIIA",
+      "IIIB"
+    ]
+  },
+  {
+    "id": "cross_2012",
+    "cancerType": "esophageal",
+    "title": "Preoperative Chemoradiotherapy for Esophageal or Junctional Cancer (CROSS)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2012,
+    "patientN": 368,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1112088",
+    "pubmedId": "22646630",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "局部进展期 cT1N1M0 或 cT2-3N0-1M0 食管癌",
+    "interventionArm": "新辅助放化疗 (41.4Gy+卡铂/紫杉醇) + 手术 vs 单纯手术",
+    "riskReduction": "长期死亡风险降低 34% (HR=0.66, P=0.003)",
+    "keyConclusions": [
+      "国际里程碑试验：每周紫杉醇+卡铂联合 41.4Gy 同步放疗术前新辅助治疗，中位总生存期从 24.0 个月翻倍至 49.4 个月 (鳞癌亚组达 81.6 个月)。",
+      "长期 10 年随访证实新辅助放化疗在局部控制和长期总生存方面获益极其持久稳定。"
+    ],
+    "relevantFactors": [
+      "CROSS方案",
+      "紫杉醇卡铂",
+      "新辅助同步放化疗",
+      "10年随访"
+    ],
+    "applicableStages": [
+      "II",
+      "III"
+    ]
+  },
+  {
+    "id": "escort_1st_2021",
+    "cancerType": "esophageal",
+    "title": "Effect of Camrelizumab vs Placebo Added to Chemotherapy on Survival and Progression-Free Survival in Patients with Advanced or Metastatic Esophageal Squamous Cell Carcinoma (ESCORT-1st)",
+    "journal": "JAMA",
+    "year": 2021,
+    "patientN": 596,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1001/jama.2021.16836",
+    "pubmedId": "34519799",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "未经系统治疗的局部晚期或转移性食管鳞癌",
+    "interventionArm": "卡瑞利珠单抗 + 紫杉醇/顺铂 vs 安慰剂 + 紫杉醇/顺铂",
+    "riskReduction": "死亡风险降低 30% (HR=0.70, P<0.001)",
+    "keyConclusions": [
+      "中国原研 PD-1 单抗卡瑞利珠单抗联合紫杉醇+顺铂一线治疗晚期食管鳞癌，中位 OS 显著延长至 15.3 个月 (vs 安慰剂化疗组 12.0 个月，HR=0.70)，死亡风险降低 30%。",
+      "中位 PFS 显著提高至 6.9 vs 5.6 个月，ORR 提升至 72.1%，成为中国 CSCO 食管癌指南一线首选 I 级推荐。"
+    ],
+    "relevantFactors": [
+      "卡瑞利珠单抗",
+      "ESCORT-1st",
+      "一线免疫联合",
+      "高有效率72%",
+      "食管鳞癌"
+    ],
+    "applicableStages": [
+      "IIIB",
+      "IVA",
+      "IVB"
+    ]
+  },
+  {
+    "id": "rationale_306_2023",
+    "cancerType": "esophageal",
+    "title": "Tislelizumab plus chemotherapy versus placebo plus chemotherapy as first-line treatment for advanced or metastatic oesophageal squamous cell carcinoma (RATIONALE-306)",
+    "journal": "Lancet Oncology",
+    "year": 2023,
+    "patientN": 649,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(23)00108-2",
+    "pubmedId": "37086737",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "未经治疗的晚期/不可切除食管鳞癌",
+    "interventionArm": "Tislelizumab + 化疗 (氟尿嘧啶/紫杉醇+顺铂) vs 安慰剂 + 化疗",
+    "riskReduction": "死亡风险显著降低 34% (HR=0.66, P<0.0001)",
+    "keyConclusions": [
+      "全球多中心 III 期试验：替雷利珠单抗联合研究者选择的含铂双药化疗一线治疗晚期 ESCC，中位 OS 突破至 17.2 个月 (vs 化疗组 10.6 个月，HR=0.66)，死亡风险降低 34%。",
+      "无论 PD-L1 表达状态高低，全人群均呈现稳健的生存获益，进一步巩固了免疫治疗在食管鳞癌中的基石地位。"
+    ],
+    "relevantFactors": [
+      "替雷利珠单抗",
+      "RATIONALE-306",
+      "中位OS 17.2月",
+      "全人群获益"
+    ],
+    "applicableStages": [
+      "III",
+      "IV"
+    ]
+  },
+  {
+    "id": "kuma_active_surveillance_2014",
+    "cancerType": "thyroid",
+    "title": "Patient Outcomes and Cost-Effectiveness of Immediate Surgery versus Active Surveillance for Low-Risk Papillary Thyroid Microcarcinoma",
+    "journal": "Thyroid",
+    "year": 2014,
+    "patientN": 1235,
+    "studyType": "prospective_cohort",
+    "evidenceLevel": 4,
+    "doi": "10.1089/thy.2013.0456",
+    "pubmedId": "24410185",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "肿瘤最大径 ≤ 10mm / 无被膜外侵犯 / 无淋巴结转移",
+    "interventionArm": "超声主动监测 (Active Surveillance) vs 立即行腺叶切除术",
+    "riskReduction": "10年疾病特异性生存率保持 100%，近九成终身免刀",
+    "keyConclusions": [
+      "日本神户 Kuma 医院开创性的低危甲状腺微小乳头状癌 (PTMC ≤1cm) 长期主动监测队列：10 年随访中仅 8% 的患者结节增大超过 3mm，发生淋巴结转移者不足 3.8%。",
+      "无论初诊即手术还是进展后再转行补救手术，两组患者的 10 年特异性生存率均为 100%；主动监测组避免了 90% 以上的手术并发症与终身服药，彻底改变了国际微小癌诊疗哲学。"
+    ],
+    "relevantFactors": [
+      "主动监测",
+      "PTMC",
+      "微小乳头状癌",
+      "Kuma医院",
+      "免除手术"
+    ],
+    "applicableStages": [
+      "T1aN0M0",
+      "I"
+    ]
+  },
+  {
+    "id": "select_lenvatinib_2015",
+    "cancerType": "thyroid",
+    "title": "Lenvatinib versus Placebo in Radioiodine-Refractory Thyroid Cancer (SELECT)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2015,
+    "patientN": 392,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1406470",
+    "pubmedId": "25671247",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "放射性碘难治性进展期分化型甲状腺癌 (RAIR-DTC)",
+    "interventionArm": "仑伐替尼 24mg 口服 qd vs 安慰剂",
+    "riskReduction": "疾病进展或死亡风险降低 79% (HR=0.21, P<0.001)",
+    "keyConclusions": [
+      "放射性碘难治性分化型甲状腺癌 (RAIR-DTC) 的里程碑突破：口服多靶点 TKI 仑伐替尼使中位无进展生存期 (PFS) 从 3.6 个月断崖式延长至 18.3 个月 (净延长 14.7 个月，HR=0.21)。",
+      "客观缓解率 (ORR) 高达 64.8% (安慰剂组仅 1.5%)，使肿瘤迅速大幅退缩，成为全球碘难治性甲癌一线靶向金标准。"
+    ],
+    "relevantFactors": [
+      "仑伐替尼",
+      "SELECT研究",
+      "RAIR-DTC",
+      "碘难治",
+      "PFS延长14.7月"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB"
+    ]
+  },
+  {
+    "id": "arrow_pralsetinib_2021",
+    "cancerType": "thyroid",
+    "title": "Efficacy and safety of pralsetinib in patients with advanced RET-altered thyroid cancer (ARROW): a multi-cohort, open-label, registrational, phase 1/2 study",
+    "journal": "Lancet Diabetes & Endocrinology",
+    "year": 2021,
+    "patientN": 136,
+    "studyType": "prospective_cohort",
+    "evidenceLevel": 4,
+    "doi": "10.1016/S2213-8587(21)00120-0",
+    "pubmedId": "34119338",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "RET 基因突变 (MTC) 或 RET 基因重排融合 (DTC)",
+    "interventionArm": "普拉替尼口服 400mg qd",
+    "riskReduction": "初治 ORR 达 71%~89%，中位 PFS 尚未达到",
+    "keyConclusions": [
+      "高选择性 RET 抑制剂普拉替尼 (Pralsetinib) 在晚期 RET 突变甲状腺髓样癌 (MTC) 和 RET 融合分化型甲状腺癌中展现出高度持久的客观缓解：初治 RET 突变 MTC 客观缓解率达 71%，RET 融合 DTC 达 89%。",
+      "开启了甲状腺髓样癌与晚期难治性甲状腺癌高特异性生物标志物精准靶向治疗的新纪元。"
+    ],
+    "relevantFactors": [
+      "RET突变",
+      "RET融合",
+      "普拉替尼",
+      "ARROW",
+      "甲状腺髓样癌"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVA",
+      "IVB",
+      "IVC"
+    ]
+  },
+  {
+    "id": "estimabl2_2022",
+    "cancerType": "thyroid",
+    "title": "Postoperative Thyroid Remnant Ablation in Low-Risk Papillary Thyroid Cancer (ESTIMABL2)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2022,
+    "patientN": 730,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2111953",
+    "pubmedId": "35263518",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "低危分化型甲状腺癌全切术后 (pT1a-T1b N0/Nx M0)",
+    "interventionArm": "免行131-I清甲随访 vs 接受 1.1 GBq 131-I 清甲",
+    "riskReduction": "非劣效性确立 (免除清甲未增加任何复发事件)",
+    "keyConclusions": [
+      "前瞻性多中心 III 期随机对照试验证实：对于术后低危分化型甲状腺乳头状癌 (pT1m/T1b N0/Nx)，全切术后不接受 131-I 清甲治疗组与接受 1.1 GBq (30 mCi) 清甲组相比，3 年无事件发生率完全等效 (95.6% vs 95.9%)。",
+      "为全球低危早期甲状腺癌患者安全免除放射性核素 131-I 辐射照射提供了最权威的前瞻性证据支持。"
+    ],
+    "relevantFactors": [
+      "ESTIMABL2",
+      "碘-131清甲",
+      "免除放疗",
+      "低危甲癌",
+      "辐射防护"
+    ],
+    "applicableStages": [
+      "pT1a",
+      "pT1b",
+      "I"
+    ]
+  },
+  {
+    "id": "ruby_part1_dostarlimab_2023",
+    "cancerType": "endometrial",
+    "title": "Dostarlimab for Primary Advanced or Recurrent Endometrial Cancer (RUBY Part 1)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2023,
+    "patientN": 494,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2302312",
+    "pubmedId": "36972026",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "dMMR (错配修复缺陷) 或 MSI-H (微卫星高度不稳定)",
+    "interventionArm": "多塔利单抗 + 卡铂/紫杉醇 vs 安慰剂 + 卡铂/紫杉醇",
+    "riskReduction": "dMMR 人群疾病进展风险骤降 72% (HR=0.28, P<0.001)",
+    "keyConclusions": [
+      "dMMR/MSI-H 晚期或复发性子宫内膜癌具有划时代意义的里程碑 RCT：在标准紫杉醇+卡铂化疗基础上加用多塔利单抗 (Dostarlimab)，24 个月无进展生存率达到 61.4% (单纯化疗组仅 15.7%)，进展或死亡风险暴跌 72% (HR=0.28)。",
+      "全人群 24 个月总生存率由 56.0% 提升至 71.3%，确立了晚期子宫内膜癌分子分型指导下一线免疫联合治疗的全球新标杆。"
+    ],
+    "relevantFactors": [
+      "多塔利单抗",
+      "RUBY研究",
+      "dMMR",
+      "MSI-H",
+      "无进展生存期翻倍"
+    ],
+    "applicableStages": [
+      "III",
+      "IIIA",
+      "IIIB",
+      "IIIC",
+      "IV",
+      "IVA",
+      "IVB"
+    ]
+  },
+  {
+    "id": "portec4a_molecular_deescalation_2023",
+    "cancerType": "endometrial",
+    "title": "Molecular-Integrated Risk Profile to Guide Adjuvant Therapy in Endometrial Cancer (PORTEC-4a)",
+    "journal": "Lancet Oncology",
+    "year": 2023,
+    "patientN": 420,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(23)00243-8",
+    "pubmedId": "37354937",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "POLE 催化亚基致病突变 / MMRd / NSMP / p53abn 四分法",
+    "interventionArm": "分子分层指导个体化放化疗 vs 标准常规辅助放疗",
+    "riskReduction": "POLEmut 患者免除放疗复发率仍极低 (HR=0.14)",
+    "keyConclusions": [
+      "国际首个根据 FIGO 2023 分子分型指导术后辅助放化疗降阶梯的前瞻性 III 期试验：POLE 超突变 (POLEmut) 患者即使组织学为高级别或深肌层浸润，免除辅助放化疗后 5 年无复发率依然高达 96.8%。",
+      "证实分子分型指导能使超过 45% 的早期中高危患者安全免除盆腔放疗，极大保留阴道与肠道功能，避免过度医疗。"
+    ],
+    "relevantFactors": [
+      "PORTEC-4a",
+      "POLEmut",
+      "免除放疗",
+      "FIGO 2023分子分型",
+      "去强化降阶梯"
+    ],
+    "applicableStages": [
+      "I",
+      "IA",
+      "IB",
+      "IAm_POLEmut"
+    ]
+  },
+  {
+    "id": "portec3_adjuvant_chemort_2019",
+    "cancerType": "endometrial",
+    "title": "Adjuvant Chemoradiotherapy versus Radiotherapy Alone in Women with High-Risk Endometrial Cancer (PORTEC-3)",
+    "journal": "Lancet Oncology",
+    "year": 2019,
+    "patientN": 660,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(19)30395-X",
+    "pubmedId": "31345626",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "高危组织学 (浆液性/透明细胞) 或深肌层浸润伴 LVSI 阳性",
+    "interventionArm": "盆腔体外放疗同步顺铂 + TC 化疗 4 周期 vs 单纯体外放疗",
+    "riskReduction": "死亡风险降低 30% (HR=0.70, P=0.034)",
+    "keyConclusions": [
+      "高危 I~III 期子宫内膜癌里程碑随访：放疗同步顺铂序贯紫杉醇+卡铂化疗，使 5 年总生存率由 76.1% 显著提升至 81.4% (HR=0.70)，无病生存率由 68.6% 提升至 75.5%。",
+      "亚组分析表明，p53 异常型 (p53abn) 及子宫浆液性癌患者从强化化疗联合放疗中获益最为突出，5 年生存率绝对提升近 22%。"
+    ],
+    "relevantFactors": [
+      "PORTEC-3",
+      "同步放化疗",
+      "高危III期",
+      "p53异常型",
+      "生存期延长"
+    ],
+    "applicableStages": [
+      "I",
+      "IB",
+      "II",
+      "IIA",
+      "IIB",
+      "III",
+      "IIIC1",
+      "IIIC2"
+    ]
+  },
+  {
+    "id": "keynote775_lenvatinib_pembro_2022",
+    "cancerType": "endometrial",
+    "title": "Lenvatinib plus Pembrolizumab for Advanced Endometrial Cancer (KEYNOTE-775 / Study 309)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2022,
+    "patientN": 827,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2108330",
+    "pubmedId": "35045221",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "pMMR (错配修复功能正常) 晚期或复发转移",
+    "interventionArm": "仑伐替尼 20mg qd + 帕博利珠单抗 200mg q3w vs 医生自选化疗 (多柔比星或紫杉醇)",
+    "riskReduction": "死亡风险降低 32% (HR=0.68, P<0.001)",
+    "keyConclusions": [
+      "针对既往含铂化疗耐药的 pMMR (错配修复正常) 晚期内膜癌患者，仑伐替尼联合帕博利珠单抗中位总生存期从 12.0 个月显著延长至 17.4 个月 (HR=0.68)。",
+      "中位无进展生存期由 3.8 个月延长至 6.6 个月，成为全球首个在 pMMR 难治性子宫内膜癌中证实双重获益的免疫靶向联合方案。"
+    ],
+    "relevantFactors": [
+      "KEYNOTE-775",
+      "仑伐替尼+帕博利珠单抗",
+      "pMMR",
+      "耐药挽救",
+      "总生存期提升"
+    ],
+    "applicableStages": [
+      "III",
+      "IV",
+      "IVB"
+    ]
+  },
+  {
+    "id": "keynote826_pembrolizumab_2021",
+    "cancerType": "cervical",
+    "title": "Pembrolizumab for Persistent, Recurrent, or Metastatic Cervical Cancer (KEYNOTE-826)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2021,
+    "patientN": 617,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa2112435",
+    "pubmedId": "34534429",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "PD-L1 综合阳性评分 (CPS) $\\\\ge 1$ 或 $\\\\ge 10$",
+    "interventionArm": "帕博利珠单抗 + 化疗 ± 贝伐珠单抗 vs 安慰剂 + 化疗 ± 贝伐珠单抗",
+    "riskReduction": "全人群死亡风险降低 36% (HR=0.64, P<0.001)",
+    "keyConclusions": [
+      "划时代全球 III 期随机双盲对照研究：在化疗 (紫杉醇+顺铂/卡铂) ± 贝伐珠单抗基础上加用帕博利珠单抗，使 PD-L1 CPS $\\\\ge 1$ 患者的 24 个月总生存率由 41.7% 跃升至 53.0% (HR=0.64)。",
+      "在 CPS $\\\\ge 10$ 人群中死亡风险降低 42% (HR=0.58)，被各大国际指南列为持续、复发或转移性宫颈癌一线治疗最高级别推荐。"
+    ],
+    "relevantFactors": [
+      "KEYNOTE-826",
+      "帕博利珠单抗",
+      "PD-L1 CPS",
+      "贝伐珠单抗",
+      "死亡风险降低36%"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVB",
+      "复发转移"
+    ]
+  },
+  {
+    "id": "embrace1_igabt_ccrt_2021",
+    "cancerType": "cervical",
+    "title": "Image-Guided Adaptive Brachytherapy in Locally Advanced Cervical Cancer (EMBRACE-I)",
+    "journal": "Lancet Oncology",
+    "year": 2021,
+    "patientN": 1411,
+    "studyType": "prospective_cohort",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S1470-2045(20)30753-1",
+    "pubmedId": "33794199",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "局部进展期宫颈癌 (FIGO 2018 IB3~IVA 期)",
+    "interventionArm": "顺铂同步外照射 (EBRT) 序贯 MRI 引导自适应三维腔内/组织间插植近距离放疗",
+    "riskReduction": "5年局部控制率达 92%，重度膀胱直肠并发症发生率 <7%",
+    "keyConclusions": [
+      "欧洲乃至全球最大规模局部进展期宫颈癌多中心前瞻队列：盆腔体外同步放化疗 (CCRT) 联合高精度 MRI 引导三维自适应后装放疗 (IGABT)，5 年局部控制率达到惊人的 92.0%。",
+      "5 年总生存率高达 74.0%，且通过对直肠、膀胱的靶区高精度避让，3~5 级重度迟发毒副反应发生率被压制在 6.8% 以下，奠定了现代放疗根治的绝对霸主地位。"
+    ],
+    "relevantFactors": [
+      "EMBRACE-I",
+      "三维自适应后装放疗",
+      "局部进展期",
+      "CCRT",
+      "5年局控率92%"
+    ],
+    "applicableStages": [
+      "IB3",
+      "IIA2",
+      "IIB",
+      "IIIA",
+      "IIIB",
+      "IIIC1",
+      "IIIC2",
+      "IVA"
+    ]
+  },
+  {
+    "id": "lacc_trial_open_vs_laparoscopic_2018",
+    "cancerType": "cervical",
+    "title": "Minimally Invasive versus Abdominal Radical Hysterectomy for Cervical Cancer (LACC)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2018,
+    "patientN": 631,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1806395",
+    "pubmedId": "30379051",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "早期 IA1 (伴 LVSI) ~ IB1 期宫颈浸润癌",
+    "interventionArm": "开腹广泛全子宫切除术 vs 微创广泛全子宫切除术 (普通腹腔镜或机器人)",
+    "riskReduction": "开腹组无病生存率绝对优出 10.5% (HR=0.30, P<0.001)",
+    "keyConclusions": [
+      "震惊全球妇科肿瘤外科界的顶刊前瞻性 III 期 RCT：早期宫颈癌微创手术 (腹腔镜或达芬奇机器人) 组的 4.5 年无病生存率仅为 86.0%，显著低于传统开腹广泛全子宫切除术组的 96.5% (HR=3.74)。",
+      "微创组局部复发率增加了近 4 倍，全因死亡风险高出 6 倍 (91.2% vs 97.1%)；该研究直接导致 NCCN 及全球指南撤回微创优先推荐，重申开腹根治术的金标准地位。"
+    ],
+    "relevantFactors": [
+      "LACC试验",
+      "开腹根治术",
+      "微创腹腔镜警示",
+      "无瘤原则",
+      "4.5年DFS 96.5%"
+    ],
+    "applicableStages": [
+      "IA1",
+      "IA2",
+      "IB1",
+      "IB2"
+    ]
+  },
+  {
+    "id": "gog240_bevacizumab_2014",
+    "cancerType": "cervical",
+    "title": "Improved Survival with Bevacizumab in Advanced Cervical Cancer (GOG-240)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2014,
+    "patientN": 452,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1309748",
+    "pubmedId": "24552318",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "持续、复发或 IVB 期转移性宫颈癌",
+    "interventionArm": "双药化疗 + 贝伐珠单抗 15mg/kg q3w vs 单纯双药化疗",
+    "riskReduction": "死亡风险降低 23% (HR=0.77, P=0.007)",
+    "keyConclusions": [
+      "首个确立抗血管生成靶向药在晚期宫颈癌获益的前瞻性 III 期 RCT：在顺铂+紫杉醇基础上联合贝伐珠单抗，中位总生存期从 13.3 个月提高到 16.8 个月 (HR=0.77)。",
+      "客观缓解率由 36% 提升至 48%，确立了贝伐珠单抗作为晚期及复发转移宫颈癌一线标准联合治疗的不可撼动地位。"
+    ],
+    "relevantFactors": [
+      "GOG-240",
+      "贝伐珠单抗",
+      "晚期一线",
+      "抗血管靶向",
+      "总生存期延长"
+    ],
+    "applicableStages": [
+      "IV",
+      "IVB",
+      "复发转移"
+    ]
+  },
+  {
+    "id": "prodige_24_2018",
+    "cancerType": "pancreatic",
+    "title": "FOLFIRINOX or Gemcitabine as Adjuvant Therapy for Pancreatic Cancer (PRODIGE 24/CCTG PA.6)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2018,
+    "patientN": 493,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1809775",
+    "pubmedId": "30575490",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "可切除胰腺导管腺癌根治术后人群",
+    "interventionArm": "mFOLFIRINOX 方案 (每2周1次，共12周期) vs 吉西他滨单药 (共6周期)",
+    "riskReduction": "术后死亡风险降低 36% (HR 0.64)",
+    "keyConclusions": [
+      "改良 mFOLFIRINOX 方案作为术后辅助化疗，将局限性胰腺癌根治术后患者的中位总生存期从 35.0 个月提升至 54.4 个月 (HR 0.64, 95% CI 0.48-0.86, P=0.003)。",
+      "5 年总生存率达 43.2% vs 吉西他滨单药组的 31.4%，确立了体能状态良好 (ECOG 0-1) 患者术后辅助治疗的全球黄金金标准。"
+    ],
+    "relevantFactors": [
+      "R0切缘",
+      "mFOLFIRINOX",
+      "辅助化疗",
+      "长期生存"
+    ],
+    "applicableStages": [
+      "I",
+      "IA",
+      "IB",
+      "IIA",
+      "IIB",
+      "III"
+    ]
+  },
+  {
+    "id": "mpact_trial_2013",
+    "cancerType": "pancreatic",
+    "title": "Increased Survival in Pancreatic Cancer with Nab-Paclitaxel plus Gemcitabine (MPACT)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2013,
+    "patientN": 861,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1304369",
+    "pubmedId": "24131140",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "初治转移性胰腺导管腺癌",
+    "interventionArm": "白蛋白紫杉醇 125mg/m² + 吉西他滨 1000mg/m² (d1,8,15 q4w) vs 吉西他滨单药",
+    "riskReduction": "晚期死亡风险降低 28% (HR 0.72)",
+    "keyConclusions": [
+      "白蛋白结合型紫杉醇联合吉西他滨 (AG 方案) 显著延长晚期转移性胰腺癌患者中位总生存期 (8.5月 vs 6.7月, HR 0.72, P<0.001)。",
+      "1 年总生存率从 22% 显著翻倍提升至 35%，2 年生存率达 9%，成为晚期一线广泛适用化疗基石。"
+    ],
+    "relevantFactors": [
+      "白蛋白紫杉醇",
+      "吉西他滨",
+      "AG方案",
+      "晚期一线"
+    ],
+    "applicableStages": [
+      "IV",
+      "III"
+    ]
+  },
+  {
+    "id": "polo_trial_2019",
+    "cancerType": "pancreatic",
+    "title": "Maintenance Olaparib for Germline BRCA-Mutated Metastatic Pancreatic Cancer (POLO)",
+    "journal": "New England Journal of Medicine (NEJM)",
+    "year": 2019,
+    "patientN": 154,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1056/NEJMoa1908639",
+    "pubmedId": "31157963",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "胚系 BRCA1/2 突变阳性",
+    "interventionArm": "奥拉帕利片 300mg 口服 bid 维持 vs 安慰剂维持",
+    "riskReduction": "疾病进展或死亡风险降低 47% (HR 0.53)",
+    "keyConclusions": [
+      "携带胚系 BRCA1/2 突变 (gBRCAm) 且一线含铂化疗至少 16 周未进展的转移性胰腺癌患者，奥拉帕利维持治疗使中位 PFS 显著翻倍 (7.4月 vs 3.8月, HR 0.53, P=0.004)。",
+      "开启了胰腺癌生物标志物驱动的精准维持治疗先河，确立初诊晚期必须常规检测 BRCA 突变的指南规范。"
+    ],
+    "relevantFactors": [
+      "gBRCA1/2突变",
+      "奥拉帕利",
+      "PARP抑制剂",
+      "无化疗维持"
+    ],
+    "applicableStages": [
+      "IV"
+    ]
+  },
+  {
+    "id": "preopanc_trial_2022",
+    "cancerType": "pancreatic",
+    "title": "Neoadjuvant Chemoradiotherapy Versus Upfront Surgery for Pancreatic Cancer: Long-Term Results of PREOPANC",
+    "journal": "Journal of Clinical Oncology (JCO)",
+    "year": 2022,
+    "patientN": 246,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1200/JCO.21.02233",
+    "pubmedId": "35640799",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "交界可切除 / 局限进展期胰腺癌",
+    "interventionArm": "术前新辅助放化疗 (吉西他滨+放疗) + 手术 vs 直接根治手术",
+    "riskReduction": "长期死亡风险降低 27% (HR 0.73)",
+    "keyConclusions": [
+      "PREOPANC 长期随访证实，新辅助放化疗将可切除及交界可切除胰腺癌患者的 5 年总生存率提升至 20.5% (vs 直接手术组 6.5%, HR 0.73, P=0.025)。",
+      "尤其在交界可切除亚组中，新辅助治疗使 R0 根治切除率翻倍提升至 71% (vs 直接手术组 40%)，确立新辅助转化手术的核心地位。"
+    ],
+    "relevantFactors": [
+      "新辅助治疗",
+      "交界可切除",
+      "R0切除率",
+      "降期转化"
+    ],
+    "applicableStages": [
+      "IIA",
+      "IIB",
+      "III"
+    ]
+  },
+  {
+    "id": "napoli_3_2023",
+    "cancerType": "pancreatic",
+    "title": "NALIRIFOX versus Nab-Paclitaxel and Gemcitabine in Treatment-Naive Metastatic PDAC (NAPOLI 3)",
+    "journal": "The Lancet",
+    "year": 2023,
+    "patientN": 770,
+    "studyType": "rct",
+    "evidenceLevel": 5,
+    "doi": "10.1016/S0140-6736(23)01366-1",
+    "pubmedId": "37949091",
+    "url": "https:\n    keyConclusions: [\n      ",
+    "biomarkerDetails": "初治转移性胰腺导管腺癌",
+    "interventionArm": "NALIRIFOX (脂质体伊立替康+奥沙利铂+5-FU/LV) vs 白蛋白紫杉醇+吉西他滨",
+    "riskReduction": "总生存期死亡风险降低 17% (HR 0.83)",
+    "keyConclusions": [
+      "NALIRIFOX 方案（脂质体伊立替康 + 奥沙利铂 + 5-FU/LV）相较于 AG 方案，进一步延长转移性胰腺癌中位总生存期至 11.1 个月 (vs 9.2月, HR 0.83, P=0.04)。",
+      "为晚期胰腺癌一线系统化疗增添了全新的一级权威强效方案。"
+    ],
+    "relevantFactors": [
+      "脂质体伊立替康",
+      "NALIRIFOX",
+      "晚期一线",
+      "PFS/OS获益"
+    ],
+    "applicableStages": [
+      "IV"
+    ]
+  }
+]

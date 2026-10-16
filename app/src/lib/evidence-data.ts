@@ -23,6 +23,10 @@ export interface Study {
   evidenceLevel: 1 | 2 | 3 | 4 | 5;
   doi?: string;
   pubmedId?: string;
+  url?: string;
+  pdfUrl?: string;
+  pdfFileName?: string;
+  hasLocalPdf?: boolean;
   keyConclusions: string[];
   relevantFactors: string[];
   applicableStages: string[];

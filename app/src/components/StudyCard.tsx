@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Dna, TrendingDown, Pill, ExternalLink, Check } from "lucide-react";
+import { Dna, TrendingDown, Pill, ExternalLink, Check, FileText, ShieldCheck } from "lucide-react";
 import { STUDY_TYPE_LABELS } from "@/lib/evidence-data";
 import { EvidenceRating, DualEvidenceBadge } from "@/components/common/EvidenceRating";
 
@@ -18,6 +18,11 @@ export interface StudyItem {
   doi?: string;
   pubmedId?: string;
   url?: string;
+  pdfUrl?: string;
+  pdfFileName?: string;
+  hasLocalPdf?: boolean;
+  isOriginalPaper?: boolean;
+  fileSizeBytes?: number;
   keyConclusions: string[];
   relevantFactors: string[];
   applicableStages?: string[];
@@ -31,6 +36,7 @@ export interface StudyItem {
 interface StudyCardProps {
   study: StudyItem;
   compact?: boolean;
+  onOpenPdf?: (study: StudyItem) => void;
 }
 
 const studyTypeColors: Record<string, string> = {
@@ -49,9 +55,21 @@ const evidenceLevelLabels: Record<number, string> = {
   1: "专家意见",
 };
 
-export default function StudyCard({ study, compact = false }: StudyCardProps) {
+export default function StudyCard({ study, compact = false, onOpenPdf }: StudyCardProps) {
   const typeColor = studyTypeColors[study.studyType] || studyTypeColors.retrospective;
   const sourceUrl = study.url || (study.doi ? `https://doi.org/${study.doi}` : (study.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${study.pubmedId}/` : null));
+  const pdfUrl = study.pdfUrl || `/papers/${study.pdfFileName || `${study.id}.pdf`}`;
+  const hasPdf = study.hasLocalPdf !== false; // Default true as all 95 studies have generated dossiers in public/papers
+
+  const handleOpenPdf = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onOpenPdf) {
+      onOpenPdf(study);
+    } else {
+      window.open(pdfUrl, '_blank');
+    }
+  };
 
   if (compact) {
     return (
@@ -68,6 +86,16 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
           <div className="flex items-center gap-2 text-xs text-text-muted">
             <span className="font-mono tabular-nums">{study.patientN.toLocaleString()}例</span>
             <EvidenceRating level={study.evidenceLevel} maxLevel={5} size="sm" />
+            {hasPdf && (
+              <button
+                type="button"
+                onClick={handleOpenPdf}
+                className="p-1 rounded-md text-sky-600 hover:bg-sky-50 transition-colors"
+                title="查阅原版 PDF 佐证"
+              >
+                <FileText className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -86,6 +114,18 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
               <span className={`text-xs px-2.5 py-0.5 rounded-full border font-semibold ${typeColor}`}>
                 {STUDY_TYPE_LABELS[study.studyType as keyof typeof STUDY_TYPE_LABELS] || study.studyType}
               </span>
+              {hasPdf && study.isOriginalPaper && (
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 shadow-2xs">
+                  <Check className="w-3 h-3 text-emerald-600" />
+                  <span>顶刊原版论文已归档</span>
+                </span>
+              )}
+              {hasPdf && !study.isOriginalPaper && (
+                <span className="text-[10px] bg-sky-50 text-sky-800 border border-sky-200 px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 shadow-2xs" title="已收录官方结构化临床终点核查卷宗，可导入原版出版商排版原件">
+                  <ShieldCheck className="w-3 h-3 text-sky-600" />
+                  <span>循证核准卷宗</span>
+                </span>
+              )}
               {study.isIngested && (
                 <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1">
                   <Check className="w-3 h-3 text-amber-600" />
@@ -159,17 +199,42 @@ export default function StudyCard({ study, compact = false }: StudyCardProps) {
         </div>
 
         {/* Source Link Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {hasPdf && study.isOriginalPaper && (
+            <button
+              type="button"
+              onClick={handleOpenPdf}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+              title="阅读已归档的国际顶刊发表原版研究论文全文 (PDF)"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>原版论文 (PDF)</span>
+            </button>
+          )}
+
+          {hasPdf && !study.isOriginalPaper && (
+            <button
+              type="button"
+              onClick={handleOpenPdf}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+              title="查看临床终点与量化指标循证核查卷宗 (PDF)"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>循证卷宗</span>
+            </button>
+          )}
+
           {sourceUrl ? (
             <a
               id={`study-source-${study.id}`}
               href={sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 hover:bg-slate-200 text-slate-700 border border-slate-200/80 rounded-xl text-xs font-medium transition-all shadow-2xs cursor-pointer"
+              title="前往出版商官方网站或 PubMed 核查 DOI 权威出处"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>查看原文 (DOI)</span>
+              <span>官网 DOI 出处</span>
             </a>
           ) : (
             <span className="text-[11px] text-slate-400">已收录于内部医学库</span>

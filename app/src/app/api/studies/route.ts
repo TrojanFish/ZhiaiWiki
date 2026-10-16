@@ -1,8 +1,42 @@
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 import prisma from '@/lib/prisma';
 import { FEATURED_STUDIES } from '@/lib/evidence-data';
 import { CancerRegistry } from '@/lib/cancerRegistry';
 import { isSupportedCancerType } from '@/lib/stagingRegistry';
+
+function resolveStudyPdf(studyId: string, customFileName?: string | null) {
+  const fileName = customFileName || `${studyId}.pdf`;
+  try {
+    let papersDir = path.join(process.cwd(), 'public', 'papers');
+    if (!fs.existsSync(papersDir)) {
+      papersDir = path.join(process.cwd(), 'app', 'public', 'papers');
+    }
+    const fullPath = path.join(papersDir, fileName);
+    if (fs.existsSync(fullPath)) {
+      const stats = fs.statSync(fullPath);
+      // Real journal papers with multi-page text and publisher layout are > 50KB (dossiers are ~3-4KB)
+      const isOriginalPaper = stats.size > 50 * 1024;
+      return {
+        hasLocalPdf: true,
+        pdfUrl: `/papers/${fileName}`,
+        pdfFileName: fileName,
+        isOriginalPaper,
+        fileSizeBytes: stats.size,
+      };
+    }
+  } catch {
+    // Non-blocking in case of filesystem permissions
+  }
+  return {
+    hasLocalPdf: true,
+    pdfUrl: `/papers/${fileName}`,
+    pdfFileName: fileName,
+    isOriginalPaper: false,
+    fileSizeBytes: 0,
+  };
+}
 
 export async function GET(request: Request) {
   try {
@@ -47,6 +81,8 @@ export async function GET(request: Request) {
       if (s.rfs5Year) conclusions.push(`5年无复发生存率 (5yr RFS): ${s.rfs5Year}`);
       if (s.riskReduction) conclusions.push(`相对获益/风险降低率: ${s.riskReduction}`);
 
+      const pdfInfo = resolveStudyPdf(s.id, s.pdfFileName);
+
       return {
         id: s.id,
         title: s.title,
@@ -58,6 +94,11 @@ export async function GET(request: Request) {
         doi: s.doi || undefined,
         pubmedId: s.pubmedId || undefined,
         url: s.url || (s.doi ? `https://doi.org/${s.doi}` : (s.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${s.pubmedId}/` : undefined)),
+        pdfUrl: pdfInfo.pdfUrl,
+        pdfFileName: pdfInfo.pdfFileName,
+        hasLocalPdf: pdfInfo.hasLocalPdf,
+        isOriginalPaper: pdfInfo.isOriginalPaper,
+        fileSizeBytes: pdfInfo.fileSizeBytes,
         keyConclusions: conclusions.length > 0 ? conclusions : ['见完整研究文献'],
         relevantFactors: Array.isArray(relevantFactors) ? relevantFactors : [cancerType === 'breast' ? '乳腺癌预后' : cancerType === 'colorectal' ? '结直肠癌预后' : cancerType === 'gastric' ? '胃癌预后' : cancerType === 'liver' ? '肝癌预后' : cancerType === 'esophageal' ? '食管癌预后' : cancerType === 'thyroid' ? '甲状腺癌预后' : '全癌种循证预后'],
         applicableStages: Array.isArray(applicableStages) ? applicableStages : ['I', 'II', 'III'],
@@ -102,10 +143,18 @@ export async function GET(request: Request) {
       }
     }
     const existingDois = new Set(formattedDbStudies.map(s => s.doi).filter(Boolean));
-    const staticStudies = baseStudies.filter(s => !s.doi || !existingDois.has(s.doi)).map(s => ({
-      ...s,
-      url: s.doi ? `https://doi.org/${s.doi}` : (s.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${s.pubmedId}/` : undefined)
-    }));
+    const staticStudies = baseStudies.filter(s => !s.doi || !existingDois.has(s.doi)).map(s => {
+      const pdfInfo = resolveStudyPdf(s.id, s.pdfFileName);
+      return {
+        ...s,
+        url: s.doi ? `https://doi.org/${s.doi}` : (s.pubmedId ? `https://pubmed.ncbi.nlm.nih.gov/${s.pubmedId}/` : undefined),
+        pdfUrl: pdfInfo.pdfUrl,
+        pdfFileName: pdfInfo.pdfFileName,
+        hasLocalPdf: pdfInfo.hasLocalPdf,
+        isOriginalPaper: pdfInfo.isOriginalPaper,
+        fileSizeBytes: pdfInfo.fileSizeBytes,
+      };
+    });
 
     const combined = [...formattedDbStudies, ...staticStudies];
 
