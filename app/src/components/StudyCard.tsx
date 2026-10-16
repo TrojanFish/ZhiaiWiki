@@ -214,14 +214,14 @@ export default function StudyCard({ study, compact = false, onOpenPdf, actionExt
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
                   <span>核心临床定论与终点数据</span>
                 </span>
-                {hasMultiple && (
+                {hasMultiple && !isExpanded && (
                   <button
                     type="button"
-                    onClick={() => setIsExpanded(!isExpanded)}
+                    onClick={() => setIsExpanded(true)}
                     className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors px-2 py-0.5 rounded-md hover:bg-blue-50 border border-transparent hover:border-blue-200"
                   >
-                    <span>{isExpanded ? "收起简述" : `展开全部终点 (${conclusions.length}项)`}</span>
-                    {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    <span>展开全部终点 ({conclusions.length}项)</span>
+                    <ChevronDown className="w-3 h-3" />
                   </button>
                 )}
               </div>
@@ -265,7 +265,7 @@ export default function StudyCard({ study, compact = false, onOpenPdf, actionExt
                     <button
                       type="button"
                       onClick={() => setIsExpanded(false)}
-                      className="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-0.5 cursor-pointer hover:underline"
+                      className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer hover:bg-blue-50 px-2 py-0.5 rounded-md transition-colors border border-transparent hover:border-blue-200"
                     >
                       <span>收起简述</span>
                       <ChevronUp className="w-3 h-3" />
