@@ -166,12 +166,6 @@ export default function SimilarCasesCard({ profile }: SimilarCasesCardProps) {
           const cancerExplanations: Record<string, string> = {
             lung: "肺癌术后 5 年内身体未出现任何局部肺部复发或脑/骨/肾上腺转移。肺癌复发高峰集中在术后前 2~3 年，跨过 5 年通常在临床上视为达到“临床治愈”。",
             breast: "早期乳腺癌术后 5 年内未出现胸壁复发或远处脏器转移。5 年无病生存是评估早期内分泌或靶向治疗效果、规划后续强化方案的关键分水岭。",
-            colon: "结肠癌根治术后 5 年内肠管及肝脏、腹膜未见肿瘤复发。结肠癌 80% 的复发集中在术后 3 年内，满 5 年未复发意味着长期复发风险降至极低。",
-            rectal: "直肠癌手术或新辅助综合治疗后，盆腔局部未复发且无远处转移。是检验全直肠系膜切除 (TME) 根治质量与多学科治疗成效的核心标尺。",
-            gastric: "胃癌 D2 根治术后 5 年内残胃及吻合口、腹膜无肿瘤复发。5 年无病生存代表微小癌细胞已被彻底清除，迎来终身治愈曙光。",
-            liver: "肝癌根治性切除或局部消融后 5 年内肝脏无新生癌灶、无血管转移。因肝脏常伴肝炎/硬化背景，5 年无复发是极高水准的抗复发质控指标。",
-            esophageal: "食管癌根治切除或新辅助放化疗后 5 年内无原位及纵隔淋巴结复发。是突破食管癌易纵隔侵犯和局部复发瓶颈的硬核指标。",
-            thyroid: "甲状腺乳头状癌/滤泡状癌术后或主动监测 5 年内无颈部淋巴结肿大或结构性复发。低危微小癌的 5 年复发率极低（通常 <3%）。",
           };
           const normalized = (profile.cancerType || "lung").toLowerCase();
           const detail = cancerExplanations[normalized] || cancerExplanations.lung;

@@ -273,12 +273,6 @@ export default function EvidenceReport({
                 (() => {
                   const ct = (profile.cancerType || "lung").toLowerCase();
                   if (ct === "breast") return "无病/无远处转移率 (DFS/DRFS)";
-                  if (ct === "thyroid") return "特异生存率 (DSS / 长期随访)";
-                  if (ct === "pancreatic") return "无病生存率 (DFS) / 中位获益";
-                  if (ct === "colon" || ct === "colorectal") return "3~5年无病生存率 (DFS)";
-                  if (ct === "rectal") return "无病生存率 / 器官保留率";
-                  if (ct === "gastric") return "3~5年无病生存率 (DFS)";
-                  if (ct === "liver") return "无瘤/总生存率 (RFS/OS)";
                   return "5年无病生存率 (DFS)";
                 })()
               }

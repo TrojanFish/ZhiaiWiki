@@ -51,35 +51,6 @@ const ReceptorSubtypeVisual       = dynamic(() => import("./visuals/ReceptorSubt
 const LymphedemaArmVisual         = dynamic(() => import("./visuals/LymphedemaArmVisual").then(m => ({ default: m.LymphedemaArmVisual })),                   { ssr: false, loading: () => null });
 const DcisBasementMembraneVisual  = dynamic(() => import("./visuals/DcisBasementMembraneVisual").then(m => ({ default: m.DcisBasementMembraneVisual })),   { ssr: false, loading: () => null });
 
-// ── 结直肠癌 (特别是直肠癌) 专区专属交互式视觉模拟器 (4个) ─────────────
-const RectalAnatomyRulerVisual    = dynamic(() => import("./visuals/RectalAnatomyRulerVisual").then(m => ({ default: m.RectalAnatomyRulerVisual })),         { ssr: false, loading: () => null });
-const RectalCrmMriVisual          = dynamic(() => import("./visuals/RectalCrmMriVisual").then(m => ({ default: m.RectalCrmMriVisual })),                     { ssr: false, loading: () => null });
-const RectalTntWatchWaitVisual    = dynamic(() => import("./visuals/RectalTntWatchWaitVisual").then(m => ({ default: m.RectalTntWatchWaitVisual })),         { ssr: false, loading: () => null });
-const StomaCareLarsVisual         = dynamic(() => import("./visuals/StomaCareLarsVisual").then(m => ({ default: m.StomaCareLarsVisual })),                   { ssr: false, loading: () => null });
-
-// ── 胃癌专区专属交互式视觉模拟器 (2个) ─────────────────────────────────
-const GastricAnatomyD2Visual        = dynamic(() => import("./visuals/GastricAnatomyD2Visual").then(m => ({ default: m.GastricAnatomyD2Visual })),               { ssr: false, loading: () => null });
-const GastricDumpingNutritionVisual = dynamic(() => import("./visuals/GastricDumpingNutritionVisual").then(m => ({ default: m.GastricDumpingNutritionVisual })), { ssr: false, loading: () => null });
-
-// ── 原发性肝癌专区专属交互式视觉模拟器 (2个) ──────────────────────────────
-const LiverCnlcStagingVisual        = dynamic(() => import("./visuals/LiverCnlcStagingVisual").then(m => ({ default: m.LiverCnlcStagingVisual })),               { ssr: false, loading: () => null });
-const HccInterventionSystemicVisual = dynamic(() => import("./visuals/HccInterventionSystemicVisual").then(m => ({ default: m.HccInterventionSystemicVisual })), { ssr: false, loading: () => null });
-
-// ── 食管癌专区专属交互式视觉模拟器 (2个) ──────────────────────────────
-const EsophagealAnatomyStagingVisual = dynamic(() => import("./visuals/EsophagealAnatomyStagingVisual").then(m => ({ default: m.EsophagealAnatomyStagingVisual })), { ssr: false, loading: () => null });
-const EsophagealMultiModalVisual     = dynamic(() => import("./visuals/EsophagealMultiModalVisual").then(m => ({ default: m.EsophagealMultiModalVisual })),         { ssr: false, loading: () => null });
-
-// ── 甲状腺癌专区专属交互式视觉模拟器 (2个) ─────────────────────────────
-const ThyroidTiradsUltrasoundVisual  = dynamic(() => import("./visuals/ThyroidTiradsUltrasoundVisual").then(m => ({ default: m.ThyroidTiradsUltrasoundVisual })),   { ssr: false, loading: () => null });
-const ThyroidLt4TimingIsolationVisual = dynamic(() => import("./visuals/ThyroidLt4TimingIsolationVisual").then(m => ({ default: m.ThyroidLt4TimingIsolationVisual })), { ssr: false, loading: () => null });
-
-// ── 子宫内膜癌与宫颈癌专区专属交互式视觉模拟器 (2个) ─────────────────────────
-const EndometrialMoleculeDecisionVisual = dynamic(() => import("./visuals/EndometrialMoleculeDecisionVisual").then(m => ({ default: m.EndometrialMoleculeDecisionVisual })), { ssr: false, loading: () => null });
-const CervicalCinProgressionVisual       = dynamic(() => import("./visuals/CervicalCinProgressionVisual").then(m => ({ default: m.CervicalCinProgressionVisual })),             { ssr: false, loading: () => null });
-
-// ── 胰腺癌专区专属交互式视觉模拟器 (1个) ─────────────────────────────────
-const PancreaticResectabilityVisual      = dynamic(() => import("./visuals/PancreaticResectabilityVisual").then(m => ({ default: m.PancreaticResectabilityVisual })),         { ssr: false, loading: () => null });
-
 interface WikiVisualRendererProps {
   visualComponent?: string;
 }
@@ -130,28 +101,6 @@ export function WikiVisualRenderer({ visualComponent }: WikiVisualRendererProps)
     case "ReceptorSubtypeVisual":     return <ReceptorSubtypeVisual />;
     case "LymphedemaArmVisual":       return <LymphedemaArmVisual />;
     case "DcisBasementMembraneVisual":return <DcisBasementMembraneVisual />;
-    // 结直肠癌专区
-    case "RectalAnatomyRulerVisual":  return <RectalAnatomyRulerVisual />;
-    case "RectalCrmMriVisual":        return <RectalCrmMriVisual />;
-    case "RectalTntWatchWaitVisual":  return <RectalTntWatchWaitVisual />;
-    case "StomaCareLarsVisual":       return <StomaCareLarsVisual />;
-    // 胃癌专区
-    case "GastricAnatomyD2Visual":        return <GastricAnatomyD2Visual />;
-    case "GastricDumpingNutritionVisual": return <GastricDumpingNutritionVisual />;
-    // 原发性肝癌专区
-    case "LiverCnlcStagingVisual":        return <LiverCnlcStagingVisual />;
-    case "HccInterventionSystemicVisual": return <HccInterventionSystemicVisual />;
-    // 食管癌专区
-    case "EsophagealAnatomyStagingVisual": return <EsophagealAnatomyStagingVisual />;
-    case "EsophagealMultiModalVisual":     return <EsophagealMultiModalVisual />;
-    // 甲状腺癌专区
-    case "ThyroidTiradsUltrasoundVisual":  return <ThyroidTiradsUltrasoundVisual />;
-    case "ThyroidLt4TimingIsolationVisual": return <ThyroidLt4TimingIsolationVisual />;
-    // 子宫内膜癌与宫颈癌专区
-    case "EndometrialMoleculeDecisionVisual": return <EndometrialMoleculeDecisionVisual />;
-    case "CervicalCinProgressionVisual":       return <CervicalCinProgressionVisual />;
-    // 胰腺癌专区
-    case "PancreaticResectabilityVisual":      return <PancreaticResectabilityVisual />;
     default:                          return null;
   }
 }
