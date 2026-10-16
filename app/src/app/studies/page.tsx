@@ -263,7 +263,7 @@ export default function StudiesPage() {
         </p>
 
         {/* View Mode Switcher: 核心文献库 / KM生存曲线 / HR森林图 / 试验入组筛查 */}
-        <div className="pt-2 flex items-center justify-center gap-1.5 sm:gap-2 overflow-x-auto p-1.5 bg-slate-200/80 rounded-2xl max-w-2xl mx-auto border border-slate-300/70 shadow-2xs">
+        <div className="pt-2 flex items-center justify-center gap-1.5 sm:gap-2 overflow-x-auto p-1.5 bg-slate-100/90 rounded-2xl max-w-2xl mx-auto border border-slate-200 shadow-2xs">
           <button
             type="button"
             onClick={() => setViewMode("library")}

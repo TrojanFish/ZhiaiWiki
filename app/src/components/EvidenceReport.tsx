@@ -577,22 +577,26 @@ function StudiesTab({ result, onInspectStudy }: { result: PatientMatchResult; on
       </div>
       <div className="grid gap-4">
         {result.matchedStudies.map((study) => (
-          <div key={study.id} className="relative group">
-            <StudyCard study={study} />
-            {onInspectStudy && (
-              <button
-                type="button"
-                onClick={() => onInspectStudy({
-                  ...study,
-                  sampleSize: study.patientN,
-                })}
-                className="absolute top-4 right-4 sm:right-6 px-2.5 py-1 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 transition-all shadow-2xs active:scale-[0.96] inline-flex items-center gap-1"
-              >
-                <Microscope className="w-3.5 h-3.5 shrink-0" />
-                <span>证据检视</span>
-              </button>
-            )}
-          </div>
+          <StudyCard 
+            key={study.id} 
+            study={study} 
+            actionExtra={
+              onInspectStudy ? (
+                <button
+                  type="button"
+                  onClick={() => onInspectStudy({
+                    ...study,
+                    sampleSize: study.patientN,
+                  })}
+                  className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 transition-all shadow-2xs active:scale-[0.96] inline-flex items-center gap-1 cursor-pointer"
+                  title="深入检视该项研究的详细终点效应量与证据评级"
+                >
+                  <Microscope className="w-3.5 h-3.5 shrink-0" />
+                  <span>证据检视</span>
+                </button>
+              ) : undefined
+            }
+          />
         ))}
       </div>
     </div>

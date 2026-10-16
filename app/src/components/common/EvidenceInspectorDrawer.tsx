@@ -5,9 +5,12 @@ import {
   BookOpen, 
   ExternalLink, 
   ShieldCheck, 
-  FileCheck 
+  FileCheck,
+  Sparkles 
 } from "lucide-react";
 import BottomSheet from "./BottomSheet";
+import { EvidenceRating, DualEvidenceBadge } from "./EvidenceRating";
+import { extractStudyAcronym } from "@/lib/tagHumanizer";
 
 export interface InspectorStudyData {
   id?: string;
@@ -39,6 +42,8 @@ export default function EvidenceInspectorDrawer({
 }: EvidenceInspectorDrawerProps) {
   if (!study) return null;
 
+  const acronym = extractStudyAcronym(study);
+
   return (
     <BottomSheet
       isOpen={isOpen}
@@ -56,10 +61,16 @@ export default function EvidenceInspectorDrawer({
         {/* 顶部标题与期刊信息卡 */}
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 border border-sky-200">
+            {acronym && (
+              <span className="px-2.5 py-0.5 rounded-lg text-xs font-extrabold font-mono bg-sky-100 text-sky-800 border border-sky-300 inline-flex items-center gap-1 shadow-2xs">
+                <Sparkles className="w-3 h-3 text-sky-600" />
+                <span>{acronym}</span>
+              </span>
+            )}
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white text-slate-800 border border-slate-200 shadow-2xs">
               {study.journal || "顶级临床期刊"}
             </span>
-            <span className="text-xs font-semibold text-slate-500">
+            <span className="text-xs font-semibold text-slate-500 font-mono tabular-nums">
               {study.year ? `${study.year} 年发表` : "权威发表"}
             </span>
             {study.sampleSize && (
@@ -97,17 +108,23 @@ export default function EvidenceInspectorDrawer({
             <p className="text-2xs text-slate-500">统计学真实效应分布范围</p>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1.5 flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500">证据推荐等级</span>
+              <span className="text-xs font-semibold text-slate-500">循证与指南双轨</span>
               <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
                 CEBM {study.evidenceLevel ? `Level ${study.evidenceLevel}` : "Level 1a"}
               </span>
             </div>
-            <div className="text-xl font-extrabold text-amber-600 flex items-center gap-1">
-              {"⭐".repeat(study.evidenceLevel || 4)}
+            <div className="pt-0.5">
+              <EvidenceRating level={study.evidenceLevel || 4} maxLevel={5} size="sm" />
             </div>
-            <p className="text-2xs text-slate-500">牛津循证医学中心 (CEBM) 标准</p>
+            <div className="pt-0.5">
+              <DualEvidenceBadge
+                nccnCategory={(study.evidenceLevel || 4) >= 4 ? "1" : (study.evidenceLevel || 4) === 3 ? "2A" : "2B"}
+                cscoLevel={(study.evidenceLevel || 4) >= 4 ? "I" : (study.evidenceLevel || 4) === 3 ? "II" : "III"}
+                cscoGrade={(study.evidenceLevel || 4) >= 4 ? "A" : "B"}
+              />
+            </div>
           </div>
         </div>
 

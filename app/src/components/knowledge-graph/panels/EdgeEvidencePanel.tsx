@@ -2,6 +2,7 @@ import React from 'react';
 import { Zap, BookOpen, X, ExternalLink } from 'lucide-react';
 import type { EdgeEvidence } from '@/lib/knowledgeGraphData';
 import { MiniForestPlot } from '../MiniForestPlot';
+import { extractStudyAcronym } from '@/lib/tagHumanizer';
 
 export function EdgeEvidencePanel({ edgeKey: _edgeKey, evidence, onClose }: { edgeKey: string; evidence: EdgeEvidence; onClose: () => void }) {
   return (
@@ -51,32 +52,42 @@ export function EdgeEvidencePanel({ edgeKey: _edgeKey, evidence, onClose }: { ed
       {/* Literature List */}
       {evidence.studies && evidence.studies.length > 0 && (
         <div>
-          <p className="text-slate-700 text-xs font-bold mb-2 flex items-center gap-1.5">
+          <p className="text-slate-800 text-xs font-bold mb-2 flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span>核心文献依据与同行评审出处</span>
+            <span>核心同行评审出处与证据溯源</span>
           </p>
-          <div className="space-y-3">
-            {evidence.studies.map((study, i) => (
-              <div key={i} className="bg-slate-50/80 rounded-xl p-3 border border-slate-200">
-                <p className="text-slate-900 text-xs font-bold leading-snug mb-1">{study.title}</p>
-                <div className="flex gap-2 text-xs text-slate-500 mb-1.5 font-medium">
-                  <span className="text-teal-700 font-semibold">{study.journal}</span>
-                  <span>({study.year})</span>
+          <div className="space-y-2.5">
+            {evidence.studies.map((study, i) => {
+              const acronym = extractStudyAcronym({ title: study.title });
+              return (
+                <div key={i} className="bg-slate-50/90 rounded-xl p-3 border border-slate-200/90 space-y-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {acronym && (
+                      <span className="font-mono text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300">
+                        {acronym}
+                      </span>
+                    )}
+                    <span className="text-slate-900 font-bold text-xs">{study.journal}</span>
+                    <span className="text-slate-400 text-xs font-mono tabular-nums">· {study.year}</span>
+                  </div>
+                  <p className="text-slate-900 text-xs font-semibold leading-snug">{study.title}</p>
+                  <p className="text-slate-600 text-xs leading-relaxed">{study.conclusion}</p>
+                  {study.doi && (
+                    <div className="pt-1 border-t border-slate-200/60 flex items-center justify-between">
+                      <a
+                        href={study.doi.startsWith('http') ? study.doi : `https://doi.org/${study.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-xs font-medium hover:underline inline-flex items-center gap-1"
+                      >
+                        <span>出处 DOI: {study.doi}</span>
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                      </a>
+                    </div>
+                  )}
                 </div>
-                <p className="text-slate-600 text-xs leading-relaxed mb-2">{study.conclusion}</p>
-                {study.doi && (
-                  <a
-                    href={study.doi.startsWith('http') ? study.doi : `https://doi.org/${study.doi}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 text-xs font-medium hover:underline inline-flex items-center gap-1"
-                  >
-                    DOI: {study.doi}
-                    <ExternalLink className="w-3 h-3 shrink-0" />
-                  </a>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
