@@ -20,3 +20,5 @@ env/
 *.key
 *.crt
 !nginx/certs/README.md
+data/incoming-papers/*
+!data/incoming-papers/README.md
